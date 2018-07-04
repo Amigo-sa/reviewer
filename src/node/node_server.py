@@ -1,13 +1,13 @@
 import requests
 import time
 from threading import Thread
+import settings.constants as CONSTANTS
 
-me = {"ip":"10.0.0.10", "port": 1000}
 status = False
 while not status:
     time.sleep(2)
     try:
-        r = requests.post('http://127.0.0.1:5000/register', json = me)
+        r = requests.post(CONSTANTS.core_server_url +'/register', json = CONSTANTS.node_id)
         if r.status_code == requests.codes.ok:
             status = True
     except:
@@ -24,7 +24,7 @@ class UpdateNetwork(Thread):
         while True:
             time.sleep(2)
             try:
-                r = requests.get('http://127.0.0.1:5000/get_network_info')
+                r = requests.get(CONSTANTS.core_server_url +'/get_network_info')
                 existing_nodes = r.json()
                 print(existing_nodes)
             except:
