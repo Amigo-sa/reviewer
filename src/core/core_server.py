@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, request
-from flask import request
 app = Flask(__name__)
 
 existing_nodes = []
