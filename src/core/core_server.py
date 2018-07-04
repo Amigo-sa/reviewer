@@ -8,6 +8,7 @@ def register():
     a = request.get_json()
     if not a in existing_nodes:
         existing_nodes.append(a)
+        print("New node registered: ",a)
     return '', 200
 
 @app.route("/get_network_info", methods = ['GET'])
