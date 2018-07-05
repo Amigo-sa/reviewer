@@ -10,8 +10,8 @@ while not status:
         r = requests.post(CONSTANTS.core_server_url +'/register', json = CONSTANTS.node_id)
         if r.status_code == requests.codes.ok:
             status = True
-    except:
-        print("Сервер не доступен")
+    except Exception as ex:
+        print(ex)
 
 
 existing_nodes = None
@@ -27,8 +27,8 @@ class UpdateNetwork(Thread):
                 r = requests.get(CONSTANTS.core_server_url +'/get_network_info')
                 existing_nodes = r.json()
                 print(existing_nodes)
-            except:
-                print("Сервер не доступен")
+            except Exception as ex:
+                print(ex)
 
 update_network_thread = UpdateNetwork()
 update_network_thread.start()
