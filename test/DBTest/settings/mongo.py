@@ -1,0 +1,1 @@
+connString = "mongodb://localhost:27017"

@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="Reviewer" id="Project_2f15991" template="Default" database="MongoDb" >
 	<schema name="Reviewer" schemaname="Reviewer" >
-		<table name="Character" >
-			<column name="_id" type="oid" jt="-8" mandatory="y" />
-			<column name="Description" type="string" jt="12" mandatory="y" />
-		</table>
 		<table name="Department" >
 			<column name="_id" type="oid" jt="-8" mandatory="y" />
 			<column name="Name" type="string" jt="12" mandatory="y" />
@@ -42,10 +38,6 @@
 			<column name="_id" type="oid" jt="-8" mandatory="y" />
 			<column name="Name" type="string" jt="12" mandatory="y" />
 			<column name="BirthDate" type="date" jt="91" mandatory="y" />
-			<column name="CharacterID" type="oid" jt="-8" />
-			<fk name="Fk_Person_Character" virtual="y" to_schema="Reviewer" to_table="Character" >
-				<fk_column name="CharacterID" pk="_id" />
-			</fk>
 		</table>
 		<table name="Review" >
 			<column name="_id" type="oid" jt="-8" mandatory="y" />
@@ -125,6 +117,7 @@
 			</fk>
 		</table>
 	</schema>
+	<connector name="MongoDb" database="MongoDb" driver_class="com.dbschema.MongoJdbcDriver" driver_jar="mongojdbc1.2.jar" driver_desc="No Authentication &lt;/span&gt;&lt;br&gt;&lt;b&gt;Connect using MongoDb URI using the Advanced tab/enforce custom URI. Details in Help.&lt;br&gt;Connectivity logs are available in Help / Output Log.&lt;/b&gt;" host="localhost" port="27017" instance="reviewer" />
 	<layout name="Rev_global" id="Layout_2b7d137" joined_routing="y" show_column_type="y" show_relation="columns" >
 		<comment><![CDATA[Default Layout]]></comment>
 		<entity schema="Reviewer" name="Organization" color="bfd4f5" x="705" y="45" />
@@ -136,9 +129,12 @@
 		<entity schema="Reviewer" name="Group" color="c1d8ee" x="390" y="465" />
 		<entity schema="Reviewer" name="Survey" color="c1d8ee" x="660" y="420" />
 		<entity schema="Reviewer" name="Test" color="c1d8ee" x="660" y="525" />
-		<entity schema="Reviewer" name="Person" color="bfd4f5" x="225" y="45" />
 		<entity schema="Reviewer" name="Skill" color="bfd4f5" x="435" y="45" />
 		<entity schema="Reviewer" name="Review" color="c1d8ee" x="210" y="465" />
 		<entity schema="Reviewer" name="Feature" color="c1d8ee" x="45" y="45" />
+		<entity schema="Reviewer" name="Person" color="bfd4f5" x="225" y="45" />
+		<browser id="Browse_26414f5" name="Department" confirm_updates="y" >
+			<browse_table schema="Reviewer" entity="Department" x="20" y="20" width="400" height="300" />
+		</browser>
 	</layout>
 </project>
