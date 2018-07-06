@@ -2,7 +2,7 @@ collections = db.getCollectionNames();
 collections.forEach((coll) =>{
    db.getCollection(coll).drop();
 });
-
+
 db.createCollection("Persons", {
    validator: {
       $jsonSchema: {
@@ -27,11 +27,16 @@ db.createCollection("Skills", {
       $jsonSchema: {
         additionalProperties: false,
         bsonType: "object",
-        required: ["Name", "Rate", "PersonId"],
+        required: ["Name", "Level", "PersonId"],
         properties: {
             _id: {},
             Name: {
                bsonType: "string"
+            },
+            Level: {
+               bsonType: "double",
+               minimum:  0.0,
+               maximum:  120.0
             },
             PersonId: {
                bsonType: "objectId"
@@ -118,7 +123,7 @@ db.createCollection("Schools", {
       }
    }
 });
-
+
 db.createCollection("Departments", {
    validator: {
       $jsonSchema: {

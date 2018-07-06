@@ -35,6 +35,16 @@ features = [
          ]
 featureIds = colFeatures.insert_many(features).inserted_ids
 
+colSkills = revDb["Skills"]
+skills = [
+        {"Name" : "Magery"                  , "Level" : 120.0, "PersonId" : personIds[5] },
+        {"Name" : "Meditation"              , "Level" : 75.0, "PersonId" : personIds[2] },
+        {"Name" : "Evaluating Intelligence" , "Level" : 10.0,"PersonId" : personIds[1] },
+        {"Name" : "Inscription"             , "Level" : 100.0, "PersonId" : personIds[0] },
+        {"Name" : "Spirit Speak"             , "Level" : 105.0, "PersonId" : personIds[4] },
+         ]
+skillIds = colSkills.insert_many(skills).inserted_ids
+
 colOrganizations = revDb["Organizations"]
 organization = {"Name" : "Хогвартс"}
 orgId = colOrganizations.insert_one(organization).inserted_id
