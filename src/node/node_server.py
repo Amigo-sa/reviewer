@@ -39,24 +39,23 @@ if __debug__:
     if (is_db_exists()):
         print_something_from_db()
 
-status = False
-while not status:
-    time.sleep(2)
-    try:
-        r = requests.post(constants.core_server_url +'/register', json = constants.node_id)
-        if r.status_code == requests.codes.ok:
-            status = True
-    except Exception as ex:
-        print(ex)
 
-
-existing_nodes = None
 
 class UpdateNetwork(Thread):
     def __init__(self):
         Thread.__init__(self)
 
     def run(self):
+        status = False
+        while not status:
+            time.sleep(2)
+            try:
+                r = requests.post(constants.core_server_url + '/register', json=constants.node_id)
+                if r.status_code == requests.codes.ok:
+                    status = True
+            except Exception as ex:
+                print(ex)
+
         while True:
             time.sleep(2)
             try:
