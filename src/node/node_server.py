@@ -19,25 +19,25 @@ def is_db_exists():
         return False
 
 
+if __debug__:
+    def print_something_from_db():
 
-def print_something_from_db():
+        rev_client = pymongo.MongoClient(constants.mongo_db)
+        rev_db = rev_client["reviewer"]
+        col_person = rev_db["Person"]
+        cursor = col_person.find({})
 
-    rev_client = pymongo.MongoClient(constants.mongo_db)
-    rev_db = rev_client["reviewer"]
-    col_person = rev_db["Person"]
-    cursor = col_person.find({})
+        try:
+            for person in cursor:
+                print(person["Name"])
+        except Exception as ex:
+            print(ex)
 
-    try:
-        for person in cursor:
-            print(person["Name"])
-    except Exception as ex:
-        print(ex)
-
-    return
+        return
 
 
-if (is_db_exists()):
-    print_something_from_db()
+    if (is_db_exists()):
+        print_something_from_db()
 
 status = False
 while not status:
