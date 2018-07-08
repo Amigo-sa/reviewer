@@ -7,16 +7,17 @@ import pymongo
 
 def is_db_exists():
     rev_client = pymongo.MongoClient(constants.mongo_db)
-    rev_db = rev_client["reviewer"]
 
     try:
-        col_list = rev_db.list_collection_names()
+        rev_db_names = rev_client.list_database_names()
+        if "reviewer" in rev_db_names:
+            return True
+        else:
+            return False
     except Exception as ex:
         print(ex)
         return False
-    if col_list == []:
-        return False
-    return True
+
 
 
 def print_something_from_db():
