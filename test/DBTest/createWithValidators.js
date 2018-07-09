@@ -263,10 +263,10 @@ db.createCollection("Reviews", {
       $jsonSchema: {
         additionalProperties: false,
         bsonType: "object",
-        required: ["RoleId", "SubjectId", "Rate"],
+        required: ["PersonId", "SubjectId", "Rate"],
         properties: {
             _id: {},
-            RoleId: {
+            PersonId: {
                bsonType: "objectId",
                description: "must refer to TutorRole or StudentRole document"
             },

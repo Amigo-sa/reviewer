@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-raise NotImplementedError
+#raise NotImplementedError
 
 import pymongo
 import datetime
@@ -86,17 +86,28 @@ tutIds = colTutors.insert_many(tutors).inserted_ids
 
 colGroups = revDb["Groups"] 
 groups = [
-        {"Name" : "Клуб анонимных алкоголиков", "RoleList" : [studIds[0], studIds[2], tutIds[0], tutIds[1]]},
-        {"Name" : "Кружок кройки и шитья", "RoleList" : [studIds[1], studIds[2], tutIds[2]]}
+        {"Name" : "Клуб анонимных алкоголиков", "RoleList" : ["Главный алкаш", "Субалкаш"]},
+        {"Name" : "Кружок кройки и шитья", "RoleList" : ["Мастер швец", "Падаван"]}
         ]
 groupIds = colGroups.insert_many(groups).inserted_ids
 
+colGroupRoles = revDb["GroupRoles"]
+groupRoles = [
+        {"RoleName" : "Главный алкаш", "GroupId" : groupIds[0], "PersonId" : personIds[4]},
+        {"RoleName" : "Мастер швец", "GroupId" : groupIds[1], "PersonId" : personIds[5]},
+        {"RoleName" : "Субалкаш", "GroupId" : groupIds[0], "PersonId" : personIds[2]},
+        {"RoleName" : "Субалкаш", "GroupId" : groupIds[0], "PersonId" : personIds[3]},
+        {"RoleName" : "Падаван", "GroupId" : groupIds[1], "PersonId" : personIds[0]},
+        {"RoleName" : "Падаван", "GroupId" : groupIds[1], "PersonId" : personIds[1]},
+        ]
+groupRoleIds = colGroupRoles.insert_many(groupRoles)
+
 colReviews = revDb["Reviews"]
 reviews = [
-        {"RoleId" : tutIds[1],  "SubjectId" : studIds[0],  "GroupId" : groupIds[0], "Details" : "Сожрал мои печеньки!", "Rate" : 2.0},
-        {"RoleId" : studIds[1], "SubjectId" : tutIds[2],   "GroupId" : groupIds[1], "Details" : "Учит шить как бог"   , "Rate" : 8.0},
-        {"RoleId" : studIds[1], "SubjectId" : groupIds[1], "GroupId" : groupIds[1], "Details" : "Прекрасный кружок"   , "Rate" : 9.0},
-        {"RoleId" : studIds[2], "SubjectId" : studIds[0],  "GroupId" : groupIds[0], "Details" : "Хамоват"             , "Rate" : 4.0}
+        {"PersonId" : personIds[2],  "SubjectId" : personIds[4],  "GroupId" : groupIds[0], "Details" : "Сожрал мои печеньки!", "Rate" : 2.0},
+        {"PersonId" : personIds[1], "SubjectId" : personIds[5],   "GroupId" : groupIds[1], "Details" : "Учит шить как бог"   , "Rate" : 8.0},
+        {"PersonId" : personIds[0], "SubjectId" : groupIds[1], "GroupId" : groupIds[1], "Details" : "Прекрасный кружок"   , "Rate" : 9.0},
+        {"PersonId" : personIds[4], "SubjectId" : personIds[0],  "GroupId" : groupIds[0], "Details" : "Хамоват"             , "Rate" : 4.0}
         ]
 reviewIds = colReviews.insert_many(reviews).inserted_ids
 
@@ -127,16 +138,7 @@ survey = {"Name" : "Любимый цвет ножниц",
             }
 survIds = colSurveys.insert_one(survey)
 
-colGroupRoles = revDb["GroupRoles"]
-groupRoles = [
-        {"RoleName" : "Преподаватель", "GroupId" : groupIds[0], "RoleId" : tutIds[0]},
-        {"RoleName" : "Преподаватель", "GroupId" : groupIds[1], "RoleId" : tutIds[2]},
-        {"RoleName" : "Ученик", "GroupId" : studIds[0], "RoleId" : tutIds[0]},
-        {"RoleName" : "Ученик", "GroupId" : studIds[0], "RoleId" : tutIds[2]},
-        {"RoleName" : "Ученик", "GroupId" : studIds[1], "RoleId" : tutIds[1]},
-        {"RoleName" : "Ученик", "GroupId" : studIds[1], "RoleId" : tutIds[2]},
-        ]
-groupRoleIds = colGroupRoles.insert_many(groupRoles)
+
 
 
 
