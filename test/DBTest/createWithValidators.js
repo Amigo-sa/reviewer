@@ -243,7 +243,7 @@ db.createCollection("GroupRoles", {
          properties: {
             _id: {},
             RoleName: {
-               bsonType: "string"
+               bsonType: "string" //а можно привязать не к этому, а к какому-то глобальному идентификатору роли!
             },
             GroupId: {
                bsonType: "objectId",
