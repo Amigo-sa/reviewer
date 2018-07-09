@@ -26,7 +26,8 @@ db.createCollection("Persons", {
                 bsonType: "date"
             },
             PhoneNo:{
-                bsonType: "string"
+                bsonType: "string",
+                pattern: "^[0-9]+$"
             }
          }
       }
@@ -268,11 +269,11 @@ db.createCollection("Reviews", {
             _id: {},
             PersonId: {
                bsonType: "objectId",
-               description: "must refer to TutorRole or StudentRole document"
+               description: "must refer to Person document"
             },
             SubjectId: {
                bsonType: "objectId",
-               description: "must refer to TutorRole, StudentRole, Group, Department, University, School or Feature document"
+               description: "must refer to TutorRole, StudentRole, Group, Department, University, School, Skill or Feature document"
             },
             GroupId: {
                bsonType: "objectId",
@@ -282,7 +283,9 @@ db.createCollection("Reviews", {
                bsonType: "string"
             },
             Rate: {
-               bsonType: "double"
+               bsonType: "double",
+               minimum: 0.0,
+               maximum: 10.0
             }
          }
       }

@@ -15,7 +15,7 @@ revDb = revClient["reviewer"]
 
 colPersons = revDb["Persons"]
 persons = [
-        {"FirstName" : "Гарри"     , "BirthDate" : datetime.datetime(2000,8,8)},
+        {"FirstName" : "Гарри"     , "BirthDate" : datetime.datetime(2000,8,8), "PhoneNo" : "3222232"},
         {"FirstName" : "Рон"       , "BirthDate" : datetime.datetime(2006,4,2)},
         {"FirstName" : "Гермиона"  , "BirthDate" : datetime.datetime(2001,8,25)},
         {"FirstName" : "Гораций"   , "BirthDate" : datetime.datetime(1920,5,1)},
