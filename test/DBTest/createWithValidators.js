@@ -1,7 +1,9 @@
+use reviewer
+
 collections = db.getCollectionNames();
 collections.forEach((coll) =>{
    db.getCollection(coll).drop();
-});
+});
 
 db.createCollection("Persons", {
    validator: {
@@ -20,7 +22,7 @@ db.createCollection("Persons", {
          }
       }
    }
-});
+});
 
 db.createCollection("Skills", {
    validator: {
