@@ -224,14 +224,39 @@ db.createCollection("Groups", {
             RoleList: {
                bsonType: "array",
                items: {
-                 bsonType: "objectId",
-                 description: "must refer to TutorRole or StudentRole document"
+                 bsonType: "string",
+                 description: "list of roles available for group"
                }
             }
          }
       }
    }
 });
+
+db.createCollection("GroupRoles", {
+   validator: {
+      $jsonSchema: {
+         additionalProperties: false,
+         bsonType: "object",
+         required: ["RoleName", "GroupId", "PersonId"],
+         properties: {
+            _id: {},
+            RoleName: {
+               bsonType: "string"
+            },
+            GroupId: {
+               bsonType: "objectId",
+               description: "must refer to Group document"
+            },
+            PersonId: {
+               bsonType: "objectId",
+               description: "must refer to Person document"
+            },
+         }
+      }
+   }
+});
+
 
 db.createCollection("Reviews", {
    validator: {
@@ -340,31 +365,6 @@ db.createCollection("Tests", {
                  }
                }
             }
-         }
-      }
-   }
-});
-
-
-db.createCollection("GroupRoles", {
-   validator: {
-      $jsonSchema: {
-         additionalProperties: false,
-         bsonType: "object",
-         required: ["RoleName", "GroupId", "RoleId"],
-         properties: {
-            _id: {},
-            RoleName: {
-               bsonType: "string"
-            },
-            GroupId: {
-               bsonType: "objectId",
-               description: "must refer to Group document"
-            },
-            RoleId: {
-               bsonType: "objectId",
-               description: "must refer to StudentRole or TutorRole document"
-            },
          }
       }
    }
