@@ -1,4 +1,4 @@
-use reviewer
+use reviewer
 
 collections = db.getCollectionNames();
 collections.forEach((coll) =>{
@@ -10,14 +10,23 @@ db.createCollection("Persons", {
       $jsonSchema: {
          additionalProperties: false,
          bsonType: "object",
-         required: ["Name", "BirthDate"],
+         required: ["FirstName", "BirthDate"],
          properties: {
             _id: {},
-            Name: {
+            FirstName: {
+               bsonType: "string"
+            },
+            MiddleName: {
+               bsonType: "string"
+            },
+            Surname: {
                bsonType: "string"
             },
             BirthDate: {
                 bsonType: "date"
+            },
+            PhoneNo:{
+                bsonType: "string"
             }
          }
       }
@@ -161,12 +170,6 @@ db.createCollection("StudentRoles", {
             PersonId: {
                bsonType: "objectId",
                description: "must refer to Person document"
-            },
-            SubRoles: {
-               bsonType: "array",
-               items: {
-                 bsonType: "string"
-               }
             },
             DepartmentId: {
                bsonType: "objectId",

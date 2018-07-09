@@ -14,12 +14,12 @@ revDb = revClient["reviewer"]
 
 colPersons = revDb["Persons"]
 persons = [
-        {"Name" : "Гарри"     , "BirthDate" : datetime.datetime(2000,8,8)},
-        {"Name" : "Рон"       , "BirthDate" : datetime.datetime(2006,4,2)},
-        {"Name" : "Гермиона"  , "BirthDate" : datetime.datetime(2001,8,25)},
-        {"Name" : "Гораций"   , "BirthDate" : datetime.datetime(1920,5,1)},
-        {"Name" : "Снейп"     , "BirthDate" : datetime.datetime(1943,6,1)},
-        {"Name" : "Дамблдор"  , "BirthDate" : datetime.datetime(1932,9,7)}
+        {"FirstName" : "Гарри"     , "BirthDate" : datetime.datetime(2000,8,8)},
+        {"FirstName" : "Рон"       , "BirthDate" : datetime.datetime(2006,4,2)},
+        {"FirstName" : "Гермиона"  , "BirthDate" : datetime.datetime(2001,8,25)},
+        {"FirstName" : "Гораций"   , "BirthDate" : datetime.datetime(1920,5,1)},
+        {"FirstName" : "Снейп"     , "BirthDate" : datetime.datetime(1943,6,1)},
+        {"FirstName" : "Дамблдор"  , "BirthDate" : datetime.datetime(1932,9,7)}
         ]
 personIds = colPersons.insert_many(persons).inserted_ids
 
