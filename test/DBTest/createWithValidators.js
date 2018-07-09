@@ -41,7 +41,8 @@ db.createCollection("Skills", {
                maximum:  120.0
             },
             PersonId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to Person document"
             }
          }
       }
@@ -65,7 +66,8 @@ db.createCollection("Features", {
                 maximum:  10.0
             },
             PersonId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to Person document"
             }
          }
       }
@@ -100,7 +102,8 @@ db.createCollection("Universities", {
                bsonType: "string"
             },
             OrganizationId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to Organizaion document"
             }
          }
       }
@@ -119,7 +122,8 @@ db.createCollection("Schools", {
                bsonType: "string"
             },
             OrganizationId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to Organizaion document"
             }
          }
       }
@@ -138,7 +142,8 @@ db.createCollection("Departments", {
                bsonType: "string"
             },
             UniversityId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to University document"
             }
          }
       }
@@ -154,10 +159,18 @@ db.createCollection("StudentRoles", {
         properties: {
             _id: {},
             PersonId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to Person document"
+            },
+            SubRoles: {
+               bsonType: "array",
+               items: {
+                 bsonType: "string"
+               }
             },
             DepartmentId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to Department document"
             },
             Specialization: {
                bsonType: "string"
@@ -176,10 +189,12 @@ db.createCollection("TutorRoles", {
         properties: {
             _id: {},
             PersonId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to Person document"
             },
             DepartmentId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to Department document"
             },
             Disciplines: {
                bsonType: "array",
@@ -206,7 +221,8 @@ db.createCollection("Groups", {
             RoleList: {
                bsonType: "array",
                items: {
-                 bsonType: "objectId"
+                 bsonType: "objectId",
+                 description: "must refer to TutorRole or StudentRole document"
                }
             }
          }
@@ -223,13 +239,16 @@ db.createCollection("Reviews", {
         properties: {
             _id: {},
             RoleId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to TutorRole or StudentRole document"
             },
             SubjectId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to TutorRole, StudentRole, Group, Department, University, School or Feature document"
             },
             GroupId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to Group document"
             },
             Details: {
                bsonType: "string"
@@ -254,7 +273,8 @@ db.createCollection("Surveys", {
                bsonType: "string"
             },
             GroupId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to Group document"
             },
             Description: {
                bsonType: "string"
@@ -292,7 +312,8 @@ db.createCollection("Tests", {
                bsonType: "string"
             },
             GroupId: {
-               bsonType: "objectId"
+               bsonType: "objectId",
+               description: "must refer to Group document"
             },
             Description: {
                bsonType: "string"
@@ -305,7 +326,8 @@ db.createCollection("Tests", {
                  required:["ParticipantId"],
                  properties:{
                    ParticipantId:{
-                     bsonType: "objectId"
+                     bsonType: "objectId",
+                     description: "must refer to StudentRole document"
                    },
                    Result:{
                      bsonType: "double",
@@ -315,6 +337,31 @@ db.createCollection("Tests", {
                  }
                }
             }
+         }
+      }
+   }
+});
+
+
+db.createCollection("GroupRoles", {
+   validator: {
+      $jsonSchema: {
+         additionalProperties: false,
+         bsonType: "object",
+         required: ["RoleName", "GroupId", "RoleId"],
+         properties: {
+            _id: {},
+            RoleName: {
+               bsonType: "string"
+            },
+            GroupId: {
+               bsonType: "objectId",
+               description: "must refer to Group document"
+            },
+            RoleId: {
+               bsonType: "objectId",
+               description: "must refer to StudentRole or TutorRole document"
+            },
          }
       }
    }

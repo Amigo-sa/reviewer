@@ -126,6 +126,17 @@ survey = {"Name" : "Любимый цвет ножниц",
             }
 survIds = colSurveys.insert_one(survey)
 
+colGroupRoles = revDb["GroupRoles"]
+groupRoles = [
+        {"RoleName" : "Преподаватель", "GroupId" : groupIds[0], "RoleId" : tutIds[0]},
+        {"RoleName" : "Преподаватель", "GroupId" : groupIds[1], "RoleId" : tutIds[2]},
+        {"RoleName" : "Ученик", "GroupId" : studIds[0], "RoleId" : tutIds[0]},
+        {"RoleName" : "Ученик", "GroupId" : studIds[0], "RoleId" : tutIds[2]},
+        {"RoleName" : "Ученик", "GroupId" : studIds[1], "RoleId" : tutIds[1]},
+        {"RoleName" : "Ученик", "GroupId" : studIds[1], "RoleId" : tutIds[2]},
+        ]
+groupRoleIds = colGroupRoles.insert_many(groupRoles)
+
 
 
 
