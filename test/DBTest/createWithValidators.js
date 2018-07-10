@@ -5,7 +5,7 @@ collections.forEach((coll) =>{
    db.getCollection(coll).drop();
 });
 
-db.createCollection("Service", {
+db.createCollection("service", {
   validator: {
     $jsonSchema:{
       additionalProperties : false,
@@ -20,61 +20,129 @@ db.createCollection("Service", {
     }
   }
 })
-db.Service.insertOne({Version: "0.2"})
+db.service.insertOne({Version: "0.2"})
 
-db.createCollection("Persons", {
-   validator: {
-      $jsonSchema: {
-         additionalProperties: false,
-         bsonType: "object",
-         required: ["FirstName", "BirthDate"],
-         properties: {
-            _id: {},
-            FirstName: {
-               bsonType: "string"
-            },
-            MiddleName: {
-               bsonType: "string"
-            },
-            Surname: {
-               bsonType: "string"
-            },
-            BirthDate: {
-                bsonType: "date"
-            },
-            PhoneNo:{
-                bsonType: "string",
-                pattern: "^[0-9]+$"
-            }
-         }
+db.createCollection("person", {
+  validator: {
+    $jsonSchema: {
+       additionalProperties: false,
+       bsonType: "object",
+       required: ["first_name", "surname"],
+       properties: {
+        _id: {},
+        first_name: {
+           bsonType: "string"
+        },
+        middle_name: {
+           bsonType: "string"
+        },
+        surname: {
+           bsonType: "string"
+        },
+        birth_date: {
+            bsonType: "datetime"
+        },
+        phone_no:{
+            bsonType: "string",
+            pattern: "^[0-9]+$"
+        }
       }
-   }
+    }
+  }
 });
 
-db.createCollection("Skills", {
-   validator: {
-      $jsonSchema: {
-        additionalProperties: false,
-        bsonType: "object",
-        required: ["Name", "Level", "PersonId"],
+db.createCollection("soft_skill", {
+  validator: {
+    $jsonSchema: {
+      additionalProperties: false,
+      bsonType: "object",
+        required: ["name", "level", "person_id"],
         properties: {
-            _id: {},
-            Name: {
-               bsonType: "string"
-            },
-            Level: {
-               bsonType: "double",
-               minimum:  0.0,
-               maximum:  120.0
-            },
-            PersonId: {
-               bsonType: "objectId",
-               description: "must refer to Person document"
-            }
-         }
+        _id: {},
+        name: {
+           bsonType: "string"
+        },
+        level: {
+           bsonType: "double",
+           minimum:  0.0,
+           maximum:  100.0
+        },
+        personId: {
+           bsonType: "objectId",
+           description: "must refer to person document"
+        }
       }
-   }
+    }
+  }
 });
+
+db.createCollection("hard_skill", {
+  validator: {
+    $jsonSchema: {
+      additionalProperties: false,
+      bsonType: "object",
+        required: ["name", "level", "person_id"],
+        properties: {
+        _id: {},
+        name: {
+           bsonType: "string"
+        },
+        level: {
+           bsonType: "double",
+           minimum:  0.0,
+           maximum:  100.0
+        },
+        personId: {
+           bsonType: "objectId",
+           description: "must refer to person document"
+        }
+      }
+    }
+  }
+});
+
+db.createCollection("organization", {
+  validator: {
+    $jsonSchema: {
+      additionalProperties: false,
+      bsonType: "object",
+        required: ["name"],
+        properties: {
+        _id: {},
+        name: {
+           bsonType: "string"
+        }
+      }
+    }
+  }
+});
+
+db.createCollection("department", {
+  validator: {
+    $jsonSchema: {
+      additionalProperties: false,
+      bsonType: "object",
+        required: ["name", "organization_id"],
+        properties: {
+        _id: {},
+        name: {
+           bsonType: "string"
+        },
+        organization_id: {
+           bsonType: "objectId",
+           description: "must refer to organization document"
+        }
+      }
+    }
+  }
+});
+
+
+
+
+/*
+
+
 
 db.createCollection("Features", {
    validator: {
@@ -389,3 +457,5 @@ db.createCollection("Tests", {
       }
    }
 });
+
+*/
