@@ -5,6 +5,23 @@ collections.forEach((coll) =>{
    db.getCollection(coll).drop();
 });
 
+db.createCollection("Service", {
+  validator: {
+    $jsonSchema:{
+      additionalProperties : false,
+      bsonType: "object",
+      required: ["Version"],
+      properties: {
+        _id: {},
+        Version: {
+          bsonType: "string"
+        }
+      }
+    }
+  }
+})
+db.Service.insertOne({Version: "0.2"})
+
 db.createCollection("Persons", {
    validator: {
       $jsonSchema: {
