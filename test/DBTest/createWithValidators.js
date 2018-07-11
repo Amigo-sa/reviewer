@@ -4,7 +4,7 @@ collections = db.getCollectionNames();
 collections.forEach((coll) =>{
    db.getCollection(coll).drop();
 });
-
+/*
 db.createCollection("service", {
   validator: {
     $jsonSchema:{
@@ -21,7 +21,7 @@ db.createCollection("service", {
   }
 })
 db.service.insertOne({Version: "0.2"})
-
+/*
 db.createCollection("person", {
   validator: {
     $jsonSchema: {

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#raise NotImplementedError
+raise NotImplementedError
 
 import pymongo
 import datetime
