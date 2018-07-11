@@ -1,9 +1,14 @@
 import requests
 import time
 from threading import Thread
-import settings.constants as constants
+from settings import constants
 import pymongo
+from flask import Flask
+from api.client_api import bp
 
+app = Flask(__name__)
+app.register_blueprint(bp)
+app.run()
 
 def is_db_exists():
     rev_client = pymongo.MongoClient(constants.mongo_db)
@@ -66,5 +71,5 @@ class UpdateNetwork(Thread):
                 print(ex)
 
 update_network_thread = UpdateNetwork()
-update_network_thread.start()
+#update_network_thread.start()
 
