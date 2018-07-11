@@ -4,6 +4,7 @@ from pymodm.connection import connect
 import settings.mongo as mongosettings
 import datetime
 import pymongo
+import random
 from reviewer_model import *    #<- govnocode                       
 
 try:
@@ -77,8 +78,8 @@ persons = {
 
 for key, item in persons.items():
     item.save()
-for key, item in persons.items():
-    print(key + " saved with _id = " + str(item.pk))
+for item in Person.objects.all():
+    print(item.surname + " _id:" + str(item.pk))
     
 print("----Organizations:")
 organizations = {
@@ -88,8 +89,8 @@ organizations = {
 }
 for key, item in organizations.items():
     item.save()
-for key, item in organizations.items():
-    print(key + " saved with _id = " + str(item.pk))
+for item in Organization.objects.all():
+    print(item.name + " _id:" + str(item.pk))
     
 print("----Departments:")
 departments = {
@@ -104,8 +105,8 @@ departments = {
 }
 for key, item in departments.items():
     item.save()
-for key, item in departments.items():
-    print(key + " saved with _id = " + str(item.pk))    
+for item in Department.objects.all():
+    print(item.name + " _id:" + str(item.pk))
 
 print("----Hard Skills:")
 hard_skills = {
@@ -130,8 +131,8 @@ hard_skills = {
 }
 for key, item in hard_skills.items():
     item.save()
-for key, item in hard_skills.items():
-    print(key + " saved with _id = " + str(item.pk))        
+for item in HardSkill.objects.all():
+    print(item.name + " _id:" + str(item.pk))        
 
 print("----Person Hard Skills:")
 person_hs = {
@@ -169,11 +170,96 @@ person_hs = {
     
 for key, item in person_hs.items():
     item.save()
+for item in PersonHS.objects.all():
+    print(item.person_id.surname + 
+          ", " + 
+          item.hs_id.name +
+          ", lvl: "+
+          str(item.level))        
+
+print("----Soft Skills:")
+soft_skills = {
+    "Communication":
+        SoftSkill(
+                "Communication"),
+    "Courtesy":
+        SoftSkill(
+                "Courtesy"),
+    "Flexibility":
+        SoftSkill(
+                "Flexibility"),
+    "Integrity":
+        SoftSkill(
+                "Integrity"),
+    "Interpersonal skills":
+        SoftSkill(
+                "Interpersonal skills"),
+    "Positive attitude":
+        SoftSkill(
+                "Positive attitude")
+}
+for key, item in soft_skills.items():
+    item.save()
+for item in SoftSkill.objects.all():
+    print(item.name + " _id:" + str(item.pk))              
+
+print("----Person Soft Skills:")
+for pers_key, person in persons.items():
+    for ss_key, soft_skill in soft_skills.items():
+        person_ss = PersonSS(
+                person,
+                soft_skill,
+                random.random() * 100.0
+                )
+        person_ss.save()
+
+for ss in PersonSS.objects.all():
+    print(ss.person_id.surname + 
+          " " +
+          ss.ss_id.name +
+          ": " +
+          str(ss.level))
+
+"""
+person_ss = {
+    "Leni4_VFP":
+        PersonHS(
+                persons["Leni4"],
+                hard_skills["VFP"],
+                15.0),
+    "Leni4_uC":
+        PersonHS(
+                persons["Leni4"],
+                hard_skills["uC"],
+                60.0),
+    "Maniac_phoneRepair":
+        PersonHS(
+                persons["Maniac"],
+                hard_skills["phoneRepair"],
+                99.0),
+    "Shatokhin_uC":
+        PersonHS(
+                persons["Shatokhin"],
+                hard_skills["uC"],
+                90.0),
+    "Pashka_litrbol":
+        PersonHS(
+                persons["Pashka"],
+                hard_skills["litrbol"],
+                100.0),
+    "Anisimov_psySupp":
+        PersonHS(
+                persons["Anisimov"],
+                hard_skills["psySupp"],
+                95.0),
+        }
+    
 for key, item in person_hs.items():
-    print(key + " saved with _id = " + str(item.pk))        
+    item.save()
+for key, item in person_hs.items():
+    print(key + " saved with _id = " + str(item.pk))       
 
-
-
+"""
 """
 pers_maniac = Person(
         "Кирилл",

@@ -55,3 +55,21 @@ class PersonHS(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        
+class SoftSkill(MongoModel):
+    name = fields.CharField()
+        
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+        
+class PersonSS(MongoModel):
+    person_id = fields.ReferenceField(Person, on_delete = ReferenceField.DENY)
+    ss_id = fields.ReferenceField(SoftSkill, on_delete = ReferenceField.DENY)
+    level = fields.FloatField()
+    
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
