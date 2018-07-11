@@ -347,7 +347,7 @@ roles_in_groups = {
         RoleInGroup(persons["Shatokhin"],
                     groups["Arduino"],
                     group_roles["Admin"],
-                    ["read", "modify"]),
+                    ["read", "modify", "initiate tests"]),
         "Leni4_member_arduino":
         RoleInGroup(persons["Leni4"],
                     groups["Arduino"],
@@ -449,105 +449,29 @@ for item in TestResult.objects.all():
             item.test_id.name,
             item.result_data))
 
+print("----Soft Skill Reviews:")
 
-    
-"""
-person_ss = {
-    "Leni4_VFP":
-        PersonHS(
-                persons["Leni4"],
-                hard_skills["VFP"],
-                15.0),
-    "Leni4_uC":
-        PersonHS(
-                persons["Leni4"],
-                hard_skills["uC"],
-                60.0),
-    "Maniac_phoneRepair":
-        PersonHS(
-                persons["Maniac"],
-                hard_skills["phoneRepair"],
-                99.0),
-    "Shatokhin_uC":
-        PersonHS(
-                persons["Shatokhin"],
-                hard_skills["uC"],
-                90.0),
-    "Pashka_litrbol":
-        PersonHS(
-                persons["Pashka"],
-                hard_skills["litrbol"],
-                100.0),
-    "Anisimov_psySupp":
-        PersonHS(
-                persons["Anisimov"],
-                hard_skills["psySupp"],
-                95.0),
+ss_reviews = {
+        "bogi_anisimov_posAtt":
+            SSReview(
+                    persons["Bogi"],
+                    PersonSS.objects.get(
+                            {"ss_id" : soft_skills["Positive attitude"].pk,
+                            "person_id" : persons["Anisimov"].pk}),
+                    1.0,
+                    "Очень негативный человек!!!1"
+                    )
         }
-    
-for key, item in person_hs.items():
+
+for key, item in ss_reviews.items():
     item.save()
-for key, item in person_hs.items():
-    print(key + " saved with _id = " + str(item.pk))       
-
-"""
-"""
-pers_maniac = Person(
-        "Кирилл",
-        "Владимирович",
-        "Ярин",
-        datetime.date(1986,1,2),
-        "79033223232")
-
-pers_pashka = Person(
-        "Павел",
-        "Борисович",
-        "Ерин",
-        datetime.date(1986,12,30),
-        "89020020032")
-
-pers_vovka = Person(
-        "Владимир",
-        "Владимирович",
-        "Панкин",
-        datetime.date(1987,7,6),
-        "78392122221")
-
-pers_ = Person(
-        "Владимир",
-        "Владимирович",
-        "Панкин",
-        datetime.date(1987,7,6),
-        "78392122221")
-
-"""
-"""
-org1 = add_organization("МЭИ")
-person1 = add_person(
-        "Иван",
-        "Иванович",
-        "Иванов",
-        datetime.date(2000,1,1),
-        "222322")
-
-"""
-"""
-def add_person(first_name, middle_name, surname, birth_date, phone_no):
-    person = Person(first_name, middle_name, surname, birth_date, phone_no)
-    try:
-        person.save()
-    except Exception as ex:
-        print(ex)
-        return None
-    return person
-
-def add_organization(name):
-    organization = Organization(name)
-    try:
-        organization.save()
-    except Exception as ex:
-        print(ex)
-        return None
-    return organization
-
-"""
+for item in SSReview.objects.all():
+    print("{0} Оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
+            item.reviewer_id.surname,
+            item.value,
+            item.subject_id.ss_id.name,
+            item.subject_id.person_id.surname,
+            item.description))
+                    
+    
+  
