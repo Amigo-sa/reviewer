@@ -452,7 +452,7 @@ for item in TestResult.objects.all():
 print("----Soft Skill Reviews:")
 
 ss_reviews = {
-        "bogi_anisimov_posAtt":
+    "bogi_anisimov_posAtt":
             SSReview(
                     persons["Bogi"],
                     PersonSS.objects.get(
@@ -460,6 +460,15 @@ ss_reviews = {
                             "person_id" : persons["Anisimov"].pk}),
                     1.0,
                     "Очень негативный человек!!!1"
+                    ),
+    "Leni4_Maniac_posAtt":
+            SSReview(
+                    persons["Leni4"],
+                    PersonSS.objects.get(
+                            {"ss_id" : soft_skills["Communication"].pk,
+                            "person_id" : persons["Maniac"].pk}),
+                    40.0,
+                    "Картавит"
                     )
         }
 
