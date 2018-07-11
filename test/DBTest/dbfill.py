@@ -474,8 +474,9 @@ ss_reviews = {
 
 for key, item in ss_reviews.items():
     item.save()
+
 for item in SSReview.objects.all():
-    print("{0} Оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
+    print("{0} оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
             item.reviewer_id.surname,
             item.value,
             item.subject_id.ss_id.name,
@@ -497,13 +498,20 @@ hs_reviews = {
                     person_hs["Maniac_phoneRepair"],
                     0.0,
                     "Ушатал мне мобилу"
+                    ),
+    "Bogi_Anisimov_psy":
+            HSReview(
+                    persons["Bogi"],
+                    person_hs["Anisimov_psySupp"],
+                    100.0,
+                    "Подавил так подавил"
                     )
         }
 
 for key, item in hs_reviews.items():
     item.save()
 for item in HSReview.objects.all():
-    print("{0} Оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
+    print("{0} оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
             item.reviewer_id.surname,
             item.value,
             item.subject_id.hs_id.name,
