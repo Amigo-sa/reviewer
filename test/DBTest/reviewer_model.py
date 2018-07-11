@@ -40,8 +40,16 @@ class Department(MongoModel):
         
 class HardSkill(MongoModel):
     name = fields.CharField()
-    level = fields.FloatField()
+        
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+        
+class PersonHS(MongoModel):
     person_id = fields.ReferenceField(Person, on_delete = ReferenceField.DENY)
+    hs_id = fields.ReferenceField(HardSkill, on_delete = ReferenceField.DENY)
+    level = fields.FloatField()
     
     class Meta:
         write_concern = WriteConcern(j=True)

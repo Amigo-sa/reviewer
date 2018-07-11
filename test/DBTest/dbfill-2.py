@@ -106,20 +106,72 @@ for key, item in departments.items():
     item.save()
 for key, item in departments.items():
     print(key + " saved with _id = " + str(item.pk))    
-    
+
 print("----Hard Skills:")
 hard_skills = {
-    "Leni4_FP":
+    "VFP":
         HardSkill(
-                "Visual Fox Pro",
-                75.0,
-                persons["Leni4"])
-        }
-    
+                "Visual Fox Pro"),
+    "uC":
+        HardSkill(
+                "C для микроконтроллеров"),
+    "digSch":
+        HardSkill(
+                "Цифровая схемотехника"),
+    "litrbol":
+        HardSkill(
+                "Литрбол"),
+    "phoneRepair":
+        HardSkill(
+                "Ремонт телефонов"),
+    "psySupp":
+        HardSkill(
+                "Психологическое подавление")
+}
 for key, item in hard_skills.items():
     item.save()
 for key, item in hard_skills.items():
     print(key + " saved with _id = " + str(item.pk))        
+
+print("----Person Hard Skills:")
+person_hs = {
+    "Leni4_VFP":
+        PersonHS(
+                persons["Leni4"],
+                hard_skills["VFP"],
+                15.0),
+    "Leni4_uC":
+        PersonHS(
+                persons["Leni4"],
+                hard_skills["uC"],
+                60.0),
+    "Maniac_phoneRepair":
+        PersonHS(
+                persons["Maniac"],
+                hard_skills["phoneRepair"],
+                99.0),
+    "Shatokhin_uC":
+        PersonHS(
+                persons["Shatokhin"],
+                hard_skills["uC"],
+                90.0),
+    "Pashka_litrbol":
+        PersonHS(
+                persons["Pashka"],
+                hard_skills["litrbol"],
+                100.0),
+    "Anisimov_psySupp":
+        PersonHS(
+                persons["Anisimov"],
+                hard_skills["psySupp"],
+                95.0),
+        }
+    
+for key, item in person_hs.items():
+    item.save()
+for key, item in person_hs.items():
+    print(key + " saved with _id = " + str(item.pk))        
+
 
 
 """
