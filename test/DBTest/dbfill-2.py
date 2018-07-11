@@ -220,6 +220,41 @@ for ss in PersonSS.objects.all():
           ": " +
           str(ss.level))
 
+
+print("----Tutor Roles:")
+tutor_roles = {
+    "Shatokhin_MCU":
+        TutorRole(
+                persons["Shatokhin"],
+                departments["IIT"],
+                "Отжигание на микроконтроллерах семейства 8051"
+                ),
+    "Anisimov_TOE":
+        TutorRole(
+                persons["Anisimov"],
+                departments["EFIS"],
+                "ТОЭ"
+                ),
+    "Anisimov_rel":
+        TutorRole(
+                persons["Anisimov"],
+                departments["EFIS"],
+                "Религиоведенье"
+                ),
+    "Shatokhin_debug":
+        TutorRole(
+                persons["Shatokhin"],
+                departments["IIT"],
+                "Отладка кода написанного за 20 лет до вашего рождения"
+                ),
+}
+for key, item in tutor_roles.items():
+    item.save()
+for item in TutorRole.objects.all():
+    print("{0} из {2} ведет {1}".format(item.person_id.surname,
+                                     item.discipline,
+                                     item.department_id.name))              
+
 """
 person_ss = {
     "Leni4_VFP":

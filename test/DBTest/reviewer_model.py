@@ -73,3 +73,14 @@ class PersonSS(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        
+class TutorRole(MongoModel):
+    person_id = fields.ReferenceField(Person, on_delete = ReferenceField.DENY)
+    department_id = fields.ReferenceField(Department, on_delete = ReferenceField.DENY)
+    discipline = fields.CharField()
+    
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True    
+        
