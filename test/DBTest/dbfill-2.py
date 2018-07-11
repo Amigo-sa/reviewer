@@ -289,7 +289,62 @@ for item in StudentRole.objects.all():
                                      item.description,
                                      item.department_id.name))              
 
+print("----Roles for Groups:")
+group_roles = {
+    "Admin":
+        GroupRole(
+                "Администратор"
+                ),
+    "Guest":
+        GroupRole(
+                "Бесправный"
+                ),
+    "Member":
+        GroupRole(
+                "Член"
+                )
+}
+for key, item in group_roles.items():
+    item.save()
+for item in GroupRole.objects.all():
+    print("{0}:_id {1}".format(item.name, str(item.pk)))
+    
+print("----Groups:")
+groups = {
+    "Arduino":
+        Group(departments["IIT"],
+              "Клуб анонимных ардуинщиков"
+              #[group_roles["Admin"], group_roles["Member"]]
+                )
+}
+for key, item in groups.items():
+    item.save()
+for item in Group.objects.all():
+    print("{0} при {1}".format(item.name, item.department_id.name))
 
+print("----Roles in Groups:")
+roles_in_groups = {
+    "Shatokhin_admin_arduino":
+        RoleInGroup(persons["Shatokhin"],
+                    groups["Arduino"],
+                    group_roles["Admin"],
+                    ["read", "modify"]),
+        "Leni4_member_arduino":
+        RoleInGroup(persons["Leni4"],
+                    groups["Arduino"],
+                    group_roles["Member"],
+                    ["read"])
+}
+    
+for key, item in roles_in_groups.items():
+    item.save()
+for item in RoleInGroup.objects.all():
+    print("{0} - {1} группы {2}".format(
+            item.person_id.surname, 
+            item.role_id.name,
+            item.group_id.name))
+
+    
 """
 person_ss = {
     "Leni4_VFP":
