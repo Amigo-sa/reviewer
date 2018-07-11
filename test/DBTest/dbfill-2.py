@@ -245,7 +245,7 @@ tutor_roles = {
         TutorRole(
                 persons["Shatokhin"],
                 departments["IIT"],
-                "Отладка кода написанного за 20 лет до вашего рождения"
+                "Отладка кода, написанного за 20 лет до вашего рождения"
                 ),
 }
 for key, item in tutor_roles.items():
@@ -254,6 +254,41 @@ for item in TutorRole.objects.all():
     print("{0} из {2} ведет {1}".format(item.person_id.surname,
                                      item.discipline,
                                      item.department_id.name))              
+
+print("----Student Roles:")
+student_roles = {
+    "Leni4":
+        StudentRole(
+                persons["Leni4"],
+                departments["IIT"],
+                "Староста группы А-4-03"
+                ),
+    "Pashka":
+        StudentRole(
+                persons["Pashka"],
+                departments["IIT"],
+                "Студент группы А-4-03"
+                ),
+    "Vovka":
+        StudentRole(
+                persons["Vovka"],
+                departments["IIT"],
+                "Студент группы А-4-03"
+                ),
+    "Bogi":
+        StudentRole(
+                persons["Bogi"],
+                departments["IIT"],
+                "Студент группы А-4-03"
+                ),
+}
+for key, item in student_roles.items():
+    item.save()
+for item in StudentRole.objects.all():
+    print("{0} - {1}, {2}".format(item.person_id.surname,
+                                     item.description,
+                                     item.department_id.name))              
+
 
 """
 person_ss = {
