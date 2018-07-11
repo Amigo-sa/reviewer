@@ -154,5 +154,15 @@ class SSReview(MongoModel):
         connection_alias = "reviewer"
         final = True
         
+class HSReview(MongoModel):
+    reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.DENY)
+    subject_id = fields.ReferenceField(PersonHS, on_delete = ReferenceField.DENY)
+    value = fields.FloatField()
+    description = fields.CharField()
+    
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
     
         

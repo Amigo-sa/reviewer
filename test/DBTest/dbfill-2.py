@@ -481,6 +481,34 @@ for item in SSReview.objects.all():
             item.subject_id.ss_id.name,
             item.subject_id.person_id.surname,
             item.description))
+    
+print("----Hard Skill Reviews:")    
+hs_reviews = {
+    "Shatokhin_Leni4_uC":
+            HSReview(
+                    persons["Shatokhin"],
+                    person_hs["Leni4_uC"],
+                    90.0,
+                    "Способен запрограммировать даже советский утюг"
+                    ),
+    "Pashka_Maniac_phone":
+            HSReview(
+                    persons["Pashka"],
+                    person_hs["Maniac_phoneRepair"],
+                    0.0,
+                    "Ушатал мне мобилу"
+                    )
+        }
+
+for key, item in hs_reviews.items():
+    item.save()
+for item in HSReview.objects.all():
+    print("{0} Оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
+            item.reviewer_id.surname,
+            item.value,
+            item.subject_id.hs_id.name,
+            item.subject_id.person_id.surname,
+            item.description))
                     
     
   
