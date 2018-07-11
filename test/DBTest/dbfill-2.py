@@ -261,25 +261,31 @@ student_roles = {
         StudentRole(
                 persons["Leni4"],
                 departments["IIT"],
-                "Староста группы А-4-03"
+                "Студент очной формы обучения"
                 ),
     "Pashka":
         StudentRole(
                 persons["Pashka"],
                 departments["IIT"],
-                "Студент группы А-4-03"
+                "Студент очной формы обучения"
                 ),
     "Vovka":
         StudentRole(
                 persons["Vovka"],
                 departments["IIT"],
-                "Студент группы А-4-03"
+                "Студент очной формы обучения"
                 ),
     "Bogi":
         StudentRole(
                 persons["Bogi"],
                 departments["IIT"],
-                "Студент группы А-4-03"
+                "Студент очной формы обучения"
+                ),
+    "Maniac":
+        StudentRole(
+                persons["Maniac"],
+                departments["IIT"],
+                "Отчислен"
                 ),
 }
 for key, item in student_roles.items():
@@ -302,6 +308,14 @@ group_roles = {
     "Member":
         GroupRole(
                 "Член"
+                ),
+    "Student":
+        GroupRole(
+                "Студент"
+                ),
+    "Monitor":
+        GroupRole(
+                "Староста"
                 )
 }
 for key, item in group_roles.items():
@@ -314,6 +328,11 @@ groups = {
     "Arduino":
         Group(departments["IIT"],
               "Клуб анонимных ардуинщиков"
+              #[group_roles["Admin"], group_roles["Member"]]
+                ),
+    "A403":
+        Group(departments["IIT"],
+              "А-4-03"
               #[group_roles["Admin"], group_roles["Member"]]
                 )
 }
@@ -333,16 +352,103 @@ roles_in_groups = {
         RoleInGroup(persons["Leni4"],
                     groups["Arduino"],
                     group_roles["Member"],
-                    ["read"])
+                    ["read"]),
+        "Bogi_member_arduino":
+        RoleInGroup(persons["Bogi"],
+                    groups["Arduino"],
+                    group_roles["Member"],
+                    ["read"]),
+        "Leni4_monitor_a403":
+        RoleInGroup(persons["Leni4"],
+                    groups["A403"],
+                    group_roles["Monitor"],
+                    ["read", "modify"]),
+        "Pashka_student_a403":
+        RoleInGroup(persons["Pashka"],
+                    groups["A403"],
+                    group_roles["Student"],
+                    ["read"]),
+        "Bogi_student_a403":
+        RoleInGroup(persons["Bogi"],
+                    groups["A403"],
+                    group_roles["Student"],
+                    ["read"]),
 }
     
 for key, item in roles_in_groups.items():
     item.save()
 for item in RoleInGroup.objects.all():
-    print("{0} - {1} группы {2}".format(
+    print("{0} - {1} группы {2}, права: {3}".format(
             item.person_id.surname, 
             item.role_id.name,
-            item.group_id.name))
+            item.group_id.name,
+            item.permissions))
+
+print("----Tests:")
+group_tests = {
+    "TOE_exam":
+        GroupTest(groups["A403"],
+                    "Экзамен по ТОЭ",
+                    "Итоговый экзамен по дисциплине \"Теоретические основы электротехники\" за 4 семестр"
+                    ),
+    "Arduino_model_test":
+        GroupTest(groups["Arduino"],
+                    "Тест на знание ардуино",
+                    "Запись в столбик всех моделей Arduino сломанной левой рукой в темноте"
+                    )
+        
+}
+    
+for key, item in group_tests.items():
+    item.save()
+for item in GroupTest.objects.all():
+    print("В группе {0} проведен {1}".format(
+            item.group_id.name, 
+            item.name))
+    
+print("----Test Results:")
+test_results = {
+    "Leni4_TOE":
+        TestResult(group_tests["TOE_exam"],
+                   persons["Leni4"],
+                   ["Оценка: 4.0", 
+                    "Время: 1:20"]
+                    ),
+    "Bogi_TOE":
+        TestResult(group_tests["TOE_exam"],
+                   persons["Bogi"],
+                   ["Оценка: 2.0", 
+                    "Время: 1:50"]
+                    ),
+    "Pashka_TOE":
+        TestResult(group_tests["TOE_exam"],
+                   persons["Pashka"],
+                   ["Оценка: 3.5", 
+                    "Время: 1:00"]
+                    ),
+    "Leni4_Arduino":
+        TestResult(group_tests["Arduino_model_test"],
+                   persons["Leni4"],
+                   ["Оценка: 4.0", 
+                    "Время: 1:07",
+                    "Уснул в процессе"]
+                    ),
+    "Bogi_Arduino":
+        TestResult(group_tests["Arduino_model_test"],
+                   persons["Bogi"],
+                   ["Оценка: 5.0", 
+                    "Время: 0:04"]
+                    )
+}
+    
+for key, item in test_results.items():
+    item.save()
+for item in TestResult.objects.all():
+    print("{0} сдал {1} со следующими результатами: {2}".format(
+            item.person_id.surname, 
+            item.test_id.name,
+            item.result_data))
+
 
     
 """

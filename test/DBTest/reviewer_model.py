@@ -122,5 +122,25 @@ class RoleInGroup(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        
+class GroupTest(MongoModel):
+    group_id = fields.ReferenceField(Group, on_delete = ReferenceField.DENY)
+    name = fields.CharField()
+    info = fields.CharField()
+    
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+        
+class TestResult(MongoModel):
+    test_id = fields.ReferenceField(GroupTest, on_delete = ReferenceField.DENY)
+    person_id = fields.ReferenceField(Person, on_delete = ReferenceField.DENY)
+    result_data = fields.ListField(field = fields.CharField())
+    
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
     
         
