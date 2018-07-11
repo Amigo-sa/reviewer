@@ -164,5 +164,26 @@ class HSReview(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        
+class SRReview(MongoModel):
+    reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.DENY)
+    subject_id = fields.ReferenceField(StudentRole, on_delete = ReferenceField.DENY)
+    value = fields.FloatField()
+    description = fields.CharField()
     
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+    
+class TRReview(MongoModel):
+    reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.DENY)
+    subject_id = fields.ReferenceField(TutorRole, on_delete = ReferenceField.DENY)
+    value = fields.FloatField()
+    description = fields.CharField()
+    
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
         

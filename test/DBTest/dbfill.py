@@ -21,6 +21,9 @@ except Exception as ex:
 connect(mongosettings.conn_string + "/" + mongosettings.db_name,
         alias = "reviewer")
 
+service = Service("0.3")
+service.save()
+
 
 print("----Persons:")
 persons = {
@@ -516,6 +519,35 @@ for item in HSReview.objects.all():
             item.value,
             item.subject_id.hs_id.name,
             item.subject_id.person_id.surname,
+            item.description))
+    
+print("----Student Role Reviews:")    
+sr_reviews = {
+    "Shatokhin_Pashka_sr":
+            SRReview(
+                    persons["Shatokhin"],
+                    student_roles["Pashka"],
+                    50.0,
+                    "Часто появляется с перегаром"
+                    ),
+    "Anisimov_Bogi_sr":
+            SRReview(
+                    persons["Anisimov"],
+                    student_roles["Bogi"],
+                    0.0,
+                    "Сам ты негативный, засранец!"
+                    )
+        }
+
+for key, item in sr_reviews.items():
+    item.save()
+for item in SRReview.objects.all():
+    print("{0} оставил отзыв с оценкой {1} на пользователя {2} в качестве {3} подразделения {4} с комментарием: {5}".format(
+            item.reviewer_id.surname,
+            item.value,
+            item.subject_id.person_id.surname,
+            item.subject_id.description,
+            item.subject_id.department_id.name,
             item.description))
                     
     
