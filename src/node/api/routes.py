@@ -1,4 +1,5 @@
 import settings.constants as constants
+import settings.errors as ERR
 import pymongo
 from flask import Blueprint, request, jsonify
 
@@ -24,11 +25,16 @@ if __debug__:
 @bp.route("/add_organization", methods = ['POST'])
 def add_organization():
     req = request.get_json()
-    cursor = rev_db['organization']
-    item = {"name": req['name']}
-    id = cursor.insert(item)
-    result = {"result":0,
-              "id": str(id)}
+    if 'name' not in req:
+        return jsonify({"result":ERR.INPUT}), 200
+    try:
+        cursor = rev_db['organization']
+        item = {"name": req['name']}
+        id = cursor.insert(item)
+        result = {"result":ERR.OK,
+                  "id": str(id)}
+    except:
+        result = {"result":ERR.DB}
 
     return jsonify(result), 200
 
