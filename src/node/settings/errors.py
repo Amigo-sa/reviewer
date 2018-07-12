@@ -1,3 +1,4 @@
 OK = 0
 INPUT = 1
 DB = 2
+NO_DATA = 3

@@ -1,3 +1,4 @@
+from bson import ObjectId
 import node.settings.errors as ERR
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
@@ -43,9 +44,11 @@ def add_organization():
 @bp.route("/delete_organization/<string:id>", methods = ['DELETE'])
 def delete_organization(id):
     try:
-        organization = Organization(_id=id)
-        organization.delete()
-        result = {"result": ERR.OK}
+        if Organization(_id=id) in Organization.objects.raw({"_id":ObjectId(id)}):
+            Organization(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
     except:
         result = {"result":ERR.DB}
     return jsonify(result), 200
@@ -63,3 +66,47 @@ def list_organizations():
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
+
+
+@bp.route("/add_department", methods = ['POST'])
+def add_department():
+    req = request.get_json()
+    if 'name' not in req or 'organization_id' not in req:
+        return jsonify({"result":ERR.INPUT}), 200
+    try:
+        department = Department(req['name'], Organization(_id=req['organization_id']))
+        department.save()
+        result = {"result":ERR.OK,
+                  "id": str(department.pk)}
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
+
+@bp.route("/delete_department/<string:id>", methods = ['DELETE'])
+def delete_department(id):
+    try:
+        if Department(_id=id) in Department.objects.raw({"_id":ObjectId(id)}):
+            Department(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/list_departments/<string:id>", methods = ['GET'])
+def list_departments(id):
+    list = []
+    try:
+        for department in  Department.objects.raw({"organization_id":ObjectId(id)}):
+            list.append({"id":str(department.pk),
+                         "name":department.name}
+                        )
+        result = {"result": ERR.OK, "list":list}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
