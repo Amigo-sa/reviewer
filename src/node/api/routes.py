@@ -5,7 +5,7 @@ from flask import Blueprint, request, jsonify
 rev_client = pymongo.MongoClient(constants.mongo_db)
 rev_db = rev_client["reviewer"]
 
-bp = Blueprint('client_api', __name__)
+bp = Blueprint('routes', __name__)
 
 if __debug__:
     @bp.route('/')

@@ -4,7 +4,7 @@ from threading import Thread
 from settings import constants
 import pymongo
 from flask import Flask
-from api.client_api import bp
+from api.routes import bp
 
 app = Flask(__name__)
 app.register_blueprint(bp)
