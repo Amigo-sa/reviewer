@@ -1,14 +1,24 @@
 import requests
 import time
 from threading import Thread
-from settings import constants
+from node.settings import constants
 import pymongo
 from flask import Flask
-from api.routes import bp
+from node.api.routes import bp
+from pymodm.connection import connect
+
+try:
+    connect(constants.mongo_db + "/reviewer",
+            alias = "reviewer")
+except Exception as ex:
+    print(ex)
 
 app = Flask(__name__)
 app.register_blueprint(bp)
 app.run()
+
+
+
 
 def is_db_exists():
     rev_client = pymongo.MongoClient(constants.mongo_db)
