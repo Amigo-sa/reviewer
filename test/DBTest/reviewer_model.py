@@ -175,11 +175,53 @@ class SRReview(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
-    
+        
 class TRReview(MongoModel):
     reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.DENY)
     subject_id = fields.ReferenceField(TutorRole, on_delete = ReferenceField.DENY)
     value = fields.FloatField()
+    description = fields.CharField()
+    
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+    
+class GroupReview(MongoModel):
+    reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.DENY)
+    subject_id = fields.ReferenceField(Group, on_delete = ReferenceField.DENY)
+    value = fields.FloatField()
+    description = fields.CharField()
+    
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+        
+class RoleInGroupReview(MongoModel):
+    reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.DENY)
+    subject_id = fields.ReferenceField(RoleInGroup, on_delete = ReferenceField.DENY)
+    value = fields.FloatField()
+    description = fields.CharField()
+    
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+
+class GroupTestReview(MongoModel):
+    reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.DENY)
+    subject_id = fields.ReferenceField(GroupTest, on_delete = ReferenceField.DENY)
+    value = fields.FloatField()
+    description = fields.CharField()
+    
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+
+class Survey(MongoModel):
+    group_id = fields.ReferenceField(Group, on_delete = ReferenceField.DENY)
     description = fields.CharField()
     
     class Meta:

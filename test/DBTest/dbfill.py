@@ -577,6 +577,60 @@ for item in TRReview.objects.all():
             item.subject_id.person_id.surname,
             item.subject_id.discipline,
             item.description))
-                    
+
+print("----Group Reviews:")    
+group_reviews = {
+    "Bogi_A403":
+            GroupReview(
+                    persons["Bogi"],
+                    groups["A403"],
+                    99.0,
+                    "Лучшая группа в мире!"
+                    ),
+    "Shatokhin_arduino":
+            GroupReview(
+                    persons["Shatokhin"],
+                    groups["Arduino"],
+                    10.0,
+                    "Лучше бы я вёл историю"
+                    )
+        }
+
+for key, item in group_reviews.items():
+    item.save()
+for item in GroupReview.objects.all():
+    print("{0} оставил отзыв с оценкой {1} на группу {2} с комментарием: {3}".format(
+            item.reviewer_id.surname,
+            item.value,
+            item.subject_id.name,
+            item.description))           
+
+print("----Role in Group Reviews:")    
+role_in_group_reviews = {
+    "Bogi_Shatokhin_Arduino":
+            RoleInGroupReview(
+                    persons["Bogi"],
+                    roles_in_groups["Shatokhin_admin_arduino"],
+                    80.0,
+                    "Хороший админ, и конкурсы интересные"
+                    ),
+    "Anisimov_arduino":
+            RoleInGroupReview(
+                    persons["Anisimov"],
+                    roles_in_groups["Leni4_monitor_a403"],
+                    70.0,
+                    "Умён, но ленив"
+                    )
+        }
+
+for key, item in role_in_group_reviews.items():
+    item.save()
+for item in RoleInGroupReview.objects.all():
+    print("{0} оставил отзыв с оценкой {1} на роль {2} пользователя {3} в группе {4} с комментарием: {5}".format(
+            item.reviewer_id.surname,
+            item.value,
+            item.subject_id.role_id.name,
+            item.subject_id.person_id.surname,
+            item.subject_id.group_id.name,
+            item.description))                             
     
-  
