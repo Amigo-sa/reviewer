@@ -5,7 +5,11 @@ import settings.mongo as mongosettings
 import datetime
 import pymongo
 import random
-from reviewer_model import *    #<- govnocode                       
+import os, sys
+parentPath = os.path.abspath("..\\..")
+if parentPath not in sys.path:
+    sys.path.insert(0, parentPath)
+from src.data.reviewer_model import *#<- govnocode
 
 try:
     revClient = pymongo.MongoClient(mongosettings.conn_string)
@@ -680,3 +684,8 @@ for item in Survey.objects.all():
             item.group_id.name,
             item.description,
             item.survey_data)) 
+"""
+TBD:
+- списки ссылок на объекты (В группах и в разрешениях)
+- перенос модели в src
+"""
