@@ -549,6 +549,34 @@ for item in SRReview.objects.all():
             item.subject_id.description,
             item.subject_id.department_id.name,
             item.description))
+    
+print("----Tutor Role Reviews:")    
+tr_reviews = {
+    "Pashka_Shatokhin_MCU":
+            TRReview(
+                    persons["Pashka"],
+                    tutor_roles["Shatokhin_MCU"],
+                    50.0,
+                    "Не знает современную элементную базу"
+                    ),
+    "Leni4_Anisimov_rel":
+            TRReview(
+                    persons["Leni4"],
+                    tutor_roles["Anisimov_rel"],
+                    100.0,
+                    "Это просто чудо какое-то!"
+                    )
+        }
+
+for key, item in tr_reviews.items():
+    item.save()
+for item in TRReview.objects.all():
+    print("{0} оставил отзыв с оценкой {1} на пользователя {2} в качестве преподавателя {3} с комментарием: {4}".format(
+            item.reviewer_id.surname,
+            item.value,
+            item.subject_id.person_id.surname,
+            item.subject_id.discipline,
+            item.description))
                     
     
   
