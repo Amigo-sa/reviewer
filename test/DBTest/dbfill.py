@@ -632,5 +632,51 @@ for item in RoleInGroupReview.objects.all():
             item.subject_id.role_id.name,
             item.subject_id.person_id.surname,
             item.subject_id.group_id.name,
+            item.description))     
+
+print("----Group Test Reviews:")    
+group_test_reviews = {
+    "Bogi_TOE_Exam":
+            GroupTestReview(
+                    persons["Bogi"],
+                    group_tests["TOE_exam"],
+                    40.0,
+                    "Слишком строгие критерии"
+                    ),
+    "Leni4_Arduino_model_test":
+            GroupTestReview(
+                    persons["Leni4"],
+                    group_tests["Arduino_model_test"],
+                    20.0,
+                    "Очень низкоквалифицированный тест"
+                    )
+        }
+
+for key, item in group_test_reviews.items():
+    item.save()
+for item in GroupTestReview.objects.all():
+    print("{0} оставил отзыв с оценкой {1} на {2} с комментарием: {3}".format(
+            item.reviewer_id.surname,
+            item.value,
+            item.subject_id.name,
             item.description))                             
     
+print("----Surveys:")    
+surveys = {
+    "A403_foodcourt":
+            Survey(
+                    groups["A403"],
+                    "Опрос про любимую столовую",
+                    {"в корпусе В": 55.0,
+                     "в корпусе М": 40.0,
+                     "в корпусе К": 5.0,}
+                    )
+        }
+            
+for key, item in surveys.items():
+    item.save()
+for item in Survey.objects.all():
+    print("В группе {0} Проведен {1} с результатами: {2}".format(
+            item.group_id.name,
+            item.description,
+            item.survey_data)) 

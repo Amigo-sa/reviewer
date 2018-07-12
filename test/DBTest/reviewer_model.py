@@ -223,6 +223,7 @@ class GroupTestReview(MongoModel):
 class Survey(MongoModel):
     group_id = fields.ReferenceField(Group, on_delete = ReferenceField.DENY)
     description = fields.CharField()
+    survey_data = fields.DictField()
     
     class Meta:
         write_concern = WriteConcern(j=True)
