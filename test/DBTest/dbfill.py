@@ -6,7 +6,8 @@ import datetime
 import pymongo
 import random
 import os, sys
-parentPath = os.path.abspath("..\\..")
+
+parentPath = os.path.abspath("..//..")
 if parentPath not in sys.path:
     sys.path.insert(0, parentPath)
 from src.data.reviewer_model import *#<- govnocode
@@ -21,6 +22,7 @@ try:
     revClient.close()
 except Exception as ex:
     print("Failed to drop collections: " + ex)
+
 
 connect(mongosettings.conn_string + "/" + mongosettings.db_name,
         alias = "reviewer")
@@ -334,19 +336,21 @@ print("----Groups:")
 groups = {
     "Arduino":
         Group(departments["IIT"],
-              "Клуб анонимных ардуинщиков"
-              #[group_roles["Admin"], group_roles["Member"]]
+              "Клуб анонимных ардуинщиков",
+              [group_roles["Admin"], group_roles["Member"]]
                 ),
     "A403":
         Group(departments["IIT"],
-              "А-4-03"
-              #[group_roles["Admin"], group_roles["Member"]]
+              "А-4-03",
+              [group_roles["Monitor"], group_roles["Student"]]
                 )
 }
 for key, item in groups.items():
     item.save()
 for item in Group.objects.all():
-    print("{0} при {1}".format(item.name, item.department_id.name))
+    print("{0} при {1}. Допустимые роли:".format(item.name, item.department_id.name))
+    for role_id in item.role_list:
+        print(GroupRole.objects.get({"_id":role_id}).name)
 
 print("----Roles in Groups:")
 roles_in_groups = {
@@ -674,6 +678,14 @@ surveys = {
                     {"в корпусе В": 55.0,
                      "в корпусе М": 40.0,
                      "в корпусе К": 5.0,}
+                    ),
+    "A403_timetable":
+            Survey(
+                    groups["A403"],
+                    "Опрос по смещению расписания занятий",
+                    {"начинать в 8:40": 35.0,
+                     "начинать в 9:00": 40.0,
+                     "начинать в 9:20": 25.0,}
                     )
         }
             
