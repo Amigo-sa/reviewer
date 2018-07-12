@@ -39,3 +39,27 @@ def add_organization():
 
     return jsonify(result), 200
 
+
+@bp.route("/delete_organization/<string:id>", methods = ['DELETE'])
+def delete_organization(id):
+    try:
+        organization = Organization(_id=id)
+        organization.delete()
+        result = {"result": ERR.OK}
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/list_organizations", methods = ['GET'])
+def list_organizations():
+    list = []
+    try:
+        for organization in  Organization.objects.all():
+            list.append({"id":str(organization.pk),
+                         "name":organization.name}
+                        )
+        result = {"result": ERR.OK, "list":list}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
