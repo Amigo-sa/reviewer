@@ -350,7 +350,7 @@ for key, item in groups.items():
 for item in Group.objects.all():
     print("{0} при {1}. Допустимые роли:".format(item.name, item.department_id.name))
     for role_id in item.role_list:
-        print(GroupRole.objects.get({"_id":role_id}).name)
+        print(role_id.name)
 
 print("----Roles in Groups:")
 roles_in_groups = {

@@ -102,18 +102,12 @@ class GroupRole(MongoModel):
         connection_alias = "reviewer"
         final = True
         
-    def to_python(self):
-        return self
-    
-    def to_mongo(self):
-        return self.pk
-    
-    validate = lambda x : True
-    
+       
 class Group(MongoModel):
     department_id = fields.ReferenceField(Department, on_delete = ReferenceField.DENY)
     name = fields.CharField()
-    role_list = fields.ListField(field = GroupRole)
+    role_list = fields.ListField(field = 
+                fields.ReferenceField(GroupRole, on_delete = ReferenceField.DENY))
         
     class Meta:
         write_concern = WriteConcern(j=True)
