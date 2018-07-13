@@ -12,6 +12,8 @@ if parentPath not in sys.path:
     sys.path.insert(0, parentPath)
 from src.data.reviewer_model import *#<- govnocode
 
+print("--Clearing DB")
+
 try:
     revClient = pymongo.MongoClient(mongosettings.conn_string)
     revDb = revClient["reviewer"]
@@ -23,15 +25,15 @@ try:
 except Exception as ex:
     print("Failed to drop collections: " + ex)
 
-
+print("--finished")
 connect(mongosettings.conn_string + "/" + mongosettings.db_name,
         alias = "reviewer")
 
 service = Service("0.3")
 service.save()
 
-
-print("----Persons:")
+print("--Filling DB")
+print("----Persons...")
 persons = {
     "Leni4":
         Person(
@@ -87,10 +89,8 @@ persons = {
 
 for key, item in persons.items():
     item.save()
-for item in Person.objects.all():
-    print(item.surname + " _id:" + str(item.pk))
     
-print("----Organizations:")
+print("----Organizations...")
 organizations = {
     "MPEI":
         Organization(
@@ -98,10 +98,9 @@ organizations = {
 }
 for key, item in organizations.items():
     item.save()
-for item in Organization.objects.all():
-    print(item.name + " _id:" + str(item.pk))
+
     
-print("----Departments:")
+print("----Departments...")
 departments = {
     "IIT":
         Department(
@@ -114,10 +113,9 @@ departments = {
 }
 for key, item in departments.items():
     item.save()
-for item in Department.objects.all():
-    print(item.name + " _id:" + str(item.pk))
 
-print("----Hard Skills:")
+
+print("----Hard Skills...")
 hard_skills = {
     "VFP":
         HardSkill(
@@ -140,10 +138,9 @@ hard_skills = {
 }
 for key, item in hard_skills.items():
     item.save()
-for item in HardSkill.objects.all():
-    print(item.name + " _id:" + str(item.pk))        
+       
 
-print("----Person Hard Skills:")
+print("----Person Hard Skills...")
 person_hs = {
     "Leni4_VFP":
         PersonHS(
@@ -179,14 +176,9 @@ person_hs = {
     
 for key, item in person_hs.items():
     item.save()
-for item in PersonHS.objects.all():
-    print(item.person_id.surname + 
-          ", " + 
-          item.hs_id.name +
-          ", lvl: "+
-          str(item.level))        
+        
 
-print("----Soft Skills:")
+print("----Soft Skills...")
 soft_skills = {
     "Communication":
         SoftSkill(
@@ -209,10 +201,9 @@ soft_skills = {
 }
 for key, item in soft_skills.items():
     item.save()
-for item in SoftSkill.objects.all():
-    print(item.name + " _id:" + str(item.pk))              
+              
 
-print("----Person Soft Skills:")
+print("----Person Soft Skills...")
 for pers_key, person in persons.items():
     for ss_key, soft_skill in soft_skills.items():
         person_ss = PersonSS(
@@ -222,15 +213,7 @@ for pers_key, person in persons.items():
                 )
         person_ss.save()
 
-for ss in PersonSS.objects.all():
-    print(ss.person_id.surname + 
-          " " +
-          ss.ss_id.name +
-          ": " +
-          str(ss.level))
-
-
-print("----Tutor Roles:")
+print("----Tutor Roles...")
 tutor_roles = {
     "Shatokhin_MCU":
         TutorRole(
@@ -259,12 +242,9 @@ tutor_roles = {
 }
 for key, item in tutor_roles.items():
     item.save()
-for item in TutorRole.objects.all():
-    print("{0} из {2} ведет {1}".format(item.person_id.surname,
-                                     item.discipline,
-                                     item.department_id.name))              
+             
 
-print("----Student Roles:")
+print("----Student Roles...")
 student_roles = {
     "Leni4":
         StudentRole(
@@ -299,12 +279,9 @@ student_roles = {
 }
 for key, item in student_roles.items():
     item.save()
-for item in StudentRole.objects.all():
-    print("{0} - {1}, {2}".format(item.person_id.surname,
-                                     item.description,
-                                     item.department_id.name))              
 
-print("----Roles for Groups:")
+
+print("----Roles for Groups...")
 group_roles = {
     "admin":
         GroupRole(
@@ -329,10 +306,9 @@ group_roles = {
 }
 for key, item in group_roles.items():
     item.save()
-for item in GroupRole.objects.all():
-    print("{0}:_id {1}".format(item.name, str(item.pk)))
+
     
-print("----Group Permissions")
+print("----Group Permissions...")
 group_permissions = {
     "read_info":
         GroupPermission(
@@ -364,10 +340,9 @@ group_permissions = {
 }
 for key, item in group_permissions.items():
     item.save()
-for item in GroupPermission.objects.all():
-    print("{0}:_id {1}".format(item.name, str(item.pk)))
+
     
-print("----Groups:")
+print("----Groups...")
 groups = {
     "Arduino":
         Group(departments["IIT"],
@@ -382,12 +357,9 @@ groups = {
 }
 for key, item in groups.items():
     item.save()
-for item in Group.objects.all():
-    print("{0} при {1}. Допустимые роли:".format(item.name, item.department_id.name))
-    for role_id in item.role_list:
-        print(role_id.name)
 
-print("----Roles in Groups:")
+
+print("----Roles in Groups...")
 roles_in_groups = {
     "Shatokhin_admin_arduino":
         RoleInGroup(persons["Shatokhin"],
@@ -432,15 +404,9 @@ roles_in_groups = {
     
 for key, item in roles_in_groups.items():
     item.save()
-for item in RoleInGroup.objects.all():
-    print("{0} - {1} группы {2}, права:".format(
-            item.person_id.surname, 
-            item.role_id.name,
-            item.group_id.name))
-    for perm in item.permissions:
-        print(perm.name)
 
-print("----Tests:")
+
+print("----Tests...")
 group_tests = {
     "TOE_exam":
         GroupTest(groups["A403"],
@@ -457,12 +423,9 @@ group_tests = {
     
 for key, item in group_tests.items():
     item.save()
-for item in GroupTest.objects.all():
-    print("В группе {0} проведен {1}".format(
-            item.group_id.name, 
-            item.name))
+
     
-print("----Test Results:")
+print("----Test Results...")
 test_results = {
     "Leni4_TOE":
         TestResult(group_tests["TOE_exam"],
@@ -499,13 +462,9 @@ test_results = {
     
 for key, item in test_results.items():
     item.save()
-for item in TestResult.objects.all():
-    print("{0} сдал {1} со следующими результатами: {2}".format(
-            item.person_id.surname, 
-            item.test_id.name,
-            item.result_data))
 
-print("----Soft Skill Reviews:")
+
+print("----Soft Skill Reviews...")
 
 ss_reviews = {
     "bogi_anisimov_posAtt":
@@ -531,15 +490,9 @@ ss_reviews = {
 for key, item in ss_reviews.items():
     item.save()
 
-for item in SSReview.objects.all():
-    print("{0} оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
-            item.reviewer_id.surname,
-            item.value,
-            item.subject_id.ss_id.name,
-            item.subject_id.person_id.surname,
-            item.description))
+
     
-print("----Hard Skill Reviews:")    
+print("----Hard Skill Reviews...")    
 hs_reviews = {
     "Shatokhin_Leni4_uC":
             HSReview(
@@ -566,15 +519,9 @@ hs_reviews = {
 
 for key, item in hs_reviews.items():
     item.save()
-for item in HSReview.objects.all():
-    print("{0} оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
-            item.reviewer_id.surname,
-            item.value,
-            item.subject_id.hs_id.name,
-            item.subject_id.person_id.surname,
-            item.description))
+
     
-print("----Student Role Reviews:")    
+print("----Student Role Reviews...")    
 sr_reviews = {
     "Shatokhin_Pashka_sr":
             SRReview(
@@ -594,16 +541,9 @@ sr_reviews = {
 
 for key, item in sr_reviews.items():
     item.save()
-for item in SRReview.objects.all():
-    print("{0} оставил отзыв с оценкой {1} на пользователя {2} в качестве {3} подразделения {4} с комментарием: {5}".format(
-            item.reviewer_id.surname,
-            item.value,
-            item.subject_id.person_id.surname,
-            item.subject_id.description,
-            item.subject_id.department_id.name,
-            item.description))
+
     
-print("----Tutor Role Reviews:")    
+print("----Tutor Role Reviews...")    
 tr_reviews = {
     "Pashka_Shatokhin_MCU":
             TRReview(
@@ -623,15 +563,8 @@ tr_reviews = {
 
 for key, item in tr_reviews.items():
     item.save()
-for item in TRReview.objects.all():
-    print("{0} оставил отзыв с оценкой {1} на пользователя {2} в качестве преподавателя {3} с комментарием: {4}".format(
-            item.reviewer_id.surname,
-            item.value,
-            item.subject_id.person_id.surname,
-            item.subject_id.discipline,
-            item.description))
 
-print("----Group Reviews:")    
+print("----Group Reviews...")    
 group_reviews = {
     "Bogi_A403":
             GroupReview(
@@ -651,14 +584,9 @@ group_reviews = {
 
 for key, item in group_reviews.items():
     item.save()
-for item in GroupReview.objects.all():
-    print("{0} оставил отзыв с оценкой {1} на группу {2} с комментарием: {3}".format(
-            item.reviewer_id.surname,
-            item.value,
-            item.subject_id.name,
-            item.description))           
+         
 
-print("----Role in Group Reviews:")    
+print("----Role in Group Reviews...")    
 role_in_group_reviews = {
     "Bogi_Shatokhin_Arduino":
             RoleInGroupReview(
@@ -678,16 +606,9 @@ role_in_group_reviews = {
 
 for key, item in role_in_group_reviews.items():
     item.save()
-for item in RoleInGroupReview.objects.all():
-    print("{0} оставил отзыв с оценкой {1} на роль {2} пользователя {3} в группе {4} с комментарием: {5}".format(
-            item.reviewer_id.surname,
-            item.value,
-            item.subject_id.role_id.name,
-            item.subject_id.person_id.surname,
-            item.subject_id.group_id.name,
-            item.description))     
 
-print("----Group Test Reviews:")    
+
+print("----Group Test Reviews...")    
 group_test_reviews = {
     "Bogi_TOE_Exam":
             GroupTestReview(
@@ -707,14 +628,9 @@ group_test_reviews = {
 
 for key, item in group_test_reviews.items():
     item.save()
-for item in GroupTestReview.objects.all():
-    print("{0} оставил отзыв с оценкой {1} на {2} с комментарием: {3}".format(
-            item.reviewer_id.surname,
-            item.value,
-            item.subject_id.name,
-            item.description))                             
+           
     
-print("----Surveys:")    
+print("----Surveys...")    
 surveys = {
     "A403_foodcourt":
             Survey(
@@ -736,13 +652,14 @@ surveys = {
             
 for key, item in surveys.items():
     item.save()
-for item in Survey.objects.all():
-    print("В группе {0} Проведен {1} с результатами: {2}".format(
-            item.group_id.name,
-            item.description,
-            item.survey_data)) 
+    
+print("--finished")    
 
-print("----Docs depending on MPEI:") 
+display_data()
+print("---------") 
+  
+print("Поиск зависимостей на примере МЭИ") 
+print("От МЭИ прямо и косвенно зависят следующие объекты:") 
 MPEI_dep_list = []
 get_dependent_list(organizations["MPEI"], MPEI_dep_list)
 
@@ -751,7 +668,162 @@ for doc in MPEI_dep_list:
     print(doc.to_son().to_dict())
     print("---")
     
-print("Всего документов зависит от МЭИ: " + str(len(MPEI_dep_list)))
+print("Всего документов зависит от МЭИ: " + str(len(MPEI_dep_list)))         
 
-ls = tutor_roles["Shatokhin_MCU"].delete()
-print(ls)
+def display_data():
+    print("--Displaying data")
+    print("----Persons:")
+    for item in Person.objects.all():
+        print(item.surname + " _id:" + str(item.pk))
+    
+    print("----Organizations:")
+    for item in Organization.objects.all():
+        print(item.name + " _id:" + str(item.pk))
+        
+    print("----Departments:")
+    for item in Department.objects.all():
+        print(item.name + " _id:" + str(item.pk))
+        
+    print("----Hard Skills:")
+    for item in HardSkill.objects.all():
+        print(item.name + " _id:" + str(item.pk))
+        
+    print("----Person Hard Skills:")
+    for item in PersonHS.objects.all():
+        print(item.person_id.surname + 
+          ", " + 
+          item.hs_id.name +
+          ", lvl: "+
+          str(item.level))
+        
+    print("----Soft Skills:")
+    for item in SoftSkill.objects.all():
+        print(item.name + " _id:" + str(item.pk))
+        
+    print("----Person Soft Skills:")
+    for ss in PersonSS.objects.all():
+        print(ss.person_id.surname + 
+          " " +
+          ss.ss_id.name +
+          ": " +
+          str(ss.level))
+        
+    print("----Tutor Roles:")
+    for item in TutorRole.objects.all():
+        print("{0} из {2} ведет {1}".format(item.person_id.surname,
+                                     item.discipline,
+                                     item.department_id.name))
+        
+    print("----Student Roles:")
+    for item in StudentRole.objects.all():
+        print("{0} - {1}, {2}".format(item.person_id.surname,
+                                     item.description,
+                                     item.department_id.name))  
+            
+    print("----Roles for Groups:")
+    for item in GroupRole.objects.all():
+        print("{0}:_id {1}".format(item.name, str(item.pk)))
+        
+    print("----Group Permissions:")    
+    for item in GroupPermission.objects.all():
+        print("{0}:_id {1}".format(item.name, str(item.pk)))
+        
+    print("----Groups:")    
+    for item in Group.objects.all():
+        print("{0} при {1}. Допустимые роли:".format(item.name, item.department_id.name))
+        for role_id in item.role_list:
+            print(role_id.name)  
+            
+    print("----Roles in Groups:")        
+    for item in RoleInGroup.objects.all():
+        print("{0} - {1} группы {2}, права:".format(
+                item.person_id.surname, 
+                item.role_id.name,
+                item.group_id.name))
+        for perm in item.permissions:
+            print(perm.name)      
+            
+    print("----Tests:")        
+    for item in GroupTest.objects.all():
+        print("В группе {0} проведен {1}".format(
+                item.group_id.name, 
+                item.name))
+        
+    print("----Test Results:")    
+    for item in TestResult.objects.all():
+        print("{0} сдал {1} со следующими результатами: {2}".format(
+                item.person_id.surname, 
+                item.test_id.name,
+                item.result_data))
+        
+    print("----Soft Skill Reviews:")        
+    for item in SSReview.objects.all():
+        print("{0} оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
+                item.reviewer_id.surname,
+                item.value,
+                item.subject_id.ss_id.name,
+                item.subject_id.person_id.surname,
+                item.description))
+        
+    print("----Hard Skill Reviews:")    
+    for item in HSReview.objects.all():
+        print("{0} оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
+                item.reviewer_id.surname,
+                item.value,
+                item.subject_id.hs_id.name,
+                item.subject_id.person_id.surname,
+                item.description))      
+        
+    print("----Student Role Reviews:")    
+    for item in SRReview.objects.all():
+        print("{0} оставил отзыв с оценкой {1} на пользователя {2} в качестве {3} подразделения {4} с комментарием: {5}".format(
+                item.reviewer_id.surname,
+                item.value,
+                item.subject_id.person_id.surname,
+                item.subject_id.description,
+                item.subject_id.department_id.name,
+                item.description))       
+        
+    print("----Tutor Role Reviews:")    
+    for item in TRReview.objects.all():
+        print("{0} оставил отзыв с оценкой {1} на пользователя {2} в качестве преподавателя {3} с комментарием: {4}".format(
+                item.reviewer_id.surname,
+                item.value,
+                item.subject_id.person_id.surname,
+                item.subject_id.discipline,
+                item.description))
+        
+    print("----Group Reviews:")
+    for item in GroupReview.objects.all():
+        print("{0} оставил отзыв с оценкой {1} на группу {2} с комментарием: {3}".format(
+                item.reviewer_id.surname,
+                item.value,
+                item.subject_id.name,
+                item.description))  
+        
+    print("----Role in Group Reviews:")    
+    for item in RoleInGroupReview.objects.all():
+        print("{0} оставил отзыв с оценкой {1} на роль {2} пользователя {3} в группе {4} с комментарием: {5}".format(
+                item.reviewer_id.surname,
+                item.value,
+                item.subject_id.role_id.name,
+                item.subject_id.person_id.surname,
+                item.subject_id.group_id.name,
+                item.description))     
+        
+    print("----Group Test Reviews:")
+    for item in GroupTestReview.objects.all():
+        print("{0} оставил отзыв с оценкой {1} на {2} с комментарием: {3}".format(
+                item.reviewer_id.surname,
+                item.value,
+                item.subject_id.name,
+                item.description))  
+        
+    print("----Surveys:")
+    for item in Survey.objects.all():
+        print("В группе {0} Проведен {1} с результатами: {2}".format(
+                item.group_id.name,
+                item.description,
+                item.survey_data))   
+
+           
