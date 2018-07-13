@@ -102,6 +102,14 @@ class GroupRole(MongoModel):
         connection_alias = "reviewer"
         final = True
         
+class GroupPermission(MongoModel):
+    name = fields.CharField()
+    
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+        
        
 class Group(MongoModel):
     department_id = fields.ReferenceField(Department, on_delete = ReferenceField.DENY)
@@ -118,7 +126,8 @@ class RoleInGroup(MongoModel):
     person_id = fields.ReferenceField(Person, on_delete = ReferenceField.DENY)
     group_id = fields.ReferenceField(Group, on_delete = ReferenceField.DENY)
     role_id = fields.ReferenceField(GroupRole, on_delete = ReferenceField.DENY)
-    permissions = fields.ListField(field = fields.CharField())
+    permissions = fields.ListField(field = 
+                fields.ReferenceField(GroupPermission, on_delete = ReferenceField.DENY))
     
     class Meta:
         write_concern = WriteConcern(j=True)

@@ -306,25 +306,25 @@ for item in StudentRole.objects.all():
 
 print("----Roles for Groups:")
 group_roles = {
-    "Admin":
+    "admin":
         GroupRole(
-                "Администратор"
+                "admin"
                 ),
-    "Guest":
+    "guest":
         GroupRole(
-                "Бесправный"
+                "guest"
                 ),
-    "Member":
+    "member":
         GroupRole(
-                "Член"
+                "member"
                 ),
-    "Student":
+    "student":
         GroupRole(
-                "Студент"
+                "student"
                 ),
-    "Monitor":
+    "monitor":
         GroupRole(
-                "Староста"
+                "monitor"
                 )
 }
 for key, item in group_roles.items():
@@ -332,17 +332,52 @@ for key, item in group_roles.items():
 for item in GroupRole.objects.all():
     print("{0}:_id {1}".format(item.name, str(item.pk)))
     
+print("----Group Permissions")
+group_permissions = {
+    "read_info":
+        GroupPermission(
+                "read_info"
+                ),
+    "modify_info":
+        GroupPermission(
+                "modify_info"
+                ),
+    "create_test":
+        GroupPermission(
+                "create_test"
+                ),
+    "participate_test":
+        GroupPermission(
+                "participate_test"
+                ),
+    "schedule_event":
+        GroupPermission(
+                "schedule_event"
+                ),
+    "create_survey":
+        GroupPermission(
+                "create_survey"),
+    "participate_survey":
+        GroupPermission(
+                "participate_survey"
+                )
+}
+for key, item in group_permissions.items():
+    item.save()
+for item in GroupPermission.objects.all():
+    print("{0}:_id {1}".format(item.name, str(item.pk)))
+    
 print("----Groups:")
 groups = {
     "Arduino":
         Group(departments["IIT"],
               "Клуб анонимных ардуинщиков",
-              [group_roles["Admin"], group_roles["Member"]]
+              [group_roles["admin"], group_roles["member"]]
                 ),
     "A403":
         Group(departments["IIT"],
               "А-4-03",
-              [group_roles["Monitor"], group_roles["Student"]]
+              [group_roles["monitor"], group_roles["student"]]
                 )
 }
 for key, item in groups.items():
@@ -357,43 +392,53 @@ roles_in_groups = {
     "Shatokhin_admin_arduino":
         RoleInGroup(persons["Shatokhin"],
                     groups["Arduino"],
-                    group_roles["Admin"],
-                    ["read", "modify", "initiate tests"]),
+                    group_roles["admin"],
+                    [group_permissions["read_info"], 
+                     group_permissions["modify_info"],
+                     group_permissions["create_test"],
+                     group_permissions["schedule_event"]]),
         "Leni4_member_arduino":
         RoleInGroup(persons["Leni4"],
                     groups["Arduino"],
-                    group_roles["Member"],
-                    ["read"]),
+                    group_roles["member"],
+                    [group_permissions["read_info"], 
+                     group_permissions["participate_test"]]),
         "Bogi_member_arduino":
         RoleInGroup(persons["Bogi"],
                     groups["Arduino"],
-                    group_roles["Member"],
-                    ["read"]),
+                    group_roles["member"],
+                    [group_permissions["read_info"], 
+                     group_permissions["participate_test"]]),
         "Leni4_monitor_a403":
         RoleInGroup(persons["Leni4"],
                     groups["A403"],
-                    group_roles["Monitor"],
-                    ["read", "modify"]),
+                    group_roles["monitor"],
+                    [group_permissions["read_info"], 
+                     group_permissions["create_survey"],
+                     group_permissions["participate_survey"]]),
         "Pashka_student_a403":
         RoleInGroup(persons["Pashka"],
                     groups["A403"],
-                    group_roles["Student"],
-                    ["read"]),
+                    group_roles["student"],
+                    [group_permissions["read_info"], 
+                     group_permissions["participate_survey"]]),
         "Bogi_student_a403":
         RoleInGroup(persons["Bogi"],
                     groups["A403"],
-                    group_roles["Student"],
-                    ["read"]),
+                    group_roles["student"],
+                    [group_permissions["read_info"], 
+                     group_permissions["participate_survey"]]),
 }
     
 for key, item in roles_in_groups.items():
     item.save()
 for item in RoleInGroup.objects.all():
-    print("{0} - {1} группы {2}, права: {3}".format(
+    print("{0} - {1} группы {2}, права:".format(
             item.person_id.surname, 
             item.role_id.name,
-            item.group_id.name,
-            item.permissions))
+            item.group_id.name))
+    for perm in item.permissions:
+        print(perm.name)
 
 print("----Tests:")
 group_tests = {
