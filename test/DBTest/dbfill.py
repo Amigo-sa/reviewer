@@ -741,8 +741,5 @@ for item in Survey.objects.all():
             item.group_id.name,
             item.description,
             item.survey_data)) 
-"""
-TBD:
-- списки ссылок на объекты (В группах и в разрешениях)
-- перенос модели в src
-"""
+
+

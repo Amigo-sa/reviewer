@@ -241,3 +241,6 @@ class Survey(MongoModel):
         connection_alias = "reviewer"
         final = True
         
+def dependency_check(document):
+    return None
+        
