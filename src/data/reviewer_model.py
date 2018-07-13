@@ -241,6 +241,15 @@ class Survey(MongoModel):
         connection_alias = "reviewer"
         final = True
         
-def dependency_check(document):
-    return None
+def get_dependent_list(doc, dep_id_list):
+    current_del_rules = doc._mongometa.delete_rules
+    dep_id_list.append(doc)
+    for item, rule in current_del_rules.items():
+        if rule == ReferenceField.DENY:
+            related_model, related_field = item
+            dependent_docs = related_model.objects.raw({related_field : doc.pk})
+            for dep in dependent_docs:
+                if dep not in dep_id_list:
+                    get_dependent_list(dep, dep_id_list)
+
         

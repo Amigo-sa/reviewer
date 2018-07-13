@@ -34,7 +34,7 @@ def get_dependencies(doc, dep_id_list):
     current_del_rules = doc._mongometa.delete_rules
     print (current_del_rules.__class__)
     print (current_del_rules)
-    
+    dep_id_list.append(doc)
     for item, rule in current_del_rules.items():
         if rule == ReferenceField.DENY:
             related_model, related_field = item
@@ -47,7 +47,7 @@ def get_dependencies(doc, dep_id_list):
             for dep in deps:
                 if dep not in dep_id_list:
                     print(dep)
-                    dep_id_list.append(dep)
+                    
                     get_dependencies(dep, dep_id_list)
             
             """
@@ -59,22 +59,23 @@ def get_dependencies(doc, dep_id_list):
                 dep_id_list.append(dep)
                 get_dependencies(dep, dep_id_list)
             """
-    return dep_id_list       
-        
-    
+    #return dep_id_list       
     
 iit = Department.objects.get({"name" : "Кафедра ИИТ"})
 mpei = Organization.objects.get({"name" : "МЭИ"})
 pashka = Person.objects.get(({"surname" : "Ерин"}))
+maniac = Person.objects.get(({"surname" : "Ярин"}))
 #print_dependencies(iit)
 dep_id_list = []
 
-dep_list = get_dependencies(mpei, dep_id_list)
+get_dependencies(maniac, dep_id_list)
 print(len(dep_list))
 print("-----------------")
 for item in dep_list:
     print("--")
     print(item.__class__)
     print(item.to_son().to_dict())
+    
+print("Total: " + str(len(dep_list)))
     
 

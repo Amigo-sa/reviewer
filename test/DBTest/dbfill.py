@@ -742,4 +742,13 @@ for item in Survey.objects.all():
             item.description,
             item.survey_data)) 
 
+print("----Docs depending on MPEI:") 
+MPEI_dep_list = []
+get_dependent_list(organizations["MPEI"], MPEI_dep_list)
 
+for doc in MPEI_dep_list:
+    print(doc.__class__.__name__)
+    print(doc.to_son().to_dict())
+    print("---")
+    
+print("Всего документов зависит от МЭИ: " + str(len(MPEI_dep_list)))
