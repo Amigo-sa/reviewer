@@ -752,3 +752,6 @@ for doc in MPEI_dep_list:
     print("---")
     
 print("Всего документов зависит от МЭИ: " + str(len(MPEI_dep_list)))
+
+ls = tutor_roles["Shatokhin_MCU"].delete()
+print(ls)
