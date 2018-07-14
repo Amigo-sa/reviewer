@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "8763fd98-a7ce-476a-9879-813f0e7d5b7f",
+		"name": "client api",
+		"description": "Вызовы функций клиентского api для node server",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "add_organization",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"МИФИ\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/add_organization",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"add_organization"
+					]
+				},
+				"description": "Добавляет организацию в базу"
+			},
+			"response": []
+		},
+		{
+			"name": "delete_organization",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/delete_organization/5b478cd12131371a64658699",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"delete_organization",
+						"5b478cd12131371a64658699"
+					]
+				},
+				"description": "Удаляет организацию из базы"
+			},
+			"response": []
+		},
+		{
+			"name": "list_organizations",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/list_organizations",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"list_organizations"
+					]
+				},
+				"description": "Получает список зарегистрированных организаций"
+			},
+			"response": []
+		},
+		{
+			"name": "add_department",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"organization_id\": \"5b478cd12131371a64658699\"\n\t\"name\":\"РТФ\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/add_department",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"add_department"
+					]
+				},
+				"description": "Добавляет департамент в базу"
+			},
+			"response": []
+		},
+		{
+			"name": "delete_department",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/delete_department/5b47a6552131372ed497e2b7",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"delete_department",
+						"5b47a6552131372ed497e2b7"
+					]
+				},
+				"description": "Удаляет департамент из базы"
+			},
+			"response": []
+		},
+		{
+			"name": "list_departments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/list_departments/5b478cd12131371a6465869c",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"list_departments",
+						"5b478cd12131371a6465869c"
+					]
+				},
+				"description": "Получает список департаментов организации"
+			},
+			"response": []
+		},
+		{
+			"name": "add_group",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"department_id\": \"5b48f6f72131372a385a1e09\",\n\t\"name\":\"А-5-03\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/add_group",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"add_group"
+					]
+				},
+				"description": "Добавляет группу в базу"
+			},
+			"response": []
+		},
+		{
+			"name": "delete_group",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/delete_group/5b48e43e2131371e38516883",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"delete_group",
+						"5b48e43e2131371e38516883"
+					]
+				},
+				"description": "Удаляе группу из базы"
+			},
+			"response": []
+		},
+		{
+			"name": "list_groups",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/list_groups/5b48f6f72131372a385a1e09",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"list_groups",
+						"5b48f6f72131372a385a1e09"
+					]
+				},
+				"description": "Получает список групп"
+			},
+			"response": []
+		}
+	]
+}
