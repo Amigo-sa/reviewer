@@ -250,6 +250,87 @@
 				"description": "Получает список групп"
 			},
 			"response": []
+		},
+		{
+			"name": "add_group_role",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"админ\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/add_group_role",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"add_group_role"
+					]
+				},
+				"description": "Добавляет роль для группы в базу"
+			},
+			"response": []
+		},
+		{
+			"name": "delete_group_role",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/delete_group_role/5b478cd12131371a64658699",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"delete_group_role",
+						"5b478cd12131371a64658699"
+					]
+				},
+				"description": "Удаляет роль для группы из базы"
+			},
+			"response": []
+		},
+		{
+			"name": "list_group_roles",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/list_group_roles",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"list_group_roles"
+					]
+				},
+				"description": "Получает список возможных ролей для группы"
+			},
+			"response": []
 		}
 	]
 }

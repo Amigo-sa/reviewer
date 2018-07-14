@@ -156,3 +156,48 @@ def list_groups(id):
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
+
+
+@bp.route("/add_group_role", methods = ['POST'])
+def add_group_role():
+    req = request.get_json()
+    try:
+        name = req['name']
+    except:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        group_role = GroupRole(name)
+        group_role.save()
+        result = {"result":ERR.OK,
+                  "id": str(group_role.pk)}
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
+
+@bp.route("/delete_group_role/<string:id>", methods = ['DELETE'])
+def delete_group_role(id):
+    try:
+        if GroupRole(_id=id) in GroupRole.objects.raw({"_id":ObjectId(id)}):
+            GroupRole(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/list_group_roles", methods = ['GET'])
+def list_group_roles():
+    list = []
+    try:
+        for group_role in  GroupRole.objects.all():
+            list.append({"id":str(group_role.pk),
+                         "name":group_role.name}
+                        )
+        result = {"result": ERR.OK, "list":list}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
