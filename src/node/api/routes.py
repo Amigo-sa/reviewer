@@ -3,6 +3,7 @@ import node.settings.errors as ERR
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
 
+
 bp = Blueprint('routes', __name__)
 
 if __debug__:
@@ -110,3 +111,48 @@ def list_departments(id):
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
+
+@bp.route("/add_group", methods = ['POST'])
+def add_group():
+    req = request.get_json()
+    try:
+        department_id = req['department_id']
+        name = req['name']
+    except:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        group = Group(Department(_id=department_id), name)
+        group.save()
+        result = {"result":ERR.OK,
+                  "id": str(group.pk)}
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
+
+@bp.route("/delete_group/<string:id>", methods = ['DELETE'])
+def delete_group(id):
+    try:
+        if Group(_id=id) in Group.objects.raw({"_id":ObjectId(id)}):
+            Group(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/list_groups/<string:id>", methods = ['GET'])
+def list_groups(id):
+    list = []
+    try:
+        for group in  Group.objects.raw({"department_id":ObjectId(id)}):
+            list.append({"id":str(group.pk),
+                         "name":group.name}
+                        )
+        result = {"result": ERR.OK, "list":list}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
