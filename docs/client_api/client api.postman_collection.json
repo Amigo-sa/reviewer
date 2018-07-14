@@ -331,6 +331,87 @@
 				"description": "Получает список возможных ролей для группы"
 			},
 			"response": []
+		},
+		{
+			"name": "add_group_permission",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"удалять всех\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/add_group_permission",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"add_group_permission"
+					]
+				},
+				"description": "Добавляет права для роли в группе в базу"
+			},
+			"response": []
+		},
+		{
+			"name": "delete_group_permission",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/delete_group_permission/5b478cd12131371a64658699",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"delete_group_permission",
+						"5b478cd12131371a64658699"
+					]
+				},
+				"description": "Удаляет права для роли в группе из базы"
+			},
+			"response": []
+		},
+		{
+			"name": "list_group_permissions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/list_group_permissions",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"list_group_permissions"
+					]
+				},
+				"description": "Получает список прав для ролей в группе из базы"
+			},
+			"response": []
 		}
 	]
 }

@@ -206,3 +206,48 @@ def list_group_roles():
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
+
+
+@bp.route("/add_group_permission", methods = ['POST'])
+def add_group_permission():
+    req = request.get_json()
+    try:
+        name = req['name']
+    except:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        group_permission = GroupPermission(name)
+        group_permission.save()
+        result = {"result":ERR.OK,
+                  "id": str(group_permission.pk)}
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
+
+@bp.route("/delete_group_permission/<string:id>", methods = ['DELETE'])
+def delete_group_permission(id):
+    try:
+        if GroupPermission(_id=id) in GroupPermission.objects.raw({"_id":ObjectId(id)}):
+            GroupPermission(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/list_group_permissions", methods = ['GET'])
+def list_group_permissions():
+    list = []
+    try:
+        for group_permission in  GroupPermission.objects.all():
+            list.append({"id":str(group_permission.pk),
+                         "name":group_permission.name}
+                        )
+        result = {"result": ERR.OK, "list":list}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
