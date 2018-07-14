@@ -29,10 +29,12 @@ if __debug__:
 @bp.route("/add_organization", methods = ['POST'])
 def add_organization():
     req = request.get_json()
-    if 'name' not in req:
-        return jsonify({"result":ERR.INPUT}), 200
     try:
-        organization = Organization(req['name'])
+        name = req['name']
+    except:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        organization = Organization(name)
         organization.save()
         result = {"result":ERR.OK,
                   "id": str(organization.pk)}
@@ -72,10 +74,13 @@ def list_organizations():
 @bp.route("/add_department", methods = ['POST'])
 def add_department():
     req = request.get_json()
-    if 'name' not in req or 'organization_id' not in req:
-        return jsonify({"result":ERR.INPUT}), 200
     try:
-        department = Department(req['name'], Organization(_id=req['organization_id']))
+        organization_id = req['organization_id']
+        name = req['name']
+    except:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        department = Department(name, Organization(_id=organization_id))
         department.save()
         result = {"result":ERR.OK,
                   "id": str(department.pk)}
