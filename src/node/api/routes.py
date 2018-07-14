@@ -251,3 +251,140 @@ def list_group_permissions():
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
+
+
+# TODO разобраться стоит ли делать дополнительные проверки на
+# корректность вносимых данных в этой функции и сделать их при необходимости
+@bp.route("/add_role_in_group", methods=['POST'])
+def add_role_in_group():
+    req = request.get_json()
+    try:
+        person_id = req['person_id']
+        group_id = req['group_id']
+        role_id = req['role_id']
+        default_permission_id = req['default_permission_id']
+    except:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        role_in_group = RoleInGroup(Person(_id=person_id),
+                                    Group(_id=group_id),
+                                    GroupRole(_id=role_id),
+                                    [GroupPermission(_id=default_permission_id)])
+        role_in_group.save()
+        result = {"result":ERR.OK,
+                  "id": str(role_in_group.pk)}
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
+
+@bp.route("/delete_role_in_group/<string:id>", methods=['DELETE'])
+def delete_role_in_group(id):
+    try:
+        if RoleInGroup(_id=id) in RoleInGroup.objects.raw({"_id":ObjectId(id)}):
+            RoleInGroup(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/list_roles_in_group_by_group_id/<string:id>", methods=['GET'])
+def list_roles_in_group_by_group_id(id):
+    list = []
+    try:
+        for role_in_group in  RoleInGroup.objects.raw({"group_id": ObjectId(id)}):
+            list.append({"id": str(role_in_group.pk)})
+        result = {"result": ERR.OK, "list":list}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/list_roles_in_group_by_person_id/<string:id>", methods=['GET'])
+def list_roles_in_group_by_person_id(id):
+    list = []
+    try:
+        for role_in_group in RoleInGroup.objects.raw({"person_id": ObjectId(id)}):
+            list.append({"id": str(role_in_group.pk)})
+        result = {"result": ERR.OK, "list":list}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/get_role_in_group_info/<string:id>", methods=['GET'])
+def get_role_in_group_info(id):
+    try:
+        if RoleInGroup(_id=id) in RoleInGroup.objects.raw({"_id": ObjectId(id)}):
+            role_in_group = RoleInGroup(_id=id)
+            role_in_group.refresh_from_db()
+            perm = []
+            for item in role_in_group.permissions:
+                perm.append(str(item.pk))
+            data = {"person_id": str(role_in_group.person_id.pk),
+                    "group_id": str(role_in_group.group_id.pk),
+                    "role_id": str(role_in_group.role_id.pk),
+                    "permissions": perm}
+            result = {"result": ERR.OK, "data": data}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/add_permissions_to_role_in_group/<string:id>", methods = ['POST'])
+def add_permissions_to_role_in_group(id):
+    req = request.get_json()
+    try:
+        group_permission_id = req['group_permission_id']
+    except:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        if RoleInGroup(_id=id) in RoleInGroup.objects.raw({"_id": ObjectId(id)}):
+            role_in_group = RoleInGroup(_id=id)
+            role_in_group.refresh_from_db()
+            permission = GroupPermission(_id=group_permission_id)
+            permission.refresh_from_db()
+            role_in_group.permissions.append(permission)
+            role_in_group.save()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
+
+@bp.route("/delete_permissions_from_role_in_group/<string:id>", methods = ['DELETE'])
+def delete_permissions_from_role_in_group(id):
+    req = request.get_json()
+    try:
+        group_permission_id = req['group_permission_id']
+    except:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        if RoleInGroup(_id=id) in RoleInGroup.objects.raw({"_id": ObjectId(id)}):
+            role_in_group = RoleInGroup(_id=id)
+            role_in_group.refresh_from_db()
+            permission = GroupPermission(_id=group_permission_id)
+            permission.refresh_from_db()
+            if permission not in role_in_group.permissions:
+                result = {"result": ERR.NO_DATA}
+            else:
+                role_in_group.permissions.remove(permission)
+                role_in_group.save()
+                result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
+

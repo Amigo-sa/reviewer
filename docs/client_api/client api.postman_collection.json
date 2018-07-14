@@ -412,6 +412,204 @@
 				"description": "Получает список прав для ролей в группе из базы"
 			},
 			"response": []
+		},
+		{
+			"name": "add_role_in_group",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"person_id\": \"5b48f6f62131372a385a1e01\",\n\t\"group_id\":\"5b490bf52131372df4cd2073\",\n\t\"role_id\":\"5b48f6f72131372a385a1e50\",\n\t\"default_permission_id\":\"5b48f6f72131372a385a1e55\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/add_role_in_group",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"add_role_in_group"
+					]
+				},
+				"description": "Добавляет пользователя в группу с определенной ролью"
+			},
+			"response": []
+		},
+		{
+			"name": "delete_role_in_group",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/delete_role_in_group/5b48e43e2131371e38516883",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"delete_role_in_group",
+						"5b48e43e2131371e38516883"
+					]
+				},
+				"description": "Удаляет роль пользователя из группы"
+			},
+			"response": []
+		},
+		{
+			"name": "list_roles_in_group_by_group_id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/list_roles_in_group_by_group_id/5b490bf52131372df4cd2073",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"list_roles_in_group_by_group_id",
+						"5b490bf52131372df4cd2073"
+					]
+				},
+				"description": "Получает список ролей пользователей в группе для заданной группы"
+			},
+			"response": []
+		},
+		{
+			"name": "list_roles_in_group_by_person_id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/list_roles_in_group_by_person_id/5b48f6f62131372a385a1e01",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"list_roles_in_group_by_person_id",
+						"5b48f6f62131372a385a1e01"
+					]
+				},
+				"description": "Получает список ролей пользователя во всех группах"
+			},
+			"response": []
+		},
+		{
+			"name": "get_role_in_group_info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/get_role_in_group_info/5b4a22d6213137168c5c6ebc",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"get_role_in_group_info",
+						"5b4a22d6213137168c5c6ebc"
+					]
+				},
+				"description": "Получает информацию о роли в группе:\nпользователя, кому принадлежит роль\nгруппу в которой она зарегистрирована\nправа этой роли в группе"
+			},
+			"response": []
+		},
+		{
+			"name": "add_permissions_to_role_in_group",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"group_permission_id\":\"5b4982cd21313707a043b018\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/add_permissions_to_role_in_group/5b4a494c2131370ed4326e16",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"add_permissions_to_role_in_group",
+						"5b4a494c2131370ed4326e16"
+					]
+				},
+				"description": "Добавляет права для роли пользователя в группе"
+			},
+			"response": []
+		},
+		{
+			"name": "delete_permissions_from_role_in_group",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"group_permission_id\":\"5b48f6f72131372a385a1e55\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/delete_permissions_from_role_in_group/5b4a494c2131370ed4326e16",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"delete_permissions_from_role_in_group",
+						"5b4a494c2131370ed4326e16"
+					]
+				},
+				"description": "Снимает права с роли пользователя в группе"
+			},
+			"response": []
 		}
 	]
 }
