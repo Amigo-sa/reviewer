@@ -610,6 +610,113 @@
 				"description": "Снимает права с роли пользователя в группе"
 			},
 			"response": []
+		},
+		{
+			"name": "add_general_role",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"person_id\": \"5b4b970a2131370f187fb986\",\n\t\"department_id\":\"5b490bf52131372df4cd2073\",\n\t\"role_type\":\"Studend\",\n\t\"role_data\":\"Бездельник\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/add_general_role",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"add_general_role"
+					]
+				},
+				"description": "Добавляет пользователю роль"
+			},
+			"response": []
+		},
+		{
+			"name": "delete_general_role",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/delete_general_role/5b4b83482131370d14e4390e",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"delete_general_role",
+						"5b4b83482131370d14e4390e"
+					]
+				},
+				"description": "Удаляет роль пользователя"
+			},
+			"response": []
+		},
+		{
+			"name": "get_general_roles_data",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/get_general_roles_data/5b4b970a2131370f187fb9c6",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"get_general_roles_data",
+						"5b4b970a2131370f187fb9c6"
+					]
+				},
+				"description": "Получает информацию о роли:\nпользователя, кому принадлежит роль\nдепартамент, в котором она зарегистрирована\nтип роли (Преподаватель или Студент)\nописание для студента и предмет для преподавателя"
+			},
+			"response": []
+		},
+		{
+			"name": "list_roles_by_person_id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/list_roles_by_person_id/5b4b970a2131370f187fb986",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"list_roles_by_person_id",
+						"5b4b970a2131370f187fb986"
+					]
+				},
+				"description": "Получает список ролей пользователя"
+			},
+			"response": []
 		}
 	]
 }

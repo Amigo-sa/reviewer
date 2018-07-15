@@ -388,3 +388,98 @@ def delete_permissions_from_role_in_group(id):
     return jsonify(result), 200
 
 
+# TODO у этой функции одна неприятная проблема:
+# сейчас она может добавить роль несуществующему человеку в несуществующем
+# департаменте. Выяснить сдесь или в базе надо исправлять
+@bp.route("/add_general_role", methods=['POST'])
+def add_general_role():
+    req = request.get_json()
+    try:
+        person_id = req['person_id']
+        department_id = req['department_id']
+        role_type = req['role_type']
+        role_data = req['role_data']
+    except:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        if role_type == "Tutor":
+            tutor_role = TutorRole(Person(_id=person_id),
+                                   Department(_id=department_id),
+                                   role_data)
+            tutor_role.save()
+            result = {"result": ERR.OK,
+                      "id": str(tutor_role.pk)}
+        else:
+            if role_type == "Studend":
+                student_role = StudentRole(Person(_id=person_id),
+                                           Department(_id=department_id),
+                                           role_data)
+                student_role.save()
+                result = {"result": ERR.OK,
+                          "id": str(student_role.pk)}
+            else:
+                return jsonify({"result": ERR.INPUT}), 200
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
+
+@bp.route("/delete_general_role/<string:id>", methods=['DELETE'])
+def delete_general_role(id):
+    try:
+        if TutorRole(_id=id) in TutorRole.objects.raw({"_id":ObjectId(id)}):
+            TutorRole(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            if StudentRole(_id=id) in StudentRole.objects.raw({"_id":ObjectId(id)}):
+                StudentRole(_id=id).delete()
+                result = {"result": ERR.OK}
+            else:
+                result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/get_general_roles_data/<string:id>", methods=['GET'])
+def get_general_roles_data(id):
+    try:
+        if StudentRole(_id=id) in StudentRole.objects.raw({"_id": ObjectId(id)}):
+            student_role = StudentRole(_id=id)
+            student_role.refresh_from_db()
+            data = {"person_id": str(student_role.person_id.pk),
+                    "department_id": str(student_role.department_id.pk),
+                    "role_type": "Student",
+                    "description": student_role.description}
+            result = {"result": ERR.OK, "data": data}
+        else:
+            if TutorRole(_id=id) in TutorRole.objects.raw({"_id": ObjectId(id)}):
+                tutor_role = TutorRole(_id=id)
+                tutor_role.refresh_from_db()
+                data = {"person_id": str(tutor_role.person_id.pk),
+                        "department_id": str(tutor_role.department_id.pk),
+                        "role_type": "Tutor",
+                        "description": tutor_role.discipline}
+                result = {"result": ERR.OK, "data": data}
+            else:
+                result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/list_roles_by_person_id/<string:id>", methods=['GET'])
+def list_roles_by_person_id(id):
+    list = []
+    try:
+        for role in StudentRole.objects.raw({"person_id": ObjectId(id)}):
+            list.append({"id": str(role.pk)})
+        for role in TutorRole.objects.raw({"person_id": ObjectId(id)}):
+            list.append({"id": str(role.pk)})
+        result = {"result": ERR.OK, "list":list}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
