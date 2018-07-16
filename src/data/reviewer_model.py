@@ -101,7 +101,7 @@ class GroupRole(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
-        
+
 class GroupPermission(MongoModel):
     name = fields.CharField()
     
@@ -109,13 +109,12 @@ class GroupPermission(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
-        
        
 class Group(MongoModel):
     department_id = fields.ReferenceField(Department, on_delete = ReferenceField.CASCADE)
     name = fields.CharField()
     role_list = fields.ListField(field = 
-                fields.ReferenceField(GroupRole, on_delete = ReferenceField.CASCADE))
+                fields.ReferenceField(GroupRole))
         
     class Meta:
         write_concern = WriteConcern(j=True)
@@ -127,7 +126,7 @@ class RoleInGroup(MongoModel):
     group_id = fields.ReferenceField(Group, on_delete = ReferenceField.CASCADE)
     role_id = fields.ReferenceField(GroupRole, on_delete = ReferenceField.CASCADE)
     permissions = fields.ListField(field = 
-                fields.ReferenceField(GroupPermission, on_delete = ReferenceField.CASCADE))
+                fields.ReferenceField(GroupPermission))
     
     class Meta:
         write_concern = WriteConcern(j=True)
@@ -245,11 +244,17 @@ def get_dependent_list(doc, dep_id_list):
     current_del_rules = doc._mongometa.delete_rules
     dep_id_list.append(doc)
     for item, rule in current_del_rules.items():
-        #if rule == ReferenceField.DENY:
-            related_model, related_field = item
-            dependent_docs = related_model.objects.raw({related_field : doc.pk})
-            for dep in dependent_docs:
-                if dep not in dep_id_list:
-                    get_dependent_list(dep, dep_id_list)
+        related_model, related_field = item
+        dependent_docs = related_model.objects.raw({related_field : doc.pk})
+        for dep in dependent_docs:
+            if dep not in dep_id_list:
+                get_dependent_list(dep, dep_id_list)
 
+#TODO перенести максимум инициализации в конструкторы классов
+
+def init_db():
+    GroupRole.register_delete_rule(
+            Group, "role_list", fields.ReferenceField.PULL)
+    GroupPermission.register_delete_rule(
+            RoleInGroup, "permissions", fields.ReferenceField.PULL)
         
