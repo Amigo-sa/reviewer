@@ -529,3 +529,41 @@ def find_persons():
     return jsonify(result), 200
 
 
+@bp.route("/post_review", methods = ['POST'])
+def post_review():
+    req = request.get_json()
+    try:
+        type = req['type']
+        reviewer_id = ObjectId(req['reviewer_id'])
+        subject_id = ObjectId(req['subject_id'])
+        value = req['value']
+        description = req['description']
+    except:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        obj = {
+            "StudentRole":
+                SRReview(reviewer_id, subject_id, value, description),
+            "TutorRole":
+                TRReview(reviewer_id, subject_id, value, description),
+            "HardSkill":
+                HSReview(reviewer_id, subject_id, value, description),
+            "SoftSkill":
+                SSReview(reviewer_id, subject_id, value, description),
+            "Group":
+                GroupReview(reviewer_id, subject_id, value, description),
+            "GroupTest":
+                GroupTestReview(reviewer_id, subject_id, value, description),
+            "RoleInGroup":
+                RoleInGroupReview(reviewer_id, subject_id, value, description)
+        }
+        if type not in obj:
+            result = {"result": ERR.INPUT}
+        else:
+            obj[type].save()
+            result = {"result":ERR.OK,
+                      "id": str(obj[type].pk)}
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200

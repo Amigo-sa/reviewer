@@ -755,6 +755,38 @@
 				"description": "Ищет людей по определенным критериям"
 			},
 			"response": []
+		},
+		{
+			"name": "post_review",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"type\":\"RoleInGroup\",\n\t\"reviewer_id\":\"5b4cce752131371ed071ead3\",\n\t\"subject_id\":\"5b4cce752131371ed071ead3\",\n\t\"value\": 90.0,\n\t\"description\":\"Очень круто\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/post_review",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"post_review"
+					]
+				},
+				"description": "Публикует отзыв о чем-либо\nв type передается тип отзыва:\nStudentRole - на студента\nTutorRole - на преподавателя\nHardSkill - на hard skill пользователя\nSoftSkill - на soft skill пользователя\nGroup - на группу\nGroupTest - на тест для группы\nRoleInGroup - на участника группы"
+			},
+			"response": []
 		}
 	]
 }
