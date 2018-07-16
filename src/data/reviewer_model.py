@@ -1,5 +1,6 @@
 from pymodm import MongoModel, fields, ReferenceField
 from pymongo.write_concern import WriteConcern
+from pymodm.errors import ValidationError
 
 class Service(MongoModel):
     version = fields.CharField()
@@ -132,6 +133,14 @@ class RoleInGroup(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        
+    #TODO лучше реализовать это в виде validator
+    def clean(self):
+        pass
+        target_group = Group.objects.get({"_id" : self.group_id.pk})
+        if self.role_id not in target_group.role_list:
+            raise ValidationError("Группа %s не предусматривает роль %s"%(
+                    target_group.name, self.role_id.name))
         
 class GroupTest(MongoModel):
     group_id = fields.ReferenceField(Group, on_delete = ReferenceField.CASCADE)
