@@ -425,7 +425,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"person_id\": \"5b48f6f62131372a385a1e01\",\n\t\"group_id\":\"5b490bf52131372df4cd2073\",\n\t\"role_id\":\"5b48f6f72131372a385a1e50\",\n\t\"default_permission_id\":\"5b48f6f72131372a385a1e55\"\n}"
+					"raw": "{\n\t\"person_id\": \"5b4cce742131371ed071ea78\",\n\t\"group_id\":\"5b4ccee82131370bd8860aba\",\n\t\"role_id\":\"5b48f6f72131372a385a1e50\",\n\t\"default_permission_id\":\"5b48f6f72131372a385a1e55\"\n}"
 				},
 				"url": {
 					"raw": "http://127.0.0.1:5000/add_role_in_group",
@@ -715,6 +715,44 @@
 					]
 				},
 				"description": "Получает список ролей пользователя"
+			},
+			"response": []
+		},
+		{
+			"name": "find_persons",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/find_persons?group_id=5b4cce752131371ed071ead3&department_id=5b4cce742131371ed071ea80&organization_id=5b4cce742131371ed071ea7f",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"find_persons"
+					],
+					"query": [
+						{
+							"key": "group_id",
+							"value": "5b4cce752131371ed071ead3"
+						},
+						{
+							"key": "department_id",
+							"value": "5b4cce742131371ed071ea80"
+						},
+						{
+							"key": "organization_id",
+							"value": "5b4cce742131371ed071ea7f"
+						}
+					]
+				},
+				"description": "Ищет людей по определенным критериям"
 			},
 			"response": []
 		}

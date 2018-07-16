@@ -483,3 +483,49 @@ def list_roles_by_person_id(id):
     return jsonify(result), 200
 
 
+@bp.route("/find_persons", methods=['GET'])
+def find_persons():
+    lst = []
+    if 'group_id' in request.args:
+        group_id = request.args['group_id']
+    else:
+        group_id = None
+    if 'department_id' in request.args:
+        department_id = request.args['department_id']
+    else:
+        department_id = None
+    if 'organization_id' in request.args:
+        organization_id = request.args['organization_id']
+    else:
+        organization_id = None
+    try:
+        if group_id:
+            for role in RoleInGroup.objects.raw({"group_id": ObjectId(group_id)}):
+                lst.append({"id": str(role.person_id.pk)})
+            list = [dict(t) for t in set([tuple(d.items()) for d in lst])]
+            result = {"result": ERR.OK, "list":list}
+        else:
+            if department_id:
+                for role in StudentRole.objects.raw({"department_id": ObjectId(department_id)}):
+                    lst.append({"id": str(role.person_id.pk)})
+                for role in TutorRole.objects.raw({"department_id": ObjectId(department_id)}):
+                    lst.append({"id": str(role.person_id.pk)})
+                list = [dict(t) for t in set([tuple(d.items()) for d in lst])]
+                result = {"result": ERR.OK, "list": list}
+            else:
+                if organization_id:
+                    for department in Department.objects.raw({"organization_id":ObjectId(organization_id)}):
+                        for role in StudentRole.objects.raw({"department_id": department.pk}):
+                            lst.append({"id": str(role.person_id.pk)})
+                        for role in TutorRole.objects.raw({"department_id": department.pk}):
+                            lst.append({"id": str(role.person_id.pk)})
+                    list = [dict(t) for t in set([tuple(d.items()) for d in lst])]
+                    result = {"result": ERR.OK, "list": list}
+                else:
+                    result = {"result": ERR.INPUT}
+    except Exception as ex:
+        print(ex)
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
