@@ -1,6 +1,7 @@
 import context
 import datetime
 import random
+
 from src.data.reviewer_model import (Department,
                                      Group,
                                      GroupPermission,
@@ -27,7 +28,6 @@ from src.data.reviewer_model import (Department,
                                      TutorRole,
                                      get_dependent_list,
                                      init_model)
-
 
 persons = {
     "Leni4":
