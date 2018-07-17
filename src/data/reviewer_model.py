@@ -23,6 +23,8 @@ class Person(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("phone_no", pymongo.DESCENDING)],
+                                 unique = True)]
         
 class Organization(MongoModel):
     name = fields.CharField()
@@ -31,6 +33,8 @@ class Organization(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("name", pymongo.DESCENDING)],
+                                 unique = True)]
     
 class Department(MongoModel):
     name = fields.CharField()
@@ -40,6 +44,9 @@ class Department(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("name", pymongo.DESCENDING),
+                               ("organization_id", pymongo.DESCENDING)],
+                                 unique = True)]
         
 class HardSkill(MongoModel):
     name = fields.CharField()
@@ -48,6 +55,8 @@ class HardSkill(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("name", pymongo.DESCENDING)],
+                                 unique = True)]
         
 class PersonHS(MongoModel):
     person_id = fields.ReferenceField(Person, on_delete = ReferenceField.CASCADE)
@@ -58,6 +67,9 @@ class PersonHS(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("person_id", pymongo.DESCENDING),
+                               ("hs_id", pymongo.DESCENDING)],
+                                 unique = True)]
         
 class SoftSkill(MongoModel):
     name = fields.CharField()
@@ -66,6 +78,8 @@ class SoftSkill(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("name", pymongo.DESCENDING)],
+                                 unique = True)]
         
 class PersonSS(MongoModel):
     person_id = fields.ReferenceField(Person, on_delete = ReferenceField.CASCADE)
@@ -76,6 +90,9 @@ class PersonSS(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("person_id", pymongo.DESCENDING),
+                               ("ss_id", pymongo.DESCENDING)],
+                                 unique = True)]
         
 class TutorRole(MongoModel):
     person_id = fields.ReferenceField(Person, on_delete = ReferenceField.CASCADE)
@@ -85,7 +102,11 @@ class TutorRole(MongoModel):
     class Meta:
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
-        final = True    
+        final = True
+        indexes = [IndexModel([("person_id", pymongo.DESCENDING),
+                               ("department_id", pymongo.DESCENDING),
+                               ("discipline", pymongo.DESCENDING)],
+                                 unique = True)]
         
 class StudentRole(MongoModel):
     person_id = fields.ReferenceField(Person, on_delete = ReferenceField.CASCADE)
@@ -96,6 +117,9 @@ class StudentRole(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("person_id", pymongo.DESCENDING),
+                               ("department_id", pymongo.DESCENDING)],
+                                 unique = True)]
      
 class GroupRole(MongoModel):
     name = fields.CharField()
@@ -104,6 +128,8 @@ class GroupRole(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("name", pymongo.DESCENDING)],
+                                 unique = True)]
 
 class GroupPermission(MongoModel):
     name = fields.CharField()
@@ -112,6 +138,8 @@ class GroupPermission(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("name", pymongo.DESCENDING)],
+                                 unique = True)]
        
 class Group(MongoModel):
     department_id = fields.ReferenceField(Department, on_delete = ReferenceField.CASCADE)
@@ -123,6 +151,9 @@ class Group(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("name", pymongo.DESCENDING),
+                               ("department_id", pymongo.DESCENDING)],
+                                 unique = True)]
         
 class RoleInGroup(MongoModel):
     person_id = fields.ReferenceField(Person, on_delete = ReferenceField.CASCADE)
@@ -168,7 +199,10 @@ class TestResult(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
-        
+        indexes = [IndexModel([("test_id", pymongo.DESCENDING),
+                               ("person_id", pymongo.DESCENDING)],
+                                unique = True)]
+    
 class SSReview(MongoModel):
     reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.CASCADE)
     subject_id = fields.ReferenceField(PersonSS, on_delete = ReferenceField.CASCADE)
@@ -179,6 +213,9 @@ class SSReview(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
+                               ("subject_id", pymongo.DESCENDING)],
+                                unique = True)]
         
 class HSReview(MongoModel):
     reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.CASCADE)
@@ -190,6 +227,9 @@ class HSReview(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
+                               ("subject_id", pymongo.DESCENDING)],
+                                unique = True)]
         
 class SRReview(MongoModel):
     reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.CASCADE)
@@ -201,6 +241,9 @@ class SRReview(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
+                               ("subject_id", pymongo.DESCENDING)],
+                                unique = True)]
         
 class TRReview(MongoModel):
     reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.CASCADE)
@@ -212,6 +255,9 @@ class TRReview(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
+                               ("subject_id", pymongo.DESCENDING)],
+                                unique = True)]
     
 class GroupReview(MongoModel):
     reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.CASCADE)
@@ -223,6 +269,9 @@ class GroupReview(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
+                               ("subject_id", pymongo.DESCENDING)],
+                                unique = True)]
         
 class RoleInGroupReview(MongoModel):
     reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.CASCADE)
@@ -234,6 +283,9 @@ class RoleInGroupReview(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
+                               ("subject_id", pymongo.DESCENDING)],
+                                unique = True)]
 
 class GroupTestReview(MongoModel):
     reviewer_id = fields.ReferenceField(Person, on_delete = ReferenceField.CASCADE)
@@ -245,6 +297,9 @@ class GroupTestReview(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
+                               ("subject_id", pymongo.DESCENDING)],
+                                unique = True)]
 
 class Survey(MongoModel):
     group_id = fields.ReferenceField(Group, on_delete = ReferenceField.CASCADE)

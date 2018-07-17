@@ -1,20 +1,15 @@
 import unittest
 import settings.mongo
 import context 
-import pymongo
 import datetime
-import random
-import importlib
 from pymodm import MongoModel
 from pymodm.connection import connect, _get_db
 from pymodm.errors import ValidationError
 from pymongo.errors import DuplicateKeyError
-import sys
 
 connect(settings.mongo.conn_string + "/" + settings.mongo.db_name,
             alias = "reviewer")
 
-import sample_data as sd
 from src.data.reviewer_model import (Department,
                                      Group,
                                      GroupPermission,
@@ -54,7 +49,7 @@ def prepare_db():
             current_version = None
         else:
             current_version = service["version"]
-        #TODO найти способ очищения только данных, либо создания заново
+        #TODO: найти способ очищения только данных, либо создания заново
         #индексов путём инициализации классов модели
         if current_version != test_version:
             print("versions differ, refilling DB")
@@ -62,71 +57,21 @@ def prepare_db():
             for col in colList:
                 revDb.drop_collection(col)
                 print ("dropped collection " + col)
-        if current_version != test_version: fill_db()
+            import sample_data
+            sample_data.fill_db()
+            #FIXME: здесь должны заново создаваться индексы
         else: print("same version, skipping DB refill")
         init_model()
     except Exception as ex:
         print(ex)
         
-def fill_db():
-    #Версия используется для ускорения тестирования:
-    #Данные в БД перезаписываются только при несовпадении версии 
-    service = Service("test_0.3")
-    service.save()
-    for key, item in sd.persons.items():
-        item.save()
-    for key, item in sd.organizations.items():
-        item.save()    
-    for key, item in sd.departments.items():
-        item.save()
-    for key, item in sd.hard_skills.items():
-        item.save()
-    for key, item in sd.person_hs.items():
-        item.save()
-    for key, item in sd.soft_skills.items():
-        item.save()
-    for key, item in sd.person_ss.items():
-        item.save()
-    for key, item in sd.tutor_roles.items():
-        item.save()
-    for key, item in sd.student_roles.items():
-        item.save()
-    for key, item in sd.group_roles.items():
-        item.save()
-    for key, item in sd.group_permissions.items():
-        item.save()
-    for key, item in sd.groups.items():
-        item.save()
-    for key, item in sd.roles_in_groups.items():
-        item.save()   
-    for key, item in sd.group_tests.items():
-        item.save()    
-    for key, item in sd.test_results.items():
-        item.save()
-    for key, item in sd.ss_reviews.items():
-        item.save()
-    for key, item in sd.hs_reviews.items():
-        item.save()
-    for key, item in sd.sr_reviews.items():
-        item.save()
-    for key, item in sd.tr_reviews.items():
-        item.save()
-    for key, item in sd.group_reviews.items():
-        item.save()
-    for key, item in sd.role_in_group_reviews.items():
-        item.save()
-    for key, item in sd.group_test_reviews.items():
-        item.save()
-    for key, item in sd.surveys.items():
-        item.save()
-
 class TestValidation(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         
         prepare_db()
         
-        
+    #Role in group tests    
     def test_vaild_role_in_group(self):
         valid_role = RoleInGroup(
                     Person.objects.get({"surname" : "Дунаев"}),
@@ -169,6 +114,10 @@ class TestValidation(unittest.TestCase):
             role_without_permissions.save()
             if role_without_permissions.pk is not None:
                 role_without_permissions.delete()
+    
+    
+    
+    
     
         
     def tearDown(self):
