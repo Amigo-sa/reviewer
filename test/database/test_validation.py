@@ -115,8 +115,17 @@ class TestValidation(unittest.TestCase):
             if role_without_permissions.pk is not None:
                 role_without_permissions.delete()
     
-    
-    
+    def test_duplicate_permissions(self):
+        with self.assertRaises(ValidationError):
+            role_in_group = RoleInGroup.objects.get(
+                    {
+                            "person_id" : Person.objects.get({"surname" : "Дунаев"}).pk,
+                            "group_id" : Group.objects.get({"name" : "А-4-03"}).pk
+                     })
+            duplicate_permission = GroupPermission.objects.get({"name" : "read_info"})
+            role_in_group.permissions.append(duplicate_permission)
+            if duplicate_permission.pk is not None:
+                duplicate_permission.delete()
     
     
         
