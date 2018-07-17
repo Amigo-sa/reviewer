@@ -7,6 +7,7 @@ import random
 from pymodm import MongoModel
 from pymodm.connection import connect
 from pymodm.errors import ValidationError
+from pymongo.errors import DuplicateKeyError
 from src.data.reviewer_model import (Department,
                                      Group,
                                      GroupPermission,
@@ -56,6 +57,8 @@ def prepare_db():
         if current_version != test_version: 
             fill_db()
             print("finished")
+            
+        init_model()
     except Exception as ex:
         print(ex)
         
@@ -154,7 +157,7 @@ class TestValidation(unittest.TestCase):
                 invalid_role.delete()
     
     def test_duplicate_role_in_group(self):
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(DuplicateKeyError):
             duplicate_role = RoleInGroup(
                         Person.objects.get({"surname" : "Дунаев"}),
                         Group.objects.get({"name" : "Клуб анонимных ардуинщиков"}),
@@ -163,6 +166,7 @@ class TestValidation(unittest.TestCase):
             duplicate_role.save()
             if duplicate_role.pk is not None:
                 duplicate_role.delete()
+
         
     def tearDown(self):
         pass
@@ -170,5 +174,5 @@ class TestValidation(unittest.TestCase):
         
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity = 1)
             
