@@ -261,7 +261,7 @@ def get_dependent_list(doc, dep_id_list):
 
 #TODO перенести максимум инициализации в конструкторы классов
 
-def init_db():
+def init_model():
     GroupRole.register_delete_rule(
             Group, "role_list", fields.ReferenceField.PULL)
     GroupPermission.register_delete_rule(

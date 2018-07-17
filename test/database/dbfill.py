@@ -5,11 +5,8 @@ import settings.mongo as mongosettings
 import datetime
 import pymongo
 import random
-import os, sys
+import context 
 
-parentPath = os.path.abspath("..//..")
-if parentPath not in sys.path:
-    sys.path.insert(0, parentPath)
 from src.data.reviewer_model import (Department,
                                      Group,
                                      GroupPermission,
@@ -226,7 +223,7 @@ def clear_db():
     print("--finished")
 
 clear_db()
-init_db()
+init_model()
     
 connect(mongosettings.conn_string + "/" + mongosettings.db_name,
             alias = "reviewer")
