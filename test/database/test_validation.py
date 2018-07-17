@@ -150,11 +150,19 @@ class TestValidation(unittest.TestCase):
                         GroupRole.objects.get({"name" : "monitor"}),
                         [GroupPermission.objects.get({"name" : "read_info"})])
             invalid_role.save()
+            if invalid_role.pk is not None:
+                invalid_role.delete()
     
     def test_duplicate_role_in_group(self):
-        #TODO написать тест
-        self.assertTrue(1)
-        
+        with self.assertRaises(ValidationError):
+            duplicate_role = RoleInGroup(
+                        Person.objects.get({"surname" : "Дунаев"}),
+                        Group.objects.get({"name" : "Клуб анонимных ардуинщиков"}),
+                        GroupRole.objects.get({"name" : "member"}),
+                        [GroupPermission.objects.get({"name" : "read_info"})])
+            duplicate_role.save()
+            if duplicate_role.pk is not None:
+                duplicate_role.delete()
         
     def tearDown(self):
         pass
