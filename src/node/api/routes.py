@@ -554,3 +554,66 @@ def post_review():
         result = {"result":ERR.DB}
 
     return jsonify(result), 200
+
+
+@bp.route("/reviews/<string:id>", methods=['DELETE'])
+def delete_review(id):
+    try:
+        result = {"result": ERR.NO_DATA}
+        if SRReview(_id=id) in SRReview.objects.raw({"_id":ObjectId(id)}):
+            SRReview(_id=id).delete()
+            result = {"result": ERR.OK}
+        if TRReview(_id=id) in TRReview.objects.raw({"_id":ObjectId(id)}):
+            TRReview(_id=id).delete()
+            result = {"result": ERR.OK}
+        if HSReview(_id=id) in HSReview.objects.raw({"_id":ObjectId(id)}):
+            HSReview(_id=id).delete()
+            result = {"result": ERR.OK}
+        if SSReview(_id=id) in SSReview.objects.raw({"_id":ObjectId(id)}):
+            SSReview(_id=id).delete()
+            result = {"result": ERR.OK}
+        if GroupReview(_id=id) in GroupReview.objects.raw({"_id":ObjectId(id)}):
+            GroupReview(_id=id).delete()
+            result = {"result": ERR.OK}
+        if GroupTestReview(_id=id) in GroupTestReview.objects.raw({"_id":ObjectId(id)}):
+            GroupTestReview(_id=id).delete()
+            result = {"result": ERR.OK}
+        if RoleInGroupReview(_id=id) in RoleInGroupReview.objects.raw({"_id":ObjectId(id)}):
+            RoleInGroupReview(_id=id).delete()
+            result = {"result": ERR.OK}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/reviews", methods=['GET'])
+def find_reviews():
+    lst = []
+    query = {}
+    if 'reviewer_id' in request.args:
+        reviewer_id = request.args['reviewer_id']
+        query.update({"reviewer_id": ObjectId(reviewer_id)})
+    if 'subject_id' in request.args:
+        subject_id = request.args['subject_id']
+        query.update({"subject_id": ObjectId(subject_id)})
+
+    try:
+        for review in SRReview.objects.raw(query):
+            lst.append({"id": str(review.pk)})
+        for review in TRReview.objects.raw(query):
+            lst.append({"id": str(review.pk)})
+        for review in HSReview.objects.raw(query):
+            lst.append({"id": str(review.pk)})
+        for review in SSReview.objects.raw(query):
+            lst.append({"id": str(review.pk)})
+        for review in GroupReview.objects.raw(query):
+            lst.append({"id": str(review.pk)})
+        for review in GroupTestReview.objects.raw(query):
+            lst.append({"id": str(review.pk)})
+        for review in RoleInGroupReview.objects.raw(query):
+            lst.append({"id": str(review.pk)})
+        result = {"result": ERR.OK, "list": lst}
+    except Exception as ex:
+        print(ex)
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
