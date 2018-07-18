@@ -41,8 +41,6 @@ test_version = "test_0.3"
 
 def prepare_db():
     try:
-        connect(settings.mongo.conn_string + "/" + settings.mongo.db_name,
-            alias = "reviewer")
         revDb = _get_db("reviewer")
         service = revDb["service"].find_one()
         if service is None:
@@ -70,6 +68,7 @@ class TestValidation(unittest.TestCase):
     def setUpClass(cls):
         
         prepare_db()
+        
         
     #Role in group tests    
     def test_vaild_role_in_group(self):
@@ -116,19 +115,22 @@ class TestValidation(unittest.TestCase):
                 role_without_permissions.delete()
     
     def test_duplicate_permissions(self):
-        with self.assertRaises(ValidationError):
-            role_in_group = RoleInGroup.objects.get(
-                    {
-                            "person_id" : Person.objects.get({"surname" : "Дунаев"}).pk,
-                            "group_id" : Group.objects.get({"name" : "А-4-03"}).pk
-                     })
-            duplicate_permission = GroupPermission.objects.get({"name" : "read_info"})
-            role_in_group.permissions.append(duplicate_permission)
-            if duplicate_permission.pk is not None:
-                duplicate_permission.delete()
-    
-    
         
+        role_in_group = RoleInGroup.objects.get(
+                {
+                        "person_id" : Person.objects.get({"surname" : "Дунаев"}).pk,
+                        "group_id" : Group.objects.get({"name" : "А-4-03"}).pk
+                 })
+        duplicate_permission = GroupPermission.objects.get({"name" : "read_info"})
+        role_in_group.permissions.append(duplicate_permission)
+        role_in_group.refresh_from_db()
+        resulting_permissions = role_in_group.permissions
+        perm_count = 0
+        for item in resulting_permissions:
+            if item.name == "read_info": 
+                perm_count+=1
+        self.assertEqual(perm_count, 1)
+    
     def tearDown(self):
         pass
         #clear_db()
@@ -137,4 +139,5 @@ class TestValidation(unittest.TestCase):
 if __name__ == "__main__":
     
     unittest.main(verbosity = 1)
+    
             
