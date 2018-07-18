@@ -617,3 +617,92 @@ def find_reviews():
         print(ex)
         result = {"result": ERR.DB}
     return jsonify(result), 200
+
+
+@bp.route("/soft_skills", methods = ['POST'])
+def add_soft_skill():
+    req = request.get_json()
+    try:
+        name = req['name']
+        soft_skill = SoftSkill(name)
+        soft_skill.save()
+        result = {"result":ERR.OK,
+                  "id": str(soft_skill.pk)}
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
+
+@bp.route("/soft_skills/<string:id>", methods = ['DELETE'])
+def delete_soft_skill(id):
+    try:
+        if SoftSkill(_id=id) in SoftSkill.objects.raw({"_id":ObjectId(id)}):
+            SoftSkill(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/soft_skills", methods = ['GET'])
+def list_soft_skills():
+    list = []
+    try:
+        for soft_skill in  SoftSkill.objects.all():
+            list.append({"id":str(soft_skill.pk),
+                         "name":soft_skill.name}
+                        )
+        result = {"result": ERR.OK, "list":list}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/hard_skills", methods = ['POST'])
+def add_hard_skill():
+    req = request.get_json()
+    try:
+        name = req['name']
+        hard_skill = HardSkill(name)
+        hard_skill.save()
+        result = {"result":ERR.OK,
+                  "id": str(hard_skill.pk)}
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
+
+@bp.route("/hard_skills/<string:id>", methods = ['DELETE'])
+def delete_hard_skill(id):
+    try:
+        if HardSkill(_id=id) in HardSkill.objects.raw({"_id":ObjectId(id)}):
+            HardSkill(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/hard_skills", methods = ['GET'])
+def list_hard_skills():
+    list = []
+    try:
+        for hard_skill in  HardSkill.objects.all():
+            list.append({"id":str(hard_skill.pk),
+                         "name":hard_skill.name}
+                        )
+        result = {"result": ERR.OK, "list":list}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+

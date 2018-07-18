@@ -974,6 +974,186 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "skills",
+			"description": "Функции для работы с навыками пользователей",
+			"item": [
+				{
+					"name": "add_soft_skill",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"Безбашенность\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/soft_skills",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"soft_skills"
+							]
+						},
+						"description": "Добавляет личностную характеристику в базу"
+					},
+					"response": []
+				},
+				{
+					"name": "delete_soft_skill",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/soft_skills/5b4f93192131371ff09087f0",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"soft_skills",
+								"5b4f93192131371ff09087f0"
+							]
+						},
+						"description": "Удаляет личностную характеристику из базы"
+					},
+					"response": []
+				},
+				{
+					"name": "list_soft_skills",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/soft_skills",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"soft_skills"
+							]
+						},
+						"description": "Получает список возможных личностных характеристик пользователей"
+					},
+					"response": []
+				},
+				{
+					"name": "add_hard_skill",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"Угнетение угнетенных\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/hard_skills",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"hard_skills"
+							]
+						},
+						"description": "Добавляет профессиональный навык в базу"
+					},
+					"response": []
+				},
+				{
+					"name": "delete_hard_skill",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/hard_skills/5b4f96a5213137236009710c",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"hard_skills",
+								"5b4f96a5213137236009710c"
+							]
+						},
+						"description": "Удаляет профессиональный навык из базы"
+					},
+					"response": []
+				},
+				{
+					"name": "list_hard_skills",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/hard_skills",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"hard_skills"
+							]
+						},
+						"description": "Получает список возможных профессиональных навыков пользователей"
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
