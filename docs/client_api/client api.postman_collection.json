@@ -1,854 +1,913 @@
 {
 	"info": {
-		"_postman_id": "7b13fc62-3ad4-4848-a5a7-a1a6eb9f11c9",
+		"_postman_id": "1be461a1-11b9-4ee8-8450-30d5ec353cd2",
 		"name": "client api",
 		"description": "Вызовы функций клиентского api для node server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "list_groups",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/departments/5b4e38d02131371ce8dd8246/groups",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"departments",
-						"5b4e38d02131371ce8dd8246",
-						"groups"
-					]
-				},
-				"description": "Получает список групп"
-			},
-			"response": []
-		},
-		{
-			"name": "delete_general_role",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/delete_general_role/5b4b83482131370d14e4390e",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"delete_general_role",
-						"5b4b83482131370d14e4390e"
-					]
-				},
-				"description": "Удаляет роль пользователя"
-			},
-			"response": []
-		},
-		{
-			"name": "add_department",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"name\":\"РТФ\"\n}"
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/organizations/5b4e37822131370d64c74b88/departments",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"organizations",
-						"5b4e37822131370d64c74b88",
-						"departments"
-					]
-				},
-				"description": "Добавляет департамент в базу"
-			},
-			"response": []
-		},
-		{
-			"name": "add_organization",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"name\":\"МИФИ\"\n}"
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/organizations",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"organizations"
-					]
-				},
-				"description": "Добавляет организацию в базу"
-			},
-			"response": []
-		},
-		{
-			"name": "add_group_permission",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"name\":\"удалять всех\"\n}"
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/group_permissions",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"group_permissions"
-					]
-				},
-				"description": "Добавляет права для роли в группе в базу"
-			},
-			"response": []
-		},
-		{
-			"name": "delete_group_role",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/group_roles/5b4e3be821313704ccea95ab",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"group_roles",
-						"5b4e3be821313704ccea95ab"
-					]
-				},
-				"description": "Удаляет роль для группы из базы"
-			},
-			"response": []
-		},
-		{
-			"name": "list_departments",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/organizations/5b4e37822131370d64c74b88/departments",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"organizations",
-						"5b4e37822131370d64c74b88",
-						"departments"
-					]
-				},
-				"description": "Получает список департаментов организации"
-			},
-			"response": []
-		},
-		{
-			"name": "post_review",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"type\":\"RoleInGroup\",\n\t\"reviewer_id\":\"5b4cce752131371ed071ead3\",\n\t\"subject_id\":\"5b4cce752131371ed071ead3\",\n\t\"value\": 90.0,\n\t\"description\":\"Очень круто\"\n}"
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/post_review",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"post_review"
-					]
-				},
-				"description": "Публикует отзыв о чем-либо\nв type передается тип отзыва:\nStudentRole - на студента\nTutorRole - на преподавателя\nHardSkill - на hard skill пользователя\nSoftSkill - на soft skill пользователя\nGroup - на группу\nGroupTest - на тест для группы\nRoleInGroup - на участника группы"
-			},
-			"response": []
-		},
-		{
-			"name": "add_group_role",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"name\":\"админ\"\n}"
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/group_roles",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"group_roles"
-					]
-				},
-				"description": "Добавляет роль для группы в базу"
-			},
-			"response": []
-		},
-		{
-			"name": "delete_group",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/groups/5b4e3b43213137134c41b7b7",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"groups",
-						"5b4e3b43213137134c41b7b7"
-					]
-				},
-				"description": "Удаляе группу из базы"
-			},
-			"response": []
-		},
-		{
-			"name": "delete_role_in_group",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/roles_in_group/5b4e46bf2131371f20760a3a",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"roles_in_group",
-						"5b4e46bf2131371f20760a3a"
-					]
-				},
-				"description": "Удаляет роль пользователя из группы"
-			},
-			"response": []
-		},
-		{
-			"name": "add_general_role",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"person_id\": \"5b4b970a2131370f187fb986\",\n\t\"department_id\":\"5b490bf52131372df4cd2073\",\n\t\"role_type\":\"Studend\",\n\t\"role_data\":\"Бездельник\"\n}"
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/add_general_role",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"add_general_role"
-					]
-				},
-				"description": "Добавляет пользователю роль"
-			},
-			"response": []
-		},
-		{
-			"name": "add_role_in_group",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"person_id\": \"5b4e31f2213137099cd9e7cb\",\n\t\"role_id\":\"5b4e31f3213137099cd9e81e\",\n\t\"default_permission_id\":\"5b48f6f72131372a385a1e55\"\n}"
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/groups/5b4e31f3213137099cd9e827/roles_in_group",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"groups",
-						"5b4e31f3213137099cd9e827",
-						"roles_in_group"
-					]
-				},
-				"description": "Добавляет пользователя в группу с определенной ролью"
-			},
-			"response": []
-		},
-		{
-			"name": "get_role_in_group_info",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/roles_in_group/5b4e31f3213137099cd9e82b",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"roles_in_group",
-						"5b4e31f3213137099cd9e82b"
-					]
-				},
-				"description": "Получает информацию о роли в группе:\nпользователя, кому принадлежит роль\nгруппу в которой она зарегистрирована\nправа этой роли в группе"
-			},
-			"response": []
-		},
-		{
-			"name": "delete_organization",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/organizations/5b4e377f2131370d64c74b86",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"organizations",
-						"5b4e377f2131370d64c74b86"
-					]
-				},
-				"description": "Удаляет организацию из базы"
-			},
-			"response": []
-		},
-		{
-			"name": "delete_permissions_from_role_in_group",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/roles_in_group/5b4e41c0213137195c0ec536/permissions/5b4e31f3213137099cd9e81f",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"roles_in_group",
-						"5b4e41c0213137195c0ec536",
-						"permissions",
-						"5b4e31f3213137099cd9e81f"
-					]
-				},
-				"description": "Снимает права с роли пользователя в группе"
-			},
-			"response": []
-		},
-		{
-			"name": "list_roles_in_group_by_person_id",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/persons/5b4e31f2213137099cd9e7cb/roles_in_group",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"persons",
-						"5b4e31f2213137099cd9e7cb",
-						"roles_in_group"
-					]
-				},
-				"description": "Получает список ролей пользователя во всех группах"
-			},
-			"response": []
-		},
-		{
-			"name": "list_group_permissions",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/group_permissions",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"group_permissions"
-					]
-				},
-				"description": "Получает список прав для ролей в группе из базы"
-			},
-			"response": []
-		},
-		{
-			"name": "list_roles_in_group_by_group_id",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/groups/5b4e31f3213137099cd9e827/roles_in_group",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"groups",
-						"5b4e31f3213137099cd9e827",
-						"roles_in_group"
-					]
-				},
-				"description": "Получает список ролей пользователей в группе для заданной группы"
-			},
-			"response": []
-		},
-		{
-			"name": "delete_group_permission",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/group_permissions/5b4e3c4921313704ccea95ae",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"group_permissions",
-						"5b4e3c4921313704ccea95ae"
-					]
-				},
-				"description": "Удаляет права для роли в группе из базы"
-			},
-			"response": []
-		},
-		{
-			"name": "add_permissions_to_role_in_group",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"group_permission_id\":\"5b4e31f3213137099cd9e81f\"\n}"
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/roles_in_group/5b4e41c0213137195c0ec536/permissions",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"roles_in_group",
-						"5b4e41c0213137195c0ec536",
-						"permissions"
-					]
-				},
-				"description": "Добавляет права для роли пользователя в группе"
-			},
-			"response": []
-		},
-		{
-			"name": "add_group",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"department_id\": \"5b48f6f72131372a385a1e09\",\n\t\"name\":\"А-5-03\"\n}"
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/departments/5b4e38d02131371ce8dd8246/groups",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"departments",
-						"5b4e38d02131371ce8dd8246",
-						"groups"
-					]
-				},
-				"description": "Добавляет группу в базу"
-			},
-			"response": []
-		},
-		{
-			"name": "list_group_roles",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/group_roles",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"group_roles"
-					]
-				},
-				"description": "Получает список возможных ролей для группы"
-			},
-			"response": []
-		},
-		{
-			"name": "find_persons",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/find_persons?group_id=5b4cce752131371ed071ead3&department_id=5b4cce742131371ed071ea80&organization_id=5b4cce742131371ed071ea7f",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"find_persons"
-					],
-					"query": [
-						{
-							"key": "group_id",
-							"value": "5b4cce752131371ed071ead3"
+			"name": "organizations",
+			"description": "Функции для работы с организациями",
+			"item": [
+				{
+					"name": "add_organization",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"МИФИ\"\n}"
 						},
-						{
-							"key": "department_id",
-							"value": "5b4cce742131371ed071ea80"
+						"url": {
+							"raw": "http://127.0.0.1:5000/organizations",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"organizations"
+							]
 						},
-						{
-							"key": "organization_id",
-							"value": "5b4cce742131371ed071ea7f"
-						}
-					]
+						"description": "Добавляет организацию в базу"
+					},
+					"response": []
 				},
-				"description": "Ищет людей по определенным критериям"
-			},
-			"response": []
+				{
+					"name": "delete_organization",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/organizations/5b4e377f2131370d64c74b86",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"organizations",
+								"5b4e377f2131370d64c74b86"
+							]
+						},
+						"description": "Удаляет организацию из базы"
+					},
+					"response": []
+				},
+				{
+					"name": "list_organizations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/organizations",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"organizations"
+							]
+						},
+						"description": "Получает список зарегистрированных организаций"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "400eb98f-ebd5-437f-8999-99ccac81c461",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "418a0d3c-8f72-46d8-97a7-aa16893f2b32",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
 		},
 		{
-			"name": "delete_department",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
+			"name": "departments",
+			"description": "Функции для работы с департаментами",
+			"item": [
+				{
+					"name": "add_department",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"РТФ\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/organizations/5b4e37822131370d64c74b88/departments",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"organizations",
+								"5b4e37822131370d64c74b88",
+								"departments"
+							]
+						},
+						"description": "Добавляет департамент в базу"
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/departments/5b4e38d12131371ce8dd8247",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"departments",
-						"5b4e38d12131371ce8dd8247"
-					]
+				{
+					"name": "delete_department",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/departments/5b4e38d12131371ce8dd8247",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"departments",
+								"5b4e38d12131371ce8dd8247"
+							]
+						},
+						"description": "Удаляет департамент из базы"
+					},
+					"response": []
 				},
-				"description": "Удаляет департамент из базы"
-			},
-			"response": []
+				{
+					"name": "list_departments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/organizations/5b4e37822131370d64c74b88/departments",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"organizations",
+								"5b4e37822131370d64c74b88",
+								"departments"
+							]
+						},
+						"description": "Получает список департаментов организации"
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "list_organizations",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
+			"name": "groups",
+			"description": "Функции для работы с группами",
+			"item": [
+				{
+					"name": "add_group",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"department_id\": \"5b48f6f72131372a385a1e09\",\n\t\"name\":\"А-5-03\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/departments/5b4e38d02131371ce8dd8246/groups",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"departments",
+								"5b4e38d02131371ce8dd8246",
+								"groups"
+							]
+						},
+						"description": "Добавляет группу в базу"
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/organizations",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"organizations"
-					]
+				{
+					"name": "delete_group",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/groups/5b4e3b43213137134c41b7b7",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"groups",
+								"5b4e3b43213137134c41b7b7"
+							]
+						},
+						"description": "Удаляе группу из базы"
+					},
+					"response": []
 				},
-				"description": "Получает список зарегистрированных организаций"
-			},
-			"response": []
+				{
+					"name": "list_groups",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/departments/5b4e38d02131371ce8dd8246/groups",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"departments",
+								"5b4e38d02131371ce8dd8246",
+								"groups"
+							]
+						},
+						"description": "Получает список групп"
+					},
+					"response": []
+				},
+				{
+					"name": "add_group_role",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"админ\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/group_roles",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"group_roles"
+							]
+						},
+						"description": "Добавляет роль для группы в базу"
+					},
+					"response": []
+				},
+				{
+					"name": "delete_group_role",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/group_roles/5b4e3be821313704ccea95ab",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"group_roles",
+								"5b4e3be821313704ccea95ab"
+							]
+						},
+						"description": "Удаляет роль для группы из базы"
+					},
+					"response": []
+				},
+				{
+					"name": "list_group_roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/group_roles",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"group_roles"
+							]
+						},
+						"description": "Получает список возможных ролей для группы"
+					},
+					"response": []
+				},
+				{
+					"name": "add_group_permission",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"удалять всех\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/group_permissions",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"group_permissions"
+							]
+						},
+						"description": "Добавляет права для роли в группе в базу"
+					},
+					"response": []
+				},
+				{
+					"name": "delete_group_permission",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/group_permissions/5b4e3c4921313704ccea95ae",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"group_permissions",
+								"5b4e3c4921313704ccea95ae"
+							]
+						},
+						"description": "Удаляет права для роли в группе из базы"
+					},
+					"response": []
+				},
+				{
+					"name": "list_group_permissions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/group_permissions",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"group_permissions"
+							]
+						},
+						"description": "Получает список прав для ролей в группе из базы"
+					},
+					"response": []
+				},
+				{
+					"name": "add_role_in_group",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"person_id\": \"5b4e31f2213137099cd9e7cb\",\n\t\"role_id\":\"5b4e31f3213137099cd9e81e\",\n\t\"default_permission_id\":\"5b48f6f72131372a385a1e55\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/groups/5b4e31f3213137099cd9e827/roles_in_group",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"groups",
+								"5b4e31f3213137099cd9e827",
+								"roles_in_group"
+							]
+						},
+						"description": "Добавляет пользователя в группу с определенной ролью"
+					},
+					"response": []
+				},
+				{
+					"name": "delete_role_in_group",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/roles_in_group/5b4e46bf2131371f20760a3a",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"roles_in_group",
+								"5b4e46bf2131371f20760a3a"
+							]
+						},
+						"description": "Удаляет роль пользователя из группы"
+					},
+					"response": []
+				},
+				{
+					"name": "get_role_in_group_info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/roles_in_group/5b4e31f3213137099cd9e82b",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"roles_in_group",
+								"5b4e31f3213137099cd9e82b"
+							]
+						},
+						"description": "Получает информацию о роли в группе:\nпользователя, кому принадлежит роль\nгруппу в которой она зарегистрирована\nправа этой роли в группе"
+					},
+					"response": []
+				},
+				{
+					"name": "add_permissions_to_role_in_group",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"group_permission_id\":\"5b4e31f3213137099cd9e81f\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/roles_in_group/5b4e41c0213137195c0ec536/permissions",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"roles_in_group",
+								"5b4e41c0213137195c0ec536",
+								"permissions"
+							]
+						},
+						"description": "Добавляет права для роли пользователя в группе"
+					},
+					"response": []
+				},
+				{
+					"name": "delete_permissions_from_role_in_group",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/roles_in_group/5b4e41c0213137195c0ec536/permissions/5b4e31f3213137099cd9e81f",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"roles_in_group",
+								"5b4e41c0213137195c0ec536",
+								"permissions",
+								"5b4e31f3213137099cd9e81f"
+							]
+						},
+						"description": "Снимает права с роли пользователя в группе"
+					},
+					"response": []
+				},
+				{
+					"name": "list_roles_in_group_by_group_id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/groups/5b4e31f3213137099cd9e827/roles_in_group",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"groups",
+								"5b4e31f3213137099cd9e827",
+								"roles_in_group"
+							]
+						},
+						"description": "Получает список ролей пользователей в группе для заданной группы"
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "list_roles_by_person_id",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
+			"name": "general roles",
+			"description": "Функции для работы с ролями пользователей",
+			"item": [
+				{
+					"name": "add_general_role",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"person_id\": \"5b4b970a2131370f187fb986\",\n\t\"department_id\":\"5b490bf52131372df4cd2073\",\n\t\"role_type\":\"Studend\",\n\t\"role_data\":\"Бездельник\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/general_roles",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"general_roles"
+							]
+						},
+						"description": "Добавляет пользователю роль"
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/list_roles_by_person_id/5b4b970a2131370f187fb986",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"list_roles_by_person_id",
-						"5b4b970a2131370f187fb986"
-					]
+				{
+					"name": "delete_general_role",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/general_roles/5b4ebab52131371208ceb10f",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"general_roles",
+								"5b4ebab52131371208ceb10f"
+							]
+						},
+						"description": "Удаляет роль пользователя"
+					},
+					"response": []
 				},
-				"description": "Получает список ролей пользователя"
-			},
-			"response": []
+				{
+					"name": "get_general_roles_data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/general_roles/5b4ebab52131371208ceb10f",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"general_roles",
+								"5b4ebab52131371208ceb10f"
+							]
+						},
+						"description": "Получает информацию о роли:\nпользователя, кому принадлежит роль\nдепартамент, в котором она зарегистрирована\nтип роли (Преподаватель или Студент)\nописание для студента и предмет для преподавателя"
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "get_general_roles_data",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
+			"name": "reviews",
+			"description": "Функции для работы с ревью",
+			"item": [
+				{
+					"name": "post_review",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\":\"RoleInGroup\",\n\t\"reviewer_id\":\"5b4cce752131371ed071ead3\",\n\t\"subject_id\":\"5b4cce752131371ed071ead3\",\n\t\"value\": 90.0,\n\t\"description\":\"Очень круто\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/reviews",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"reviews"
+							]
+						},
+						"description": "Публикует отзыв о чем-либо\nв type передается тип отзыва:\nStudentRole - на студента\nTutorRole - на преподавателя\nHardSkill - на hard skill пользователя\nSoftSkill - на soft skill пользователя\nGroup - на группу\nGroupTest - на тест для группы\nRoleInGroup - на участника группы"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "persons",
+			"description": "Функции для работы с данными пользователей",
+			"item": [
+				{
+					"name": "find_persons",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons?group_id=5b4ebab52131371208ceb120&department_id=5b4cce742131371ed071ea80&organization_id=5b4cce742131371ed071ea7f",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons"
+							],
+							"query": [
+								{
+									"key": "group_id",
+									"value": "5b4ebab52131371208ceb120"
+								},
+								{
+									"key": "department_id",
+									"value": "5b4cce742131371ed071ea80"
+								},
+								{
+									"key": "organization_id",
+									"value": "5b4cce742131371ed071ea7f"
+								}
+							]
+						},
+						"description": "Ищет людей по определенным критериям"
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/get_general_roles_data/5b4b970a2131370f187fb9c6",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"get_general_roles_data",
-						"5b4b970a2131370f187fb9c6"
-					]
+				{
+					"name": "list_roles_in_group_by_person_id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/5b4e31f2213137099cd9e7cb/roles_in_group",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"5b4e31f2213137099cd9e7cb",
+								"roles_in_group"
+							]
+						},
+						"description": "Получает список ролей пользователя во всех группах"
+					},
+					"response": []
 				},
-				"description": "Получает информацию о роли:\nпользователя, кому принадлежит роль\nдепартамент, в котором она зарегистрирована\nтип роли (Преподаватель или Студент)\nописание для студента и предмет для преподавателя"
-			},
-			"response": []
+				{
+					"name": "list_roles_by_person_id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/5b4ebab42131371208ceb0c6/general_roles",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"5b4ebab42131371208ceb0c6",
+								"general_roles"
+							]
+						},
+						"description": "Получает список ролей пользователя"
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

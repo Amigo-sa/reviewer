@@ -378,10 +378,7 @@ def delete_permissions_from_role_in_group(id1, id2):
     return jsonify(result), 200
 
 
-# TODO у этой функции одна неприятная проблема:
-# сейчас она может добавить роль несуществующему человеку в несуществующем
-# департаменте. Выяснить сдесь или в базе надо исправлять
-@bp.route("/add_general_role", methods=['POST'])
+@bp.route("/general_roles", methods=['POST'])
 def add_general_role():
     req = request.get_json()
     try:
@@ -415,7 +412,7 @@ def add_general_role():
     return jsonify(result), 200
 
 
-@bp.route("/delete_general_role/<string:id>", methods=['DELETE'])
+@bp.route("/general_roles/<string:id>", methods=['DELETE'])
 def delete_general_role(id):
     try:
         if TutorRole(_id=id) in TutorRole.objects.raw({"_id":ObjectId(id)}):
@@ -432,7 +429,7 @@ def delete_general_role(id):
     return jsonify(result), 200
 
 
-@bp.route("/get_general_roles_data/<string:id>", methods=['GET'])
+@bp.route("/general_roles/<string:id>", methods=['GET'])
 def get_general_roles_data(id):
     try:
         if StudentRole(_id=id) in StudentRole.objects.raw({"_id": ObjectId(id)}):
@@ -459,7 +456,7 @@ def get_general_roles_data(id):
     return jsonify(result), 200
 
 
-@bp.route("/list_roles_by_person_id/<string:id>", methods=['GET'])
+@bp.route("/persons/<string:id>/general_roles", methods=['GET'])
 def list_roles_by_person_id(id):
     list = []
     try:
@@ -473,7 +470,7 @@ def list_roles_by_person_id(id):
     return jsonify(result), 200
 
 
-@bp.route("/find_persons", methods=['GET'])
+@bp.route("/persons", methods=['GET'])
 def find_persons():
     lst = []
     if 'group_id' in request.args:
@@ -519,7 +516,7 @@ def find_persons():
     return jsonify(result), 200
 
 
-@bp.route("/post_review", methods = ['POST'])
+@bp.route("/reviews", methods = ['POST'])
 def post_review():
     req = request.get_json()
     try:
