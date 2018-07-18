@@ -10,7 +10,7 @@ from pymongo.errors import DuplicateKeyError
 connect(settings.mongo.conn_string + "/" + settings.mongo.db_name,
             alias = "reviewer")
 
-from src.data.reviewer_model import (Department,
+from data.reviewer_model import (Department,
                                      Group,
                                      GroupPermission,
                                      GroupReview,
@@ -36,6 +36,10 @@ from src.data.reviewer_model import (Department,
                                      TutorRole,
                                      get_dependent_list,
                                      init_model)
+import src.node as node
+import src.node.settings.errors as ERR
+import src.node.api.routes as routes
+
 
 test_version = "test_0.3"
 

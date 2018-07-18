@@ -2,7 +2,7 @@ import context
 import datetime
 import random
 
-from src.data.reviewer_model import (Department,
+from data.reviewer_model import (Department,
                                      Group,
                                      GroupPermission,
                                      GroupReview,
