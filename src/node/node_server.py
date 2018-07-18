@@ -4,16 +4,12 @@ from threading import Thread
 from node.settings import constants
 import pymongo
 from flask import Flask
-
+from node.api.routes import bp
 from pymodm.connection import connect
 
-try:
-    connect(constants.mongo_db + "/reviewer",
-            alias = "reviewer")
-except Exception as ex:
-    print(ex)
 
-from node.api.routes import bp
+
+
 
 app = Flask(__name__)
 app.register_blueprint(bp)

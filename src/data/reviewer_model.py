@@ -4,7 +4,7 @@ from pymodm.errors import ValidationError
 from pymongo.operations import IndexModel
 import pymongo
 from pymodm.connection import connect
-import settings.mongo
+import data.settings as settings
 
 connect(settings.mongo.conn_string + "/" + settings.mongo.db_name,
             alias = "reviewer")
