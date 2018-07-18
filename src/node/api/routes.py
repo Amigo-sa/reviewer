@@ -26,7 +26,7 @@ if __debug__:
         return result_string
 
 
-@bp.route("/add_organization", methods = ['POST'])
+@bp.route("/organizations", methods = ['POST'])
 def add_organization():
     req = request.get_json()
     try:
@@ -44,7 +44,7 @@ def add_organization():
     return jsonify(result), 200
 
 
-@bp.route("/delete_organization/<string:id>", methods = ['DELETE'])
+@bp.route("/organizations/<string:id>", methods = ['DELETE'])
 def delete_organization(id):
     try:
         if Organization(_id=id) in Organization.objects.raw({"_id":ObjectId(id)}):
@@ -57,7 +57,7 @@ def delete_organization(id):
     return jsonify(result), 200
 
 
-@bp.route("/list_organizations", methods = ['GET'])
+@bp.route("/organizations", methods = ['GET'])
 def list_organizations():
     list = []
     try:
@@ -71,16 +71,15 @@ def list_organizations():
     return jsonify(result), 200
 
 
-@bp.route("/add_department", methods = ['POST'])
-def add_department():
+@bp.route("/organizations/<string:id>/departments", methods = ['POST'])
+def add_department(id):
     req = request.get_json()
     try:
-        organization_id = req['organization_id']
         name = req['name']
     except:
         return jsonify({"result": ERR.INPUT}), 200
     try:
-        department = Department(name, Organization(_id=organization_id))
+        department = Department(name, Organization(_id=id))
         department.save()
         result = {"result":ERR.OK,
                   "id": str(department.pk)}
@@ -90,7 +89,7 @@ def add_department():
     return jsonify(result), 200
 
 
-@bp.route("/delete_department/<string:id>", methods = ['DELETE'])
+@bp.route("/departments/<string:id>", methods = ['DELETE'])
 def delete_department(id):
     try:
         if Department(_id=id) in Department.objects.raw({"_id":ObjectId(id)}):
@@ -103,7 +102,7 @@ def delete_department(id):
     return jsonify(result), 200
 
 
-@bp.route("/list_departments/<string:id>", methods = ['GET'])
+@bp.route("/organizations/<string:id>/departments", methods = ['GET'])
 def list_departments(id):
     list = []
     try:
@@ -117,16 +116,15 @@ def list_departments(id):
     return jsonify(result), 200
 
 
-@bp.route("/add_group", methods = ['POST'])
-def add_group():
+@bp.route("/departments/<string:id>/groups", methods = ['POST'])
+def add_group(id):
     req = request.get_json()
     try:
-        department_id = req['department_id']
         name = req['name']
     except:
         return jsonify({"result": ERR.INPUT}), 200
     try:
-        group = Group(Department(_id=department_id), name)
+        group = Group(Department(_id=id), name)
         group.save()
         result = {"result":ERR.OK,
                   "id": str(group.pk)}
@@ -136,7 +134,7 @@ def add_group():
     return jsonify(result), 200
 
 
-@bp.route("/delete_group/<string:id>", methods = ['DELETE'])
+@bp.route("/groups/<string:id>", methods = ['DELETE'])
 def delete_group(id):
     try:
         if Group(_id=id) in Group.objects.raw({"_id":ObjectId(id)}):
@@ -149,7 +147,7 @@ def delete_group(id):
     return jsonify(result), 200
 
 
-@bp.route("/list_groups/<string:id>", methods = ['GET'])
+@bp.route("/departments/<string:id>/groups", methods = ['GET'])
 def list_groups(id):
     list = []
     try:
@@ -163,7 +161,7 @@ def list_groups(id):
     return jsonify(result), 200
 
 
-@bp.route("/add_group_role", methods = ['POST'])
+@bp.route("/group_roles", methods = ['POST'])
 def add_group_role():
     req = request.get_json()
     try:
@@ -181,7 +179,7 @@ def add_group_role():
     return jsonify(result), 200
 
 
-@bp.route("/delete_group_role/<string:id>", methods = ['DELETE'])
+@bp.route("/group_roles/<string:id>", methods = ['DELETE'])
 def delete_group_role(id):
     try:
         if GroupRole(_id=id) in GroupRole.objects.raw({"_id":ObjectId(id)}):
@@ -194,7 +192,7 @@ def delete_group_role(id):
     return jsonify(result), 200
 
 
-@bp.route("/list_group_roles", methods = ['GET'])
+@bp.route("/group_roles", methods = ['GET'])
 def list_group_roles():
     list = []
     try:
@@ -208,7 +206,7 @@ def list_group_roles():
     return jsonify(result), 200
 
 
-@bp.route("/add_group_permission", methods = ['POST'])
+@bp.route("/group_permissions", methods = ['POST'])
 def add_group_permission():
     req = request.get_json()
     try:
@@ -226,7 +224,7 @@ def add_group_permission():
     return jsonify(result), 200
 
 
-@bp.route("/delete_group_permission/<string:id>", methods = ['DELETE'])
+@bp.route("/group_permissions/<string:id>", methods = ['DELETE'])
 def delete_group_permission(id):
     try:
         if GroupPermission(_id=id) in GroupPermission.objects.raw({"_id":ObjectId(id)}):
@@ -239,7 +237,7 @@ def delete_group_permission(id):
     return jsonify(result), 200
 
 
-@bp.route("/list_group_permissions", methods = ['GET'])
+@bp.route("/group_permissions", methods = ['GET'])
 def list_group_permissions():
     list = []
     try:
@@ -253,21 +251,18 @@ def list_group_permissions():
     return jsonify(result), 200
 
 
-# TODO разобраться стоит ли делать дополнительные проверки на
-# корректность вносимых данных в этой функции и сделать их при необходимости
-@bp.route("/add_role_in_group", methods=['POST'])
-def add_role_in_group():
+@bp.route("/groups/<string:id>/roles_in_group", methods=['POST'])
+def add_role_in_group(id):
     req = request.get_json()
     try:
         person_id = req['person_id']
-        group_id = req['group_id']
         role_id = req['role_id']
         default_permission_id = req['default_permission_id']
     except:
         return jsonify({"result": ERR.INPUT}), 200
     try:
         role_in_group = RoleInGroup(Person(_id=person_id),
-                                    Group(_id=group_id),
+                                    Group(_id=id),
                                     GroupRole(_id=role_id),
                                     [GroupPermission(_id=default_permission_id)])
         role_in_group.save()
@@ -279,7 +274,7 @@ def add_role_in_group():
     return jsonify(result), 200
 
 
-@bp.route("/delete_role_in_group/<string:id>", methods=['DELETE'])
+@bp.route("/roles_in_group/<string:id>", methods=['DELETE'])
 def delete_role_in_group(id):
     try:
         if RoleInGroup(_id=id) in RoleInGroup.objects.raw({"_id":ObjectId(id)}):
@@ -292,7 +287,7 @@ def delete_role_in_group(id):
     return jsonify(result), 200
 
 
-@bp.route("/list_roles_in_group_by_group_id/<string:id>", methods=['GET'])
+@bp.route("/groups/<string:id>/roles_in_group", methods=['GET'])
 def list_roles_in_group_by_group_id(id):
     list = []
     try:
@@ -304,7 +299,7 @@ def list_roles_in_group_by_group_id(id):
     return jsonify(result), 200
 
 
-@bp.route("/list_roles_in_group_by_person_id/<string:id>", methods=['GET'])
+@bp.route("/persons/<string:id>/roles_in_group", methods=['GET'])
 def list_roles_in_group_by_person_id(id):
     list = []
     try:
@@ -316,7 +311,7 @@ def list_roles_in_group_by_person_id(id):
     return jsonify(result), 200
 
 
-@bp.route("/get_role_in_group_info/<string:id>", methods=['GET'])
+@bp.route("/roles_in_group/<string:id>", methods=['GET'])
 def get_role_in_group_info(id):
     try:
         if RoleInGroup(_id=id) in RoleInGroup.objects.raw({"_id": ObjectId(id)}):
@@ -337,7 +332,7 @@ def get_role_in_group_info(id):
     return jsonify(result), 200
 
 
-@bp.route("/add_permissions_to_role_in_group/<string:id>", methods = ['POST'])
+@bp.route("/roles_in_group/<string:id>/permissions", methods = ['POST'])
 def add_permissions_to_role_in_group(id):
     req = request.get_json()
     try:
@@ -361,18 +356,13 @@ def add_permissions_to_role_in_group(id):
     return jsonify(result), 200
 
 
-@bp.route("/delete_permissions_from_role_in_group/<string:id>", methods = ['DELETE'])
-def delete_permissions_from_role_in_group(id):
-    req = request.get_json()
+@bp.route("/roles_in_group/<string:id1>/permissions/<string:id2>", methods = ['DELETE'])
+def delete_permissions_from_role_in_group(id1, id2):
     try:
-        group_permission_id = req['group_permission_id']
-    except:
-        return jsonify({"result": ERR.INPUT}), 200
-    try:
-        if RoleInGroup(_id=id) in RoleInGroup.objects.raw({"_id": ObjectId(id)}):
-            role_in_group = RoleInGroup(_id=id)
+        if RoleInGroup(_id=id1) in RoleInGroup.objects.raw({"_id": ObjectId(id1)}):
+            role_in_group = RoleInGroup(_id=id1)
             role_in_group.refresh_from_db()
-            permission = GroupPermission(_id=group_permission_id)
+            permission = GroupPermission(_id=id2)
             permission.refresh_from_db()
             if permission not in role_in_group.permissions:
                 result = {"result": ERR.NO_DATA}
