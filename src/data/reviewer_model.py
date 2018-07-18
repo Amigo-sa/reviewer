@@ -3,6 +3,11 @@ from pymongo.write_concern import WriteConcern
 from pymodm.errors import ValidationError
 from pymongo.operations import IndexModel
 import pymongo
+from pymodm.connection import connect
+import settings.mongo
+
+connect(settings.mongo.conn_string + "/" + settings.mongo.db_name,
+            alias = "reviewer")
 
 class Service(MongoModel):
     version = fields.CharField()

@@ -1,6 +1,9 @@
 import context
 import datetime
 import random
+from pymodm.connection import _get_db
+
+fill_script_version = "0.3"
 
 from data.reviewer_model import (Department,
                                      Group,
@@ -29,6 +32,14 @@ from data.reviewer_model import (Department,
                                      get_dependent_list,
                                      init_model)
 
+def clear_db():
+    print("clearing db...")
+    revDb = _get_db("reviewer")
+    colList = revDb.list_collection_names()
+    for col in colList:
+        revDb.drop_collection(col)
+        print ("dropped collection " + col)
+    print("done")
 def fill_db():
     persons = {
         "Leni4":
@@ -544,8 +555,9 @@ def fill_db():
                          "начинать в 9:20": 25.0,}
                         )
             }
-
-    service = Service("test_0.3")
+    print("Filling db...")
+    print("Fill script version is " + fill_script_version)
+    service = Service(fill_script_version)
     service.save()
     for key, item in persons.items():
         item.save()
@@ -593,9 +605,11 @@ def fill_db():
         item.save()
     for key, item in surveys.items():
         item.save()
+    print("done")
 
-
-            
+if __name__ == "__main__":
+    clear_db()
+    fill_db()          
     
 
     

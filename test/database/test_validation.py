@@ -1,14 +1,10 @@
 import unittest
-import settings.mongo
 import context 
 import datetime
 from pymodm import MongoModel
-from pymodm.connection import connect, _get_db
+from pymodm.connection import _get_db
 from pymodm.errors import ValidationError
 from pymongo.errors import DuplicateKeyError
-
-connect(settings.mongo.conn_string + "/" + settings.mongo.db_name,
-            alias = "reviewer")
 
 from data.reviewer_model import (Department,
                                      Group,
@@ -36,10 +32,6 @@ from data.reviewer_model import (Department,
                                      TutorRole,
                                      get_dependent_list,
                                      init_model)
-import src.node as node
-import src.node.settings.errors as ERR
-import src.node.api.routes as routes
-
 
 test_version = "test_0.3"
 
@@ -141,7 +133,6 @@ class TestValidation(unittest.TestCase):
         
 
 if __name__ == "__main__":
-    
     unittest.main(verbosity = 1)
     
             
