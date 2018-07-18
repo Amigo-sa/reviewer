@@ -782,7 +782,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"type\":\"RoleInGroup\",\n\t\"reviewer_id\":\"5b4cce752131371ed071ead3\",\n\t\"subject_id\":\"5b4cce752131371ed071ead3\",\n\t\"value\": 90.0,\n\t\"description\":\"Очень круто\"\n}"
+							"raw": "{\n\t\"type\":\"RoleInGroup\",\n\t\"reviewer_id\":\"5b4ebab42131371208ceb0c9\",\n\t\"subject_id\":\"5b4ebab62131371208ceb122\",\n\t\"value\": 90.0,\n\t\"description\":\"Очень круто\"\n}"
 						},
 						"url": {
 							"raw": "http://127.0.0.1:5000/reviews",
@@ -799,6 +799,72 @@
 							]
 						},
 						"description": "Публикует отзыв о чем-либо\nв type передается тип отзыва:\nStudentRole - на студента\nTutorRole - на преподавателя\nHardSkill - на hard skill пользователя\nSoftSkill - на soft skill пользователя\nGroup - на группу\nGroupTest - на тест для группы\nRoleInGroup - на участника группы"
+					},
+					"response": []
+				},
+				{
+					"name": "delete_review",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/reviews/5b4ebab62131371208ceb135",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"reviews",
+								"5b4ebab62131371208ceb135"
+							]
+						},
+						"description": "Удаляет review"
+					},
+					"response": []
+				},
+				{
+					"name": "find_reviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/reviews?subject_id=5b4ebab52131371208ceb10b",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"reviews"
+							],
+							"query": [
+								{
+									"key": "reviewer_id",
+									"value": "5b4ebab42131371208ceb0c9",
+									"disabled": true
+								},
+								{
+									"key": "subject_id",
+									"value": "5b4ebab52131371208ceb10b"
+								}
+							]
+						},
+						"description": "Ищет запросы по определенным критериям"
 					},
 					"response": []
 				}

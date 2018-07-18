@@ -4,7 +4,7 @@ from pymodm.errors import ValidationError
 from pymongo.operations import IndexModel
 import pymongo
 from pymodm.connection import connect, _get_db
-import settings.mongo
+import data.settings as settings
 
 model_version = "0.3"
 
