@@ -3,8 +3,26 @@ from pymongo.write_concern import WriteConcern
 from pymodm.errors import ValidationError
 from pymongo.operations import IndexModel
 import pymongo
-from pymodm.connection import connect
+from pymodm.connection import connect, _get_db
 import settings.mongo
+
+model_version = "0.3"
+
+def get_dependent_list(doc, dep_id_list):
+    current_del_rules = doc._mongometa.delete_rules
+    dep_id_list.append(doc)
+    for item, rule in current_del_rules.items():
+        related_model, related_field = item
+        dependent_docs = related_model.objects.raw({related_field : doc.pk})
+        for dep in dependent_docs:
+            if dep not in dep_id_list:
+                get_dependent_list(dep, dep_id_list)
+
+def init_model():
+    GroupRole.register_delete_rule(
+            Group, "role_list", fields.ReferenceField.PULL)
+    GroupPermission.register_delete_rule(
+            RoleInGroup, "permissions", fields.ReferenceField.PULL)
 
 connect(settings.mongo.conn_string + "/" + settings.mongo.db_name,
             alias = "reviewer")
@@ -16,7 +34,7 @@ class Service(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
-
+        
 class Person(MongoModel):
     first_name = fields.CharField()
     middle_name = fields.CharField()
@@ -316,21 +334,5 @@ class Survey(MongoModel):
         connection_alias = "reviewer"
         final = True
         
-def get_dependent_list(doc, dep_id_list):
-    current_del_rules = doc._mongometa.delete_rules
-    dep_id_list.append(doc)
-    for item, rule in current_del_rules.items():
-        related_model, related_field = item
-        dependent_docs = related_model.objects.raw({related_field : doc.pk})
-        for dep in dependent_docs:
-            if dep not in dep_id_list:
-                get_dependent_list(dep, dep_id_list)
-
-#TODO перенести максимум инициализации в конструкторы классов
-
-def init_model():
-    GroupRole.register_delete_rule(
-            Group, "role_list", fields.ReferenceField.PULL)
-    GroupPermission.register_delete_rule(
-            RoleInGroup, "permissions", fields.ReferenceField.PULL)
+init_model()
         

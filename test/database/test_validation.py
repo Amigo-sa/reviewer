@@ -1,7 +1,6 @@
 import unittest
 import context 
 import datetime
-from pymodm import MongoModel
 from pymodm.connection import _get_db
 from pymodm.errors import ValidationError
 from pymongo.errors import DuplicateKeyError
@@ -33,9 +32,9 @@ from data.reviewer_model import (Department,
                                      get_dependent_list,
                                      init_model)
 
-test_version = "test_0.3"
+test_version = "0.3"
 
-def prepare_db():
+def check_db():
     try:
         revDb = _get_db("reviewer")
         service = revDb["service"].find_one()
@@ -43,29 +42,18 @@ def prepare_db():
             current_version = None
         else:
             current_version = service["version"]
-        #TODO: найти способ очищения только данных, либо создания заново
-        #индексов путём инициализации классов модели
         if current_version != test_version:
-            print("versions differ, refilling DB")
-            colList = revDb.list_collection_names()
-            for col in colList:
-                revDb.drop_collection(col)
-                print ("dropped collection " + col)
-            import sample_data
-            sample_data.fill_db()
-            #FIXME: здесь должны заново создаваться индексы
-        else: print("same version, skipping DB refill")
-        init_model()
+            print("versions differ, please refill DB via sample_data.py")
+            return False
+        return True
     except Exception as ex:
         print(ex)
+        return False
         
 class TestValidation(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        
-        prepare_db()
-        
-        
+        check_db()      
     #Role in group tests    
     def test_vaild_role_in_group(self):
         valid_role = RoleInGroup(
