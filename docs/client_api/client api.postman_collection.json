@@ -1008,6 +1008,102 @@
 					"response": []
 				},
 				{
+					"name": "delete_person_soft_skill",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/soft_skills/5b4f89322131372234ca2014",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"soft_skills",
+								"5b4f89322131372234ca2014"
+							]
+						},
+						"description": "Удаляет личностную характеристику пользователя"
+					},
+					"response": []
+				},
+				{
+					"name": "find_person_soft_skills",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/soft_skills?person_id=5b4f89322131372234ca1ff8&ss_id=5b4f89322131372234ca200f",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"soft_skills"
+							],
+							"query": [
+								{
+									"key": "person_id",
+									"value": "5b4f89322131372234ca1ff8"
+								},
+								{
+									"key": "ss_id",
+									"value": "5b4f89322131372234ca200f"
+								}
+							]
+						},
+						"description": "Получает список личностных характеристик пользователя по id пользователя или id характеристики"
+					},
+					"response": []
+				},
+				{
+					"name": "get_person_soft_skill_info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/soft_skills/5b4f89322131372234ca2016",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"soft_skills",
+								"5b4f89322131372234ca2016"
+							]
+						},
+						"description": "Получает данные личностной характеристики пользователя"
+					},
+					"response": []
+				},
+				{
 					"name": "add_person_hard_skill",
 					"request": {
 						"method": "POST",
@@ -1038,6 +1134,102 @@
 							]
 						},
 						"description": "Добавляет профессиональный навык пользователю"
+					},
+					"response": []
+				},
+				{
+					"name": "delete_person_hard_skill",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/hard_skills/5b4f89322131372234ca2008",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"hard_skills",
+								"5b4f89322131372234ca2008"
+							]
+						},
+						"description": "Удаляет профессиональный навык пользователя"
+					},
+					"response": []
+				},
+				{
+					"name": "find_person_hard_skills",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/hard_skills?person_id=5b4f89322131372234ca1ff8&hs_id=5b4f89322131372234ca2003",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"hard_skills"
+							],
+							"query": [
+								{
+									"key": "person_id",
+									"value": "5b4f89322131372234ca1ff8"
+								},
+								{
+									"key": "hs_id",
+									"value": "5b4f89322131372234ca2003"
+								}
+							]
+						},
+						"description": "Получает список профессиональных навыков пользователя по id пользователя или id навыка"
+					},
+					"response": []
+				},
+				{
+					"name": "get_person_hard_skill_info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/hard_skills/5b4f89322131372234ca200a",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"hard_skills",
+								"5b4f89322131372234ca200a"
+							]
+						},
+						"description": "Получает данные профессионального навыка пользователя"
 					},
 					"response": []
 				}

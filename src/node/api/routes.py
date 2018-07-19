@@ -745,3 +745,107 @@ def add_person_hard_skill(id):
         result = {"result":ERR.DB}
 
     return jsonify(result), 200
+
+
+@bp.route("/persons/soft_skills/<string:id>", methods = ['DELETE'])
+def delete_person_soft_skill(id):
+    try:
+        if PersonSS(_id=id) in PersonSS.objects.raw({"_id":ObjectId(id)}):
+            PersonSS(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/persons/hard_skills/<string:id>", methods = ['DELETE'])
+def delete_person_hard_skill(id):
+    try:
+        if PersonHS(_id=id) in PersonHS.objects.raw({"_id":ObjectId(id)}):
+            PersonHS(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/persons/soft_skills", methods=['GET'])
+def find_person_soft_skills():
+    lst = []
+    query = {}
+    if 'person_id' in request.args:
+        person_id = request.args['person_id']
+        query.update({"person_id": ObjectId(person_id)})
+    if 'ss_id' in request.args:
+        ss_id = request.args['ss_id']
+        query.update({"ss_id": ObjectId(ss_id)})
+    try:
+        for person_ss in PersonSS.objects.raw(query):
+            lst.append({"id": str(person_ss.pk)})
+        result = {"result": ERR.OK, "list": lst}
+    except Exception as ex:
+        print(ex)
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/persons/hard_skills", methods=['GET'])
+def find_person_hard_skills():
+    lst = []
+    query = {}
+    if 'person_id' in request.args:
+        person_id = request.args['person_id']
+        query.update({"person_id": ObjectId(person_id)})
+    if 'hs_id' in request.args:
+        hs_id = request.args['hs_id']
+        query.update({"hs_id": ObjectId(hs_id)})
+    try:
+        for person_hs in PersonHS.objects.raw(query):
+            lst.append({"id": str(person_hs.pk)})
+        result = {"result": ERR.OK, "list": lst}
+    except Exception as ex:
+        print(ex)
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/persons/soft_skills/<string:id>", methods=['GET'])
+def get_person_soft_skill_info(id):
+    try:
+        if PersonSS(_id=id) in PersonSS.objects.raw({"_id": ObjectId(id)}):
+            person_ss = PersonSS(_id=id)
+            person_ss.refresh_from_db()
+            data = {"person_id": str(person_ss.person_id.pk),
+                    "ss_id": str(person_ss.ss_id.pk),
+                    "level": str(person_ss.level)}
+            result = {"result": ERR.OK, "data": data}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/persons/hard_skills/<string:id>", methods=['GET'])
+def get_person_hard_skill_info(id):
+    try:
+        if PersonHS(_id=id) in PersonHS.objects.raw({"_id": ObjectId(id)}):
+            person_hs = PersonHS(_id=id)
+            person_hs.refresh_from_db()
+            data = {"person_id": str(person_hs.person_id.pk),
+                    "hs_id": str(person_hs.hs_id.pk),
+                    "level": str(person_hs.level)}
+            result = {"result": ERR.OK, "data": data}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+
+
