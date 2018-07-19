@@ -1,5 +1,5 @@
 import unittest
-import context 
+import context
 import datetime
 from pymodm.connection import _get_db
 from pymodm.errors import ValidationError
@@ -53,8 +53,10 @@ def check_db():
 class TestValidation(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        check_db()      
-    #Role in group tests    
+        check_db()
+
+    # Role in group tests
+
     def test_vaild_role_in_group(self):
         valid_role = RoleInGroup(
                     Person.objects.get({"surname" : "Дунаев"}),
@@ -117,8 +119,6 @@ class TestValidation(unittest.TestCase):
     
     def tearDown(self):
         pass
-        #clear_db()
-        
 
 if __name__ == "__main__":
     unittest.main(verbosity = 1)
