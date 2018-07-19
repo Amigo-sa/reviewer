@@ -234,7 +234,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"department_id\": \"5b48f6f72131372a385a1e09\",\n\t\"name\":\"А-5-03\"\n}"
+							"raw": "{\n\t\"name\":\"А-5-03\"\n}"
 						},
 						"url": {
 							"raw": "http://127.0.0.1:5000/departments/5b4e38d02131371ce8dd8246/groups",
@@ -1412,6 +1412,283 @@
 						"description": "Получает список возможных профессиональных навыков пользователей"
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "tests",
+			"description": "Функции для работы с тестами и их результатами",
+			"item": [
+				{
+					"name": "add_group_test",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Тест на знание микроконтроллеров\",\n\t\"info\":\"Описание\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/groups/5b4f89322131372234ca2053/tests",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"groups",
+								"5b4f89322131372234ca2053",
+								"tests"
+							]
+						},
+						"description": "Добавляет тест для группы"
+					},
+					"response": []
+				},
+				{
+					"name": "delete_group_test",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tests/5b50d5b22131371238fe4443",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tests",
+								"5b50d5b22131371238fe4443"
+							]
+						},
+						"description": "Удаляет тест для группы"
+					},
+					"response": []
+				},
+				{
+					"name": "get_group_test_info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tests/5b4f89322131372234ca205c",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tests",
+								"5b4f89322131372234ca205c"
+							]
+						},
+						"description": "Получает информацию по тесту"
+					},
+					"response": []
+				},
+				{
+					"name": "list_group_tests",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/groups/5b4f89322131372234ca2053/tests",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"groups",
+								"5b4f89322131372234ca2053",
+								"tests"
+							]
+						},
+						"description": "Выводит список тестов в группе"
+					},
+					"response": []
+				},
+				{
+					"name": "add_test_result",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"person_id\": \"5b4f89322131372234ca2053\",\n\t\"result_data\":[\"Оценка:2, \",\"Время: 4.0\"]\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tests/5b4f89322131372234ca205c/results",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tests",
+								"5b4f89322131372234ca205c",
+								"results"
+							]
+						},
+						"description": "Добавляет результат тестирования пользователя"
+					},
+					"response": []
+				},
+				{
+					"name": "delete_test_result",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tests/results/5b50e5572131370f188d0bf7",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tests",
+								"results",
+								"5b50e5572131370f188d0bf7"
+							]
+						},
+						"description": "Удаляет результат тестирования"
+					},
+					"response": []
+				},
+				{
+					"name": "get_test_result_info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tests/results/5b4f89322131372234ca205d",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tests",
+								"results",
+								"5b4f89322131372234ca205d"
+							]
+						},
+						"description": "Получает информацию результату тестирования"
+					},
+					"response": []
+				},
+				{
+					"name": "find_test_results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tests/results?test_id=5b4f89322131372234ca205b&person_id=5b4f89322131372234ca1ff8",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tests",
+								"results"
+							],
+							"query": [
+								{
+									"key": "test_id",
+									"value": "5b4f89322131372234ca205b"
+								},
+								{
+									"key": "person_id",
+									"value": "5b4f89322131372234ca1ff8"
+								}
+							]
+						},
+						"description": "Ищет результаты тестов по id теста и id пользователя"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "5a52396c-7e73-4668-935c-55d3d9c4e2c9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2979db86-a0f8-4974-884e-dfb6f0d5ebf6",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		}

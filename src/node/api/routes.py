@@ -847,5 +847,127 @@ def get_person_hard_skill_info(id):
     return jsonify(result), 200
 
 
+@bp.route("/groups/<string:id>/tests", methods = ['POST'])
+def add_group_test(id):
+    req = request.get_json()
+    try:
+        name = req['name']
+        info = req['info']
+        group_test = GroupTest(Group(_id=id), name, info)
+        group_test.save()
+        result = {"result":ERR.OK,
+                  "id": str(group_test.pk)}
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
 
 
+@bp.route("/tests/<string:id>", methods = ['DELETE'])
+def delete_group_test(id):
+    try:
+        if GroupTest(_id=id) in GroupTest.objects.raw({"_id":ObjectId(id)}):
+            GroupTest(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/tests/<string:id>", methods=['GET'])
+def get_group_test_info(id):
+    try:
+        if GroupTest(_id=id) in GroupTest.objects.raw({"_id": ObjectId(id)}):
+            group_test = GroupTest(_id=id)
+            group_test.refresh_from_db()
+            data = {"group_id": str(group_test.group_id.pk),
+                    "name": str(group_test.name),
+                    "info": str(group_test.info)}
+            result = {"result": ERR.OK, "data": data}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/groups/<string:id>/tests", methods=['GET'])
+def list_group_tests(id):
+    list = []
+    try:
+        for group_test in GroupTest.objects.raw({"group_id": ObjectId(id)}):
+            list.append({"id": str(group_test.pk)})
+        result = {"result": ERR.OK, "list":list}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/tests/<string:id>/results", methods = ['POST'])
+def add_test_result(id):
+    req = request.get_json()
+    try:
+        person_id = req['person_id']
+        result_data = req['result_data']
+        test_result = TestResult(GroupTest(_id=id), Person(_id=person_id), result_data)
+        test_result.save()
+        result = {"result":ERR.OK,
+                  "id": str(test_result.pk)}
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/tests/results/<string:id>", methods = ['DELETE'])
+def delete_test_result(id):
+    try:
+        if TestResult(_id=id) in TestResult.objects.raw({"_id":ObjectId(id)}):
+            TestResult(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/tests/results/<string:id>", methods=['GET'])
+def get_test_result_info(id):
+    try:
+        if TestResult(_id=id) in TestResult.objects.raw({"_id": ObjectId(id)}):
+            test_result = TestResult(_id=id)
+            test_result.refresh_from_db()
+            data = {"test_id": str(test_result.test_id.pk),
+                    "person_id": str(test_result.person_id.pk),
+                    "result_data": str(test_result.result_data)}
+            result = {"result": ERR.OK, "data": data}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/tests/results", methods=['GET'])
+def find_test_results():
+    lst = []
+    query = {}
+    if 'person_id' in request.args:
+        person_id = request.args['person_id']
+        query.update({"person_id": ObjectId(person_id)})
+    if 'test_id' in request.args:
+        test_id = request.args['test_id']
+        query.update({"test_id": ObjectId(test_id)})
+    try:
+        for test_result in TestResult.objects.raw(query):
+            lst.append({"id": str(test_result.pk)})
+        result = {"result": ERR.OK, "list": lst}
+    except Exception as ex:
+        print(ex)
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
