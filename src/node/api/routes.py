@@ -706,3 +706,42 @@ def list_hard_skills():
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
+
+@bp.route("/persons/<string:id>/soft_skills", methods=['POST'])
+def add_person_soft_skill(id):
+    req = request.get_json()
+    try:
+        ss_id = req['ss_id']
+        default_level = 50.0
+        person_ss = PersonSS(Person(_id=id),
+                             SoftSkill(_id=ss_id),
+                             default_level)
+        person_ss.save()
+        result = {"result":ERR.OK,
+                  "id": str(person_ss.pk)}
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
+
+@bp.route("/persons/<string:id>/hard_skills", methods=['POST'])
+def add_person_hard_skill(id):
+    req = request.get_json()
+    try:
+        hs_id = req['hs_id']
+        default_level = 50.0
+        person_hs = PersonHS(Person(_id=id),
+                             HardSkill(_id=hs_id),
+                             default_level)
+        person_hs.save()
+        result = {"result":ERR.OK,
+                  "id": str(person_hs.pk)}
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200

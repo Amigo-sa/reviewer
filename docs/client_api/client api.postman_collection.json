@@ -972,6 +972,74 @@
 						"description": "Получает список ролей пользователя"
 					},
 					"response": []
+				},
+				{
+					"name": "add_person_soft_skill",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"ss_id\":\"5b4f93082131371ff09087ee\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/5b4f89322131372234ca1ff8/soft_skills",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"5b4f89322131372234ca1ff8",
+								"soft_skills"
+							]
+						},
+						"description": "Добавляет личностную характеристику пользователю"
+					},
+					"response": []
+				},
+				{
+					"name": "add_person_hard_skill",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"hs_id\":\"5b4f89322131372234ca2007\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/5b4f89322131372234ca1ff8/hard_skills",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"5b4f89322131372234ca1ff8",
+								"hard_skills"
+							]
+						},
+						"description": "Добавляет профессиональный навык пользователю"
+					},
+					"response": []
 				}
 			]
 		},
