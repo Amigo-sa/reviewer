@@ -117,6 +117,13 @@ class TestApi(unittest.TestCase):
     def test_hard_skill_normal(self):
         self.t_not_referencing_normal("/hard_skills", name="string")
 
+    def test_group_roles_normal(self):
+        self.t_not_referencing_normal("/group_roles", name="string")
+
+    def test_group_permissions_normal(self):
+        self.t_not_referencing_normal("/group_permissions", name="string")
+
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=1)
