@@ -78,7 +78,9 @@ class Department(MongoModel):
         indexes = [IndexModel([("name", pymongo.DESCENDING),
                                ("organization_id", pymongo.DESCENDING)],
                               unique=True)]
-
+    def clean(self):
+        if not Organization.objects.get({"_id": self.organization_id.pk}):
+            raise ValidationError("не существует организации с таким _id")
 
 class HardSkill(MongoModel):
     name = fields.CharField()
