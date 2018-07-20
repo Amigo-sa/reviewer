@@ -3,7 +3,6 @@ import node.settings.errors as ERR
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
 
-
 bp = Blueprint('routes', __name__)
 
 if __debug__:
@@ -51,12 +50,49 @@ def add_organization():
 
     return jsonify(result), 200
 
+@bp.route("/persons", methods = ['POST'])
+def add_person():
+    req = request.get_json()
+    try:
+        first_name = req['first_name']
+        middle_name = req['middle_name']
+        surname = req['surname']
+        birth_date = req['birth_date']
+        phone_no = req['phone_no']
+    except:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        person = Person(first_name,
+                        middle_name,
+                        surname,
+                        birth_date,
+                        phone_no)
+        person.save()
+        result = {"result":ERR.OK,
+                  "id": str(person.pk)}
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
 
 @bp.route("/organizations/<string:id>", methods = ['DELETE'])
 def delete_organization(id):
     try:
         if Organization(_id=id) in Organization.objects.raw({"_id":ObjectId(id)}):
             Organization(_id=id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+@bp.route("/persons/<string:id>", methods = ['DELETE'])
+def delete_person(id):
+    try:
+        if Person(_id=id) in Person.objects.raw({"_id":ObjectId(id)}):
+            Person(_id=id).delete()
             result = {"result": ERR.OK}
         else:
             result = {"result": ERR.NO_DATA}
@@ -517,7 +553,19 @@ def find_persons():
                     list = [dict(t) for t in set([tuple(d.items()) for d in lst])]
                     result = {"result": ERR.OK, "list": list}
                 else:
-                    result = {"result": ERR.INPUT}
+                    try:
+                        list = []
+                        for person in Person.objects.all():
+                            birth_date_str = person.birth_date.strftime("%Y-%m-%d")
+                            list.append({"id": str(person.pk),
+                                         "first_name": person.first_name,
+                                         "middle_name": person.middle_name,
+                                         "surname": person.surname,
+                                         "birth_date": birth_date_str,
+                                         "phone_no": person.phone_no})
+                        result = {"result": ERR.OK, "list": list}
+                    except:
+                        result = {"result": ERR.INPUT}
     except Exception as ex:
         print(ex)
         result = {"result": ERR.DB}

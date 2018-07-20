@@ -5,6 +5,9 @@ from node.settings import constants
 import node.settings.errors as ERR
 from node.node_server import start_server
 from threading import Thread
+import random
+import datetime
+#from src.data.reviewer_model import *
 
 class NodeServer(Thread):
     def __init__(self):
@@ -23,152 +26,91 @@ class TestApi(unittest.TestCase):
         cls.api_URL = constants.core_server_url
         # Запуск сервера, (проверка на запущенность не проводится!)
         # TODO добавить проверку на запущенность сервера
+        # TODO добавить очищение базы с сохранинем индексов
         node_server_thread.start()
-        # Получение часто используемых и не предусматривающих изменение при тестировании _id
-        resp = requests.get(cls.api_URL + '/organizations').json()
-        cls.mpei_id = cls.find_by_name(resp, 'МЭИ')
-        cls.assertTrue(unittest.TestCase(),cls.mpei_id)
 
     @classmethod
     def tearDownClass(cls):
-        requests.post(cls.api_URL + '/shutdown')
+        pass
+        requests.post(cls.api_URL + "/shutdown")
 
-    # TODO Возможно, с учётом поиска объектов при инициализации, этот и схожие тесты лишние
-    def test_list_organizations(self):
-        req = requests.get(self.api_URL + '/organizations')
-        self.assertEqual(200, req.status_code)
-        resp = req.json()
-        self.assertEqual(resp["result"], ERR.OK)
-        self.assertTrue(self.find_by_name(resp, 'МЭИ'))
+    def t_not_referencing_normal(self, access_url, *args, **kwargs):
+        # read from empty DB
+        resp = requests.get(self.api_URL + access_url)
+        self.assertEqual(200, resp.status_code, "get response status code must be 200")
+        resp_json = resp.json()
+        self.assertEqual(resp_json["result"], ERR.OK, "result must be ERR.OK")
+        read_list = resp_json["list"]
+        self.assertListEqual([],read_list, "initial DB must be empty")
+        # write items to DB
+        add_list = []
+        items_to_write = 3
+        for item_ctr in range(items_to_write):
+            cur_item = dict()
+            for key, value in kwargs.items():
+                if value == "string":
+                    cur_item.update({
+                        key: "sample_" + key + "_" + str(item_ctr + 1)
+                    })
+                elif value == "date":
+                    cur_date = datetime.date(random.randrange(1900, 2000),
+                                           random.randrange(1, 12),
+                                           random.randrange(1, 28))
+                    date_iso = cur_date.isoformat()
+                    cur_item.update({
+                        key: date_iso
+                    })
+                elif value == "number_string":
+                    cur_item.update({
+                        key: "3223223" + str(item_ctr)
+                    })
+                else:
+                    raise ValueError("unsupported field type")
+            resp = requests.post(url=self.api_URL + access_url, json=cur_item)
+            self.assertEqual(200, resp.status_code, "post response status code must be 200")
+            resp_json = resp.json()
+            self.assertEqual(resp_json["result"], ERR.OK, "post result must be ERR.OK")
+            self.assertTrue(resp_json["id"], "returned id must be not None")
+            cur_item.update({"id" : resp_json["id"]})
+            add_list.append(cur_item)
+        print("sample data:\n" + str(add_list))
+        # verify written items
+        resp_json = requests.get(self.api_URL + access_url).json()
+        read_list = resp_json["list"]
+        total_match = 0
+        for added_item in add_list:
+            item_match = 0
+            for read_item in read_list:
+                if added_item == read_item:
+                    item_match += 1
+                    total_match += 1
+            self.assertEqual(item_match, 1, "must be exactly one match for each item")
+        self.assertEqual(total_match, items_to_write, "all added items must be in GET list")
+        # delete items
+        for item in add_list:
+            resp = requests.delete(url=self.api_URL + access_url + "/" + item["id"])
+            self.assertEqual(200, resp.status_code, "delete response status code must be 200")
+            resp_json = resp.json()
+            self.assertEqual(resp_json["result"], ERR.OK, "result must be ERR.OK")
+        # verify deletion
+        resp_json = requests.get(self.api_URL + access_url).json()
+        read_list = resp_json["list"]
+        self.assertListEqual([], read_list, "docs must be erased from DB")
 
-    def test_add_del_organization_normal(self):
-        resp = requests.get(self.api_URL + "/organizations").json()
-        self.assertEqual(resp["result"], ERR.OK)
 
-        mephi_id = self.find_by_name(resp, 'МИФИ')
-        if mephi_id:
-            resp = requests.delete(self.api_URL + '/organizations/' + str(mephi_id)).json()
-            self.assertEqual(resp['result'], ERR.OK)
+    def test_organization_normal(self):
+        self.t_not_referencing_normal("/organizations", name = "string")
 
-        post_data = {'name': 'МИФИ'}
-        req = requests.post(url=self.api_URL + '/organizations', json=post_data)
-        self.assertEqual(200, req.status_code)
-        resp = req.json()
-        self.assertEqual(resp['result'], ERR.OK)
+    def test_person_normal(self):
+        self.t_not_referencing_normal("/persons",
+                                      first_name="string",
+                                      middle_name="string",
+                                      surname="string",
+                                      birth_date="date",
+                                      phone_no = "number_string"
+                                      )
 
-        resp = requests.get(self.api_URL + '/organizations').json()
-        mephi_id = self.find_by_name(resp, 'МИФИ')
-        self.assertTrue(mephi_id)
 
-        req = requests.delete(self.api_URL + '/organizations/' + str(mephi_id))
-        self.assertEqual(200, req.status_code)
-        resp = req.json()
-        self.assertEqual(resp['result'], ERR.OK)
-
-        resp = requests.get(self.api_URL + '/organizations').json()
-        mephi_id = self.find_by_name(resp, 'МИФИ')
-        self.assertFalse(mephi_id)
-
-    def test_add_organization_malformed(self):
-        post_data = {'noname': 'МИФИ'}
-        resp = requests.post(url=self.api_URL + '/organizations', json=post_data).json()
-        self.assertEqual(resp['result'], ERR.INPUT)
-
-    def test_add_organization_duplicate(self):
-        post_data = {'name': 'МЭИ'}
-        resp = requests.post(url=self.api_URL + '/organizations', json=post_data).json()
-        self.assertEqual(resp['result'], ERR.DB)
-
-    def test_add_organization_no_data(self):
-        post_data = {'name': 'МИФИ'}
-        resp = requests.post(url=self.api_URL + '/organizations', json=post_data).json()
-        self.assertEqual(resp['result'], ERR.OK)
-        mephi_id = resp['id']
-        resp = requests.delete(self.api_URL + '/organizations/' + str(mephi_id)).json()
-        self.assertEqual(resp['result'], ERR.OK)
-        resp = requests.delete(self.api_URL + '/organizations/' + str(mephi_id)).json()
-        self.assertEqual(resp['result'], ERR.NO_DATA)
-
-    def test_list_departments(self):
-        req = requests.get(self.api_URL + '/organizations/' + self.mpei_id + '/departments')
-        self.assertEqual(200, req.status_code)
-        resp = req.json()
-        self.assertEqual(resp['result'], ERR.OK)
-        self.assertTrue(self.find_by_name(resp, 'Кафедра ИИТ'))
-
-    def test_add_del_department_normal(self):
-        resp = requests.get(self.api_URL + '/organizations/' + self.mpei_id + '/departments').json()
-        self.assertEqual(resp["result"], ERR.OK)
-
-        rtf_id = self.find_by_name(resp, 'РТФ')
-        if rtf_id:
-            resp = requests.delete(self.api_URL + '/departments/' + str(rtf_id)).json()
-            self.assertEqual(resp['result'], ERR.OK)
-
-        post_data = {'name': 'РТФ'}
-        req = requests.post(url=self.api_URL + '/organizations/' + self.mpei_id + '/departments',
-                            json=post_data)
-        self.assertEqual(200, req.status_code)
-        resp = req.json()
-        self.assertEqual(resp['result'], ERR.OK)
-
-        resp = requests.get(self.api_URL + '/organizations/' + self.mpei_id + '/departments').json()
-        rtf_id = self.find_by_name(resp, 'РТФ')
-        self.assertTrue(rtf_id)
-
-        req = requests.delete(self.api_URL + '/departments/' + str(rtf_id))
-        self.assertEqual(200, req.status_code)
-        resp = req.json()
-        self.assertEqual(resp['result'], ERR.OK)
-
-        resp = requests.get(self.api_URL + '/organizations/' + self.mpei_id + '/departments').json()
-        rtf_id = self.find_by_name(resp, 'РТФ')
-        self.assertFalse(rtf_id)
-
-    def test_add_department_malformed(self):
-        post_data = {'noname': 'РТФ'}
-        resp = requests.post(url=self.api_URL + '/organizations/' + self.mpei_id + '/departments',
-                             json=post_data).json()
-        self.assertEqual(resp['result'], ERR.INPUT)
-
-    def test_add_department_wrong_org(self):
-        resp = requests.get(self.api_URL + "/organizations").json()
-        mephi_id = self.find_by_name(resp, 'МИФИ')
-        if not mephi_id:
-            post_data = {'name': 'МИФИ'}
-            resp = requests.post(url=self.api_URL + '/organizations',
-                                 json=post_data).json()
-            self.assertEqual(resp['result'], ERR.OK)
-            mephi_id = resp['id']
-        resp = requests.delete(self.api_URL + '/organizations/' + str(mephi_id)).json()
-        self.assertEqual(resp['result'], ERR.OK)
-        post_data = {'name': 'РТФ'}
-        resp = requests.post(url=self.api_URL + '/organizations/' + mephi_id + '/departments',
-                             json=post_data).json()
-        self.assertEqual(resp['result'],ERR.DB)
-
-    def test_add_department_duplicate(self):
-        post_data = {'name': 'Кафедра ИИТ'}
-        resp = requests.post(url=self.api_URL + '/organizations/' + self.mpei_id + '/departments',
-                             json=post_data).json()
-        self.assertEqual(resp['result'], ERR.DB)
-
-    def test_delete_department_no_data(self):
-        post_data = {'name': 'РТФ'}
-        resp = requests.post(url=self.api_URL + '/organizations/' + self.mpei_id + '/departments',
-                             json=post_data).json()
-        self.assertEqual(resp['result'], ERR.OK)
-        rtf_id = resp['id']
-        resp = requests.delete(self.api_URL + '/departments/' + str(rtf_id)).json()
-        self.assertEqual(resp['result'], ERR.OK)
-        resp = requests.delete(self.api_URL + '/departments/' + str(rtf_id)).json()
-        self.assertEqual(resp['result'], ERR.NO_DATA)
-
-    @staticmethod
-    def find_by_name(resp, name):
-        for item in resp['list']:
-            if item['name'] == name:
-                return item['id']
 
 if __name__ == "__main__":
     unittest.main(verbosity=1)
