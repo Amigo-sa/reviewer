@@ -25,6 +25,14 @@ if __debug__:
                   result_string += "document: {0}<br>".format(document)
         return result_string
 
+@bp.route("/shutdown", methods = ['GET'])
+def shutdown():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+    result = {"result": ERR.OK}
+    return jsonify(result), 200
 
 @bp.route("/organizations", methods = ['POST'])
 def add_organization():

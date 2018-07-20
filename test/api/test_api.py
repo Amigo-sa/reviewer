@@ -3,7 +3,17 @@ import unittest
 import requests
 from node.settings import constants
 import node.settings.errors as ERR
+from node.node_server import start_server
+from threading import Thread
 
+class NodeServer(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+
+    def run(self):
+        start_server()
+
+node_server_thread = NodeServer()
 
 class TestApi(unittest.TestCase):
 
@@ -11,10 +21,17 @@ class TestApi(unittest.TestCase):
     def setUpClass(cls):
         # Загрузка адреса сервера
         cls.api_URL = constants.core_server_url
+        # Запуск сервера, (проверка на запущенность не проводится!)
+        # TODO добавить проверку на запущенность сервера
+        node_server_thread.start()
         # Получение часто используемых и не предусматривающих изменение при тестировании _id
         resp = requests.get(cls.api_URL + '/organizations').json()
         cls.mpei_id = cls.find_by_name(resp, 'МЭИ')
         cls.assertTrue(unittest.TestCase(),cls.mpei_id)
+
+    @classmethod
+    def tearDownClass(cls):
+        requests.get(cls.api_URL + '/shutdown')
 
     # TODO Возможно, с учётом поиска объектов при инициализации, этот и схожие тесты лишние
     def test_list_organizations(self):
@@ -120,7 +137,6 @@ class TestApi(unittest.TestCase):
             resp = requests.post(url=self.api_URL + '/organizations', json=post_data).json()
             self.assertEqual(resp['result'], ERR.OK)
             mephi_id = resp['id']
-            print("added mephi " + str(mephi_id))
         resp = requests.delete(self.api_URL + '/organizations/' + str(mephi_id)).json()
         self.assertEqual(resp['result'], ERR.OK)
         post_data = {'name': 'РТФ'}

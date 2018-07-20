@@ -7,16 +7,13 @@ from flask import Flask
 from node.api.routes import bp
 from pymodm.connection import connect
 
+def start_server():
+    app = Flask(__name__)
+    app.register_blueprint(bp)
+    app.run()
 
-
-
-
-app = Flask(__name__)
-app.register_blueprint(bp)
-app.run()
-
-
-
+if __name__ == "__main__":
+    start_server()
 
 def is_db_exists():
     rev_client = pymongo.MongoClient(constants.mongo_db)
