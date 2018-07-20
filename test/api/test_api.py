@@ -1,8 +1,8 @@
 import context
 import unittest
 import requests
-from src.node.settings import constants
-import src.node.settings.errors as ERR
+from node.settings import constants
+import node.settings.errors as ERR
 
 
 class TestApi(unittest.TestCase):
