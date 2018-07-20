@@ -53,6 +53,7 @@ class TestApi(unittest.TestCase):
                         key: "sample_" + key + "_" + str(item_ctr + 1)
                     })
                 elif value == "date":
+                    #TODO уточнить, подойдёт ли ISO во всех случаях
                     cur_date = datetime.date(random.randrange(1900, 2000),
                                            random.randrange(1, 12),
                                            random.randrange(1, 28))
@@ -73,7 +74,7 @@ class TestApi(unittest.TestCase):
             self.assertTrue(resp_json["id"], "returned id must be not None")
             cur_item.update({"id" : resp_json["id"]})
             add_list.append(cur_item)
-        print("sample data:\n" + str(add_list))
+        print("sample data for " + access_url + ":\n" + str(add_list))
         # verify written items
         resp_json = requests.get(self.api_URL + access_url).json()
         read_list = resp_json["list"]
@@ -110,6 +111,11 @@ class TestApi(unittest.TestCase):
                                       phone_no = "number_string"
                                       )
 
+    def test_soft_skill_normal(self):
+        self.t_not_referencing_normal("/soft_skills", name="string")
+
+    def test_hard_skill_normal(self):
+        self.t_not_referencing_normal("/hard_skills", name="string")
 
 
 if __name__ == "__main__":
