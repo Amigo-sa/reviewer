@@ -31,7 +31,7 @@ class TestApi(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        requests.get(cls.api_URL + '/shutdown')
+        requests.post(cls.api_URL + '/shutdown')
 
     # TODO Возможно, с учётом поиска объектов при инициализации, этот и схожие тесты лишние
     def test_list_organizations(self):

@@ -25,7 +25,7 @@ if __debug__:
                   result_string += "document: {0}<br>".format(document)
         return result_string
 
-@bp.route("/shutdown", methods = ['GET'])
+@bp.route("/shutdown", methods = ['POST'])
 def shutdown():
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
