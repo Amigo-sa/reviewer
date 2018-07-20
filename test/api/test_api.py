@@ -106,7 +106,8 @@ class TestApi(unittest.TestCase):
             self.assertEqual(resp['result'], ERR.OK)
 
         post_data = {'name': 'РТФ'}
-        req = requests.post(url=self.api_URL + '/organizations/' + self.mpei_id + '/departments', json=post_data)
+        req = requests.post(url=self.api_URL + '/organizations/' + self.mpei_id + '/departments',
+                            json=post_data)
         self.assertEqual(200, req.status_code)
         resp = req.json()
         self.assertEqual(resp['result'], ERR.OK)
@@ -126,7 +127,8 @@ class TestApi(unittest.TestCase):
 
     def test_add_department_malformed(self):
         post_data = {'noname': 'РТФ'}
-        resp = requests.post(url=self.api_URL + '/organizations/' + self.mpei_id + '/departments', json=post_data).json()
+        resp = requests.post(url=self.api_URL + '/organizations/' + self.mpei_id + '/departments',
+                             json=post_data).json()
         self.assertEqual(resp['result'], ERR.INPUT)
 
     def test_add_department_wrong_org(self):
@@ -134,15 +136,33 @@ class TestApi(unittest.TestCase):
         mephi_id = self.find_by_name(resp, 'МИФИ')
         if not mephi_id:
             post_data = {'name': 'МИФИ'}
-            resp = requests.post(url=self.api_URL + '/organizations', json=post_data).json()
+            resp = requests.post(url=self.api_URL + '/organizations',
+                                 json=post_data).json()
             self.assertEqual(resp['result'], ERR.OK)
             mephi_id = resp['id']
         resp = requests.delete(self.api_URL + '/organizations/' + str(mephi_id)).json()
         self.assertEqual(resp['result'], ERR.OK)
         post_data = {'name': 'РТФ'}
-        resp = requests.post(url=self.api_URL + '/organizations/' + mephi_id + '/departments', json=post_data).json()
+        resp = requests.post(url=self.api_URL + '/organizations/' + mephi_id + '/departments',
+                             json=post_data).json()
         self.assertEqual(resp['result'],ERR.DB)
 
+    def test_add_department_duplicate(self):
+        post_data = {'name': 'Кафедра ИИТ'}
+        resp = requests.post(url=self.api_URL + '/organizations/' + self.mpei_id + '/departments',
+                             json=post_data).json()
+        self.assertEqual(resp['result'], ERR.DB)
+
+    def test_delete_department_no_data(self):
+        post_data = {'name': 'РТФ'}
+        resp = requests.post(url=self.api_URL + '/organizations/' + self.mpei_id + '/departments',
+                             json=post_data).json()
+        self.assertEqual(resp['result'], ERR.OK)
+        rtf_id = resp['id']
+        resp = requests.delete(self.api_URL + '/departments/' + str(rtf_id)).json()
+        self.assertEqual(resp['result'], ERR.OK)
+        resp = requests.delete(self.api_URL + '/departments/' + str(rtf_id)).json()
+        self.assertEqual(resp['result'], ERR.NO_DATA)
 
     @staticmethod
     def find_by_name(resp, name):
