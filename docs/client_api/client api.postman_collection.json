@@ -44,6 +44,28 @@
 				},
 				{
 					"name": "delete_organization",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e6f8caf8-184c-42d5-9806-09763527b38c",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "4a9b8b88-760e-42a2-92ec-51e96c1700a5",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"organization_id\", \"5b50ec752131370f188d0bf9\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -52,7 +74,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/organizations/5b4e377f2131370d64c74b86",
+							"raw": "http://127.0.0.1:5000/organizations/{{organization_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -63,7 +85,7 @@
 							"port": "5000",
 							"path": [
 								"organizations",
-								"5b4e377f2131370d64c74b86"
+								"{{organization_id}}"
 							]
 						},
 						"description": "Удаляет организацию из базы"
@@ -127,6 +149,18 @@
 			"item": [
 				{
 					"name": "add_department",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "d5f82519-646b-4115-87ae-88e3bf506317",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"organization_id\", \"5b50ec752131370f188d0bf9\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -140,7 +174,7 @@
 							"raw": "{\n\t\"name\":\"РТФ\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/organizations/5b4e37822131370d64c74b88/departments",
+							"raw": "http://127.0.0.1:5000/organizations/{{organization_id}}/departments",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -151,7 +185,7 @@
 							"port": "5000",
 							"path": [
 								"organizations",
-								"5b4e37822131370d64c74b88",
+								"{{organization_id}}",
 								"departments"
 							]
 						},
@@ -161,6 +195,18 @@
 				},
 				{
 					"name": "delete_department",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e7fba242-71e2-4e4e-9711-e462701dc4d1",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"department_id\", \"5b50ec752131370f188d0bf9\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -169,7 +215,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/departments/5b4e38d12131371ce8dd8247",
+							"raw": "http://127.0.0.1:5000/departments/{{department_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -180,7 +226,7 @@
 							"port": "5000",
 							"path": [
 								"departments",
-								"5b4e38d12131371ce8dd8247"
+								"{{department_id}}"
 							]
 						},
 						"description": "Удаляет департамент из базы"
@@ -189,6 +235,18 @@
 				},
 				{
 					"name": "list_departments",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8b0c9660-62ee-4b21-be24-9fae9d58049c",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"organization_id\", \"5b4f89322131372234ca1fff\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -197,7 +255,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/organizations/5b4e37822131370d64c74b88/departments",
+							"raw": "http://127.0.0.1:5000/organizations/{{organization_id}}/departments",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -208,7 +266,7 @@
 							"port": "5000",
 							"path": [
 								"organizations",
-								"5b4e37822131370d64c74b88",
+								"{{organization_id}}",
 								"departments"
 							]
 						},
@@ -224,6 +282,18 @@
 			"item": [
 				{
 					"name": "add_group",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "620c158c-e667-41c0-88fa-a7944d1324c5",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"department_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -237,7 +307,7 @@
 							"raw": "{\n\t\"name\":\"А-5-03\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/departments/5b4e38d02131371ce8dd8246/groups",
+							"raw": "http://127.0.0.1:5000/departments/{{department_id}}/groups",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -248,7 +318,7 @@
 							"port": "5000",
 							"path": [
 								"departments",
-								"5b4e38d02131371ce8dd8246",
+								"{{department_id}}",
 								"groups"
 							]
 						},
@@ -258,6 +328,18 @@
 				},
 				{
 					"name": "delete_group",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "85304377-606d-4277-93d9-6561747aed26",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -266,7 +348,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/groups/5b4e3b43213137134c41b7b7",
+							"raw": "http://127.0.0.1:5000/groups/{{group_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -277,7 +359,7 @@
 							"port": "5000",
 							"path": [
 								"groups",
-								"5b4e3b43213137134c41b7b7"
+								"{{group_id}}"
 							]
 						},
 						"description": "Удаляе группу из базы"
@@ -286,6 +368,18 @@
 				},
 				{
 					"name": "list_groups",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "3663d06b-9100-4478-813e-49e0dd55fef9",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"department_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -294,7 +388,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/departments/5b4e38d02131371ce8dd8246/groups",
+							"raw": "http://127.0.0.1:5000/departments/{{department_id}}/groups",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -305,7 +399,7 @@
 							"port": "5000",
 							"path": [
 								"departments",
-								"5b4e38d02131371ce8dd8246",
+								"{{department_id}}",
 								"groups"
 							]
 						},
@@ -347,6 +441,18 @@
 				},
 				{
 					"name": "delete_group_role",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1357d64b-19f5-4aad-93b7-36df85852bf7",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_role_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -355,7 +461,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/group_roles/5b4e3be821313704ccea95ab",
+							"raw": "http://127.0.0.1:5000/group_roles/{{group_role_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -366,7 +472,7 @@
 							"port": "5000",
 							"path": [
 								"group_roles",
-								"5b4e3be821313704ccea95ab"
+								"{{group_role_id}}"
 							]
 						},
 						"description": "Удаляет роль для группы из базы"
@@ -434,6 +540,18 @@
 				},
 				{
 					"name": "delete_group_permission",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "ea28abff-a18b-4b6b-aea8-3d2af24b3488",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"permission_id\", \"5b51623f21313711c8c5337e\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -442,7 +560,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/group_permissions/5b4e3c4921313704ccea95ae",
+							"raw": "http://127.0.0.1:5000/group_permissions/{{permission_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -453,7 +571,7 @@
 							"port": "5000",
 							"path": [
 								"group_permissions",
-								"5b4e3c4921313704ccea95ae"
+								"{{permission_id}}"
 							]
 						},
 						"description": "Удаляет права для роли в группе из базы"
@@ -489,6 +607,21 @@
 				},
 				{
 					"name": "add_role_in_group",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "de2613a6-de21-4217-846f-a78a5f1aa5b4",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_id\", \"5b4f89322131372234ca2054\");",
+									"pm.environment.set(\"person_id\", \"5b4f89322131372234ca1ffd\");",
+									"pm.environment.set(\"group_role_id\", \"5b4f89322131372234ca204a\");",
+									"pm.environment.set(\"permission_id\", \"5b4f89322131372234ca2052\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -499,10 +632,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"person_id\": \"5b4e31f2213137099cd9e7cb\",\n\t\"role_id\":\"5b4e31f3213137099cd9e81e\",\n\t\"default_permission_id\":\"5b48f6f72131372a385a1e55\"\n}"
+							"raw": "{\n\t\"person_id\": \"{{person_id}}\",\n\t\"role_id\":\"{{group_role_id}}\",\n\t\"default_permission_id\":\"{{permission_id}}\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/groups/5b4e31f3213137099cd9e827/roles_in_group",
+							"raw": "http://127.0.0.1:5000/groups/{{group_id}}/roles_in_group",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -513,7 +646,7 @@
 							"port": "5000",
 							"path": [
 								"groups",
-								"5b4e31f3213137099cd9e827",
+								"{{group_id}}",
 								"roles_in_group"
 							]
 						},
@@ -523,6 +656,18 @@
 				},
 				{
 					"name": "delete_role_in_group",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "71b1d173-c1da-47f0-a0bb-905b7c787853",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"role_in_group_id\", \"5b4f89322131372234ca2052\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -531,7 +676,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/roles_in_group/5b4e46bf2131371f20760a3a",
+							"raw": "http://127.0.0.1:5000/roles_in_group/{{role_in_group_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -542,7 +687,7 @@
 							"port": "5000",
 							"path": [
 								"roles_in_group",
-								"5b4e46bf2131371f20760a3a"
+								"{{role_in_group_id}}"
 							]
 						},
 						"description": "Удаляет роль пользователя из группы"
@@ -551,6 +696,18 @@
 				},
 				{
 					"name": "get_role_in_group_info",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "739b2617-7984-4830-8afe-8421ff7eca0b",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"role_in_group_id\", \"5b4f89322131372234ca2052\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -559,7 +716,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/roles_in_group/5b4e31f3213137099cd9e82b",
+							"raw": "http://127.0.0.1:5000/roles_in_group/{{role_in_group_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -570,7 +727,7 @@
 							"port": "5000",
 							"path": [
 								"roles_in_group",
-								"5b4e31f3213137099cd9e82b"
+								"{{role_in_group_id}}"
 							]
 						},
 						"description": "Получает информацию о роли в группе:\nпользователя, кому принадлежит роль\nгруппу в которой она зарегистрирована\nправа этой роли в группе"
@@ -579,6 +736,19 @@
 				},
 				{
 					"name": "add_permissions_to_role_in_group",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "01044146-272c-42db-aed3-c8f06f39a4b3",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"role_in_group_id\", \"5b4f89322131372234ca2052\");",
+									"pm.environment.set(\"permission_id\", \"5b4f89322131372234ca2052\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -589,10 +759,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"group_permission_id\":\"5b4e31f3213137099cd9e81f\"\n}"
+							"raw": "{\n\t\"group_permission_id\":\"{{permission_id}}\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/roles_in_group/5b4e41c0213137195c0ec536/permissions",
+							"raw": "http://127.0.0.1:5000/roles_in_group/{{role_in_group_id}}/permissions",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -603,7 +773,7 @@
 							"port": "5000",
 							"path": [
 								"roles_in_group",
-								"5b4e41c0213137195c0ec536",
+								"{{role_in_group_id}}",
 								"permissions"
 							]
 						},
@@ -613,6 +783,19 @@
 				},
 				{
 					"name": "delete_permissions_from_role_in_group",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "ff82061c-8a9f-47bc-ba3e-411341eb160c",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"role_in_group_id\", \"5b4f89322131372234ca2052\");",
+									"pm.environment.set(\"permission_id\", \"5b4f89322131372234ca2052\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -621,7 +804,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/roles_in_group/5b4e41c0213137195c0ec536/permissions/5b4e31f3213137099cd9e81f",
+							"raw": "http://127.0.0.1:5000/roles_in_group/{{role_in_group_id}}/permissions/{{permission_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -632,9 +815,9 @@
 							"port": "5000",
 							"path": [
 								"roles_in_group",
-								"5b4e41c0213137195c0ec536",
+								"{{role_in_group_id}}",
 								"permissions",
-								"5b4e31f3213137099cd9e81f"
+								"{{permission_id}}"
 							]
 						},
 						"description": "Снимает права с роли пользователя в группе"
@@ -643,6 +826,18 @@
 				},
 				{
 					"name": "list_roles_in_group_by_group_id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "24db7bb8-74af-4e9d-88e8-473ee3a78bcc",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_id\", \"5b4f89322131372234ca2054\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -651,7 +846,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/groups/5b4e31f3213137099cd9e827/roles_in_group",
+							"raw": "http://127.0.0.1:5000/groups/{{group_id}}/roles_in_group",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -662,7 +857,7 @@
 							"port": "5000",
 							"path": [
 								"groups",
-								"5b4e31f3213137099cd9e827",
+								"{{group_id}}",
 								"roles_in_group"
 							]
 						},
@@ -678,6 +873,20 @@
 			"item": [
 				{
 					"name": "add_general_role",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2a855419-ddb0-402a-b0ed-0fb508b51957",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b4f89322131372234ca1ff8\");",
+									"pm.environment.set(\"department_id\", \"5b4f89322131372234ca2001\");",
+									"pm.environment.set(\"role_type\", \"Tutor\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -688,7 +897,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"person_id\": \"5b4b970a2131370f187fb986\",\n\t\"department_id\":\"5b490bf52131372df4cd2073\",\n\t\"role_type\":\"Studend\",\n\t\"role_data\":\"Бездельник\"\n}"
+							"raw": "{\n\t\"person_id\": \"{{person_id}}\",\n\t\"department_id\":\"{{department_id}}\",\n\t\"role_type\":\"{{role_type}}\",\n\t\"role_data\":\"Бездельник\"\n}"
 						},
 						"url": {
 							"raw": "http://127.0.0.1:5000/general_roles",
@@ -710,6 +919,18 @@
 				},
 				{
 					"name": "delete_general_role",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "78575c80-4a52-484f-ae2d-09b14a7f841d",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"role_id\", \"5b4f89322131372234ca2054\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -718,7 +939,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/general_roles/5b4ebab52131371208ceb10f",
+							"raw": "http://127.0.0.1:5000/general_roles/{{role_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -729,7 +950,7 @@
 							"port": "5000",
 							"path": [
 								"general_roles",
-								"5b4ebab52131371208ceb10f"
+								"{{role_id}}"
 							]
 						},
 						"description": "Удаляет роль пользователя"
@@ -738,6 +959,18 @@
 				},
 				{
 					"name": "get_general_roles_data",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0282af45-7e8b-4570-8be8-c89b33098280",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"role_id\", \"5b4f89322131372234ca2054\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -746,7 +979,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/general_roles/5b4ebab52131371208ceb10f",
+							"raw": "http://127.0.0.1:5000/general_roles/{{role_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -757,7 +990,7 @@
 							"port": "5000",
 							"path": [
 								"general_roles",
-								"5b4ebab52131371208ceb10f"
+								"{{role_id}}"
 							]
 						},
 						"description": "Получает информацию о роли:\nпользователя, кому принадлежит роль\nдепартамент, в котором она зарегистрирована\nтип роли (Преподаватель или Студент)\nописание для студента и предмет для преподавателя"
@@ -772,6 +1005,22 @@
 			"item": [
 				{
 					"name": "post_review",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "d91994ef-9569-4201-8a26-04b9a6029540",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"type\", \"RoleInGroup\");",
+									"pm.environment.set(\"reviewer_id\", \"5b4ebab42131371208ceb0c9\");",
+									"pm.environment.set(\"subject_id\", \"5b4ebab62131371208ceb122\");",
+									"pm.environment.set(\"value\",90.0);",
+									"pm.environment.set(\"description\", \"Очень круто\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -782,7 +1031,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"type\":\"RoleInGroup\",\n\t\"reviewer_id\":\"5b4ebab42131371208ceb0c9\",\n\t\"subject_id\":\"5b4ebab62131371208ceb122\",\n\t\"value\": 90.0,\n\t\"description\":\"Очень круто\"\n}"
+							"raw": "{\n\t\"type\":\"{{type}}\",\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"subject_id\":\"{{subject_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
 						},
 						"url": {
 							"raw": "http://127.0.0.1:5000/reviews",
@@ -804,6 +1053,18 @@
 				},
 				{
 					"name": "delete_review",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "be7c3d84-6ca2-4783-8932-8e82c5bdbf54",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"review_id\", \"5b522dce2131371a30a5b10c\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -812,7 +1073,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/reviews/5b4ebab62131371208ceb135",
+							"raw": "http://127.0.0.1:5000/reviews/{{review_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -823,7 +1084,7 @@
 							"port": "5000",
 							"path": [
 								"reviews",
-								"5b4ebab62131371208ceb135"
+								"{{review_id}}"
 							]
 						},
 						"description": "Удаляет review"
@@ -832,6 +1093,19 @@
 				},
 				{
 					"name": "find_reviews",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "dec3249f-7fbc-4cd9-8f81-bda327a3ba1e",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"reviewer_id\", \"5b4ebab42131371208ceb0c9\");",
+									"pm.environment.set(\"subject_id\", \"5b4ebab62131371208ceb122\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -840,7 +1114,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/reviews?subject_id=5b4ebab52131371208ceb10b",
+							"raw": "http://127.0.0.1:5000/reviews?reviewer_id={{reviewer_id}}&subject_id={{subject_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -855,12 +1129,11 @@
 							"query": [
 								{
 									"key": "reviewer_id",
-									"value": "5b4ebab42131371208ceb0c9",
-									"disabled": true
+									"value": "{{reviewer_id}}"
 								},
 								{
 									"key": "subject_id",
-									"value": "5b4ebab52131371208ceb10b"
+									"value": "{{subject_id}}"
 								}
 							]
 						},
@@ -876,6 +1149,20 @@
 			"item": [
 				{
 					"name": "find_persons",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "34d3e3d1-0213-490b-86d3-bd44fe4b5a06",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_id\", \"5b4e38d02131371ce8dd8246\");",
+									"pm.environment.set(\"department_id\", \"5b4e38d02131371ce8dd8246\");",
+									"pm.environment.set(\"organization_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -884,7 +1171,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons?group_id=5b4ebab52131371208ceb120&department_id=5b4cce742131371ed071ea80&organization_id=5b4cce742131371ed071ea7f",
+							"raw": "http://127.0.0.1:5000/persons?group_id={{group_id}}&department_id={{department_id}}&organization_id={{organization_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -899,15 +1186,15 @@
 							"query": [
 								{
 									"key": "group_id",
-									"value": "5b4ebab52131371208ceb120"
+									"value": "{{group_id}}"
 								},
 								{
 									"key": "department_id",
-									"value": "5b4cce742131371ed071ea80"
+									"value": "{{department_id}}"
 								},
 								{
 									"key": "organization_id",
-									"value": "5b4cce742131371ed071ea7f"
+									"value": "{{organization_id}}"
 								}
 							]
 						},
@@ -917,6 +1204,18 @@
 				},
 				{
 					"name": "list_roles_in_group_by_person_id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "d5dc4435-1ed0-4832-bfce-824bce2e620b",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -925,7 +1224,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/5b4e31f2213137099cd9e7cb/roles_in_group",
+							"raw": "http://127.0.0.1:5000/persons/{{person_id}}/roles_in_group",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -936,7 +1235,7 @@
 							"port": "5000",
 							"path": [
 								"persons",
-								"5b4e31f2213137099cd9e7cb",
+								"{{person_id}}",
 								"roles_in_group"
 							]
 						},
@@ -946,6 +1245,18 @@
 				},
 				{
 					"name": "list_roles_by_person_id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "d47dbbaa-78e3-4335-964b-a0b074b484d9",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -954,7 +1265,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/5b4ebab42131371208ceb0c6/general_roles",
+							"raw": "http://127.0.0.1:5000/persons/{{person_id}}/general_roles",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -965,7 +1276,7 @@
 							"port": "5000",
 							"path": [
 								"persons",
-								"5b4ebab42131371208ceb0c6",
+								"{{person_id}}",
 								"general_roles"
 							]
 						},
@@ -975,6 +1286,19 @@
 				},
 				{
 					"name": "add_person_soft_skill",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1fb4cac0-8ae2-4149-9bee-111f4d2b9de1",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b4e38d02131371ce8dd8246\");",
+									"pm.environment.set(\"ss_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -985,10 +1309,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"ss_id\":\"5b4f93082131371ff09087ee\"\n}"
+							"raw": "{\n\t\"ss_id\":\"{{ss_id}}\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/5b4f89322131372234ca1ff8/soft_skills",
+							"raw": "http://127.0.0.1:5000/persons/{{person_id}}/soft_skills",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -999,7 +1323,7 @@
 							"port": "5000",
 							"path": [
 								"persons",
-								"5b4f89322131372234ca1ff8",
+								"{{person_id}}",
 								"soft_skills"
 							]
 						},
@@ -1009,6 +1333,18 @@
 				},
 				{
 					"name": "delete_person_soft_skill",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "47236589-f608-4caa-82de-287db44ebe8a",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_ss_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -1017,7 +1353,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/soft_skills/5b4f89322131372234ca2014",
+							"raw": "http://127.0.0.1:5000/persons/soft_skills/{{person_ss_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1029,7 +1365,7 @@
 							"path": [
 								"persons",
 								"soft_skills",
-								"5b4f89322131372234ca2014"
+								"{{person_ss_id}}"
 							]
 						},
 						"description": "Удаляет личностную характеристику пользователя"
@@ -1038,6 +1374,19 @@
 				},
 				{
 					"name": "find_person_soft_skills",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9ea19ade-8c77-431f-91f5-e3ba2c38ac53",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b4e38d02131371ce8dd8246\");",
+									"pm.environment.set(\"ss_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1046,7 +1395,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/soft_skills?person_id=5b4f89322131372234ca1ff8&ss_id=5b4f89322131372234ca200f",
+							"raw": "http://127.0.0.1:5000/persons/soft_skills?person_id={{person_id}}&ss_id={{ss_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1062,11 +1411,11 @@
 							"query": [
 								{
 									"key": "person_id",
-									"value": "5b4f89322131372234ca1ff8"
+									"value": "{{person_id}}"
 								},
 								{
 									"key": "ss_id",
-									"value": "5b4f89322131372234ca200f"
+									"value": "{{ss_id}}"
 								}
 							]
 						},
@@ -1076,6 +1425,18 @@
 				},
 				{
 					"name": "get_person_soft_skill_info",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "96090e81-77c3-48a4-b6ce-b7ac6c6500ee",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_ss_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1084,7 +1445,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/soft_skills/5b4f89322131372234ca2016",
+							"raw": "http://127.0.0.1:5000/persons/soft_skills/{{person_ss_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1096,7 +1457,7 @@
 							"path": [
 								"persons",
 								"soft_skills",
-								"5b4f89322131372234ca2016"
+								"{{person_ss_id}}"
 							]
 						},
 						"description": "Получает данные личностной характеристики пользователя"
@@ -1105,6 +1466,19 @@
 				},
 				{
 					"name": "add_person_hard_skill",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "d0e908cd-a711-4edf-a968-ddb984cad8a6",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b4e38d02131371ce8dd8246\");",
+									"pm.environment.set(\"hs_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1115,10 +1489,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"hs_id\":\"5b4f89322131372234ca2007\"\n}"
+							"raw": "{\n\t\"hs_id\":\"{{hs_id}}\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/5b4f89322131372234ca1ff8/hard_skills",
+							"raw": "http://127.0.0.1:5000/persons/{{person_id}}/hard_skills",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1129,7 +1503,7 @@
 							"port": "5000",
 							"path": [
 								"persons",
-								"5b4f89322131372234ca1ff8",
+								"{{person_id}}",
 								"hard_skills"
 							]
 						},
@@ -1139,6 +1513,18 @@
 				},
 				{
 					"name": "delete_person_hard_skill",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "dae912bc-fe25-4c6b-843c-3eaafa90e985",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_hs_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -1147,7 +1533,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/hard_skills/5b4f89322131372234ca2008",
+							"raw": "http://127.0.0.1:5000/persons/hard_skills/{{person_hs_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1159,7 +1545,7 @@
 							"path": [
 								"persons",
 								"hard_skills",
-								"5b4f89322131372234ca2008"
+								"{{person_hs_id}}"
 							]
 						},
 						"description": "Удаляет профессиональный навык пользователя"
@@ -1168,6 +1554,19 @@
 				},
 				{
 					"name": "find_person_hard_skills",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a862e85a-48e7-4aec-bc94-2b9a36afc404",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b4e38d02131371ce8dd8246\");",
+									"pm.environment.set(\"hs_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1176,7 +1575,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/hard_skills?person_id=5b4f89322131372234ca1ff8&hs_id=5b4f89322131372234ca2003",
+							"raw": "http://127.0.0.1:5000/persons/hard_skills?person_id={{person_id}}&hs_id={{hs_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1192,11 +1591,11 @@
 							"query": [
 								{
 									"key": "person_id",
-									"value": "5b4f89322131372234ca1ff8"
+									"value": "{{person_id}}"
 								},
 								{
 									"key": "hs_id",
-									"value": "5b4f89322131372234ca2003"
+									"value": "{{hs_id}}"
 								}
 							]
 						},
@@ -1206,6 +1605,18 @@
 				},
 				{
 					"name": "get_person_hard_skill_info",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "88310c8f-fe7d-44fb-a545-78b0d7d80130",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_hs_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1214,7 +1625,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/hard_skills/5b4f89322131372234ca200a",
+							"raw": "http://127.0.0.1:5000/persons/hard_skills/{{person_hs_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1226,7 +1637,7 @@
 							"path": [
 								"persons",
 								"hard_skills",
-								"5b4f89322131372234ca200a"
+								"{{person_hs_id}}"
 							]
 						},
 						"description": "Получает данные профессионального навыка пользователя"
@@ -1273,6 +1684,18 @@
 				},
 				{
 					"name": "delete_soft_skill",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0b00adb7-65eb-47d8-90cc-391c1e6e61a5",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"ss_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -1281,7 +1704,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/soft_skills/5b4f93192131371ff09087f0",
+							"raw": "http://127.0.0.1:5000/soft_skills/{{ss_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1292,7 +1715,7 @@
 							"port": "5000",
 							"path": [
 								"soft_skills",
-								"5b4f93192131371ff09087f0"
+								"{{ss_id}}"
 							]
 						},
 						"description": "Удаляет личностную характеристику из базы"
@@ -1360,6 +1783,18 @@
 				},
 				{
 					"name": "delete_hard_skill",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "d61a3182-d665-4c67-8527-75a17566b30b",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"hs_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -1368,7 +1803,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/hard_skills/5b4f96a5213137236009710c",
+							"raw": "http://127.0.0.1:5000/hard_skills/{{hs_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1379,7 +1814,7 @@
 							"port": "5000",
 							"path": [
 								"hard_skills",
-								"5b4f96a5213137236009710c"
+								"{{hs_id}}"
 							]
 						},
 						"description": "Удаляет профессиональный навык из базы"
@@ -1421,6 +1856,18 @@
 			"item": [
 				{
 					"name": "add_group_test",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8ebf5c79-dba8-4f04-853e-83529f98d9d3",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1434,7 +1881,7 @@
 							"raw": "{\n\t\"name\": \"Тест на знание микроконтроллеров\",\n\t\"info\":\"Описание\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/groups/5b4f89322131372234ca2053/tests",
+							"raw": "http://127.0.0.1:5000/groups/{{group_id}}/tests",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1445,7 +1892,7 @@
 							"port": "5000",
 							"path": [
 								"groups",
-								"5b4f89322131372234ca2053",
+								"{{group_id}}",
 								"tests"
 							]
 						},
@@ -1455,6 +1902,18 @@
 				},
 				{
 					"name": "delete_group_test",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "884eb980-83d0-4477-8394-189a9f0a86f0",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"test_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -1463,7 +1922,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/tests/5b50d5b22131371238fe4443",
+							"raw": "http://127.0.0.1:5000/tests/{{test_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1474,7 +1933,7 @@
 							"port": "5000",
 							"path": [
 								"tests",
-								"5b50d5b22131371238fe4443"
+								"{{test_id}}"
 							]
 						},
 						"description": "Удаляет тест для группы"
@@ -1483,6 +1942,18 @@
 				},
 				{
 					"name": "get_group_test_info",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "dc0732d0-56aa-4ffa-8437-597c4c60340b",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"test_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1491,7 +1962,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/tests/5b4f89322131372234ca205c",
+							"raw": "http://127.0.0.1:5000/tests/{{test_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1502,7 +1973,7 @@
 							"port": "5000",
 							"path": [
 								"tests",
-								"5b4f89322131372234ca205c"
+								"{{test_id}}"
 							]
 						},
 						"description": "Получает информацию по тесту"
@@ -1511,6 +1982,18 @@
 				},
 				{
 					"name": "list_group_tests",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2d04145a-968b-4378-9cf2-ad1f80546f18",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1519,7 +2002,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/groups/5b4f89322131372234ca2053/tests",
+							"raw": "http://127.0.0.1:5000/groups/{{group_id}}/tests",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1530,7 +2013,7 @@
 							"port": "5000",
 							"path": [
 								"groups",
-								"5b4f89322131372234ca2053",
+								"{{group_id}}",
 								"tests"
 							]
 						},
@@ -1540,6 +2023,19 @@
 				},
 				{
 					"name": "add_test_result",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "300cab5c-5de3-4889-a332-b6a421d3b4fa",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"test_id\", \"5b4e38d02131371ce8dd8246\");",
+									"pm.environment.set(\"person_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1550,10 +2046,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"person_id\": \"5b4f89322131372234ca2053\",\n\t\"result_data\":[\"Оценка:2, \",\"Время: 4.0\"]\n}"
+							"raw": "{\n\t\"person_id\": \"{{person_id}}}}\",\n\t\"result_data\":[\"Оценка:2, \",\"Время: 4.0\"]\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/tests/5b4f89322131372234ca205c/results",
+							"raw": "http://127.0.0.1:5000/tests/{{test_id}}/results",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1564,7 +2060,7 @@
 							"port": "5000",
 							"path": [
 								"tests",
-								"5b4f89322131372234ca205c",
+								"{{test_id}}",
 								"results"
 							]
 						},
@@ -1574,6 +2070,18 @@
 				},
 				{
 					"name": "delete_test_result",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0aa77fd6-64aa-4fc6-a845-176e989f9105",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"test_result_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -1582,7 +2090,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/tests/results/5b50e5572131370f188d0bf7",
+							"raw": "http://127.0.0.1:5000/tests/results/{{test_result_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1594,7 +2102,7 @@
 							"path": [
 								"tests",
 								"results",
-								"5b50e5572131370f188d0bf7"
+								"{{test_result_id}}"
 							]
 						},
 						"description": "Удаляет результат тестирования"
@@ -1603,6 +2111,18 @@
 				},
 				{
 					"name": "get_test_result_info",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2258c725-e906-43f0-adcf-2f4e9dd3f4e4",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"test_result_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1611,7 +2131,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/tests/results/5b4f89322131372234ca205d",
+							"raw": "http://127.0.0.1:5000/tests/results/{{test_result_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1623,7 +2143,7 @@
 							"path": [
 								"tests",
 								"results",
-								"5b4f89322131372234ca205d"
+								"{{test_result_id}}"
 							]
 						},
 						"description": "Получает информацию результату тестирования"
@@ -1632,6 +2152,19 @@
 				},
 				{
 					"name": "find_test_results",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5ffdfc48-ba71-4b31-a8c1-e57893fe5dd5",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"test_id\", \"5b4e38d02131371ce8dd8246\");",
+									"pm.environment.set(\"person_id\", \"5b4e38d02131371ce8dd8246\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1640,7 +2173,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/tests/results?test_id=5b4f89322131372234ca205b&person_id=5b4f89322131372234ca1ff8",
+							"raw": "http://127.0.0.1:5000/tests/results?test_id={{test_id}}&person_id={{person_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1656,11 +2189,11 @@
 							"query": [
 								{
 									"key": "test_id",
-									"value": "5b4f89322131372234ca205b"
+									"value": "{{test_id}}"
 								},
 								{
 									"key": "person_id",
-									"value": "5b4f89322131372234ca1ff8"
+									"value": "{{person_id}}"
 								}
 							]
 						},
