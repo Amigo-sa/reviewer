@@ -46,27 +46,7 @@ class TestApi(unittest.TestCase):
         add_list = []
         items_to_write = 3
         for item_ctr in range(items_to_write):
-            cur_item = dict()
-            for key, value in kwargs.items():
-                if value == "string":
-                    cur_item.update({
-                        key: "sample_" + key + "_" + str(item_ctr + 1)
-                    })
-                elif value == "date":
-                    #TODO уточнить, подойдёт ли ISO во всех случаях
-                    cur_date = datetime.date(random.randrange(1900, 2000),
-                                           random.randrange(1, 12),
-                                           random.randrange(1, 28))
-                    date_iso = cur_date.isoformat()
-                    cur_item.update({
-                        key: date_iso
-                    })
-                elif value == "number_string":
-                    cur_item.update({
-                        key: "3223223" + str(item_ctr)
-                    })
-                else:
-                    raise ValueError("unsupported field type")
+            cur_item = self.generate_doc(item_ctr, kwargs.items())
             resp = requests.post(url=self.api_URL + url_post, json=cur_item)
             self.assertEqual(200, resp.status_code, "post response status code must be 200")
             resp_json = resp.json()
@@ -98,8 +78,36 @@ class TestApi(unittest.TestCase):
         read_list = resp_json["list"]
         self.assertListEqual([], read_list, "docs must be erased from DB")
 
-    def t_referencing_normal(self):
-        pass
+    @staticmethod
+    def generate_doc(doc_no, type_list):
+        cur_item = dict()
+        for key, value in type_list:
+            if value == "string":
+                cur_item.update({
+                    key: "sample_" + key + "_" + str(doc_no + 1)
+                })
+            elif value == "date":
+                # TODO уточнить, подойдёт ли ISO во всех случаях
+                cur_date = datetime.date(random.randrange(1900, 2000),
+                                         random.randrange(1, 12),
+                                         random.randrange(1, 28))
+                date_iso = cur_date.isoformat()
+                cur_item.update({
+                    key: date_iso
+                })
+            elif value == "number_string":
+                cur_item.update({
+                    key: "3223223" + str(doc_no)
+                })
+            elif value == "skill_level":
+                cur_item.update({
+                    key: random.random() * 100.0
+                })
+            else:
+                cur_item.update({
+                    key: value
+                })
+        return cur_item
 
     def prepare_organization(self):
         post_data = {"name": "aux_org"}
@@ -116,13 +124,40 @@ class TestApi(unittest.TestCase):
             return {"dep_id" : resp_json["id"],
                     "org_id" : aux_org_id}
 
-    def delete_organization(self, id):
-        resp_json = requests.delete(url=self.api_URL + '/organizations' + "/" + id).json()
-        self.assertEqual(resp_json["result"], ERR.OK, "the organization must be deleted")
+    def prepare_group(self):
+        aux_items_ids = self.prepare_department()
+        self.assertTrue(aux_items_ids["dep_id"], "aux department must be created")
+        post_data = {"name": "aux_group"}
+        resp_json = requests.post(url=self.api_URL + '/departments/' + aux_items_ids["dep_id"] + "/groups",
+                                  json=post_data).json()
+        if resp_json["result"] == ERR.OK:
+            aux_items_ids.update({"group_id": resp_json["id"]})
+            return aux_items_ids
 
-    def delete_department(self, id):
-        resp_json = requests.delete(url=self.api_URL + '/departments' + "/" + id).json()
-        self.assertEqual(resp_json["result"], ERR.OK, "the department must be deleted")
+    def prepare_persons(self, person_count):
+        person_type_list = dict(first_name="string",
+                             middle_name="string",
+                             surname="string",
+                             birth_date="date",
+                             phone_no="number_string")
+        id_list = []
+        print(person_type_list)
+        for person_ctr in range(person_count):
+            cur_person = self.generate_doc(person_ctr, person_type_list.items())
+            resp_json = requests.post(url=self.api_URL + "/persons", json=cur_person).json()
+            self.assertEqual(resp_json["result"], ERR.OK, "aux person must be added")
+            id_list.append(resp_json["id"])
+        return id_list
+
+    def prepare_hs(self):
+        post_data = {"name": "aux_hard_skill"}
+        resp_json = requests.post(url=self.api_URL + '/hard_skills', json=post_data).json()
+        if resp_json["result"] == ERR.OK:
+            return resp_json["id"]
+
+    def delete_doc(self, url):
+        resp_json = requests.delete(url=self.api_URL + url).json()
+        self.assertEqual(resp_json["result"], ERR.OK, "the document must be deleted")
 
     def test_organization_normal(self):
         self.t_simple_normal(         "/organizations",
@@ -172,17 +207,45 @@ class TestApi(unittest.TestCase):
                                       "/organizations/" + aux_org_id + "/departments",
                                       "/departments",
                                         name="string")
-        self.delete_organization(aux_org_id)
+        self.delete_doc("/organizations/" + aux_org_id)
 
     def test_group_normal(self):
-        aux_field_ids = self.prepare_department()
-        self.assertTrue(aux_field_ids, "auxiliary organization must be created")
-        self.t_simple_normal("/departments/" + aux_field_ids["dep_id"] + "/groups",
-                             "/departments/" + aux_field_ids["dep_id"] + "/groups",
+        aux_item_ids = self.prepare_department()
+        self.assertTrue(aux_item_ids, "auxiliary organization must be created")
+        self.t_simple_normal("/departments/" + aux_item_ids["dep_id"] + "/groups",
+                             "/departments/" + aux_item_ids["dep_id"] + "/groups",
                              "/groups",
                              name="string")
-        self.delete_department(aux_field_ids["dep_id"])
-        self.delete_organization(aux_field_ids["org_id"])
+        self.delete_doc("/departments/" + aux_item_ids["dep_id"])
+        self.delete_doc("/organizations/" + aux_item_ids["org_id"])
+
+    """
+    #TODO проверить также второй вариант поиска
+    def test_person_HS(self):
+        aux_person_list = self.prepare_persons(1)
+        aux_hs_id = self.prepare_hs()
+        self.assertTrue(aux_person_list[0], "aux person must be created")
+        self.assertTrue(aux_hs_id, "aux hard skill must be created")
+        self.t_simple_normal("/persons/hard_skills/" +  + "/hard_skills",
+                             "/persons/" + aux_person_list[0]+ "/hard_skills",
+                             "/persons/hard_skills/",
+                             hs_id=aux_hs_id)
+        self.delete_doc("/hard_skills/" + aux_hs_id)
+        for person_id in aux_person_list:
+            self.delete_doc("/persons/" + person_id)
+    """
+
+    def test_group_test_normal(self):
+        aux_item_ids = self.prepare_group()
+        self.assertTrue(aux_item_ids["group_id"], "aux group must be created")
+        self.t_simple_normal("/groups/" + aux_item_ids["group_id"] + "/tests",
+                             "/groups/" + aux_item_ids["group_id"] + "/tests",
+                             "/tests",
+                             name="string",
+                             info="string")
+        self.delete_doc("/groups/" + aux_item_ids["group_id"])
+        self.delete_doc("/departments/" + aux_item_ids["dep_id"])
+        self.delete_doc("/organizations/" + aux_item_ids["org_id"])
 
 
 if __name__ == "__main__":
