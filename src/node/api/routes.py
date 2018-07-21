@@ -956,8 +956,7 @@ def list_group_tests(id):
     try:
         for group_test in GroupTest.objects.raw({"group_id": ObjectId(id)}):
             list.append({"id": str(group_test.pk),
-                        "name": group_test.name,
-                         "info": group_test.info})
+                        "name": group_test.name})
         result = {"result": ERR.OK, "list":list}
     except:
         result = {"result": ERR.DB}

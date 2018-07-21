@@ -61,6 +61,7 @@ class TestApi(unittest.TestCase):
         total_match = 0
         for added_item in add_list:
             item_match = 0
+            if "info" in added_item.keys(): del added_item["info"] # Подразумевает, что мы не ожидаем получение info при получении списка, т.к. инфо может быть длинное
             for read_item in read_list:
                 if added_item == read_item:
                     item_match += 1
