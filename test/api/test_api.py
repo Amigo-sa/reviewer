@@ -106,11 +106,23 @@ class TestApi(unittest.TestCase):
         resp_json = requests.post(url=self.api_URL + '/organizations', json=post_data).json()
         if resp_json["result"] == ERR.OK:
             return resp_json["id"]
-        # return None
+
+    def prepare_department(self):
+        aux_org_id = self.prepare_organization()
+        self.assertTrue(aux_org_id, "auxiliary organization must be created")
+        post_data = {"name": "aux_dep"}
+        resp_json = requests.post(url=self.api_URL + '/organizations/' + aux_org_id + "/departments", json=post_data).json()
+        if resp_json["result"] == ERR.OK:
+            return {"dep_id" : resp_json["id"],
+                    "org_id" : aux_org_id}
 
     def delete_organization(self, id):
         resp_json = requests.delete(url=self.api_URL + '/organizations' + "/" + id).json()
         self.assertEqual(resp_json["result"], ERR.OK, "the organization must be deleted")
+
+    def delete_department(self, id):
+        resp_json = requests.delete(url=self.api_URL + '/departments' + "/" + id).json()
+        self.assertEqual(resp_json["result"], ERR.OK, "the department must be deleted")
 
     def test_organization_normal(self):
         self.t_simple_normal(         "/organizations",
@@ -161,6 +173,16 @@ class TestApi(unittest.TestCase):
                                       "/departments",
                                         name="string")
         self.delete_organization(aux_org_id)
+
+    def test_group_normal(self):
+        aux_field_ids = self.prepare_department()
+        self.assertTrue(aux_field_ids, "auxiliary organization must be created")
+        self.t_simple_normal("/departments/" + aux_field_ids["dep_id"] + "/groups",
+                             "/departments/" + aux_field_ids["dep_id"] + "/groups",
+                             "/groups",
+                             name="string")
+        self.delete_department(aux_field_ids["dep_id"])
+        self.delete_organization(aux_field_ids["org_id"])
 
 
 if __name__ == "__main__":
