@@ -877,10 +877,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "2a855419-ddb0-402a-b0ed-0fb508b51957",
+								"id": "6ea67462-f97a-4fe4-b29f-9557ceb88417",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"person_id\", \"5b4f89322131372234ca1ff8\");",
+									"pm.environment.set(\"person_id\", \"5b547bee21313717b8ddd06c\");",
 									"pm.environment.set(\"department_id\", \"5b4f89322131372234ca2001\");",
 									"pm.environment.set(\"role_type\", \"Tutor\");"
 								]
@@ -897,7 +897,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"person_id\": \"{{person_id}}\",\n\t\"department_id\":\"{{department_id}}\",\n\t\"role_type\":\"{{role_type}}\",\n\t\"role_data\":\"Бездельник\"\n}"
+							"raw": "{\n\t\"person_id\": \"{{person_id}}\",\n\t\"department_id\":\"{{department_id}}\",\n\t\"role_type\":\"{{role_type}}\",\n\t\"description\":\"Бездельник\"\n}"
 						},
 						"url": {
 							"raw": "http://127.0.0.1:5000/general_roles",
@@ -963,10 +963,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "0282af45-7e8b-4570-8be8-c89b33098280",
+								"id": "3e91bfff-7041-451e-8dbd-3879697846de",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"role_id\", \"5b4f89322131372234ca2054\");"
+									"pm.environment.set(\"role_id\", \"5b54b0fa2131371ee8d3278b\");"
 								]
 							}
 						}
