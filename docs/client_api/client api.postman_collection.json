@@ -1148,17 +1148,49 @@
 			"description": "Функции для работы с данными пользователей",
 			"item": [
 				{
+					"name": "add_person",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"first_name\":\"Иван\",\n\t\"middle_name\": \"Иванович\",\n\t\"surname\": \"Иванов\",\n\t\"birth_date\": \"2000-10-10\",\n\t\"phone_no\": \"89001002033\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons"
+							]
+						},
+						"description": "Добавляет пользователя в базу"
+					},
+					"response": []
+				},
+				{
 					"name": "find_persons",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "34d3e3d1-0213-490b-86d3-bd44fe4b5a06",
+								"id": "ea9d7bbb-04bc-4419-ab14-f1fc48072019",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"group_id\", \"5b4e38d02131371ce8dd8246\");",
+									"pm.environment.set(\"group_id\", \"5b4f89322131372234ca2053\");",
 									"pm.environment.set(\"department_id\", \"5b4e38d02131371ce8dd8246\");",
-									"pm.environment.set(\"organization_id\", \"5b4e38d02131371ce8dd8246\");"
+									"pm.environment.set(\"organization_id\", \"5b4f89322131372234ca1fff\");"
 								]
 							}
 						}
@@ -1199,6 +1231,43 @@
 							]
 						},
 						"description": "Ищет людей по определенным критериям"
+					},
+					"response": []
+				},
+				{
+					"name": "delete_person",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8aa3700e-bbef-43a9-a951-11647a1be821",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b54544d21313706f86787df\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/{{person_id}}",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"{{person_id}}"
+							]
+						},
+						"description": "Удаляет пользователя из базы"
 					},
 					"response": []
 				},
