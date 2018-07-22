@@ -441,7 +441,7 @@ def add_general_role():
             result = {"result": ERR.OK,
                       "id": str(tutor_role.pk)}
         else:
-            if role_type == "Studend":
+            if role_type == "Student":
                 student_role = StudentRole(Person(_id=person_id),
                                            Department(_id=department_id),
                                            description)
