@@ -429,14 +429,14 @@ def add_general_role():
         person_id = req['person_id']
         department_id = req['department_id']
         role_type = req['role_type']
-        role_data = req['role_data']
+        description = req['description']
     except:
         return jsonify({"result": ERR.INPUT}), 200
     try:
         if role_type == "Tutor":
             tutor_role = TutorRole(Person(_id=person_id),
                                    Department(_id=department_id),
-                                   role_data)
+                                   description)
             tutor_role.save()
             result = {"result": ERR.OK,
                       "id": str(tutor_role.pk)}
@@ -444,7 +444,7 @@ def add_general_role():
             if role_type == "Studend":
                 student_role = StudentRole(Person(_id=person_id),
                                            Department(_id=department_id),
-                                           role_data)
+                                           description)
                 student_role.save()
                 result = {"result": ERR.OK,
                           "id": str(student_role.pk)}
