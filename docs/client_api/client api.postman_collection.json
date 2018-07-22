@@ -40,7 +40,71 @@
 						},
 						"description": "Добавляет организацию в базу"
 					},
-					"response": []
+					"response": [
+						{
+							"id": "3ffe7e3a-2bae-42ec-837b-2a6f824f43a4",
+							"name": "add_organization_example_success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\":\"МГУ\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/organizations",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"organizations"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "13",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 22 Jul 2018 17:26:43 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"5b54c0cc2131371148e85d3c\",\n    \"result\": 0\n}"
+						}
+					]
 				},
 				{
 					"name": "delete_organization",
@@ -1278,6 +1342,105 @@
 						"description": "Удаляет пользователя из базы"
 					},
 					"response": []
+				},
+				{
+					"name": "get_person_info",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5937108a-ce70-4ed5-9154-87493252caad",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b54c4a72131371cb0cbdd45\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/{{person_id}}",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"{{person_id}}"
+							]
+						},
+						"description": "Получает информацию по пользователю"
+					},
+					"response": [
+						{
+							"id": "96668329-d4ef-46f2-89ed-6137ed1e63fa",
+							"name": "get_person_info_success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/persons/{{person_id}}",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"persons",
+										"{{person_id}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "301",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 22 Jul 2018 17:54:50 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"data\":{\"birth_date\":\"1986-05-01\",\"first_name\":\"\\u041b\\u0435\\u043e\\u043d\\u0438\\u0434\",\"id\":\"5b54c4a72131371cb0cbdd45\",\"middle_name\":\"\\u0410\\u043b\\u0435\\u043a\\u0441\\u0430\\u043d\\u0434\\u0440\\u043e\\u0432\\u0438\\u0447\",\"phone_no\":\"88005553535\",\"surname\":\"\\u0414\\u0443\\u043d\\u0430\\u0435\\u0432\"},\"result\":0}\n"
+						}
+					]
 				},
 				{
 					"name": "list_roles_in_group_by_person_id",

@@ -598,6 +598,27 @@ def find_persons():
     return jsonify(result), 200
 
 
+@bp.route("/persons/<string:id>", methods=['GET'])
+def get_person_info(id):
+    try:
+        if Person(_id=id) in Person.objects.raw({"_id": ObjectId(id)}):
+            person = Person(_id=id)
+            person.refresh_from_db()
+            birth_date_str = person.birth_date.strftime("%Y-%m-%d")
+            data = {"id": str(person.pk),
+                    "first_name": person.first_name,
+                    "middle_name": person.middle_name,
+                    "surname": person.surname,
+                    "birth_date": birth_date_str,
+                    "phone_no": person.phone_no}
+            result = {"result": ERR.OK, "data": data}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
 @bp.route("/reviews", methods = ['POST'])
 def post_review():
     req = request.get_json()
