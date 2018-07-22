@@ -516,56 +516,82 @@ def list_roles_by_person_id(id):
 
 @bp.route("/persons", methods=['GET'])
 def find_persons():
-    lst = []
+    if 'query_limit' in request.args:
+        limit = int(request.args['query_limit'])
+    else:
+        limit = 100
+    if 'query_start' in request.args:
+        skip = int(request.args['query_start'])
+    else:
+        skip = 0
+    pipeline = ({"$lookup":
+                     {"from": "tutor_role",
+                      "localField": "_id",
+                      "foreignField": "person_id",
+                      "as": "tutor_role"}},
+                {"$lookup":
+                     {"from": "student_role",
+                      "localField": "_id",
+                      "foreignField": "person_id",
+                      "as": "student_role"}})
     if 'group_id' in request.args:
         group_id = request.args['group_id']
+        pipeline += ({"$lookup":
+                        {"from": "role_in_group",
+                         "localField": "_id",
+                         "foreignField": "person_id",
+                         "as": "role"}},
+                     {"$match":
+                         {"role.group_id": ObjectId(group_id)}},
+                     )
     else:
-        group_id = None
-    if 'department_id' in request.args:
-        department_id = request.args['department_id']
-    else:
-        department_id = None
-    if 'organization_id' in request.args:
-        organization_id = request.args['organization_id']
-    else:
-        organization_id = None
-    try:
-        if group_id:
-            for role in RoleInGroup.objects.raw({"group_id": ObjectId(group_id)}):
-                lst.append({"id": str(role.person_id.pk)})
-            list = [dict(t) for t in set([tuple(d.items()) for d in lst])]
-            result = {"result": ERR.OK, "list":list}
+        if 'department_id' in request.args:
+            department_id = request.args['department_id']
+            pipeline += ({"$match":
+                             {"$or": [{"tutor_role.department_id": ObjectId(department_id)},
+                                      {"student_role.department_id": ObjectId(department_id)}]}},
+            )
         else:
-            if department_id:
-                for role in StudentRole.objects.raw({"department_id": ObjectId(department_id)}):
-                    lst.append({"id": str(role.person_id.pk)})
-                for role in TutorRole.objects.raw({"department_id": ObjectId(department_id)}):
-                    lst.append({"id": str(role.person_id.pk)})
-                list = [dict(t) for t in set([tuple(d.items()) for d in lst])]
-                result = {"result": ERR.OK, "list": list}
+            if 'organization_id' in request.args:
+                organization_id = request.args['organization_id']
+                departments = []
+                for department in Department.objects.raw({"organization_id": ObjectId(organization_id)}):
+                    departments.append(department.pk)
+                pipeline += ({"$match":
+                                 {"$or": [{"tutor_role.department_id": {"$in" : departments}},
+                                          {"student_role.department_id": {"$in" : departments}}]}},
+                            )
             else:
-                if organization_id:
-                    for department in Department.objects.raw({"organization_id":ObjectId(organization_id)}):
-                        for role in StudentRole.objects.raw({"department_id": department.pk}):
-                            lst.append({"id": str(role.person_id.pk)})
-                        for role in TutorRole.objects.raw({"department_id": department.pk}):
-                            lst.append({"id": str(role.person_id.pk)})
-                    list = [dict(t) for t in set([tuple(d.items()) for d in lst])]
-                    result = {"result": ERR.OK, "list": list}
+                pipeline += ({"$match":
+                                  {"$or": [{"tutor_role.department_id": {"$exists": True}},
+                                           {"student_role.department_id": {"$exists": True}}]}},
+                             )
+    pipeline += ({"$skip": skip},
+                 {"$limit": limit})
+    try:
+        list = []
+        for person in Person.objects.aggregate(*pipeline):
+            if person["tutor_role"]:
+                department_id = person["tutor_role"][0]["department_id"]
+                role = "Tutor"
+            else:
+                if person["student_role"]:
+                    department_id = person["student_role"][0]["department_id"]
+                    role = "Student"
                 else:
-                    try:
-                        list = []
-                        for person in Person.objects.all():
-                            birth_date_str = person.birth_date.strftime("%Y-%m-%d")
-                            list.append({"id": str(person.pk),
-                                         "first_name": person.first_name,
-                                         "middle_name": person.middle_name,
-                                         "surname": person.surname,
-                                         "birth_date": birth_date_str,
-                                         "phone_no": person.phone_no})
-                        result = {"result": ERR.OK, "list": list}
-                    except:
-                        result = {"result": ERR.INPUT}
+                    role = "None"
+                    department_id = None
+            department = Department(_id=department_id)
+            department.refresh_from_db()
+            organization = Organization(_id=department.organization_id.pk)
+            organization.refresh_from_db()
+            list.append({"id": str(person["_id"]),
+                         "first_name": person["first_name"],
+                         "middle_name": person["middle_name"],
+                         "surname": person["surname"],
+                         "role": role,
+                         "organization_name": organization.name})
+        result = {"result": ERR.OK, "list": list}
     except Exception as ex:
         print(ex)
         result = {"result": ERR.DB}
