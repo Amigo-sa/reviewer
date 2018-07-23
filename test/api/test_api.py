@@ -1,3 +1,4 @@
+# -- coding: utf-8 --
 import context
 import unittest
 import requests
