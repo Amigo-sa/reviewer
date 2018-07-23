@@ -25,6 +25,7 @@ class TestApi(unittest.TestCase):
     def setUpClass(cls):
         # Загрузка адреса сервера
         cls.api_URL = constants.core_server_url
+        cls.gen_doc_ctr = 0
         # Запуск сервера, (проверка на запущенность не проводится!)
         # TODO добавить проверку на запущенность сервера
         # TODO добавить очищение базы с сохранинем индексов
@@ -67,7 +68,7 @@ class TestApi(unittest.TestCase):
         add_list = []
         items_to_write = 3
         for item_ctr in range(items_to_write):
-            cur_item = self.generate_doc(item_ctr, kwargs.items())
+            cur_item = self.generate_doc(kwargs.items())
             resp = requests.post(url=self.api_URL + url_post, json=cur_item)
             self.assertEqual(200, resp.status_code, "post response status code must be 200")
             resp_json = resp.json()
@@ -107,14 +108,14 @@ class TestApi(unittest.TestCase):
         resp_json = requests.get(self.api_URL + url_get).json()
         read_list = resp_json["list"]
         self.assertListEqual([], read_list, "docs must be erased from DB")
-
-    @staticmethod
-    def generate_doc(doc_no, type_list, *args, **kwargs):
+    @classmethod
+    def generate_doc(cls, type_list, *args, **kwargs):
+        cls.gen_doc_ctr += 1
         cur_item = dict()
         for key, value in type_list:
             if value == "string":
                 cur_item.update({
-                    key: "sample_" + key + "_" + str(doc_no + 1)
+                    key: "sample_" + key + "_" + str(cls.gen_doc_ctr + 1)
                 })
             elif value == "date":
                 # TODO уточнить, подойдёт ли ISO во всех случаях
@@ -127,7 +128,7 @@ class TestApi(unittest.TestCase):
                 })
             elif value == "number_string":
                 cur_item.update({
-                    key: "3223223" + str(doc_no)
+                    key: "3223223" + str(cls.gen_doc_ctr)
                 })
             elif value == "skill_level":
                 cur_item.update({
@@ -142,7 +143,7 @@ class TestApi(unittest.TestCase):
         return cur_item
 
     def prepare_organization(self):
-        post_data = {"name": "aux_org"}
+        post_data = self.generate_doc(dict(name="string").items())
         resp_json = requests.post(url=self.api_URL + '/organizations', json=post_data).json()
         self.assertEqual(resp_json["result"],ERR.OK, "aux organization must be created")
         return resp_json["id"]
@@ -150,7 +151,7 @@ class TestApi(unittest.TestCase):
     def prepare_department(self):
         aux_org_id = self.prepare_organization()
         self.assertTrue(aux_org_id, "auxiliary organization must be created")
-        post_data = {"name": "aux_dep"}
+        post_data = self.generate_doc(dict(name="string").items())
         resp_json = requests.post(url=self.api_URL + '/organizations/' + aux_org_id + "/departments", json=post_data).json()
         self.assertEqual(resp_json["result"], ERR.OK, "aux department must be created")
         return {"dep_id" : resp_json["id"],
@@ -159,7 +160,7 @@ class TestApi(unittest.TestCase):
     def prepare_group(self):
         aux_items_ids = self.prepare_department()
         self.assertTrue(aux_items_ids["dep_id"], "aux department must be created")
-        post_data = {"name": "aux_group"}
+        post_data = self.generate_doc(dict(name="string").items())
         resp_json = requests.post(url=self.api_URL + '/departments/' + aux_items_ids["dep_id"] + "/groups",
                                   json=post_data).json()
         self.assertEqual(resp_json["result"], ERR.OK, "aux group must be created")
@@ -174,14 +175,14 @@ class TestApi(unittest.TestCase):
                              phone_no="number_string")
         id_list = []
         for person_ctr in range(person_count):
-            cur_person = self.generate_doc(person_ctr, person_type_list.items())
+            cur_person = self.generate_doc(person_type_list.items())
             resp_json = requests.post(url=self.api_URL + "/persons", json=cur_person).json()
             self.assertEqual(resp_json["result"], ERR.OK, "aux person must be added")
             id_list.append(resp_json["id"])
         return id_list
 
     def prepare_hs(self):
-        post_data = {"name": "aux_hard_skill"}
+        post_data = self.generate_doc(dict(name="string").items())
         resp_json = requests.post(url=self.api_URL + '/hard_skills', json=post_data).json()
         self.assertEqual(resp_json["result"], ERR.OK, "aux hard skill must be created")
 
