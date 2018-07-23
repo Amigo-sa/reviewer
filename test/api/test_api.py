@@ -7,6 +7,7 @@ from node.node_server import start_server
 from threading import Thread
 import random
 import datetime
+import re
 #from src.data.reviewer_model import *
 
 class NodeServer(Thread):
@@ -28,27 +29,31 @@ class TestApi(unittest.TestCase):
         # TODO добавить проверку на запущенность сервера
         # TODO добавить очищение базы с сохранинем индексов
         node_server_thread.start()
+        cls.clear_collection("/persons", "/persons")
+        cls.clear_collection("/organizations", "/organizations")
+        cls.clear_collection("/group_permissions", "/group_permissions")
+        cls.clear_collection("/group_roles", "/group_roles")
+        cls.clear_collection("/hard_skills", "/hard_skills")
+        cls.clear_collection("/soft_skills", "/soft_skills")
+
+    @classmethod
+    def clear_collection(cls, url_list, url_delete):
+        resp_json = requests.get(cls.api_URL + url_list).json()
+        if resp_json["list"]:
+            print("Warning: collection %s was not cleared after tests"%url_delete)
+            for doc in resp_json["list"]:
+                resp_json = requests.delete(url=cls.api_URL + url_delete+ "/" + doc["id"]).json()
 
     @classmethod
     def tearDownClass(cls):
         requests.post(cls.api_URL + "/shutdown")
 
     def tearDown(self):
-
         pass
 
     def setUp(self):
-        resp_json = requests.get(self.api_URL + "/organizations").json()
-        orgs = resp_json["list"]
-        resp_json = requests.get(self.api_URL + "/persons").json()
-        persons = resp_json["list"]
-        # Такое удаление подразумевает правило удаления CASCADE в базе
-        if orgs or persons:
-            print("Warning: test did not clean DB")
-            for org in orgs:
-                self.delete_doc("/organizations/" + org["id"])
-            for person in persons:
-                self.delete_doc("/persons/" + person["id"])
+
+        pass
 
     def t_simple_normal(self, url_get, url_post, url_delete, *args, **kwargs):
         # read from empty DB
@@ -57,7 +62,7 @@ class TestApi(unittest.TestCase):
         resp_json = resp.json()
         self.assertEqual(resp_json["result"], ERR.OK, "result must be ERR.OK")
         read_list = resp_json["list"]
-        self.assertListEqual([],read_list, "initial DB must be empty")
+        self.assertListEqual([],read_list, "initial DB must not contain any " + url_delete)
         # write items to DB
         add_list = []
         items_to_write = 3
@@ -83,6 +88,15 @@ class TestApi(unittest.TestCase):
                     total_match += 1
             self.assertEqual(item_match, 1, "must be exactly one match for each item")
         self.assertEqual(total_match, items_to_write, "all added items must be in GET list")
+        # specific tests
+        if url_delete == "/tests":
+            parent_id = re.findall("\w+", url_post)[1]
+            for added_item in add_list:
+                resp_json = requests.get(self.api_URL + "/tests/" + added_item["id"]).json()
+                self.assertEqual(resp_json["result"], ERR.OK, "the get test info result must be ERR.OK")
+                self.assertEqual(resp_json["data"]["info"], added_item["info"], "test info must match")
+                self.assertEqual(resp_json["data"]["name"], added_item["name"], "test name must match")
+                self.assertEqual(resp_json["data"]["group_id"], parent_id, "group_ids must match")
         # delete items
         for item in add_list:
             resp = requests.delete(url=self.api_URL + url_delete + "/" + item["id"])
@@ -233,22 +247,6 @@ class TestApi(unittest.TestCase):
                              name="string")
         self.delete_doc("/departments/" + aux_item_ids["dep_id"])
         self.delete_doc("/organizations/" + aux_item_ids["org_id"])
-
-    """
-    #TODO проверить также второй вариант поиска
-    def test_person_HS(self):
-        aux_person_list = self.prepare_persons(1)
-        aux_hs_id = self.prepare_hs()
-        self.assertTrue(aux_person_list[0], "aux person must be created")
-        self.assertTrue(aux_hs_id, "aux hard skill must be created")
-        self.t_simple_normal("/persons/hard_skills/" +  + "/hard_skills",
-                             "/persons/" + aux_person_list[0]+ "/hard_skills",
-                             "/persons/hard_skills/",
-                             hs_id=aux_hs_id)
-        self.delete_doc("/hard_skills/" + aux_hs_id)
-        for person_id in aux_person_list:
-            self.delete_doc("/persons/" + person_id)
-    """
 
     def test_group_test_normal(self):
         aux_doc_ids = self.prepare_group()
