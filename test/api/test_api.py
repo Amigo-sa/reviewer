@@ -269,13 +269,22 @@ class TestApi(unittest.TestCase):
         self.delete_doc("/departments/" + aux_doc_ids["dep_id"])
         self.delete_doc("/organizations/" + aux_doc_ids["org_id"])
 
-    def test_tutor_role_normal(self):
-        #self.t_role("Tutor")
-        pass
-
-    def test_student_role_normal(self):
-        #self.t_role("Student")
-        pass
+    def test_find_person_limits(self):
+        person_ids = self.prepare_persons(10)
+        list_0_3 = self.get_item_list("/persons?query_limit=4")
+        self.assertEqual(len(list_0_3), 4, "must return requested number of items")
+        for index, item in enumerate(list_0_3):
+            self.assertEqual(item["id"], person_ids[index])
+        list_4_7 =  self.get_item_list("/persons?query_start=4&query_limit=4")
+        self.assertEqual(len(list_4_7), 4, "must return requested number of items")
+        for index, item in enumerate(list_4_7):
+            self.assertEqual(item["id"], person_ids[index + 4])
+        list_8_9 = self.get_item_list("/persons?query_start=8")
+        self.assertEqual(len(list_8_9), 2, "must return requested number of items")
+        for index, item in enumerate(list_8_9):
+            self.assertEqual(item["id"], person_ids[index + 8])
+        for person_id in person_ids:
+            self.delete_doc("/persons/" + person_id)
 
     @staticmethod
     def assertDictListEqual(a, b):
@@ -283,7 +292,7 @@ class TestApi(unittest.TestCase):
         try:
             for item in b:
                 a.remove(item)
-        except AssertionError("dict lists are not equal"):
+        except AssertionError("dict lists must be equal"):
             return False
         return not a
 
