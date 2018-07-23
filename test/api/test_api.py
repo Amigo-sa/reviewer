@@ -325,11 +325,9 @@ class TestApi(unittest.TestCase):
             "role_type": "Tutor",
             "description": "sample_description"
         }
-        print(temp_role)
         temp_role.update({"id": self.post_item("/general_roles", temp_role)})
         roles["person2_Tutor"] = temp_role
         # person 3 has no general role
-        print(roles)
         # testing that roles were added properly
         for key, value in roles.items():
             role_wo_id = value.copy()
@@ -345,13 +343,11 @@ class TestApi(unittest.TestCase):
                           {"id": roles["person1_Student"]["id"]}])
         # testing find_persons without request params
         person_list = self.get_item_list("/persons")
-        print(person_list)
         for person in person_list:
-            # TODO remove extra request
-            read_data = self.get_item_data("/persons/"+person["id"])
-            self.assertEqual(read_data["first_name"], person["first_name"])
-            self.assertEqual(read_data["middle_name"], person["middle_name"])
-            self.assertEqual(read_data["surname"], person["surname"])
+            ref_data = next((p for p in person_ref_data if p["id"] == person["id"]), None)
+            self.assertEqual(ref_data["first_name"], person["first_name"])
+            self.assertEqual(ref_data["middle_name"], person["middle_name"])
+            self.assertEqual(ref_data["surname"], person["surname"])
             if person["id"] == person_ids[0]:
                 self.assertEqual(person["role"], "Student")
                 self.assertEqual(person["organization_name"], org_1["name"])
@@ -365,11 +361,15 @@ class TestApi(unittest.TestCase):
                 self.assertEqual(person["role"], "None")
                 self.assertEqual(person["organization_name"], "None")
         # testing find_persons with department_id param
-
-
-
-        #person_list = self.get_item_list("/persons?department_id=" + )
-
+        person_list = self.get_item_list("/persons?department_id=" + dep_1["id"])
+        for person in person_list:
+            self.assertNotIn(person["id"], [person_ids[2], person_ids[3]])
+            self.assertIn(person["id"], [person_ids[0], person_ids[1]])
+        # testing find_persons with organization_id param
+        person_list = self.get_item_list("/persons?organization_id=" + org_1["id"])
+        for person in person_list:
+            self.assertNotIn(person["id"], [person_ids[2], person_ids[3]])
+            self.assertIn(person["id"], [person_ids[0], person_ids[1]])
         # clearing collections
         for key, role in roles.items():
             self.delete_item("/general_roles/" + role["id"])
