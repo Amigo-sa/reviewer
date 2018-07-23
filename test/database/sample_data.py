@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import context
 import datetime
 import random
