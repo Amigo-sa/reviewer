@@ -561,11 +561,12 @@ def find_persons():
                                  {"$or": [{"tutor_role.department_id": {"$in" : departments}},
                                           {"student_role.department_id": {"$in" : departments}}]}},
                             )
+            """ #оставим этот код на случай если понадобится отфильтровать безрольных пользователей
             else:
                 pipeline += ({"$match":
                                   {"$or": [{"tutor_role.department_id": {"$exists": True}},
                                            {"student_role.department_id": {"$exists": True}}]}},
-                             )
+                             )"""
     pipeline += ({"$skip": skip},
                  {"$limit": limit})
     try:
@@ -581,16 +582,20 @@ def find_persons():
                 else:
                     role = "None"
                     department_id = None
-            department = Department(_id=department_id)
-            department.refresh_from_db()
-            organization = Organization(_id=department.organization_id.pk)
-            organization.refresh_from_db()
+            if (department_id):
+                department = Department(_id=department_id)
+                department.refresh_from_db()
+                organization = Organization(_id=department.organization_id.pk)
+                organization.refresh_from_db()
+                org_name = organization.name
+            else:
+                org_name = "None"
             list.append({"id": str(person["_id"]),
                          "first_name": person["first_name"],
                          "middle_name": person["middle_name"],
                          "surname": person["surname"],
                          "role": role,
-                         "organization_name": organization.name})
+                         "organization_name": org_name})
         result = {"result": ERR.OK, "list": list}
     except Exception as ex:
         print(ex)
