@@ -77,9 +77,8 @@ class TestApi(unittest.TestCase):
         total_match = 0
         for added_item in add_list:
             item_match = 0
-            if "info" in added_item.keys(): del added_item["info"] # Подразумевает, что мы не ожидаем получение "info" при получении списка, т.к. инфо может быть длинное
             for read_item in read_list:
-                if added_item == read_item:
+                if added_item["id"] == read_item["id"]: # сравниваем только id, так как формат выдачи будет меняться
                     item_match += 1
                     total_match += 1
             self.assertEqual(item_match, 1, "must be exactly one match for each item")
@@ -183,7 +182,6 @@ class TestApi(unittest.TestCase):
                                         name = "string")
 
     def test_person_normal(self):
-        raise NotImplementedError
         self.t_simple_normal("/persons",
                             "/persons",
                             "/persons",
@@ -299,6 +297,9 @@ class TestApi(unittest.TestCase):
                              role_list, "role list by person id must return correct data")
         for role in roles:
             self.delete_item("/general_roles/" + role["id"])
+        for person_id in aux_persons_ids:
+            role_list = self.get_item_list("/persons/%s/general_roles" % person_id)
+            self.assertEqual([], role_list, "all roles must be deleted")
         self.delete_doc("/departments/" + aux_facilities_ids["dep_id"])
         self.delete_doc("/organizations/" + aux_facilities_ids["org_id"])
         for person_id in aux_persons_ids:
