@@ -98,6 +98,14 @@ class TestApi(unittest.TestCase):
                 self.assertEqual(resp_json["data"]["info"], added_item["info"], "test info must match")
                 self.assertEqual(resp_json["data"]["name"], added_item["name"], "test name must match")
                 self.assertEqual(resp_json["data"]["group_id"], parent_id, "group_ids must match")
+        if url_delete == "/persons":
+            for person in add_list:
+                person_info = self.get_item_data("/persons/"+person["id"])
+                self.assertEqual(person["surname"], person_info["surname"])
+                self.assertEqual(person["first_name"], person_info["first_name"])
+                self.assertEqual(person["middle_name"], person_info["middle_name"])
+                self.assertEqual(person["phone_no"], person_info["phone_no"])
+                self.assertEqual(person["birth_date"], person_info["birth_date"])
         # delete items
         for item in add_list:
             resp = requests.delete(url=self.api_URL + url_delete + "/" + item["id"])
