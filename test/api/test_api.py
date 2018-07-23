@@ -281,12 +281,12 @@ class TestApi(unittest.TestCase):
 
     def test_general_role_person(self):
         person_count = 2
-        persons = self.prepare_persons(person_count)
+        person_ids = self.prepare_persons(person_count)
         facilities = self.prepare_department()
         roles = {}
         # person 0 is student
         temp_role = {
-                "person_id": persons[0],
+                "person_id": person_ids[0],
                 "department_id": facilities["dep_id"],
                 "role_type": "Student",
                 "description": "sample_description"
@@ -295,7 +295,7 @@ class TestApi(unittest.TestCase):
         roles["person0_Student"] = temp_role
         # person 1 is tutor and student
         temp_role = {
-            "person_id": persons[1],
+            "person_id": person_ids[1],
             "department_id": facilities["dep_id"],
             "role_type": "Tutor",
             "description": "sample_description"
@@ -303,7 +303,7 @@ class TestApi(unittest.TestCase):
         temp_role.update({"id": self.post_item("/general_roles", temp_role)})
         roles["person1_Tutor"] = temp_role
         temp_role = {
-            "person_id": persons[1],
+            "person_id": person_ids[1],
             "department_id": facilities["dep_id"],
             "role_type": "Student",
             "description": "sample_description"
@@ -317,25 +317,40 @@ class TestApi(unittest.TestCase):
             del role_wo_id["id"]
             role_data = self.get_item_data("/general_roles/" + value["id"])
             self.assertEqual(role_wo_id, role_data, "returned general role data must match inserted data")
-        person0_rolelist = self.get_item_list("/persons/%s/general_roles" % persons[0])
-        person1_rolelist = self.get_item_list("/persons/%s/general_roles" % persons[1])
+        person0_rolelist = self.get_item_list("/persons/%s/general_roles" % person_ids[0])
+        person1_rolelist = self.get_item_list("/persons/%s/general_roles" % person_ids[1])
         self.assertEqual(person0_rolelist,
                          [{"id": roles["person0_Student"]["id"]}])
         self.assertDictListEqual(person1_rolelist,
                          [{"id": roles["person1_Tutor"]["id"]},
                           {"id": roles["person1_Student"]["id"]}])
+        # testing find_persons without request params
+        person_list = self.get_item_list("/persons")
+        print(person_list)
+        for person in person_list:
+            read_data = self.get_item_data("/persons/"+person["id"])
+            self.assertEqual(read_data["first_name"], person["first_name"])
+            self.assertEqual(read_data["middle_name"], person["middle_name"])
+            self.assertEqual(read_data["surname"], person["surname"])
+            if person["id"] == person_ids[0]:
+                self.assertEqual(person["role"], "Student")
+            if person["id"] == person_ids[1]:
+                self.assertEqual(person["role"], "Tutor")
+
+        # testing find_persons with department_id
 
 
-        
+        # clearing collections
         for key, role in roles.items():
             self.delete_item("/general_roles/" + role["id"])
-        for person_id in persons:
+        for person_id in person_ids:
             role_list = self.get_item_list("/persons/%s/general_roles" % person_id)
             self.assertEqual([], role_list, "all roles must be deleted")
         self.delete_doc("/departments/" + facilities["dep_id"])
         self.delete_doc("/organizations/" + facilities["org_id"])
-        for person_id in persons:
+        for person_id in person_ids:
             self.delete_doc("/persons/" + person_id)
+
 
 
     def get_item_list(self, url):
