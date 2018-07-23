@@ -33,6 +33,23 @@ class TestApi(unittest.TestCase):
     def tearDownClass(cls):
         requests.post(cls.api_URL + "/shutdown")
 
+    def tearDown(self):
+
+        pass
+
+    def setUp(self):
+        resp_json = requests.get(self.api_URL + "/organizations").json()
+        orgs = resp_json["list"]
+        resp_json = requests.get(self.api_URL + "/persons").json()
+        persons = resp_json["list"]
+        # Такое удаление подразумевает правило удаления CASCADE в базе
+        if orgs or persons:
+            print("Warning: test did not clean DB")
+            for org in orgs:
+                self.delete_doc("/organizations/" + org["id"])
+            for person in persons:
+                self.delete_doc("/persons/" + person["id"])
+
     def t_simple_normal(self, url_get, url_post, url_delete, *args, **kwargs):
         # read from empty DB
         resp = requests.get(self.api_URL + url_get)
@@ -166,6 +183,7 @@ class TestApi(unittest.TestCase):
                                         name = "string")
 
     def test_person_normal(self):
+        raise NotImplementedError
         self.t_simple_normal("/persons",
                             "/persons",
                             "/persons",
@@ -175,6 +193,7 @@ class TestApi(unittest.TestCase):
                              birth_date="date",
                              phone_no="number_string"
                              )
+        pass
 
     def test_soft_skill_normal(self):
         self.t_simple_normal("/soft_skills",
