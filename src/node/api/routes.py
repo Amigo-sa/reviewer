@@ -306,7 +306,7 @@ def add_group_member(id):
     except:
         return jsonify({"result": ERR.INPUT}), 200
     try:
-        role_in_group = RoleInGroup(Person(_id=person_id),
+        role_in_group = GroupMember(Person(_id=person_id),
                                     Group(_id=id),
                                     GroupRole(_id=role_id),
                                     [GroupPermission(_id=default_permission_id)])
@@ -322,8 +322,8 @@ def add_group_member(id):
 @bp.route("/group_members/<string:id>", methods=['DELETE'])
 def delete_group_member(id):
     try:
-        if RoleInGroup(_id=id) in RoleInGroup.objects.raw({"_id":ObjectId(id)}):
-            RoleInGroup(_id=id).delete()
+        if GroupMember(_id=id) in GroupMember.objects.raw({"_id":ObjectId(id)}):
+            GroupMember(_id=id).delete()
             result = {"result": ERR.OK}
         else:
             result = {"result": ERR.NO_DATA}
@@ -336,7 +336,7 @@ def delete_group_member(id):
 def list_group_members_by_group_id(id):
     list = []
     try:
-        for role_in_group in  RoleInGroup.objects.raw({"group_id": ObjectId(id)}):
+        for role_in_group in  GroupMember.objects.raw({"group_id": ObjectId(id)}):
             list.append({"id": str(role_in_group.pk)})
         result = {"result": ERR.OK, "list":list}
     except:
@@ -348,7 +348,7 @@ def list_group_members_by_group_id(id):
 def list_group_members_by_person_id(id):
     list = []
     try:
-        for role_in_group in RoleInGroup.objects.raw({"person_id": ObjectId(id)}):
+        for role_in_group in GroupMember.objects.raw({"person_id": ObjectId(id)}):
             list.append({"id": str(role_in_group.pk)})
         result = {"result": ERR.OK, "list":list}
     except:
@@ -359,8 +359,8 @@ def list_group_members_by_person_id(id):
 @bp.route("/group_members/<string:id>", methods=['GET'])
 def get_group_member_info(id):
     try:
-        if RoleInGroup(_id=id) in RoleInGroup.objects.raw({"_id": ObjectId(id)}):
-            role_in_group = RoleInGroup(_id=id)
+        if GroupMember(_id=id) in GroupMember.objects.raw({"_id": ObjectId(id)}):
+            role_in_group = GroupMember(_id=id)
             role_in_group.refresh_from_db()
             perm = []
             for item in role_in_group.permissions:
@@ -385,8 +385,8 @@ def add_permissions_to_group_member(id):
     except:
         return jsonify({"result": ERR.INPUT}), 200
     try:
-        if RoleInGroup(_id=id) in RoleInGroup.objects.raw({"_id": ObjectId(id)}):
-            role_in_group = RoleInGroup(_id=id)
+        if GroupMember(_id=id) in GroupMember.objects.raw({"_id": ObjectId(id)}):
+            role_in_group = GroupMember(_id=id)
             role_in_group.refresh_from_db()
             permission = GroupPermission(_id=group_permission_id)
             permission.refresh_from_db()
@@ -404,8 +404,8 @@ def add_permissions_to_group_member(id):
 @bp.route("/group_members/<string:id1>/permissions/<string:id2>", methods = ['DELETE'])
 def delete_permissions_from_group_member(id1, id2):
     try:
-        if RoleInGroup(_id=id1) in RoleInGroup.objects.raw({"_id": ObjectId(id1)}):
-            role_in_group = RoleInGroup(_id=id1)
+        if GroupMember(_id=id1) in GroupMember.objects.raw({"_id": ObjectId(id1)}):
+            role_in_group = GroupMember(_id=id1)
             role_in_group.refresh_from_db()
             permission = GroupPermission(_id=id2)
             permission.refresh_from_db()
@@ -650,8 +650,8 @@ def post_review():
                 GroupReview(reviewer_id, subject_id, value, description),
             "GroupTest":
                 GroupTestReview(reviewer_id, subject_id, value, description),
-            "RoleInGroup":
-                RoleInGroupReview(reviewer_id, subject_id, value, description)
+            "GroupMember":
+                GroupMemberReview(reviewer_id, subject_id, value, description)
         }
         if type not in obj:
             result = {"result": ERR.INPUT}
@@ -687,8 +687,8 @@ def delete_review(id):
         if GroupTestReview(_id=id) in GroupTestReview.objects.raw({"_id":ObjectId(id)}):
             GroupTestReview(_id=id).delete()
             result = {"result": ERR.OK}
-        if RoleInGroupReview(_id=id) in RoleInGroupReview.objects.raw({"_id":ObjectId(id)}):
-            RoleInGroupReview(_id=id).delete()
+        if GroupMemberReview(_id=id) in GroupMemberReview.objects.raw({"_id":ObjectId(id)}):
+            GroupMemberReview(_id=id).delete()
             result = {"result": ERR.OK}
     except:
         result = {"result": ERR.DB}
@@ -719,7 +719,7 @@ def find_reviews():
             lst.append({"id": str(review.pk)})
         for review in GroupTestReview.objects.raw(query):
             lst.append({"id": str(review.pk)})
-        for review in RoleInGroupReview.objects.raw(query):
+        for review in GroupMemberReview.objects.raw(query):
             lst.append({"id": str(review.pk)})
         result = {"result": ERR.OK, "list": lst}
     except Exception as ex:

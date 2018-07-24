@@ -42,7 +42,7 @@
 					},
 					"response": [
 						{
-							"id": "475b7fe4-2cca-4345-8db6-9c51aa6e120e",
+							"id": "2afc9bcf-2857-46d4-954f-e19eb5d5fa8d",
 							"name": "add_organization_example_success",
 							"originalRequest": {
 								"method": "POST",
@@ -156,7 +156,7 @@
 					},
 					"response": [
 						{
-							"id": "3e4de7be-6930-48e0-a6f0-b7a8b2cbbec9",
+							"id": "b60102ca-ad5a-4642-8749-7b3c36c98176",
 							"name": "delete_organization_success",
 							"originalRequest": {
 								"method": "DELETE",
@@ -242,7 +242,7 @@
 					},
 					"response": [
 						{
-							"id": "fc9dedd7-4575-46f2-9431-277f1e869ffd",
+							"id": "10abcf8a-9998-46cd-bb9a-290ae00b11a3",
 							"name": "list_organizations_success",
 							"originalRequest": {
 								"method": "GET",
@@ -374,7 +374,7 @@
 					},
 					"response": [
 						{
-							"id": "eb63fda4-8485-4fee-b406-500182499660",
+							"id": "6e2b0999-3a44-45db-a224-59af45d5a3e6",
 							"name": "add_department",
 							"originalRequest": {
 								"method": "POST",
@@ -480,7 +480,7 @@
 					},
 					"response": [
 						{
-							"id": "66f67e75-f860-4175-89b5-23375ee8e6a4",
+							"id": "8be9be63-ea49-4aac-a850-fb1c8e1eb146",
 							"name": "delete_department",
 							"originalRequest": {
 								"method": "DELETE",
@@ -580,7 +580,7 @@
 					},
 					"response": [
 						{
-							"id": "5cdd97b0-63f0-4131-beea-5d0a97ea9b33",
+							"id": "41a5540e-62d3-4440-bc40-1dd0a058ffea",
 							"name": "list_departments",
 							"originalRequest": {
 								"method": "GET",
@@ -692,7 +692,7 @@
 					},
 					"response": [
 						{
-							"id": "60be862e-3597-47f4-b15e-a57c583f4f57",
+							"id": "0ab5b57e-6e62-4548-b73c-7338a516e05c",
 							"name": "add_group",
 							"originalRequest": {
 								"method": "POST",
@@ -798,7 +798,7 @@
 					},
 					"response": [
 						{
-							"id": "977a23c7-cec7-416b-9763-7d1e1abe37e9",
+							"id": "a7034392-6697-4225-bf18-e9c68c4fc4f5",
 							"name": "delete_group",
 							"originalRequest": {
 								"method": "DELETE",
@@ -898,7 +898,7 @@
 					},
 					"response": [
 						{
-							"id": "bac01c16-cf6d-422f-ae65-c1c5ce7e5837",
+							"id": "e9208adc-aeb8-400f-ba55-595238b26bf8",
 							"name": "list_groups",
 							"originalRequest": {
 								"method": "GET",
@@ -990,7 +990,7 @@
 					},
 					"response": [
 						{
-							"id": "0018cff5-b6d8-4090-8285-02367948c392",
+							"id": "2492dbb0-e3f7-4f18-9ce0-af504f1f05a1",
 							"name": "add_group_role",
 							"originalRequest": {
 								"method": "POST",
@@ -1094,7 +1094,7 @@
 					},
 					"response": [
 						{
-							"id": "35a2590e-d494-410f-abe9-a0088f08341f",
+							"id": "b7be4ceb-7b82-41f3-8748-5868d58edfd3",
 							"name": "delete_group_role",
 							"originalRequest": {
 								"method": "DELETE",
@@ -1180,7 +1180,7 @@
 					},
 					"response": [
 						{
-							"id": "867cb9c0-d1f1-42d3-bb90-b3ff7fd6ca70",
+							"id": "648230a3-9c45-4c5f-b24d-c21674ea22fe",
 							"name": "list_group_roles",
 							"originalRequest": {
 								"method": "GET",
@@ -1270,7 +1270,7 @@
 					},
 					"response": [
 						{
-							"id": "5f22716f-c49a-4a0c-b1ca-bf921266f6f2",
+							"id": "66203a09-0e46-4c22-a9a5-0caeb37c86a9",
 							"name": "add_group_permission",
 							"originalRequest": {
 								"method": "POST",
@@ -1374,7 +1374,7 @@
 					},
 					"response": [
 						{
-							"id": "af1d3c84-f3f5-4e5f-8f75-922081a19b86",
+							"id": "b6d7dfa1-4676-498c-8d79-485ec127b4a3",
 							"name": "delete_group_permission",
 							"originalRequest": {
 								"method": "DELETE",
@@ -1460,7 +1460,7 @@
 					},
 					"response": [
 						{
-							"id": "b70c00b6-f283-477b-b276-f7a03d7ba636",
+							"id": "776cbedd-8788-4a67-b62e-3783f349988a",
 							"name": "list_group_permissions",
 							"originalRequest": {
 								"method": "GET",
@@ -1567,7 +1567,7 @@
 					},
 					"response": [
 						{
-							"id": "2800a9d9-eaf8-405e-9b6c-866ef57c6c3e",
+							"id": "7849d545-7301-48a2-bf66-c33af286232e",
 							"name": "add_group_member",
 							"originalRequest": {
 								"method": "POST",
@@ -1673,7 +1673,7 @@
 					},
 					"response": [
 						{
-							"id": "88efb44a-8d82-4d40-8817-3cf96098d175",
+							"id": "16f935a6-659c-46de-ad06-241caaef6a6e",
 							"name": "delete_group_member",
 							"originalRequest": {
 								"method": "DELETE",
@@ -1772,7 +1772,7 @@
 					},
 					"response": [
 						{
-							"id": "008d51e1-d46d-42bd-8dda-3f75b989435a",
+							"id": "51c21b7c-8471-4774-85e2-a62661185fff",
 							"name": "get_role_in_group_info",
 							"originalRequest": {
 								"method": "GET",
@@ -1878,7 +1878,7 @@
 					},
 					"response": [
 						{
-							"id": "9d807482-24ab-4a06-9fa2-93ed21e8549c",
+							"id": "50135614-7c09-4b37-b51b-fd606cf1e29a",
 							"name": "add_permissions_to_group_member",
 							"originalRequest": {
 								"method": "POST",
@@ -1986,7 +1986,7 @@
 					},
 					"response": [
 						{
-							"id": "69ae8e16-f929-4df4-808d-01ed306e670d",
+							"id": "ed8ad8b9-5301-4f81-931b-3a524b6ea5cc",
 							"name": "delete_permissions_from_group_member",
 							"originalRequest": {
 								"method": "DELETE",
@@ -2063,7 +2063,7 @@
 					},
 					"response": [
 						{
-							"id": "55761b29-9845-4c50-ac87-3bbcd185fc13",
+							"id": "f01a4aec-b2f9-4894-b30f-12fe2cf9015e",
 							"name": "list_roles_in_group_by_group_id",
 							"originalRequest": {
 								"method": "GET",
@@ -2175,7 +2175,7 @@
 					},
 					"response": [
 						{
-							"id": "c79ead81-a112-40ac-bf6e-f960cce76816",
+							"id": "062f87ec-eb57-41ff-bf6f-bd6b2a692321",
 							"name": "add_general_role_tutor",
 							"originalRequest": {
 								"method": "POST",
@@ -2279,7 +2279,7 @@
 					},
 					"response": [
 						{
-							"id": "e230dfac-4571-4a9d-bfb6-c12c0270c053",
+							"id": "41f31bbc-c6ae-453c-8e18-6c578e6330b2",
 							"name": "delete_general_role",
 							"originalRequest": {
 								"method": "DELETE",
@@ -2378,7 +2378,7 @@
 					},
 					"response": [
 						{
-							"id": "bc9b8afe-b7e8-44b9-8ec3-fa4f98592b73",
+							"id": "02a636de-d50a-47f1-a52d-fb144536fd12",
 							"name": "get_general_roles_data",
 							"originalRequest": {
 								"method": "GET",
@@ -2487,11 +2487,11 @@
 								"reviews"
 							]
 						},
-						"description": "Публикует отзыв о чем-либо\nв type передается тип отзыва:\nStudentRole - на студента\nTutorRole - на преподавателя\nHardSkill - на hard skill пользователя\nSoftSkill - на soft skill пользователя\nGroup - на группу\nGroupTest - на тест для группы\nRoleInGroup - на участника группы"
+						"description": "Публикует отзыв о чем-либо\nв type передается тип отзыва:\nStudentRole - на студента\nTutorRole - на преподавателя\nHardSkill - на hard skill пользователя\nSoftSkill - на soft skill пользователя\nGroup - на группу\nGroupTest - на тест для группы\nGroupMember - на участника группы"
 					},
 					"response": [
 						{
-							"id": "1105bd61-2dcc-4d8e-9b99-3b1b2c57cd37",
+							"id": "bc046707-7721-44cf-b4a3-881111c9f479",
 							"name": "post_review",
 							"originalRequest": {
 								"method": "POST",
@@ -2504,7 +2504,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"type\":\"RoleInGroup\",\n\t\"reviewer_id\":\"5b4ebab42131371208ceb0c9\",\n\t\"subject_id\":\"5b4ebab62131371208ceb122\",\n\t\"value\": 93.0,\n\t\"description\":\"Молодец !\"\n}"
+									"raw": "{\n\t\"type\":\"GroupMember\",\n\t\"reviewer_id\":\"5b4ebab42131371208ceb0c9\",\n\t\"subject_id\":\"5b4ebab62131371208ceb122\",\n\t\"value\": 93.0,\n\t\"description\":\"Молодец !\"\n}"
 								},
 								"url": {
 									"raw": "http://127.0.0.1:5000/reviews",
@@ -2595,7 +2595,7 @@
 					},
 					"response": [
 						{
-							"id": "460e0d8e-7de6-4f51-923d-094f8d305a71",
+							"id": "53e00f27-6c1a-4570-b537-5838a5ca0eec",
 							"name": "delete_review",
 							"originalRequest": {
 								"method": "DELETE",
@@ -2704,7 +2704,7 @@
 					},
 					"response": [
 						{
-							"id": "a4b2f7cb-7f2d-4316-8fca-ac13f2d820a8",
+							"id": "715140f9-cb4f-4b25-b9ac-13e8dd09c8c6",
 							"name": "find_reviews",
 							"originalRequest": {
 								"method": "GET",
@@ -2810,7 +2810,7 @@
 					},
 					"response": [
 						{
-							"id": "8808eebe-0720-411c-8596-c9913f7f9c96",
+							"id": "28350ba7-a8e7-4479-9ff5-ac495de8fab2",
 							"name": "add_person",
 							"originalRequest": {
 								"method": "POST",
@@ -2937,7 +2937,7 @@
 					},
 					"response": [
 						{
-							"id": "01dfc6f6-caf1-47c5-8d2d-eb6f57fb77a9",
+							"id": "153eb640-14c1-4d4c-b5ae-bf65ab6d3dba",
 							"name": "find_persons",
 							"originalRequest": {
 								"method": "GET",
@@ -3056,7 +3056,7 @@
 					},
 					"response": [
 						{
-							"id": "47fc09d9-0dcf-4b0e-8f3b-884614208085",
+							"id": "dd342b41-c116-4f1b-b4af-36b70b39cae5",
 							"name": "delete_person",
 							"originalRequest": {
 								"method": "DELETE",
@@ -3152,7 +3152,7 @@
 					},
 					"response": [
 						{
-							"id": "6606230c-344d-467b-9f7a-7dd929ed891b",
+							"id": "1bcd6053-dca2-462e-9ba8-a387f9309356",
 							"name": "get_person_info_success",
 							"originalRequest": {
 								"method": "GET",
@@ -3252,7 +3252,7 @@
 					},
 					"response": [
 						{
-							"id": "61e16bcd-8e4e-4962-af9c-51e065bca879",
+							"id": "d463401b-7dbd-4736-8de2-ffc464f3c4e6",
 							"name": "list_group_members_by_person_id",
 							"originalRequest": {
 								"method": "GET",
@@ -3353,7 +3353,7 @@
 					},
 					"response": [
 						{
-							"id": "a79ba7c2-e029-4706-8c94-5ccb55491326",
+							"id": "26e0c3b8-95dc-43d2-b612-7671ade2dad7",
 							"name": "list_roles_by_person_id",
 							"originalRequest": {
 								"method": "GET",
@@ -3460,7 +3460,7 @@
 					},
 					"response": [
 						{
-							"id": "44603710-44de-41df-9ac5-66ef31f6ad8b",
+							"id": "8964d77d-f51a-417b-b7dc-35fbe4dee264",
 							"name": "add_person_soft_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -3567,7 +3567,7 @@
 					},
 					"response": [
 						{
-							"id": "6f777f9b-4503-4822-ad96-c3957b02671d",
+							"id": "d728b0ac-070b-4c41-8cbb-3a4a0e6d2a30",
 							"name": "delete_person_soft_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -3678,7 +3678,7 @@
 					},
 					"response": [
 						{
-							"id": "d80f792e-b1ed-49c0-a6a2-b112620e3bb4",
+							"id": "07168676-ba0f-466f-97e0-b5fe1a1381ea",
 							"name": "find_person_soft_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -3788,7 +3788,7 @@
 					},
 					"response": [
 						{
-							"id": "d251fd48-26e2-4a91-9465-a45cfb8c6670",
+							"id": "9257873f-7ddb-4186-8883-f673967b4957",
 							"name": "get_person_soft_skill_info",
 							"originalRequest": {
 								"method": "GET",
@@ -3895,7 +3895,7 @@
 					},
 					"response": [
 						{
-							"id": "dae51c20-78c6-4134-b319-79ea224bea98",
+							"id": "129932b3-78bd-4eaf-9144-53141d2918d3",
 							"name": "add_person_hard_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -4002,7 +4002,7 @@
 					},
 					"response": [
 						{
-							"id": "b7f56c09-0511-493d-80c6-67ea1b50ac35",
+							"id": "f300404a-979f-44ea-8d1f-93fb6fab8d83",
 							"name": "delete_person_hard_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -4113,7 +4113,7 @@
 					},
 					"response": [
 						{
-							"id": "328b89cc-3d9e-4d9c-aecc-041801773b20",
+							"id": "544beefb-ccb8-4bbd-89f4-bfbf81b1c893",
 							"name": "find_person_hard_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -4223,7 +4223,7 @@
 					},
 					"response": [
 						{
-							"id": "756d1339-bc3a-451f-b730-9989f23400b4",
+							"id": "4e6ca43b-0b47-4d48-be4d-c6657941249d",
 							"name": "get_person_hard_skill_info",
 							"originalRequest": {
 								"method": "GET",
@@ -4321,7 +4321,7 @@
 					},
 					"response": [
 						{
-							"id": "c0d8845f-a86d-40c7-bd95-5aa5aeb65070",
+							"id": "54388f21-7ebe-4252-b164-3f60a74ffd5c",
 							"name": "add_soft_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -4425,7 +4425,7 @@
 					},
 					"response": [
 						{
-							"id": "dcee7819-175f-419a-962b-1854bc34e9a0",
+							"id": "bc01e803-da95-4e36-85ea-1a540698ec0d",
 							"name": "delete_soft_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -4511,7 +4511,7 @@
 					},
 					"response": [
 						{
-							"id": "a80adb92-1a01-48c7-862a-74fbeea33968",
+							"id": "ab89bf2e-4113-44b5-ad1c-4fd9c8026b52",
 							"name": "list_soft_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -4601,7 +4601,7 @@
 					},
 					"response": [
 						{
-							"id": "0f49a7d6-bff4-49a9-a87f-d9a198663d7d",
+							"id": "713fc53b-482c-4772-970e-867107b07d66",
 							"name": "add_hard_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -4705,7 +4705,7 @@
 					},
 					"response": [
 						{
-							"id": "50d6065a-6ce3-430b-9071-39a9f49815b6",
+							"id": "a06d9320-357a-4c2f-bed0-7b59a332b928",
 							"name": "delete_hard_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -4791,7 +4791,7 @@
 					},
 					"response": [
 						{
-							"id": "4a3ae6a7-5086-41d3-be42-e2d997eb25b0",
+							"id": "63db05be-c467-46bd-bcd0-daea1882c590",
 							"name": "list_hard_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -4901,7 +4901,7 @@
 					},
 					"response": [
 						{
-							"id": "76dbfcdd-0dd2-4fe8-84b3-96b30fa6161f",
+							"id": "0ca48c87-722f-4af4-8978-b24a2dc6da40",
 							"name": "add_group_test",
 							"originalRequest": {
 								"method": "POST",
@@ -5007,7 +5007,7 @@
 					},
 					"response": [
 						{
-							"id": "3ad56db4-8482-4467-96e3-e879f7813c33",
+							"id": "a07285f2-1a57-4298-ad51-0774b27c4523",
 							"name": "delete_group_test",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5106,7 +5106,7 @@
 					},
 					"response": [
 						{
-							"id": "84129b27-6f8c-4411-ab91-9e2038ab8fbe",
+							"id": "76ad0a8e-7012-4a74-95a9-1c0100b0287f",
 							"name": "get_group_test_info",
 							"originalRequest": {
 								"method": "GET",
@@ -5206,7 +5206,7 @@
 					},
 					"response": [
 						{
-							"id": "41ef7750-83dd-4316-a511-31bc30f74477",
+							"id": "d62d674b-db2c-41c6-9c83-444c0f1f4299",
 							"name": "list_group_tests",
 							"originalRequest": {
 								"method": "GET",
@@ -5313,7 +5313,7 @@
 					},
 					"response": [
 						{
-							"id": "ed854a2d-2179-4b13-81db-3b54acfb7f9a",
+							"id": "7a80fef2-200d-427d-9948-49bf8db98c91",
 							"name": "add_test_result",
 							"originalRequest": {
 								"method": "POST",
@@ -5420,7 +5420,7 @@
 					},
 					"response": [
 						{
-							"id": "bf00c3b1-1fd4-457a-a148-b6df02173436",
+							"id": "e9fa52e8-b7e2-4295-9c23-dcc6dde1a7e3",
 							"name": "delete_test_result",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5521,7 +5521,7 @@
 					},
 					"response": [
 						{
-							"id": "c108305f-f515-438f-8253-739f90232443",
+							"id": "524006ab-bb5a-4371-9f17-739986803386",
 							"name": "get_test_result_info",
 							"originalRequest": {
 								"method": "GET",
@@ -5632,7 +5632,7 @@
 					},
 					"response": [
 						{
-							"id": "bc6cd8ba-eaff-4164-8513-acdaaaeb4184",
+							"id": "e2324ae6-780e-4cec-bb1b-d966360ccc67",
 							"name": "find_test_results",
 							"originalRequest": {
 								"method": "GET",
