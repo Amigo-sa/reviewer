@@ -128,6 +128,7 @@ class TestApi(unittest.TestCase):
         resp_json = requests.get(self.api_URL + url_get).json()
         read_list = resp_json["list"]
         self.assertListEqual([], read_list, "docs must be erased from DB")
+
     @classmethod
     def generate_doc(cls, type_list, *args, **kwargs):
         cls.gen_doc_ctr += 1
@@ -162,13 +163,13 @@ class TestApi(unittest.TestCase):
             cur_item.update({key: value})
         return cur_item
 
-    def prepare_organization(self):
+    def prepare_organization(self) -> str:
         post_data = self.generate_doc(dict(name="string").items())
         resp_json = requests.post(url=self.api_URL + '/organizations', json=post_data).json()
         self.assertEqual(resp_json["result"],ERR.OK, "aux organization must be created")
         return resp_json["id"]
 
-    def prepare_department(self):
+    def prepare_department(self) -> dict:
         aux_org_id = self.prepare_organization()
         self.assertTrue(aux_org_id, "auxiliary organization must be created")
         post_data = self.generate_doc(dict(name="string").items())
@@ -177,7 +178,7 @@ class TestApi(unittest.TestCase):
         return {"dep_id" : resp_json["id"],
                 "org_id" : aux_org_id}
 
-    def prepare_group(self):
+    def prepare_group(self) -> dict:
         aux_items_ids = self.prepare_department()
         self.assertTrue(aux_items_ids["dep_id"], "aux department must be created")
         post_data = self.generate_doc(dict(name="string").items())
@@ -429,6 +430,7 @@ class TestApi(unittest.TestCase):
         p0_hs1_id = self.post_item("/persons/%s/hard_skills" % person_ids[0], {"hs_id" : hs1_id})
         p1_hs1_id = self.post_item("/persons/%s/hard_skills" % person_ids[1], {"hs_id" : hs1_id})
         p1_hs2_id = self.post_item("/persons/%s/hard_skills" % person_ids[1], {"hs_id": hs2_id})
+
         p1_hs_list = self.get_item_list("/persons/hard_skills?person_id="+person_ids[0])
         ref_p1_hs_list = [{"id": p0_hs0_id}, {"id": p0_hs1_id}]
         self.assertDictListEqual(p1_hs_list, ref_p1_hs_list)
@@ -467,6 +469,7 @@ class TestApi(unittest.TestCase):
         p0_ss1_id = self.post_item("/persons/%s/soft_skills" % person_ids[0], {"ss_id": ss1_id})
         p1_ss1_id = self.post_item("/persons/%s/soft_skills" % person_ids[1], {"ss_id": ss1_id})
         p1_ss2_id = self.post_item("/persons/%s/soft_skills" % person_ids[1], {"ss_id": ss2_id})
+
         p1_ss_list = self.get_item_list("/persons/soft_skills?person_id="+person_ids[0])
         ref_p1_ss_list = [{"id": p0_ss0_id}, {"id": p0_ss1_id}]
         self.assertDictListEqual(p1_ss_list, ref_p1_ss_list)
@@ -495,9 +498,24 @@ class TestApi(unittest.TestCase):
             self.delete_item("/persons/" + person_id)
         for ss_id in [ss0_id, ss1_id, ss2_id]:
             self.delete_item("/soft_skills/" + ss_id)
-
+    """
     def test_role_in_group_normal(self):
+        raise NotImplementedError
+        person_id = self.prepare_persons(1)[0]
+        facility_ids = self.prepare_group()
+
+
+
+
+
+        self.delete_item("/persons/" + person_id)
+        self.delete_item("/departments/" + facility_ids["group_id"])
+        self.delete_item("/departments/" + facility_ids["dep_id"])
+        self.delete_item("/departments/" + facility_ids["org_id"])
         pass
+    """
+
+
 
     def get_item_list(self, url):
         resp = requests.get(self.api_URL + url)

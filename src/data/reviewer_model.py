@@ -26,7 +26,7 @@ def init_model():
     GroupRole.register_delete_rule(
         Group, "role_list", fields.ReferenceField.PULL)
     GroupPermission.register_delete_rule(
-        RoleInGroup, "permissions", fields.ReferenceField.PULL)
+        GroupMember, "permissions", fields.ReferenceField.PULL)
 
 
 connect(settings.mongo.conn_string + "/" + settings.mongo.db_name,
@@ -199,7 +199,7 @@ class Group(MongoModel):
                               unique=True)]
 
 
-class RoleInGroup(MongoModel):
+class GroupMember(MongoModel):
     person_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
     group_id = fields.ReferenceField(Group, on_delete=ReferenceField.CASCADE)
     role_id = fields.ReferenceField(GroupRole, on_delete=ReferenceField.CASCADE)
@@ -323,9 +323,9 @@ class GroupReview(MongoModel):
                               unique=True)]
 
 
-class RoleInGroupReview(MongoModel):
+class GroupMemberReview(MongoModel):
     reviewer_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    subject_id = fields.ReferenceField(RoleInGroup, on_delete=ReferenceField.CASCADE)
+    subject_id = fields.ReferenceField(GroupMember, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
     description = fields.CharField()
 

@@ -7,55 +7,44 @@ from pymodm.errors import ValidationError
 from pymongo.errors import DuplicateKeyError
 
 from data.reviewer_model import (Department,
-                                     Group,
-                                     GroupPermission,
-                                     GroupReview,
-                                     GroupRole,
-                                     GroupTest,
-                                     GroupTestReview,
-                                     HSReview,
-                                     HardSkill,
-                                     Organization,
-                                     Person,
-                                     PersonHS,
-                                     PersonSS,
-                                     RoleInGroup,
-                                     RoleInGroupReview,
-                                     SRReview,
-                                     SSReview,
-                                     Service,
-                                     SoftSkill,
-                                     StudentRole,
-                                     Survey,
-                                     TRReview,
-                                     TestResult,
-                                     TutorRole,
-                                     get_dependent_list,
-                                     init_model)
+                                 Group,
+                                 GroupPermission,
+                                 GroupReview,
+                                 GroupRole,
+                                 GroupTest,
+                                 GroupTestReview,
+                                 HSReview,
+                                 HardSkill,
+                                 Organization,
+                                 Person,
+                                 PersonHS,
+                                 PersonSS,
+                                 GroupMember,
+                                 GroupMemberReview,
+                                 SRReview,
+                                 SSReview,
+                                 Service,
+                                 SoftSkill,
+                                 StudentRole,
+                                 Survey,
+                                 TRReview,
+                                 TestResult,
+                                 TutorRole,
+                                 get_dependent_list,
+                                 init_model)
 
 test_version = "0.3"
 
-def check_db():
-    try:
-        revDb = _get_db("reviewer")
-        service = revDb["service"].find_one()
-        if service is None:
-            current_version = None
-        else:
-            current_version = service["version"]
-        if current_version != test_version:
-            print("versions differ, please refill DB via sample_data.py")
-            return False
-        return True
-    except Exception as ex:
-        print(ex)
-        return False
-        
 class TestValidation(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        check_db()
+        pass
 
+    def test_group_member_validation(self):
+
+        pass
+
+"""
     # Role in group tests
 
     def test_vaild_role_in_group(self):
@@ -120,6 +109,7 @@ class TestValidation(unittest.TestCase):
     
     def tearDown(self):
         pass
+"""
 
 if __name__ == "__main__":
     unittest.main(verbosity = 1)
