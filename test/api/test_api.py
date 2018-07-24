@@ -194,6 +194,7 @@ class TestApi(unittest.TestCase):
         post_data = self.generate_doc(dict(name="string").items())
         resp_json = requests.post(url=self.api_URL + '/hard_skills', json=post_data).json()
         self.assertEqual(resp_json["result"], ERR.OK, "aux hard skill must be created")
+        return [resp_json["id"], post_data]
 
     def delete_doc(self, url):
         resp_json = requests.delete(url=self.api_URL + url).json()
@@ -215,7 +216,6 @@ class TestApi(unittest.TestCase):
                              birth_date="date",
                              phone_no="number_string"
                              )
-        pass
 
     def test_soft_skill_normal(self):
         self.t_simple_normal("/soft_skills",
@@ -288,14 +288,16 @@ class TestApi(unittest.TestCase):
             self.delete_doc("/persons/" + person_id)
 
     @staticmethod
-    def assertDictListEqual(a, b):
-        a = list(a)
+    def assertDictListEqual(list1, list2):
+        list1_c = list(list1)
         try:
-            for item in b:
-                a.remove(item)
-        except AssertionError("dict lists must be equal"):
-            return False
-        return not a
+            for item in list2:
+                list1_c.remove(item)
+        except Exception as e:
+            print(list1)
+            print(list2)
+            raise AssertionError("dict lists must be equal")
+        return not list1_c
 
     def test_general_role_person(self):
         person_count = 4
@@ -401,6 +403,36 @@ class TestApi(unittest.TestCase):
         for person_id in person_ids:
             self.delete_doc("/persons/" + person_id)
 
+    def test_person_hs(self):
+        hs0_id, hs0_data = self.prepare_hs()
+        hs1_id, hs1_data = self.prepare_hs()
+        hs2_id, hs2_data = self.prepare_hs()
+        person_ids = self.prepare_persons(2)
+        p0_hs0_id = self.post_item("/persons/%s/hard_skills" % person_ids[0], {"hs_id" : hs0_id})
+        p0_hs1_id = self.post_item("/persons/%s/hard_skills" % person_ids[0], {"hs_id" : hs1_id})
+        p1_hs1_id = self.post_item("/persons/%s/hard_skills" % person_ids[1], {"hs_id" : hs1_id})
+        p1_hs2_id = self.post_item("/persons/%s/hard_skills" % person_ids[1], {"hs_id": hs2_id})
+        p1_hs_list = self.get_item_list("/persons/hard_skills?person_id="+person_ids[0])
+        ref_p1_hs_list = [{"id": p0_hs0_id}, {"id": p0_hs1_id}]
+        self.assertDictListEqual(p1_hs_list, ref_p1_hs_list)
+
+        hs1_phs_list = self.get_item_list("/persons/hard_skills?hs_id="+hs1_id)
+        ref_hs1_phs_list = [{"id": p0_hs1_id}, {"id": p1_hs1_id}]
+        self.assertDictListEqual(hs1_phs_list, ref_hs1_phs_list)
+
+        all_phs_list = self.get_item_list("/persons/hard_skills")
+        ref_all_phs_list = [{"id": p0_hs0_id}, {"id": p0_hs1_id},
+                            {"id": p1_hs1_id}, {"id": p1_hs2_id}]
+        self.assertDictListEqual(ref_all_phs_list, all_phs_list)
+
+        for p_hs_id in [p0_hs0_id, p0_hs1_id, p1_hs1_id, p1_hs2_id]:
+            self.delete_item("/persons/hard_skills/"+p_hs_id)
+
+        all_phs_list = self.get_item_list("/persons/hard_skills")
+        self.assertDictListEqual([], all_phs_list)
+
+        for person_id in person_ids:
+            self.delete_doc("/persons/" + person_id)
 
 
     def get_item_list(self, url):
