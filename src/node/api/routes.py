@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from bson import ObjectId
 import node.settings.errors as ERR
 from flask import Blueprint, request, jsonify
