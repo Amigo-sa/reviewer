@@ -426,6 +426,11 @@ class TestApi(unittest.TestCase):
         ref_hs1_phs_list = [{"id": p0_hs1_id}, {"id": p1_hs1_id}]
         self.assertDictListEqual(hs1_phs_list, ref_hs1_phs_list)
 
+        p0_hs1_data = self.get_item_data("/persons/hard_skills/" + p0_hs1_id)
+        self.assertEqual(p0_hs1_data["person_id"], person_ids[0])
+        self.assertEqual(p0_hs1_data["hs_id"], hs1_id)
+        self.assertEqual(float(p0_hs1_data["level"]), 50.0)
+
         all_phs_list = self.get_item_list("/persons/hard_skills")
         ref_all_phs_list = [{"id": p0_hs0_id}, {"id": p0_hs1_id},
                             {"id": p1_hs1_id}, {"id": p1_hs2_id}]
@@ -458,6 +463,11 @@ class TestApi(unittest.TestCase):
         ss1_pss_list = self.get_item_list("/persons/soft_skills?ss_id="+ss1_id)
         ref_ss1_pss_list = [{"id": p0_ss1_id}, {"id": p1_ss1_id}]
         self.assertDictListEqual(ss1_pss_list, ref_ss1_pss_list)
+
+        p0_ss1_data = self.get_item_data("/persons/soft_skills/" + p0_ss1_id)
+        self.assertEqual(p0_ss1_data["person_id"], person_ids[0])
+        self.assertEqual(p0_ss1_data["ss_id"], ss1_id)
+        self.assertEqual(float(p0_ss1_data["level"]), 50.0)
 
         all_pss_list = self.get_item_list("/persons/soft_skills")
         ref_all_pss_list = [{"id": p0_ss0_id}, {"id": p0_ss1_id},
