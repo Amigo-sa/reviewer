@@ -196,6 +196,12 @@ class TestApi(unittest.TestCase):
         self.assertEqual(resp_json["result"], ERR.OK, "aux hard skill must be created")
         return [resp_json["id"], post_data]
 
+    def prepare_ss(self):
+        post_data = self.generate_doc(dict(name="string").items())
+        resp_json = requests.post(url=self.api_URL + '/soft_skills', json=post_data).json()
+        self.assertEqual(resp_json["result"], ERR.OK, "aux soft skill must be created")
+        return [resp_json["id"], post_data]
+
     def delete_doc(self, url):
         resp_json = requests.delete(url=self.api_URL + url).json()
         self.assertEqual(resp_json["result"], ERR.OK, "the document must be deleted")
@@ -432,7 +438,42 @@ class TestApi(unittest.TestCase):
         self.assertDictListEqual([], all_phs_list)
 
         for person_id in person_ids:
-            self.delete_doc("/persons/" + person_id)
+            self.delete_item("/persons/" + person_id)
+        for hs_id in [hs0_id, hs1_id, hs2_id]:
+            self.delete_item("/hard_skills/" + hs_id)
+            
+    def test_person_ss(self):
+        ss0_id, ss0_data = self.prepare_ss()
+        ss1_id, ss1_data = self.prepare_ss()
+        ss2_id, ss2_data = self.prepare_ss()
+        person_ids = self.prepare_persons(2)
+        p0_ss0_id = self.post_item("/persons/%s/soft_skills" % person_ids[0], {"ss_id": ss0_id})
+        p0_ss1_id = self.post_item("/persons/%s/soft_skills" % person_ids[0], {"ss_id": ss1_id})
+        p1_ss1_id = self.post_item("/persons/%s/soft_skills" % person_ids[1], {"ss_id": ss1_id})
+        p1_ss2_id = self.post_item("/persons/%s/soft_skills" % person_ids[1], {"ss_id": ss2_id})
+        p1_ss_list = self.get_item_list("/persons/soft_skills?person_id="+person_ids[0])
+        ref_p1_ss_list = [{"id": p0_ss0_id}, {"id": p0_ss1_id}]
+        self.assertDictListEqual(p1_ss_list, ref_p1_ss_list)
+
+        ss1_pss_list = self.get_item_list("/persons/soft_skills?ss_id="+ss1_id)
+        ref_ss1_pss_list = [{"id": p0_ss1_id}, {"id": p1_ss1_id}]
+        self.assertDictListEqual(ss1_pss_list, ref_ss1_pss_list)
+
+        all_pss_list = self.get_item_list("/persons/soft_skills")
+        ref_all_pss_list = [{"id": p0_ss0_id}, {"id": p0_ss1_id},
+                            {"id": p1_ss1_id}, {"id": p1_ss2_id}]
+        self.assertDictListEqual(ref_all_pss_list, all_pss_list)
+
+        for p_ss_id in [p0_ss0_id, p0_ss1_id, p1_ss1_id, p1_ss2_id]:
+            self.delete_item("/persons/soft_skills/"+p_ss_id)
+
+        all_pss_list = self.get_item_list("/persons/soft_skills")
+        self.assertDictListEqual([], all_pss_list)
+
+        for person_id in person_ids:
+            self.delete_item("/persons/" + person_id)
+        for ss_id in [ss0_id, ss1_id, ss2_id]:
+            self.delete_item("/soft_skills/" + ss_id)
 
 
     def get_item_list(self, url):
