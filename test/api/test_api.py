@@ -8,6 +8,7 @@ from node.node_server import start_server
 from threading import Thread
 import random
 import datetime
+from time import sleep
 import re
 #from src.data.reviewer_model import *
 
@@ -18,7 +19,10 @@ class NodeServer(Thread):
     def run(self):
         start_server()
 
+print ("Server starting...")
 node_server_thread = NodeServer()
+print ("Waiting for server...")
+sleep(5)
 
 class TestApi(unittest.TestCase):
 
