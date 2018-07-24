@@ -19,10 +19,7 @@ class NodeServer(Thread):
     def run(self):
         start_server()
 
-print ("Server starting...")
 node_server_thread = NodeServer()
-print ("Waiting for server...")
-sleep(5)
 
 class TestApi(unittest.TestCase):
 
@@ -33,8 +30,11 @@ class TestApi(unittest.TestCase):
         cls.gen_doc_ctr = 0
         # Запуск сервера, (проверка на запущенность не проводится!)
         # TODO добавить проверку на запущенность сервера
-        # TODO добавить очищение базы с сохранинем индексов
+        # TODO добавить очищение базы с сохранинем индексов    
+        print ("Server starting...")
         node_server_thread.start()
+        print ("Waiting for server...")
+        sleep(5)
         cls.clear_collection("/persons", "/persons")
         cls.clear_collection("/organizations", "/organizations")
         cls.clear_collection("/group_permissions", "/group_permissions")
