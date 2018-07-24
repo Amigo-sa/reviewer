@@ -1,4 +1,4 @@
-# -- coding: utf-8 --
+# -*- coding: utf-8 -*-
 import context
 import unittest
 import requests
@@ -489,6 +489,8 @@ class TestApi(unittest.TestCase):
         for ss_id in [ss0_id, ss1_id, ss2_id]:
             self.delete_item("/soft_skills/" + ss_id)
 
+    def test_role_in_group_normal(self):
+        pass
 
     def get_item_list(self, url):
         resp = requests.get(self.api_URL + url)

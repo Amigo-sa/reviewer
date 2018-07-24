@@ -1,4 +1,4 @@
-# -- coding: utf-8 --
+# -*- coding: utf-8 -*-
 from pymodm import MongoModel, fields, ReferenceField
 from pymongo.write_concern import WriteConcern
 from pymodm.errors import ValidationError
