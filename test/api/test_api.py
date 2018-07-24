@@ -12,14 +12,13 @@ from time import sleep
 import re
 #from src.data.reviewer_model import *
 
-class NodeServer(Thread):
-    def __init__(self):
-        Thread.__init__(self)
 
+class NodeServer(Thread):
     def run(self):
         start_server()
 
 node_server_thread = NodeServer()
+
 
 class TestApi(unittest.TestCase):
 
@@ -28,13 +27,21 @@ class TestApi(unittest.TestCase):
         # Загрузка адреса сервера
         cls.api_URL = constants.core_server_url
         cls.gen_doc_ctr = 0
-        # Запуск сервера, (проверка на запущенность не проводится!)
-        # TODO добавить проверку на запущенность сервера
-        # TODO добавить очищение базы с сохранинем индексов    
-        print ("Server starting...")
+        print("Server starting...")
         node_server_thread.start()
-        print ("Waiting for server...")
-        sleep(5)
+        attempts = 0
+        connected = False
+        print("Waiting for server...")
+        while not connected:
+            try:
+                requests.get(cls.api_URL + "/organizations")
+                connected = True
+            except Exception as e:
+                attempts += 1
+                sleep(0.5)
+                print("Connection attempt %s failed" %str(attempts))
+                if attempts > 20: raise ConnectionError("could not connect to server")
+        print("Connected")
         cls.clear_collection("/persons", "/persons")
         cls.clear_collection("/organizations", "/organizations")
         cls.clear_collection("/group_permissions", "/group_permissions")
