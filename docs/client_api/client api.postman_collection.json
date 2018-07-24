@@ -42,7 +42,7 @@
 					},
 					"response": [
 						{
-							"id": "b337df2b-efca-43d9-92d1-7e2746b5f067",
+							"id": "475b7fe4-2cca-4345-8db6-9c51aa6e120e",
 							"name": "add_organization_example_success",
 							"originalRequest": {
 								"method": "POST",
@@ -156,7 +156,7 @@
 					},
 					"response": [
 						{
-							"id": "46b30505-f4fa-4bf2-9ca6-54a512ac2900",
+							"id": "3e4de7be-6930-48e0-a6f0-b7a8b2cbbec9",
 							"name": "delete_organization_success",
 							"originalRequest": {
 								"method": "DELETE",
@@ -242,7 +242,7 @@
 					},
 					"response": [
 						{
-							"id": "6afc40bd-d67a-4bcc-9543-b31278e9ef9c",
+							"id": "fc9dedd7-4575-46f2-9431-277f1e869ffd",
 							"name": "list_organizations_success",
 							"originalRequest": {
 								"method": "GET",
@@ -374,7 +374,7 @@
 					},
 					"response": [
 						{
-							"id": "8fc315f3-c851-4257-9865-6af69519486f",
+							"id": "eb63fda4-8485-4fee-b406-500182499660",
 							"name": "add_department",
 							"originalRequest": {
 								"method": "POST",
@@ -480,7 +480,7 @@
 					},
 					"response": [
 						{
-							"id": "45903675-3aca-4732-b69c-d3e74ef9a458",
+							"id": "66f67e75-f860-4175-89b5-23375ee8e6a4",
 							"name": "delete_department",
 							"originalRequest": {
 								"method": "DELETE",
@@ -580,7 +580,7 @@
 					},
 					"response": [
 						{
-							"id": "e16b3f09-f4b9-4c35-9987-0ce37a58dcbd",
+							"id": "5cdd97b0-63f0-4131-beea-5d0a97ea9b33",
 							"name": "list_departments",
 							"originalRequest": {
 								"method": "GET",
@@ -692,7 +692,7 @@
 					},
 					"response": [
 						{
-							"id": "4c0f8735-c1be-4a57-917f-0243ab1ed1f9",
+							"id": "60be862e-3597-47f4-b15e-a57c583f4f57",
 							"name": "add_group",
 							"originalRequest": {
 								"method": "POST",
@@ -798,7 +798,7 @@
 					},
 					"response": [
 						{
-							"id": "66134712-e79c-468c-abac-cf02d70b6caf",
+							"id": "977a23c7-cec7-416b-9763-7d1e1abe37e9",
 							"name": "delete_group",
 							"originalRequest": {
 								"method": "DELETE",
@@ -898,7 +898,7 @@
 					},
 					"response": [
 						{
-							"id": "f9dcb776-c903-4a6c-be94-a602f142d2c2",
+							"id": "bac01c16-cf6d-422f-ae65-c1c5ce7e5837",
 							"name": "list_groups",
 							"originalRequest": {
 								"method": "GET",
@@ -990,7 +990,7 @@
 					},
 					"response": [
 						{
-							"id": "d080426a-590e-45f1-b9ff-11f1fd7ddca9",
+							"id": "0018cff5-b6d8-4090-8285-02367948c392",
 							"name": "add_group_role",
 							"originalRequest": {
 								"method": "POST",
@@ -1094,7 +1094,7 @@
 					},
 					"response": [
 						{
-							"id": "42dd7532-9ddc-4e78-babe-fc6c7d07f47e",
+							"id": "35a2590e-d494-410f-abe9-a0088f08341f",
 							"name": "delete_group_role",
 							"originalRequest": {
 								"method": "DELETE",
@@ -1180,7 +1180,7 @@
 					},
 					"response": [
 						{
-							"id": "161b4498-3b42-4dba-bd1d-feaa475f5107",
+							"id": "867cb9c0-d1f1-42d3-bb90-b3ff7fd6ca70",
 							"name": "list_group_roles",
 							"originalRequest": {
 								"method": "GET",
@@ -1270,7 +1270,7 @@
 					},
 					"response": [
 						{
-							"id": "f826779f-9533-4a1a-841a-4446c4b18587",
+							"id": "5f22716f-c49a-4a0c-b1ca-bf921266f6f2",
 							"name": "add_group_permission",
 							"originalRequest": {
 								"method": "POST",
@@ -1374,7 +1374,7 @@
 					},
 					"response": [
 						{
-							"id": "8c2fc998-c678-4c16-891d-16b545f93ef1",
+							"id": "af1d3c84-f3f5-4e5f-8f75-922081a19b86",
 							"name": "delete_group_permission",
 							"originalRequest": {
 								"method": "DELETE",
@@ -1460,7 +1460,7 @@
 					},
 					"response": [
 						{
-							"id": "cd144316-45f5-44b6-b3e2-744b5677312d",
+							"id": "b70c00b6-f283-477b-b276-f7a03d7ba636",
 							"name": "list_group_permissions",
 							"originalRequest": {
 								"method": "GET",
@@ -1519,18 +1519,18 @@
 					]
 				},
 				{
-					"name": "add_role_in_group",
+					"name": "add_group_member",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "de2613a6-de21-4217-846f-a78a5f1aa5b4",
+								"id": "17d92ee4-5e4a-4fba-a320-dcc1f82b509c",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"group_id\", \"5b4f89322131372234ca2054\");",
-									"pm.environment.set(\"person_id\", \"5b4f89322131372234ca1ffd\");",
-									"pm.environment.set(\"group_role_id\", \"5b4f89322131372234ca204a\");",
-									"pm.environment.set(\"permission_id\", \"5b4f89322131372234ca2052\");"
+									"pm.environment.set(\"group_id\", \"5b54c4a72131371cb0cbdda0\");",
+									"pm.environment.set(\"person_id\", \"5b54da812131371308dded16\");",
+									"pm.environment.set(\"group_role_id\", \"5b54c4a72131371cb0cbdd94\");",
+									"pm.environment.set(\"permission_id\", \"5b54c4a72131371cb0cbdd99\");"
 								]
 							}
 						}
@@ -1548,7 +1548,7 @@
 							"raw": "{\n\t\"person_id\": \"{{person_id}}\",\n\t\"role_id\":\"{{group_role_id}}\",\n\t\"default_permission_id\":\"{{permission_id}}\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/groups/{{group_id}}/roles_in_group",
+							"raw": "http://127.0.0.1:5000/groups/{{group_id}}/group_members",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1560,15 +1560,15 @@
 							"path": [
 								"groups",
 								"{{group_id}}",
-								"roles_in_group"
+								"group_members"
 							]
 						},
-						"description": "Добавляет пользователя в группу с определенной ролью"
+						"description": "Добавляет участника в группу"
 					},
 					"response": [
 						{
-							"id": "dd01e5c7-7048-445a-b821-d1926265bf16",
-							"name": "add_role_in_group",
+							"id": "2800a9d9-eaf8-405e-9b6c-866ef57c6c3e",
+							"name": "add_group_member",
 							"originalRequest": {
 								"method": "POST",
 								"header": [
@@ -1583,7 +1583,7 @@
 									"raw": "{\n\t\"person_id\": \"5b54c4a72131371cb0cbdd4a\",\n\t\"role_id\":\"5b54c4a72131371cb0cbdd94\",\n\t\"default_permission_id\":\"5b54c4a72131371cb0cbdd99\"\n}"
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/groups/5b54c4a72131371cb0cbdda0/roles_in_group",
+									"raw": "http://127.0.0.1:5000/groups/5b54c4a72131371cb0cbdda0/group_members",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -1595,7 +1595,7 @@
 									"path": [
 										"groups",
 										"5b54c4a72131371cb0cbdda0",
-										"roles_in_group"
+										"group_members"
 									]
 								}
 							},
@@ -1634,15 +1634,15 @@
 					]
 				},
 				{
-					"name": "delete_role_in_group",
+					"name": "delete_group_member",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "71b1d173-c1da-47f0-a0bb-905b7c787853",
+								"id": "cf5ca972-60ed-443c-b149-fc903ed178bc",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"role_in_group_id\", \"5b4f89322131372234ca2052\");"
+									"pm.environment.set(\"group_member_id\", \"5b5780a82131370680173854\");"
 								]
 							}
 						}
@@ -1655,7 +1655,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/roles_in_group/{{role_in_group_id}}",
+							"raw": "http://127.0.0.1:5000/group_members/{{group_member_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1665,16 +1665,16 @@
 							],
 							"port": "5000",
 							"path": [
-								"roles_in_group",
-								"{{role_in_group_id}}"
+								"group_members",
+								"{{group_member_id}}"
 							]
 						},
-						"description": "Удаляет роль пользователя из группы"
+						"description": "Удаляет участника группы"
 					},
 					"response": [
 						{
-							"id": "8c7f419d-7b2f-4175-aa02-3c4bab0c8d8e",
-							"name": "delete_role_in_group",
+							"id": "88efb44a-8d82-4d40-8817-3cf96098d175",
+							"name": "delete_group_member",
 							"originalRequest": {
 								"method": "DELETE",
 								"header": [],
@@ -1683,7 +1683,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/roles_in_group/5b54d60e2131371308dded15",
+									"raw": "http://127.0.0.1:5000/group_members/5b54d60e2131371308dded15",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -1693,7 +1693,7 @@
 									],
 									"port": "5000",
 									"path": [
-										"roles_in_group",
+										"group_members",
 										"5b54d60e2131371308dded15"
 									]
 								}
@@ -1733,15 +1733,15 @@
 					]
 				},
 				{
-					"name": "get_role_in_group_info",
+					"name": "get_group_member_info",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "739b2617-7984-4830-8afe-8421ff7eca0b",
+								"id": "db30dc16-16e5-4317-b9a4-d12a86fab026",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"role_in_group_id\", \"5b4f89322131372234ca2052\");"
+									"pm.environment.set(\"group_member_id\", \"5b54c4a72131371cb0cbdda2\");"
 								]
 							}
 						}
@@ -1754,7 +1754,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/roles_in_group/{{role_in_group_id}}",
+							"raw": "http://127.0.0.1:5000/group_members/{{group_member_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1764,15 +1764,15 @@
 							],
 							"port": "5000",
 							"path": [
-								"roles_in_group",
-								"{{role_in_group_id}}"
+								"group_members",
+								"{{group_member_id}}"
 							]
 						},
-						"description": "Получает информацию о роли в группе:\nпользователя, кому принадлежит роль\nгруппу в которой она зарегистрирована\nправа этой роли в группе"
+						"description": "Получает информацию об участнике группы:\nпользователя, кому принадлежит роль\nгруппу в которой она зарегистрирована\nправа этой роли в группе"
 					},
 					"response": [
 						{
-							"id": "6bb8f75d-c4f6-4c72-a471-306b4f0388c6",
+							"id": "008d51e1-d46d-42bd-8dda-3f75b989435a",
 							"name": "get_role_in_group_info",
 							"originalRequest": {
 								"method": "GET",
@@ -1832,16 +1832,16 @@
 					]
 				},
 				{
-					"name": "add_permissions_to_role_in_group",
+					"name": "add_permissions_to_group_member",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "01044146-272c-42db-aed3-c8f06f39a4b3",
+								"id": "b71a31a9-40e2-4987-953b-25338836cef0",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"role_in_group_id\", \"5b4f89322131372234ca2052\");",
-									"pm.environment.set(\"permission_id\", \"5b4f89322131372234ca2052\");"
+									"pm.environment.set(\"group_member_id\", \"5b54c4a72131371cb0cbdda2\");",
+									"pm.environment.set(\"permission_id\", \"5b54c4a72131371cb0cbdd9f\");"
 								]
 							}
 						}
@@ -1859,7 +1859,7 @@
 							"raw": "{\n\t\"group_permission_id\":\"{{permission_id}}\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/roles_in_group/{{role_in_group_id}}/permissions",
+							"raw": "http://127.0.0.1:5000/group_members/{{group_member_id}}/permissions",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1869,17 +1869,17 @@
 							],
 							"port": "5000",
 							"path": [
-								"roles_in_group",
-								"{{role_in_group_id}}",
+								"group_members",
+								"{{group_member_id}}",
 								"permissions"
 							]
 						},
-						"description": "Добавляет права для роли пользователя в группе"
+						"description": "Добавляет права для участника группы"
 					},
 					"response": [
 						{
-							"id": "d48a0538-a0e0-4243-9e80-4e58a201fd4f",
-							"name": "add_permissions_to_role_in_group",
+							"id": "9d807482-24ab-4a06-9fa2-93ed21e8549c",
+							"name": "add_permissions_to_group_member",
 							"originalRequest": {
 								"method": "POST",
 								"header": [
@@ -1893,7 +1893,7 @@
 									"raw": "{\n\t\"group_permission_id\":\"5b54c4a72131371cb0cbdd9e\"\n}"
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/roles_in_group/5b54c4a72131371cb0cbdda7/permissions",
+									"raw": "http://127.0.0.1:5000/group_members/5b54c4a72131371cb0cbdda7/permissions",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -1903,7 +1903,7 @@
 									],
 									"port": "5000",
 									"path": [
-										"roles_in_group",
+										"group_members",
 										"5b54c4a72131371cb0cbdda7",
 										"permissions"
 									]
@@ -1944,16 +1944,16 @@
 					]
 				},
 				{
-					"name": "delete_permissions_from_role_in_group",
+					"name": "delete_permissions_from_group_member",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "ff82061c-8a9f-47bc-ba3e-411341eb160c",
+								"id": "634fa9a3-d817-4533-a375-acfa059cdb0f",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"role_in_group_id\", \"5b4f89322131372234ca2052\");",
-									"pm.environment.set(\"permission_id\", \"5b4f89322131372234ca2052\");"
+									"pm.environment.set(\"group_member_id\", \"5b54c4a72131371cb0cbdda2\");",
+									"pm.environment.set(\"permission_id\", \"5b54c4a72131371cb0cbdd9f\");"
 								]
 							}
 						}
@@ -1966,7 +1966,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/roles_in_group/{{role_in_group_id}}/permissions/{{permission_id}}",
+							"raw": "http://127.0.0.1:5000/group_members/{{group_member_id}}/permissions/{{permission_id}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -1976,18 +1976,18 @@
 							],
 							"port": "5000",
 							"path": [
-								"roles_in_group",
-								"{{role_in_group_id}}",
+								"group_members",
+								"{{group_member_id}}",
 								"permissions",
 								"{{permission_id}}"
 							]
 						},
-						"description": "Снимает права с роли пользователя в группе"
+						"description": "Снимает права с участника в группы"
 					},
 					"response": [
 						{
-							"id": "fba65fae-ca4e-42a7-a93d-9c4cb0c07a53",
-							"name": "delete_permissions_from_role_in_group",
+							"id": "69ae8e16-f929-4df4-808d-01ed306e670d",
+							"name": "delete_permissions_from_group_member",
 							"originalRequest": {
 								"method": "DELETE",
 								"header": [],
@@ -1996,7 +1996,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/roles_in_group/5b4f89322131372234ca2052/permissions/5b4f89322131372234ca2052",
+									"raw": "http://127.0.0.1:5000/group_members/5b4f89322131372234ca2052/permissions/5b4f89322131372234ca2052",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -2006,7 +2006,7 @@
 									],
 									"port": "5000",
 									"path": [
-										"roles_in_group",
+										"group_members",
 										"5b4f89322131372234ca2052",
 										"permissions",
 										"5b4f89322131372234ca2052"
@@ -2023,15 +2023,15 @@
 					]
 				},
 				{
-					"name": "list_roles_in_group_by_group_id",
+					"name": "list_group_memberы_by_group_id",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "24db7bb8-74af-4e9d-88e8-473ee3a78bcc",
+								"id": "e124bc4f-039d-4ff3-9a2d-d57fb0d4d3fd",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"group_id\", \"5b4f89322131372234ca2054\");"
+									"pm.environment.set(\"group_id\", \"5b54c4a72131371cb0cbdda0\");"
 								]
 							}
 						}
@@ -2044,7 +2044,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/groups/{{group_id}}/roles_in_group",
+							"raw": "http://127.0.0.1:5000/groups/{{group_id}}/group_members",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -2056,14 +2056,14 @@
 							"path": [
 								"groups",
 								"{{group_id}}",
-								"roles_in_group"
+								"group_members"
 							]
 						},
-						"description": "Получает список ролей пользователей в группе для заданной группы"
+						"description": "Получает список участников группы"
 					},
 					"response": [
 						{
-							"id": "2998e779-6ac2-4cf9-83ea-a3c205e1a3fe",
+							"id": "55761b29-9845-4c50-ac87-3bbcd185fc13",
 							"name": "list_roles_in_group_by_group_id",
 							"originalRequest": {
 								"method": "GET",
@@ -2073,7 +2073,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/groups/5b54c4a72131371cb0cbdda0/roles_in_group",
+									"raw": "http://127.0.0.1:5000/groups/5b54c4a72131371cb0cbdda0/group_members",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -2085,7 +2085,7 @@
 									"path": [
 										"groups",
 										"5b54c4a72131371cb0cbdda0",
-										"roles_in_group"
+										"group_members"
 									]
 								}
 							},
@@ -2175,7 +2175,7 @@
 					},
 					"response": [
 						{
-							"id": "720062c5-9cf5-4e76-b933-a27b8b831c5c",
+							"id": "c79ead81-a112-40ac-bf6e-f960cce76816",
 							"name": "add_general_role_tutor",
 							"originalRequest": {
 								"method": "POST",
@@ -2279,7 +2279,7 @@
 					},
 					"response": [
 						{
-							"id": "c4bc827f-f778-4c0e-8b0d-4d8191cc2996",
+							"id": "e230dfac-4571-4a9d-bfb6-c12c0270c053",
 							"name": "delete_general_role",
 							"originalRequest": {
 								"method": "DELETE",
@@ -2378,7 +2378,7 @@
 					},
 					"response": [
 						{
-							"id": "ac95a2ea-9a8a-4252-b044-b4e86e8d9beb",
+							"id": "bc9b8afe-b7e8-44b9-8ec3-fa4f98592b73",
 							"name": "get_general_roles_data",
 							"originalRequest": {
 								"method": "GET",
@@ -2491,7 +2491,7 @@
 					},
 					"response": [
 						{
-							"id": "21796499-2d58-4fd3-9cc7-0664bf98ddf1",
+							"id": "1105bd61-2dcc-4d8e-9b99-3b1b2c57cd37",
 							"name": "post_review",
 							"originalRequest": {
 								"method": "POST",
@@ -2595,7 +2595,7 @@
 					},
 					"response": [
 						{
-							"id": "32115b3d-0336-4f44-8e5d-33cab3db024a",
+							"id": "460e0d8e-7de6-4f51-923d-094f8d305a71",
 							"name": "delete_review",
 							"originalRequest": {
 								"method": "DELETE",
@@ -2704,7 +2704,7 @@
 					},
 					"response": [
 						{
-							"id": "0ef7e6a7-6ee2-4151-ae16-f2f6d7027b6d",
+							"id": "a4b2f7cb-7f2d-4316-8fca-ac13f2d820a8",
 							"name": "find_reviews",
 							"originalRequest": {
 								"method": "GET",
@@ -2810,7 +2810,7 @@
 					},
 					"response": [
 						{
-							"id": "e51026c3-22bb-47be-853a-a0d1171065f9",
+							"id": "8808eebe-0720-411c-8596-c9913f7f9c96",
 							"name": "add_person",
 							"originalRequest": {
 								"method": "POST",
@@ -2937,7 +2937,7 @@
 					},
 					"response": [
 						{
-							"id": "5f2dc3fa-3edf-4373-86e0-5cf51bd0797f",
+							"id": "01dfc6f6-caf1-47c5-8d2d-eb6f57fb77a9",
 							"name": "find_persons",
 							"originalRequest": {
 								"method": "GET",
@@ -3056,7 +3056,7 @@
 					},
 					"response": [
 						{
-							"id": "dd3cc609-fc06-4ad7-b4a9-93aa44da267b",
+							"id": "47fc09d9-0dcf-4b0e-8f3b-884614208085",
 							"name": "delete_person",
 							"originalRequest": {
 								"method": "DELETE",
@@ -3152,7 +3152,7 @@
 					},
 					"response": [
 						{
-							"id": "be0ec3d0-c3c7-4df0-bdce-d96c365ff9ab",
+							"id": "6606230c-344d-467b-9f7a-7dd929ed891b",
 							"name": "get_person_info_success",
 							"originalRequest": {
 								"method": "GET",
@@ -3212,15 +3212,15 @@
 					]
 				},
 				{
-					"name": "list_roles_in_group_by_person_id",
+					"name": "list_group_members_by_person_id",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d5dc4435-1ed0-4832-bfce-824bce2e620b",
+								"id": "fb4fc427-1456-4ffc-897f-ba445aa03a78",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"person_id\", \"5b4e38d02131371ce8dd8246\");"
+									"pm.environment.set(\"person_id\", \"5b54c4a72131371cb0cbdd45\");"
 								]
 							}
 						}
@@ -3233,7 +3233,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/{{person_id}}/roles_in_group",
+							"raw": "http://127.0.0.1:5000/persons/{{person_id}}/group_members",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -3245,15 +3245,15 @@
 							"path": [
 								"persons",
 								"{{person_id}}",
-								"roles_in_group"
+								"group_members"
 							]
 						},
-						"description": "Получает список ролей пользователя во всех группах"
+						"description": "Получает список представлений пользователя как участника в группах"
 					},
 					"response": [
 						{
-							"id": "0d35dea8-db75-4ebf-b00e-402600a5e6c5",
-							"name": "list_roles_in_group_by_person_id",
+							"id": "61e16bcd-8e4e-4962-af9c-51e065bca879",
+							"name": "list_group_members_by_person_id",
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
@@ -3262,7 +3262,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/persons/5b54c4a72131371cb0cbdd45/roles_in_group",
+									"raw": "http://127.0.0.1:5000/persons/5b54c4a72131371cb0cbdd45/group_members",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -3274,7 +3274,7 @@
 									"path": [
 										"persons",
 										"5b54c4a72131371cb0cbdd45",
-										"roles_in_group"
+										"group_members"
 									]
 								}
 							},
@@ -3353,7 +3353,7 @@
 					},
 					"response": [
 						{
-							"id": "85b11e0f-9b14-437f-963b-1308a5be6b36",
+							"id": "a79ba7c2-e029-4706-8c94-5ccb55491326",
 							"name": "list_roles_by_person_id",
 							"originalRequest": {
 								"method": "GET",
@@ -3460,7 +3460,7 @@
 					},
 					"response": [
 						{
-							"id": "e181b572-568c-419d-8c1e-93ef8ffc0e5a",
+							"id": "44603710-44de-41df-9ac5-66ef31f6ad8b",
 							"name": "add_person_soft_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -3567,7 +3567,7 @@
 					},
 					"response": [
 						{
-							"id": "1b4498ce-4ba7-464b-972e-da472590983a",
+							"id": "6f777f9b-4503-4822-ad96-c3957b02671d",
 							"name": "delete_person_soft_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -3678,7 +3678,7 @@
 					},
 					"response": [
 						{
-							"id": "ee633002-64fe-42d3-b4e5-edb9ef9e877d",
+							"id": "d80f792e-b1ed-49c0-a6a2-b112620e3bb4",
 							"name": "find_person_soft_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -3788,7 +3788,7 @@
 					},
 					"response": [
 						{
-							"id": "03f55bf2-3977-4c27-acd0-233f5223c6b5",
+							"id": "d251fd48-26e2-4a91-9465-a45cfb8c6670",
 							"name": "get_person_soft_skill_info",
 							"originalRequest": {
 								"method": "GET",
@@ -3895,7 +3895,7 @@
 					},
 					"response": [
 						{
-							"id": "b770a897-f6b9-46f2-af2c-b8ab9c2bbf90",
+							"id": "dae51c20-78c6-4134-b319-79ea224bea98",
 							"name": "add_person_hard_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -4002,7 +4002,7 @@
 					},
 					"response": [
 						{
-							"id": "24a0aeae-ef43-4ecf-ba38-4a4facff3655",
+							"id": "b7f56c09-0511-493d-80c6-67ea1b50ac35",
 							"name": "delete_person_hard_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -4113,7 +4113,7 @@
 					},
 					"response": [
 						{
-							"id": "7c7e9fe1-719e-4bdf-aac1-fcc222c418c7",
+							"id": "328b89cc-3d9e-4d9c-aecc-041801773b20",
 							"name": "find_person_hard_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -4223,7 +4223,7 @@
 					},
 					"response": [
 						{
-							"id": "8d22051c-8a29-4f57-8eeb-ba76e1221804",
+							"id": "756d1339-bc3a-451f-b730-9989f23400b4",
 							"name": "get_person_hard_skill_info",
 							"originalRequest": {
 								"method": "GET",
@@ -4321,7 +4321,7 @@
 					},
 					"response": [
 						{
-							"id": "2a448387-095a-464d-b925-ebf72da496f3",
+							"id": "c0d8845f-a86d-40c7-bd95-5aa5aeb65070",
 							"name": "add_soft_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -4425,7 +4425,7 @@
 					},
 					"response": [
 						{
-							"id": "202aad52-0681-4e88-aabb-25906523bc1f",
+							"id": "dcee7819-175f-419a-962b-1854bc34e9a0",
 							"name": "delete_soft_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -4511,7 +4511,7 @@
 					},
 					"response": [
 						{
-							"id": "dfd6cd34-ab1d-48d9-b336-bd6ec0a85d67",
+							"id": "a80adb92-1a01-48c7-862a-74fbeea33968",
 							"name": "list_soft_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -4601,7 +4601,7 @@
 					},
 					"response": [
 						{
-							"id": "1a8aa6b5-ded7-45b6-a1c8-831416b526d6",
+							"id": "0f49a7d6-bff4-49a9-a87f-d9a198663d7d",
 							"name": "add_hard_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -4705,7 +4705,7 @@
 					},
 					"response": [
 						{
-							"id": "93ee22e2-cf2b-47fa-afdf-030fe3d28cea",
+							"id": "50d6065a-6ce3-430b-9071-39a9f49815b6",
 							"name": "delete_hard_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -4791,7 +4791,7 @@
 					},
 					"response": [
 						{
-							"id": "b3adf991-dc1a-44fc-8b6c-e20b87bf4ccc",
+							"id": "4a3ae6a7-5086-41d3-be42-e2d997eb25b0",
 							"name": "list_hard_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -4901,7 +4901,7 @@
 					},
 					"response": [
 						{
-							"id": "baee45b6-848a-49b7-aa0a-e85179ff4ae9",
+							"id": "76dbfcdd-0dd2-4fe8-84b3-96b30fa6161f",
 							"name": "add_group_test",
 							"originalRequest": {
 								"method": "POST",
@@ -5007,7 +5007,7 @@
 					},
 					"response": [
 						{
-							"id": "6a33ac37-970a-45d7-8a7a-74902ad9b59d",
+							"id": "3ad56db4-8482-4467-96e3-e879f7813c33",
 							"name": "delete_group_test",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5106,7 +5106,7 @@
 					},
 					"response": [
 						{
-							"id": "85bfe793-fb96-4780-8f7a-e7041946ed06",
+							"id": "84129b27-6f8c-4411-ab91-9e2038ab8fbe",
 							"name": "get_group_test_info",
 							"originalRequest": {
 								"method": "GET",
@@ -5206,7 +5206,7 @@
 					},
 					"response": [
 						{
-							"id": "da81caae-bfbc-4e40-ab9f-6448cb90bf53",
+							"id": "41ef7750-83dd-4316-a511-31bc30f74477",
 							"name": "list_group_tests",
 							"originalRequest": {
 								"method": "GET",
@@ -5313,7 +5313,7 @@
 					},
 					"response": [
 						{
-							"id": "06910150-6684-4b24-bed5-dab08a74be53",
+							"id": "ed854a2d-2179-4b13-81db-3b54acfb7f9a",
 							"name": "add_test_result",
 							"originalRequest": {
 								"method": "POST",
@@ -5420,7 +5420,7 @@
 					},
 					"response": [
 						{
-							"id": "fdaba2d6-6046-451f-9894-6299bc2bf1dd",
+							"id": "bf00c3b1-1fd4-457a-a148-b6df02173436",
 							"name": "delete_test_result",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5521,7 +5521,7 @@
 					},
 					"response": [
 						{
-							"id": "b5980613-82f9-4fe1-a51d-ab8904f37819",
+							"id": "c108305f-f515-438f-8253-739f90232443",
 							"name": "get_test_result_info",
 							"originalRequest": {
 								"method": "GET",
@@ -5632,7 +5632,7 @@
 					},
 					"response": [
 						{
-							"id": "9c54b593-23a3-4d7e-8dd4-affd1313a40a",
+							"id": "bc6cd8ba-eaff-4164-8513-acdaaaeb4184",
 							"name": "find_test_results",
 							"originalRequest": {
 								"method": "GET",

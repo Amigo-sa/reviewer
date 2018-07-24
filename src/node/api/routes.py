@@ -296,8 +296,8 @@ def list_group_permissions():
     return jsonify(result), 200
 
 
-@bp.route("/groups/<string:id>/roles_in_group", methods=['POST'])
-def add_role_in_group(id):
+@bp.route("/groups/<string:id>/group_members", methods=['POST'])
+def add_group_member(id):
     req = request.get_json()
     try:
         person_id = req['person_id']
@@ -319,8 +319,8 @@ def add_role_in_group(id):
     return jsonify(result), 200
 
 
-@bp.route("/roles_in_group/<string:id>", methods=['DELETE'])
-def delete_role_in_group(id):
+@bp.route("/group_members/<string:id>", methods=['DELETE'])
+def delete_group_member(id):
     try:
         if RoleInGroup(_id=id) in RoleInGroup.objects.raw({"_id":ObjectId(id)}):
             RoleInGroup(_id=id).delete()
@@ -332,8 +332,8 @@ def delete_role_in_group(id):
     return jsonify(result), 200
 
 
-@bp.route("/groups/<string:id>/roles_in_group", methods=['GET'])
-def list_roles_in_group_by_group_id(id):
+@bp.route("/groups/<string:id>/group_members", methods=['GET'])
+def list_group_members_by_group_id(id):
     list = []
     try:
         for role_in_group in  RoleInGroup.objects.raw({"group_id": ObjectId(id)}):
@@ -344,8 +344,8 @@ def list_roles_in_group_by_group_id(id):
     return jsonify(result), 200
 
 
-@bp.route("/persons/<string:id>/roles_in_group", methods=['GET'])
-def list_roles_in_group_by_person_id(id):
+@bp.route("/persons/<string:id>/group_members", methods=['GET'])
+def list_group_members_by_person_id(id):
     list = []
     try:
         for role_in_group in RoleInGroup.objects.raw({"person_id": ObjectId(id)}):
@@ -356,8 +356,8 @@ def list_roles_in_group_by_person_id(id):
     return jsonify(result), 200
 
 
-@bp.route("/roles_in_group/<string:id>", methods=['GET'])
-def get_role_in_group_info(id):
+@bp.route("/group_members/<string:id>", methods=['GET'])
+def get_group_member_info(id):
     try:
         if RoleInGroup(_id=id) in RoleInGroup.objects.raw({"_id": ObjectId(id)}):
             role_in_group = RoleInGroup(_id=id)
@@ -377,8 +377,8 @@ def get_role_in_group_info(id):
     return jsonify(result), 200
 
 
-@bp.route("/roles_in_group/<string:id>/permissions", methods = ['POST'])
-def add_permissions_to_role_in_group(id):
+@bp.route("/group_members/<string:id>/permissions", methods = ['POST'])
+def add_permissions_to_group_member(id):
     req = request.get_json()
     try:
         group_permission_id = req['group_permission_id']
@@ -401,8 +401,8 @@ def add_permissions_to_role_in_group(id):
     return jsonify(result), 200
 
 
-@bp.route("/roles_in_group/<string:id1>/permissions/<string:id2>", methods = ['DELETE'])
-def delete_permissions_from_role_in_group(id1, id2):
+@bp.route("/group_members/<string:id1>/permissions/<string:id2>", methods = ['DELETE'])
+def delete_permissions_from_group_member(id1, id2):
     try:
         if RoleInGroup(_id=id1) in RoleInGroup.objects.raw({"_id": ObjectId(id1)}):
             role_in_group = RoleInGroup(_id=id1)
