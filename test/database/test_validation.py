@@ -77,14 +77,41 @@ class TestValidation(unittest.TestCase):
         read_permission.save()
         group = Group(department, "А-4-03", [member_role])
         group.save()
-        # add person without group and permissions
+        # add person to group without group role and permissions
         group_member = GroupMember()
         group_member.group_id = group
         group_member.person_id = person
+        group_member.role_id = None
         group_member.permissions = []
+        gm_id = group_member.save()
+        # verify group member added
+        group_member.refresh_from_db()
+        gm_data = group_member.__dict__["_data"]
+        ref_gm_data = {
+            "_id": group_member.pk,
+            "person_id": person.pk,
+            "group_id": group.pk,
+            "role_id": None,
+            "permissions": []}
+        self.assertDictEqual(ref_gm_data, gm_data)
+        # add permission to group member
+        group_member.permissions.append(read_permission)
         group_member.save()
-        #group_member.permissions.append(read_permission)
-        #group_member.save()
+        # verify added permission
+        group_member.refresh_from_db()
+        gm_data = group_member.__dict__["_data"]
+        ref_gm_data.update({"permissions" : [read_permission.pk]})
+        self.assertDictEqual(ref_gm_data, gm_data)
+        # add group role
+        group_member.role_id = member_role
+        group_member.save()
+        # verify added role
+        group_member.refresh_from_db()
+        gm_data = group_member.__dict__["_data"]
+        ref_gm_data.update({"role_id": member_role.pk})
+        self.assertDictEqual(ref_gm_data, gm_data)
+        # role removal must fail
+
 
 """
     # Role in group tests

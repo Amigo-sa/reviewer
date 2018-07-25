@@ -202,7 +202,7 @@ class Group(MongoModel):
 class GroupMember(MongoModel):
     person_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
     group_id = fields.ReferenceField(Group, on_delete=ReferenceField.CASCADE)
-    role_id = fields.ReferenceField(GroupRole, on_delete=ReferenceField.CASCADE)
+    role_id = fields.ReferenceField(GroupRole, on_delete=ReferenceField.DO_NOTHING, blank=True)
     permissions = fields.ListField(field=
                                    fields.ReferenceField(GroupPermission), blank=True)
 
