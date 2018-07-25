@@ -7,6 +7,8 @@ import pymongo
 from pymodm.connection import connect, _get_db
 import data.settings as settings
 
+from collections import Counter
+
 # TODO внедрить в базу номер версии модели и номер версии скрипта-заполнителя
 model_version = "0.3"
 
@@ -223,6 +225,8 @@ class GroupMember(MongoModel):
             if self.role_id not in target_group.role_list:
                 raise ValidationError("Группа %s не предусматривает роль %s" % (
                     target_group.name, self.role_id.name))
+        if [x for n, x in enumerate(self.permissions) if x in self.permissions[:n]]:
+            raise ValidationError("Разрешения не должны повторяться")
 
     def set_role(self, role: GroupRole):
         if not role:
