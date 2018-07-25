@@ -431,6 +431,28 @@ def delete_permissions_from_group_member(id1, id2):
 
     return jsonify(result), 200
 
+@bp.route("/group_members/<string:id>/group_roles", methods = ['POST'])
+def add_group_role_to_group_member(id):
+    req = request.get_json()
+    try:
+        group_role_id = req['group_role_id']
+        if GroupMember(_id=id) in GroupMember.objects.raw({"_id": ObjectId(id)}):
+            group_member = GroupMember(_id=id)
+            group_member.refresh_from_db()
+            group_role = GroupRole(_id=group_role_id)
+            group_role.refresh_from_db()
+            group_member.role_id = group_role.pk
+            group_member.save()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
 
 @bp.route("/general_roles", methods=['POST'])
 def add_general_role():
