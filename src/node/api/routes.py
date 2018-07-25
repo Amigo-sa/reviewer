@@ -454,6 +454,34 @@ def add_group_role_to_group_member(id):
     return jsonify(result), 200
 
 
+@bp.route("/group_members/<string:id>", methods = ['PATCH'])
+def change_group_member_status(id):
+    if 'is_active' in request.args:
+        string = request.args['is_active']
+        if string == "true":
+            is_active = True
+        elif string == "false":
+            is_active = False
+        else:
+            return jsonify({"result": ERR.INPUT}), 200
+    else:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        if GroupMember(_id=id) in GroupMember.objects.raw({"_id": ObjectId(id)}):
+            group_member = GroupMember(_id=id)
+            group_member.refresh_from_db()
+            group_member.is_active = is_active
+            group_member.save()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except Exception as ex:
+        print(ex)
+        result = {"result":ERR.DB, "error_message": str(ex)}
+
+    return jsonify(result), 200
+
+
 @bp.route("/general_roles", methods=['POST'])
 def add_general_role():
     req = request.get_json()
