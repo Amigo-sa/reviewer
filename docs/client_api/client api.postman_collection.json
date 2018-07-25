@@ -7,10 +7,11 @@
 	},
 	"item": [
 		{
+			"_postman_id": "565484d3-c633-433d-a610-1e322c94a7a0",
 			"name": "organizations",
-			"description": "Функции для работы с организациями",
 			"item": [
 				{
+					"_postman_id": "0ed67e6e-a2f5-4f77-ad07-c7ad67b3f138",
 					"name": "add_organization",
 					"request": {
 						"method": "POST",
@@ -42,7 +43,7 @@
 					},
 					"response": [
 						{
-							"id": "2afc9bcf-2857-46d4-954f-e19eb5d5fa8d",
+							"id": "5afd0b16-ca01-464c-bf8f-44c5d8ad9cdb",
 							"name": "add_organization_example_success",
 							"originalRequest": {
 								"method": "POST",
@@ -107,6 +108,7 @@
 					]
 				},
 				{
+					"_postman_id": "845dbaf9-10e1-4b41-a3c2-4637f2cfc545",
 					"name": "delete_organization",
 					"event": [
 						{
@@ -156,7 +158,7 @@
 					},
 					"response": [
 						{
-							"id": "b60102ca-ad5a-4642-8749-7b3c36c98176",
+							"id": "776dd03a-f747-4de0-b546-1de36bc96836",
 							"name": "delete_organization_success",
 							"originalRequest": {
 								"method": "DELETE",
@@ -216,6 +218,7 @@
 					]
 				},
 				{
+					"_postman_id": "9dcf81b5-2d4f-4ada-977e-10944896ccf9",
 					"name": "list_organizations",
 					"request": {
 						"method": "GET",
@@ -242,7 +245,7 @@
 					},
 					"response": [
 						{
-							"id": "10abcf8a-9998-46cd-bb9a-290ae00b11a3",
+							"id": "b8deb921-8acc-4108-a466-054e052c405f",
 							"name": "list_organizations_success",
 							"originalRequest": {
 								"method": "GET",
@@ -301,6 +304,7 @@
 					]
 				}
 			],
+			"description": "Функции для работы с организациями",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -325,10 +329,11 @@
 			]
 		},
 		{
+			"_postman_id": "92d8575d-5b95-4a73-943a-009fe251693f",
 			"name": "departments",
-			"description": "Функции для работы с департаментами",
 			"item": [
 				{
+					"_postman_id": "1a75344b-5189-45a2-b546-84bb2974680b",
 					"name": "add_department",
 					"event": [
 						{
@@ -374,7 +379,7 @@
 					},
 					"response": [
 						{
-							"id": "6e2b0999-3a44-45db-a224-59af45d5a3e6",
+							"id": "3fadf32b-d820-4025-9b20-8a02551736cb",
 							"name": "add_department",
 							"originalRequest": {
 								"method": "POST",
@@ -441,6 +446,7 @@
 					]
 				},
 				{
+					"_postman_id": "da42d9df-64e6-4b67-b709-abffe77cdacd",
 					"name": "delete_department",
 					"event": [
 						{
@@ -480,7 +486,7 @@
 					},
 					"response": [
 						{
-							"id": "8be9be63-ea49-4aac-a850-fb1c8e1eb146",
+							"id": "79077890-7b0b-4d99-a885-5c52dca22181",
 							"name": "delete_department",
 							"originalRequest": {
 								"method": "DELETE",
@@ -540,6 +546,7 @@
 					]
 				},
 				{
+					"_postman_id": "0f6a59d4-db5d-4481-a551-cf364bc4b860",
 					"name": "list_departments",
 					"event": [
 						{
@@ -580,7 +587,7 @@
 					},
 					"response": [
 						{
-							"id": "41a5540e-62d3-4440-bc40-1dd0a058ffea",
+							"id": "94cf5cb4-01bc-4eac-9ce5-0e762c92fd09",
 							"name": "list_departments",
 							"originalRequest": {
 								"method": "GET",
@@ -640,13 +647,15 @@
 						}
 					]
 				}
-			]
+			],
+			"description": "Функции для работы с департаментами"
 		},
 		{
+			"_postman_id": "9ba52ae2-a354-480e-bd0f-32fdc31d452f",
 			"name": "groups",
-			"description": "Функции для работы с группами",
 			"item": [
 				{
+					"_postman_id": "9349d6fa-e1a1-457f-8098-5737df5544ce",
 					"name": "add_group",
 					"event": [
 						{
@@ -692,7 +701,7 @@
 					},
 					"response": [
 						{
-							"id": "0ab5b57e-6e62-4548-b73c-7338a516e05c",
+							"id": "b669504c-cfca-4cf1-af02-8a6970ae8787",
 							"name": "add_group",
 							"originalRequest": {
 								"method": "POST",
@@ -759,6 +768,7 @@
 					]
 				},
 				{
+					"_postman_id": "adcf9592-e9ee-4bbf-902c-703cc7ddda50",
 					"name": "delete_group",
 					"event": [
 						{
@@ -798,7 +808,7 @@
 					},
 					"response": [
 						{
-							"id": "a7034392-6697-4225-bf18-e9c68c4fc4f5",
+							"id": "ba6f12ed-8e0d-4e77-a232-2be2da226207",
 							"name": "delete_group",
 							"originalRequest": {
 								"method": "DELETE",
@@ -858,6 +868,7 @@
 					]
 				},
 				{
+					"_postman_id": "d26d4c1b-2eed-47f8-a007-faa474b4544d",
 					"name": "list_groups",
 					"event": [
 						{
@@ -898,7 +909,7 @@
 					},
 					"response": [
 						{
-							"id": "e9208adc-aeb8-400f-ba55-595238b26bf8",
+							"id": "2426116d-be03-4ce6-bae5-7dfd1bc948ba",
 							"name": "list_groups",
 							"originalRequest": {
 								"method": "GET",
@@ -959,6 +970,7 @@
 					]
 				},
 				{
+					"_postman_id": "5eccf942-6639-4749-9853-3e3aeeaacaf3",
 					"name": "add_group_role",
 					"request": {
 						"method": "POST",
@@ -990,7 +1002,7 @@
 					},
 					"response": [
 						{
-							"id": "2492dbb0-e3f7-4f18-9ce0-af504f1f05a1",
+							"id": "ec365069-2a6b-49e1-952b-fd180a7e1e00",
 							"name": "add_group_role",
 							"originalRequest": {
 								"method": "POST",
@@ -1055,6 +1067,7 @@
 					]
 				},
 				{
+					"_postman_id": "b884dbca-cac9-4b65-993e-e3080961732f",
 					"name": "delete_group_role",
 					"event": [
 						{
@@ -1094,7 +1107,7 @@
 					},
 					"response": [
 						{
-							"id": "b7be4ceb-7b82-41f3-8748-5868d58edfd3",
+							"id": "df6bb829-4932-4b43-9488-22fe6b1b017a",
 							"name": "delete_group_role",
 							"originalRequest": {
 								"method": "DELETE",
@@ -1154,6 +1167,7 @@
 					]
 				},
 				{
+					"_postman_id": "fdd5106b-1a3c-4522-9003-4d4f26d802f7",
 					"name": "list_group_roles",
 					"request": {
 						"method": "GET",
@@ -1180,7 +1194,7 @@
 					},
 					"response": [
 						{
-							"id": "648230a3-9c45-4c5f-b24d-c21674ea22fe",
+							"id": "c4316c86-e8c0-4584-824f-c7545142609d",
 							"name": "list_group_roles",
 							"originalRequest": {
 								"method": "GET",
@@ -1239,6 +1253,7 @@
 					]
 				},
 				{
+					"_postman_id": "e8b9ba17-207e-4269-8cb8-31f93c6ee74f",
 					"name": "add_group_permission",
 					"request": {
 						"method": "POST",
@@ -1270,7 +1285,7 @@
 					},
 					"response": [
 						{
-							"id": "66203a09-0e46-4c22-a9a5-0caeb37c86a9",
+							"id": "8bb14d55-b9d5-4c01-b8f9-92986d14ab5b",
 							"name": "add_group_permission",
 							"originalRequest": {
 								"method": "POST",
@@ -1335,6 +1350,7 @@
 					]
 				},
 				{
+					"_postman_id": "d222b3c0-8670-4ab0-8457-29e9a8fb769f",
 					"name": "delete_group_permission",
 					"event": [
 						{
@@ -1374,7 +1390,7 @@
 					},
 					"response": [
 						{
-							"id": "b6d7dfa1-4676-498c-8d79-485ec127b4a3",
+							"id": "1ab6269e-1767-46ad-b161-5d3870c0c9a8",
 							"name": "delete_group_permission",
 							"originalRequest": {
 								"method": "DELETE",
@@ -1434,6 +1450,7 @@
 					]
 				},
 				{
+					"_postman_id": "6c05b017-3e37-4dbb-97d2-78e24b6d7d7d",
 					"name": "list_group_permissions",
 					"request": {
 						"method": "GET",
@@ -1460,7 +1477,7 @@
 					},
 					"response": [
 						{
-							"id": "776cbedd-8788-4a67-b62e-3783f349988a",
+							"id": "612ec140-17c0-486d-a745-6a6dc07f296e",
 							"name": "list_group_permissions",
 							"originalRequest": {
 								"method": "GET",
@@ -1519,18 +1536,19 @@
 					]
 				},
 				{
+					"_postman_id": "2a04b28c-53aa-41f9-8ea2-12284f94db9a",
 					"name": "add_group_member",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "17d92ee4-5e4a-4fba-a320-dcc1f82b509c",
+								"id": "08a6095d-ab2e-4e43-b18a-b918c99ec76c",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"group_id\", \"5b54c4a72131371cb0cbdda0\");",
-									"pm.environment.set(\"person_id\", \"5b54da812131371308dded16\");",
-									"pm.environment.set(\"group_role_id\", \"5b54c4a72131371cb0cbdd94\");",
-									"pm.environment.set(\"permission_id\", \"5b54c4a72131371cb0cbdd99\");"
+									"pm.environment.set(\"group_id\", \"5b578828213137045400109e\");",
+									"pm.environment.set(\"person_id\", \"5b5788272131370454001045\");",
+									"pm.environment.set(\"group_role_id\", \"5b5788282131370454001092\");",
+									"pm.environment.set(\"permission_id\", \"5b5788282131370454001097\");"
 								]
 							}
 						}
@@ -1545,7 +1563,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"person_id\": \"{{person_id}}\",\n\t\"role_id\":\"{{group_role_id}}\",\n\t\"default_permission_id\":\"{{permission_id}}\"\n}"
+							"raw": "{\n\t\"person_id\": \"{{person_id}}\",\n\t\"role_id\":\"{{group_role_id}}\"\n}"
 						},
 						"url": {
 							"raw": "http://127.0.0.1:5000/groups/{{group_id}}/group_members",
@@ -1567,7 +1585,7 @@
 					},
 					"response": [
 						{
-							"id": "7849d545-7301-48a2-bf66-c33af286232e",
+							"id": "6edc7a6d-81c9-44f5-b493-ff5e9cd868e9",
 							"name": "add_group_member",
 							"originalRequest": {
 								"method": "POST",
@@ -1630,19 +1648,85 @@
 							],
 							"cookie": [],
 							"body": "{\"id\":\"5b54d60e2131371308dded15\",\"result\":0}\n"
+						},
+						{
+							"id": "51937779-5917-46b2-bddd-b6529aa6bcaa",
+							"name": "add_group_member_wo_permissions",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"person_id\": \"5b5788272131370454001048\",\n\t\"role_id\":\"5b5788282131370454001092\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/groups/5b578828213137045400109e/group_members",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"groups",
+										"5b578828213137045400109e",
+										"group_members"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 25 Jul 2018 06:29:05 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"id\":\"5b5818b12131371c40a7db81\",\"result\":0}\n"
 						}
 					]
 				},
 				{
+					"_postman_id": "41002a5e-2875-41ec-9e7a-b395e25f2100",
 					"name": "delete_group_member",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "cf5ca972-60ed-443c-b149-fc903ed178bc",
+								"id": "78a56b07-bbb1-4058-b149-1fe990e94743",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"group_member_id\", \"5b5780a82131370680173854\");"
+									"pm.environment.set(\"group_member_id\", \"5b5818b12131371c40a7db81\");"
 								]
 							}
 						}
@@ -1673,7 +1757,7 @@
 					},
 					"response": [
 						{
-							"id": "16f935a6-659c-46de-ad06-241caaef6a6e",
+							"id": "4c51d447-2292-49f3-8dda-38ef6771e4d8",
 							"name": "delete_group_member",
 							"originalRequest": {
 								"method": "DELETE",
@@ -1733,15 +1817,16 @@
 					]
 				},
 				{
+					"_postman_id": "e9ceb2c3-3e1d-4d67-9aee-641ccbd0d3b1",
 					"name": "get_group_member_info",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "db30dc16-16e5-4317-b9a4-d12a86fab026",
+								"id": "d7564510-6d59-47cd-89b6-3d05dfa314a3",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"group_member_id\", \"5b54c4a72131371cb0cbdda2\");"
+									"pm.environment.set(\"group_member_id\", \"5b5818b12131371c40a7db81\");"
 								]
 							}
 						}
@@ -1772,7 +1857,7 @@
 					},
 					"response": [
 						{
-							"id": "51c21b7c-8471-4774-85e2-a62661185fff",
+							"id": "d7e4c1d3-e0c7-4111-8de1-2a4f1e21fed6",
 							"name": "get_role_in_group_info",
 							"originalRequest": {
 								"method": "GET",
@@ -1832,16 +1917,17 @@
 					]
 				},
 				{
+					"_postman_id": "2603cb39-e663-49e2-b3af-3748e13645c6",
 					"name": "add_permissions_to_group_member",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "b71a31a9-40e2-4987-953b-25338836cef0",
+								"id": "306690ff-3634-4628-a2b8-608c8228d79a",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"group_member_id\", \"5b54c4a72131371cb0cbdda2\");",
-									"pm.environment.set(\"permission_id\", \"5b54c4a72131371cb0cbdd9f\");"
+									"pm.environment.set(\"group_member_id\", \"5b5818b12131371c40a7db81\");",
+									"pm.environment.set(\"permission_id\", \"5b5788282131370454001097\");"
 								]
 							}
 						}
@@ -1878,7 +1964,7 @@
 					},
 					"response": [
 						{
-							"id": "50135614-7c09-4b37-b51b-fd606cf1e29a",
+							"id": "42c009ea-4b1f-4d0f-9ed2-1d36aa14bc5e",
 							"name": "add_permissions_to_group_member",
 							"originalRequest": {
 								"method": "POST",
@@ -1944,6 +2030,7 @@
 					]
 				},
 				{
+					"_postman_id": "74806353-c8e5-4922-ae6c-c152134effea",
 					"name": "delete_permissions_from_group_member",
 					"event": [
 						{
@@ -1986,7 +2073,7 @@
 					},
 					"response": [
 						{
-							"id": "ed8ad8b9-5301-4f81-931b-3a524b6ea5cc",
+							"id": "0bd83be4-3f29-422b-941f-ff7a6de31b42",
 							"name": "delete_permissions_from_group_member",
 							"originalRequest": {
 								"method": "DELETE",
@@ -2023,6 +2110,7 @@
 					]
 				},
 				{
+					"_postman_id": "5fc2c0db-114b-497a-af82-e8e4f8db5078",
 					"name": "list_group_memberы_by_group_id",
 					"event": [
 						{
@@ -2063,7 +2151,7 @@
 					},
 					"response": [
 						{
-							"id": "f01a4aec-b2f9-4894-b30f-12fe2cf9015e",
+							"id": "6b22f1ea-7dae-4289-b5e0-ed4ee671cf09",
 							"name": "list_roles_in_group_by_group_id",
 							"originalRequest": {
 								"method": "GET",
@@ -2123,13 +2211,15 @@
 						}
 					]
 				}
-			]
+			],
+			"description": "Функции для работы с группами"
 		},
 		{
+			"_postman_id": "9debb1bf-c964-4834-899d-d8866663c9d1",
 			"name": "general roles",
-			"description": "Функции для работы с ролями пользователей",
 			"item": [
 				{
+					"_postman_id": "bd0961a8-506a-45dd-b713-1a53ae2830dd",
 					"name": "add_general_role",
 					"event": [
 						{
@@ -2175,7 +2265,7 @@
 					},
 					"response": [
 						{
-							"id": "062f87ec-eb57-41ff-bf6f-bd6b2a692321",
+							"id": "e8c5e744-ae7d-4516-b239-e9fd664dd81d",
 							"name": "add_general_role_tutor",
 							"originalRequest": {
 								"method": "POST",
@@ -2240,6 +2330,7 @@
 					]
 				},
 				{
+					"_postman_id": "3149685f-d7cb-489c-a3df-84ac08578b98",
 					"name": "delete_general_role",
 					"event": [
 						{
@@ -2279,7 +2370,7 @@
 					},
 					"response": [
 						{
-							"id": "41f31bbc-c6ae-453c-8e18-6c578e6330b2",
+							"id": "93199844-3eb2-4598-94a2-f0e9e5d80496",
 							"name": "delete_general_role",
 							"originalRequest": {
 								"method": "DELETE",
@@ -2339,6 +2430,7 @@
 					]
 				},
 				{
+					"_postman_id": "7dd50e44-0d8c-4eeb-8bb6-71723712d45c",
 					"name": "get_general_roles_data",
 					"event": [
 						{
@@ -2378,7 +2470,7 @@
 					},
 					"response": [
 						{
-							"id": "02a636de-d50a-47f1-a52d-fb144536fd12",
+							"id": "767a81e3-f111-4a4f-a67e-3efa45527ec3",
 							"name": "get_general_roles_data",
 							"originalRequest": {
 								"method": "GET",
@@ -2437,13 +2529,15 @@
 						}
 					]
 				}
-			]
+			],
+			"description": "Функции для работы с ролями пользователей"
 		},
 		{
+			"_postman_id": "802dcecf-4942-4bf6-8046-7ce51e636b46",
 			"name": "reviews",
-			"description": "Функции для работы с ревью",
 			"item": [
 				{
+					"_postman_id": "a906edda-cece-4d89-9b22-734595286615",
 					"name": "post_review",
 					"event": [
 						{
@@ -2491,7 +2585,7 @@
 					},
 					"response": [
 						{
-							"id": "bc046707-7721-44cf-b4a3-881111c9f479",
+							"id": "99c78a52-aad5-4cfb-a950-b309e52f5588",
 							"name": "post_review",
 							"originalRequest": {
 								"method": "POST",
@@ -2556,6 +2650,7 @@
 					]
 				},
 				{
+					"_postman_id": "db9802f6-3f62-4a8c-91d7-86cb71cbf273",
 					"name": "delete_review",
 					"event": [
 						{
@@ -2595,7 +2690,7 @@
 					},
 					"response": [
 						{
-							"id": "53e00f27-6c1a-4570-b537-5838a5ca0eec",
+							"id": "683ab8f3-8ddc-4acb-abdc-19476cac6669",
 							"name": "delete_review",
 							"originalRequest": {
 								"method": "DELETE",
@@ -2655,6 +2750,7 @@
 					]
 				},
 				{
+					"_postman_id": "9a4bd6b8-cda0-4dbf-aa83-7d028c49695b",
 					"name": "find_reviews",
 					"event": [
 						{
@@ -2704,7 +2800,7 @@
 					},
 					"response": [
 						{
-							"id": "715140f9-cb4f-4b25-b9ac-13e8dd09c8c6",
+							"id": "49ac6525-03a4-4ecd-b8b1-42e4b529a077",
 							"name": "find_reviews",
 							"originalRequest": {
 								"method": "GET",
@@ -2772,13 +2868,15 @@
 						}
 					]
 				}
-			]
+			],
+			"description": "Функции для работы с ревью"
 		},
 		{
+			"_postman_id": "c54625b7-efa5-4812-86fc-e97d5dc16b5d",
 			"name": "persons",
-			"description": "Функции для работы с данными пользователей",
 			"item": [
 				{
+					"_postman_id": "1ad43ef0-8b3f-4e32-8757-48e3bb845451",
 					"name": "add_person",
 					"request": {
 						"method": "POST",
@@ -2810,7 +2908,7 @@
 					},
 					"response": [
 						{
-							"id": "28350ba7-a8e7-4479-9ff5-ac495de8fab2",
+							"id": "77a0bdfd-9888-4500-afe2-6818d4b0d22a",
 							"name": "add_person",
 							"originalRequest": {
 								"method": "POST",
@@ -2875,6 +2973,7 @@
 					]
 				},
 				{
+					"_postman_id": "7e691618-b08c-4a96-ae17-fb053976a311",
 					"name": "find_persons",
 					"event": [
 						{
@@ -2937,7 +3036,7 @@
 					},
 					"response": [
 						{
-							"id": "153eb640-14c1-4d4c-b5ae-bf65ab6d3dba",
+							"id": "c62cb278-6e8a-445a-b1cf-7598391a7846",
 							"name": "find_persons",
 							"originalRequest": {
 								"method": "GET",
@@ -3020,6 +3119,7 @@
 					]
 				},
 				{
+					"_postman_id": "ca5bdbb5-5f71-4c69-8084-549db639320e",
 					"name": "delete_person",
 					"event": [
 						{
@@ -3056,7 +3156,7 @@
 					},
 					"response": [
 						{
-							"id": "dd342b41-c116-4f1b-b4af-36b70b39cae5",
+							"id": "4868a131-d11a-42d3-bc47-7cec154939e8",
 							"name": "delete_person",
 							"originalRequest": {
 								"method": "DELETE",
@@ -3113,6 +3213,7 @@
 					]
 				},
 				{
+					"_postman_id": "2c9f4ca4-bd37-48ca-b463-45347c04e3b7",
 					"name": "get_person_info",
 					"event": [
 						{
@@ -3152,7 +3253,7 @@
 					},
 					"response": [
 						{
-							"id": "1bcd6053-dca2-462e-9ba8-a387f9309356",
+							"id": "17729880-9a54-4c56-aa33-f506a1009484",
 							"name": "get_person_info_success",
 							"originalRequest": {
 								"method": "GET",
@@ -3212,6 +3313,7 @@
 					]
 				},
 				{
+					"_postman_id": "d9d818ae-87aa-4704-8cd6-88e7cc7b3a15",
 					"name": "list_group_members_by_person_id",
 					"event": [
 						{
@@ -3252,7 +3354,7 @@
 					},
 					"response": [
 						{
-							"id": "d463401b-7dbd-4736-8de2-ffc464f3c4e6",
+							"id": "4996d175-f2d2-495b-b52f-c721a2b8d3fe",
 							"name": "list_group_members_by_person_id",
 							"originalRequest": {
 								"method": "GET",
@@ -3313,6 +3415,7 @@
 					]
 				},
 				{
+					"_postman_id": "23c2587c-7b52-4c1a-90c9-aba9db44f4ad",
 					"name": "list_roles_by_person_id",
 					"event": [
 						{
@@ -3353,7 +3456,7 @@
 					},
 					"response": [
 						{
-							"id": "26e0c3b8-95dc-43d2-b612-7671ade2dad7",
+							"id": "a5c07c44-5ef6-4d6e-842a-b2324b6e9acf",
 							"name": "list_roles_by_person_id",
 							"originalRequest": {
 								"method": "GET",
@@ -3414,6 +3517,7 @@
 					]
 				},
 				{
+					"_postman_id": "881bfc74-64d1-4397-9a0a-7c3f62c2b898",
 					"name": "add_person_soft_skill",
 					"event": [
 						{
@@ -3460,7 +3564,7 @@
 					},
 					"response": [
 						{
-							"id": "8964d77d-f51a-417b-b7dc-35fbe4dee264",
+							"id": "bb1d39b6-65e9-45bb-bda9-927dcbdd9363",
 							"name": "add_person_soft_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -3527,6 +3631,7 @@
 					]
 				},
 				{
+					"_postman_id": "a2a539cc-e186-45cf-9921-611c53d9c32e",
 					"name": "delete_person_soft_skill",
 					"event": [
 						{
@@ -3567,7 +3672,7 @@
 					},
 					"response": [
 						{
-							"id": "d728b0ac-070b-4c41-8cbb-3a4a0e6d2a30",
+							"id": "2eab83fc-9f6b-4d5a-9c1c-00727367bc3e",
 							"name": "delete_person_soft_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -3628,6 +3733,7 @@
 					]
 				},
 				{
+					"_postman_id": "448e8796-ae7c-41e8-953b-1a10712c6522",
 					"name": "find_person_soft_skills",
 					"event": [
 						{
@@ -3678,7 +3784,7 @@
 					},
 					"response": [
 						{
-							"id": "07168676-ba0f-466f-97e0-b5fe1a1381ea",
+							"id": "abbbbe67-678f-4c72-89a7-9455de9d8fc0",
 							"name": "find_person_soft_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -3748,6 +3854,7 @@
 					]
 				},
 				{
+					"_postman_id": "dffcc4fd-f970-4782-8b83-79228d29b7f7",
 					"name": "get_person_soft_skill_info",
 					"event": [
 						{
@@ -3788,7 +3895,7 @@
 					},
 					"response": [
 						{
-							"id": "9257873f-7ddb-4186-8883-f673967b4957",
+							"id": "14ec47c9-f632-4880-9965-758d44d08399",
 							"name": "get_person_soft_skill_info",
 							"originalRequest": {
 								"method": "GET",
@@ -3849,6 +3956,7 @@
 					]
 				},
 				{
+					"_postman_id": "c7253150-79b3-4b05-a2b1-b59fc94648fd",
 					"name": "add_person_hard_skill",
 					"event": [
 						{
@@ -3895,7 +4003,7 @@
 					},
 					"response": [
 						{
-							"id": "129932b3-78bd-4eaf-9144-53141d2918d3",
+							"id": "fcd2538e-2c09-4df1-84b8-dc9c6dee46ae",
 							"name": "add_person_hard_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -3962,6 +4070,7 @@
 					]
 				},
 				{
+					"_postman_id": "4e2e9c3f-ea8b-4f3d-bbc5-ea16a0d738c5",
 					"name": "delete_person_hard_skill",
 					"event": [
 						{
@@ -4002,7 +4111,7 @@
 					},
 					"response": [
 						{
-							"id": "f300404a-979f-44ea-8d1f-93fb6fab8d83",
+							"id": "256f9119-0af7-41fb-8af6-884303181d4d",
 							"name": "delete_person_hard_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -4063,6 +4172,7 @@
 					]
 				},
 				{
+					"_postman_id": "d87611b0-5cd7-4057-b23c-e2821f1d4d1f",
 					"name": "find_person_hard_skills",
 					"event": [
 						{
@@ -4113,7 +4223,7 @@
 					},
 					"response": [
 						{
-							"id": "544beefb-ccb8-4bbd-89f4-bfbf81b1c893",
+							"id": "7bcb4725-8d10-41a3-adfe-8d6056d6f07a",
 							"name": "find_person_hard_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -4183,6 +4293,7 @@
 					]
 				},
 				{
+					"_postman_id": "74a770ab-debc-4871-8824-e95cddf1a701",
 					"name": "get_person_hard_skill_info",
 					"event": [
 						{
@@ -4223,7 +4334,7 @@
 					},
 					"response": [
 						{
-							"id": "4e6ca43b-0b47-4d48-be4d-c6657941249d",
+							"id": "d426c6c0-a9bf-4964-a8cd-62cff09dbbc4",
 							"name": "get_person_hard_skill_info",
 							"originalRequest": {
 								"method": "GET",
@@ -4283,13 +4394,15 @@
 						}
 					]
 				}
-			]
+			],
+			"description": "Функции для работы с данными пользователей"
 		},
 		{
+			"_postman_id": "7e1243d7-23b3-49f5-8d9a-590e35b4f395",
 			"name": "skills",
-			"description": "Функции для работы с навыками пользователей",
 			"item": [
 				{
+					"_postman_id": "74d39772-539a-4886-a4e0-8454acbea512",
 					"name": "add_soft_skill",
 					"request": {
 						"method": "POST",
@@ -4321,7 +4434,7 @@
 					},
 					"response": [
 						{
-							"id": "54388f21-7ebe-4252-b164-3f60a74ffd5c",
+							"id": "29277e4c-d8b1-4708-8cc1-9f0b5f0e296b",
 							"name": "add_soft_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -4386,6 +4499,7 @@
 					]
 				},
 				{
+					"_postman_id": "d06b78b6-a6af-45a0-883c-fabede194304",
 					"name": "delete_soft_skill",
 					"event": [
 						{
@@ -4425,7 +4539,7 @@
 					},
 					"response": [
 						{
-							"id": "bc01e803-da95-4e36-85ea-1a540698ec0d",
+							"id": "3303fb65-ab02-413b-af97-9321c876b011",
 							"name": "delete_soft_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -4485,6 +4599,7 @@
 					]
 				},
 				{
+					"_postman_id": "bd1e9b9c-4cfa-42b8-9f21-ee7c64184abd",
 					"name": "list_soft_skills",
 					"request": {
 						"method": "GET",
@@ -4511,7 +4626,7 @@
 					},
 					"response": [
 						{
-							"id": "ab89bf2e-4113-44b5-ad1c-4fd9c8026b52",
+							"id": "a482b4c5-09c0-4e30-a6d4-20e6f2508444",
 							"name": "list_soft_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -4570,6 +4685,7 @@
 					]
 				},
 				{
+					"_postman_id": "342f88c0-9bbd-429a-aa8b-a786deeb95f6",
 					"name": "add_hard_skill",
 					"request": {
 						"method": "POST",
@@ -4601,7 +4717,7 @@
 					},
 					"response": [
 						{
-							"id": "713fc53b-482c-4772-970e-867107b07d66",
+							"id": "60031b96-abfa-4da1-a7bc-e7039e73cee2",
 							"name": "add_hard_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -4666,6 +4782,7 @@
 					]
 				},
 				{
+					"_postman_id": "e43295eb-b4b5-465e-9861-fd936281dbf4",
 					"name": "delete_hard_skill",
 					"event": [
 						{
@@ -4705,7 +4822,7 @@
 					},
 					"response": [
 						{
-							"id": "a06d9320-357a-4c2f-bed0-7b59a332b928",
+							"id": "50dd07b2-b2be-4ee2-8b0a-7373e01928ef",
 							"name": "delete_hard_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -4765,6 +4882,7 @@
 					]
 				},
 				{
+					"_postman_id": "d73a1806-a4c6-469b-951b-9e27b6e35689",
 					"name": "list_hard_skills",
 					"request": {
 						"method": "GET",
@@ -4791,7 +4909,7 @@
 					},
 					"response": [
 						{
-							"id": "63db05be-c467-46bd-bcd0-daea1882c590",
+							"id": "61d82c5f-2828-464e-a64f-f1a7556ed013",
 							"name": "list_hard_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -4849,13 +4967,15 @@
 						}
 					]
 				}
-			]
+			],
+			"description": "Функции для работы с навыками пользователей"
 		},
 		{
+			"_postman_id": "86d8696d-9d97-4bf8-b078-61dfc1c507ec",
 			"name": "tests",
-			"description": "Функции для работы с тестами и их результатами",
 			"item": [
 				{
+					"_postman_id": "17a98fa7-7b17-44b0-a0ea-d56a67482a56",
 					"name": "add_group_test",
 					"event": [
 						{
@@ -4901,7 +5021,7 @@
 					},
 					"response": [
 						{
-							"id": "0ca48c87-722f-4af4-8978-b24a2dc6da40",
+							"id": "f11119ff-0ceb-4763-a2c0-26b26bd017a2",
 							"name": "add_group_test",
 							"originalRequest": {
 								"method": "POST",
@@ -4968,6 +5088,7 @@
 					]
 				},
 				{
+					"_postman_id": "34e2101c-391a-4aa0-9404-2b9a568b1716",
 					"name": "delete_group_test",
 					"event": [
 						{
@@ -5007,7 +5128,7 @@
 					},
 					"response": [
 						{
-							"id": "a07285f2-1a57-4298-ad51-0774b27c4523",
+							"id": "0fd4a77f-6811-431d-aa29-6aa021d38aa6",
 							"name": "delete_group_test",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5067,6 +5188,7 @@
 					]
 				},
 				{
+					"_postman_id": "2b6178f7-6c34-4b6a-8ca8-382a87e4af55",
 					"name": "get_group_test_info",
 					"event": [
 						{
@@ -5106,7 +5228,7 @@
 					},
 					"response": [
 						{
-							"id": "76ad0a8e-7012-4a74-95a9-1c0100b0287f",
+							"id": "5e1b7428-642d-4afc-a6a0-2708150eaf9b",
 							"name": "get_group_test_info",
 							"originalRequest": {
 								"method": "GET",
@@ -5166,6 +5288,7 @@
 					]
 				},
 				{
+					"_postman_id": "662d6bca-7f64-4803-b003-5786e98e7d2c",
 					"name": "list_group_tests",
 					"event": [
 						{
@@ -5206,7 +5329,7 @@
 					},
 					"response": [
 						{
-							"id": "d62d674b-db2c-41c6-9c83-444c0f1f4299",
+							"id": "de0058eb-c8ad-4686-a6e0-2a0f5de0649c",
 							"name": "list_group_tests",
 							"originalRequest": {
 								"method": "GET",
@@ -5267,6 +5390,7 @@
 					]
 				},
 				{
+					"_postman_id": "c1f27ae7-20ff-4deb-9701-d3aab7fe584b",
 					"name": "add_test_result",
 					"event": [
 						{
@@ -5313,7 +5437,7 @@
 					},
 					"response": [
 						{
-							"id": "7a80fef2-200d-427d-9948-49bf8db98c91",
+							"id": "5d914a65-8858-465f-906d-6fd47b0966b1",
 							"name": "add_test_result",
 							"originalRequest": {
 								"method": "POST",
@@ -5380,6 +5504,7 @@
 					]
 				},
 				{
+					"_postman_id": "2f828779-95e7-482e-a4f6-45e0f1cec615",
 					"name": "delete_test_result",
 					"event": [
 						{
@@ -5420,7 +5545,7 @@
 					},
 					"response": [
 						{
-							"id": "e9fa52e8-b7e2-4295-9c23-dcc6dde1a7e3",
+							"id": "5416684d-c2e1-4ee5-aa12-8d94b407f839",
 							"name": "delete_test_result",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5481,6 +5606,7 @@
 					]
 				},
 				{
+					"_postman_id": "312e5972-2774-4138-9967-f9f09801083e",
 					"name": "get_test_result_info",
 					"event": [
 						{
@@ -5521,7 +5647,7 @@
 					},
 					"response": [
 						{
-							"id": "524006ab-bb5a-4371-9f17-739986803386",
+							"id": "de9e8cbe-3d0b-4031-8aa3-ac3b4d065b30",
 							"name": "get_test_result_info",
 							"originalRequest": {
 								"method": "GET",
@@ -5582,6 +5708,7 @@
 					]
 				},
 				{
+					"_postman_id": "a5d2f9f9-1e1e-40bf-b242-f012d3c6a2b8",
 					"name": "find_test_results",
 					"event": [
 						{
@@ -5632,7 +5759,7 @@
 					},
 					"response": [
 						{
-							"id": "e2324ae6-780e-4cec-bb1b-d966360ccc67",
+							"id": "e6245c04-aa42-47bc-b2c5-225b2ad85641",
 							"name": "find_test_results",
 							"originalRequest": {
 								"method": "GET",
@@ -5702,6 +5829,7 @@
 					]
 				}
 			],
+			"description": "Функции для работы с тестами и их результатами",
 			"event": [
 				{
 					"listen": "prerequest",

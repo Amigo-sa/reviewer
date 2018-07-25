@@ -300,19 +300,23 @@ def list_group_permissions():
 def add_group_member(id):
     req = request.get_json()
     try:
-        person_id = req['person_id']
+        person_id = req['person_id']        
         role_id = req['role_id']
-        default_permission_id = req['default_permission_id']
-    except:
-        return jsonify({"result": ERR.INPUT}), 200
-    try:
+        if 'default_permission_id' in req:
+            default_permission_id = req['default_permission_id']
+            permissions = [GroupPermission(_id=default_permission_id)]
+        else:
+            permissions = []
+
         role_in_group = GroupMember(Person(_id=person_id),
                                     Group(_id=id),
                                     GroupRole(_id=role_id),
-                                    [GroupPermission(_id=default_permission_id)])
+                                    permissions)
         role_in_group.save()
         result = {"result":ERR.OK,
                   "id": str(role_in_group.pk)}
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
     except:
         result = {"result":ERR.DB}
 
