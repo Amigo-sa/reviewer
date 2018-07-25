@@ -13,6 +13,7 @@ import datetime
 from time import sleep
 import re
 from pymodm.errors import ValidationError
+from pymongo.errors import DuplicateKeyError
 
 
 from data.reviewer_model import (Department,
@@ -45,12 +46,10 @@ from data.reviewer_model import (Department,
 test_version = "0.3"
 
 def clear_db():
-    print("clearing db...")
     revDb = _get_db("reviewer")
     colList = revDb.list_collection_names()
     for col in colList:
         revDb[col].delete_many({})
-    print("done")
 
 class TestValidation(unittest.TestCase):
 
@@ -131,6 +130,25 @@ class TestValidation(unittest.TestCase):
         gm_data = group_member.__dict__["_data"]
         ref_gm_data.update({"is_active": False})
         self.assertDictEqual(ref_gm_data, gm_data)
+        # try add duplicate group member
+        with self.assertRaises(DuplicateKeyError):
+            dup_group_member = GroupMember()
+            dup_group_member.group_id = group
+            dup_group_member.person_id = person
+            dup_group_member.set_role(member_role)
+            dup_group_member.save()
+        # try add invalid role
+        inv_role = GroupRole("god-emperor")
+        inv_role.save()
+        inv_group_member = GroupMember(person, group, None, [])
+        with self.assertRaises(ValidationError):
+            inv_group_member.set_role(inv_role)
+            inv_group_member.save()
+        # try add duplicate permissions
+        dup_permission = GroupPermission("read_data")
+        with self.assertRaises(ValidationError):
+            group_member.permissions.append(dup_permission)
+            group_member.save()
 
 """
     # Role in group tests
