@@ -441,15 +441,15 @@ def add_group_role_to_group_member(id):
             group_member.refresh_from_db()
             group_role = GroupRole(_id=group_role_id)
             group_role.refresh_from_db()
-            group_member.role_id = group_role.pk
-            group_member.save()
+            group_member.set_role(group_role)
             result = {"result": ERR.OK}
         else:
             result = {"result": ERR.NO_DATA}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
+    except Exception as ex:
+        print(ex)
+        result = {"result":ERR.DB, "error_message": str(ex)}
 
     return jsonify(result), 200
 
