@@ -2,6 +2,8 @@
 import context
 import unittest
 import requests
+from pymodm.connection import _get_db
+
 from node.settings import constants
 import node.settings.errors as ERR
 from node.node_server import start_server
@@ -42,19 +44,22 @@ from data.reviewer_model import (Department,
 
 test_version = "0.3"
 
+def clear_db():
+    print("clearing db...")
+    revDb = _get_db("reviewer")
+    colList = revDb.list_collection_names()
+    for col in colList:
+        revDb[col].delete_many({})
+    print("done")
 
 class TestValidation(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.api_URL = constants.core_server_url
-        cls.gen_doc_ctr = 0
-        cls.clear_collection(Person)
-        cls.clear_collection(Organization)
-        cls.clear_collection(GroupPermission)
-        cls.clear_collection(GroupRole)
-        cls.clear_collection(HardSkill)
-        cls.clear_collection(SoftSkill)
+        pass
+
+    def setUp(self):
+        clear_db()
 
     @classmethod
     def clear_collection(cls, collection_class):
