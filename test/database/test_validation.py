@@ -10,6 +10,8 @@ import random
 import datetime
 from time import sleep
 import re
+from pymodm.errors import ValidationError
+
 
 from data.reviewer_model import (Department,
                                  Group,
@@ -102,16 +104,19 @@ class TestValidation(unittest.TestCase):
         gm_data = group_member.__dict__["_data"]
         ref_gm_data.update({"permissions" : [read_permission.pk]})
         self.assertDictEqual(ref_gm_data, gm_data)
+        # setting None role must fail
+        with self.assertRaises(ValidationError):
+            group_member.set_role(None)
         # add group role
-        group_member.role_id = member_role
-        group_member.save()
+        group_member.set_role(member_role)
         # verify added role
         group_member.refresh_from_db()
         gm_data = group_member.__dict__["_data"]
         ref_gm_data.update({"role_id": member_role.pk})
         self.assertDictEqual(ref_gm_data, gm_data)
-        # role removal must fail
-
+        # setting role when already set must fail
+        with self.assertRaises(ValidationError):
+            group_member.set_role(member_role)
 
 """
     # Role in group tests

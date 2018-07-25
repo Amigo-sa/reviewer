@@ -218,11 +218,19 @@ class GroupMember(MongoModel):
     # TODO лучше реализовать это в виде validator
     def clean(self):
         if self.role_id:
+            self.has_role_id = True
             target_group = Group.objects.get({"_id": self.group_id.pk})
             if self.role_id not in target_group.role_list:
                 raise ValidationError("Группа %s не предусматривает роль %s" % (
                     target_group.name, self.role_id.name))
 
+    def set_role(self, role: GroupRole):
+        if not role:
+            raise ValidationError("Необходимо указать id роли")
+        if self.role_id:
+            raise ValidationError("Роль уже задана")
+        self.role_id = role.pk
+        self.save()
 
 class GroupTest(MongoModel):
     group_id = fields.ReferenceField(Group, on_delete=ReferenceField.CASCADE)
