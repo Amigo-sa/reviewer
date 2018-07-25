@@ -204,7 +204,7 @@ class GroupMember(MongoModel):
     group_id = fields.ReferenceField(Group, on_delete=ReferenceField.CASCADE)
     role_id = fields.ReferenceField(GroupRole, on_delete=ReferenceField.CASCADE)
     permissions = fields.ListField(field=
-                                   fields.ReferenceField(GroupPermission))
+                                   fields.ReferenceField(GroupPermission), blank=True)
 
     class Meta:
         write_concern = WriteConcern(j=True)

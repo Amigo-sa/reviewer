@@ -73,14 +73,18 @@ class TestValidation(unittest.TestCase):
         department.save()
         member_role = GroupRole("member")
         member_role.save()
-        group_permission = GroupPermission("read_info")
-        group_permission.save()
+        read_permission = GroupPermission("read_info")
+        read_permission.save()
         group = Group(department, "А-4-03", [member_role])
         group.save()
+        # add person without group and permissions
         group_member = GroupMember()
         group_member.group_id = group
         group_member.person_id = person
+        group_member.permissions = []
         group_member.save()
+        #group_member.permissions.append(read_permission)
+        #group_member.save()
 
 """
     # Role in group tests
