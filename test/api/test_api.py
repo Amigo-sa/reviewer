@@ -42,6 +42,7 @@ class TestApi(unittest.TestCase):
                 print("Connection attempt %s failed" %str(attempts))
                 if attempts > 20: raise ConnectionError("could not connect to server")
         print("Connected")
+        # Подразумевается, что в delete_rule установлено правило CASCADE, поэтому остальные коллекции удалятся цепочкой
         cls.clear_collection("/persons", "/persons")
         cls.clear_collection("/organizations", "/organizations")
         cls.clear_collection("/group_permissions", "/group_permissions")
@@ -315,7 +316,7 @@ class TestApi(unittest.TestCase):
             print(list1)
             print(list2)
             raise AssertionError("dict lists must be equal")
-        return not list1_c
+        if list1_c: raise AssertionError("dict lists must be equal")
 
     def test_general_role_person(self):
         person_count = 4
