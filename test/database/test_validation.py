@@ -1,10 +1,15 @@
-# -- coding: utf-8 --
-import unittest
+# -*- coding: utf-8 -*-
 import context
+import unittest
+import requests
+from node.settings import constants
+import node.settings.errors as ERR
+from node.node_server import start_server
+from threading import Thread
+import random
 import datetime
-from pymodm.connection import _get_db
-from pymodm.errors import ValidationError
-from pymongo.errors import DuplicateKeyError
+from time import sleep
+import re
 
 from data.reviewer_model import (Department,
                                  Group,
@@ -35,14 +40,47 @@ from data.reviewer_model import (Department,
 
 test_version = "0.3"
 
+
 class TestValidation(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
-        pass
+        cls.api_URL = constants.core_server_url
+        cls.gen_doc_ctr = 0
+        cls.clear_collection(Person)
+        cls.clear_collection(Organization)
+        cls.clear_collection(GroupPermission)
+        cls.clear_collection(GroupRole)
+        cls.clear_collection(HardSkill)
+        cls.clear_collection(SoftSkill)
+
+    @classmethod
+    def clear_collection(cls, collection_class):
+        for doc in collection_class.objects.all():
+            doc.delete()
 
     def test_group_member_validation(self):
-
-        pass
+        person = Person(
+                        "Леонид",
+                        "Александрович",
+                        "Дунаев",
+                        datetime.date(1986, 5, 1),
+                        "88005553535")
+        person.save()
+        organization = Organization("МЭИ")
+        organization.save()
+        department = Department("Кафедра ИИТ", organization)
+        department.save()
+        member_role = GroupRole("member")
+        member_role.save()
+        group_permission = GroupPermission("read_info")
+        group_permission.save()
+        group = Group(department, "А-4-03", [member_role])
+        group.save()
+        group_member = GroupMember()
+        group_member.group_id = group
+        group_member.person_id = person
+        group_member.save()
 
 """
     # Role in group tests

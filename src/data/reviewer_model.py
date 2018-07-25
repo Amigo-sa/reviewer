@@ -217,10 +217,11 @@ class GroupMember(MongoModel):
 
     # TODO лучше реализовать это в виде validator
     def clean(self):
-        target_group = Group.objects.get({"_id": self.group_id.pk})
-        if self.role_id not in target_group.role_list:
-            raise ValidationError("Группа %s не предусматривает роль %s" % (
-                target_group.name, self.role_id.name))
+        if self.role_id:
+            target_group = Group.objects.get({"_id": self.group_id.pk})
+            if self.role_id not in target_group.role_list:
+                raise ValidationError("Группа %s не предусматривает роль %s" % (
+                    target_group.name, self.role_id.name))
 
 
 class GroupTest(MongoModel):
