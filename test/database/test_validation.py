@@ -94,7 +94,8 @@ class TestValidation(unittest.TestCase):
             "person_id": person.pk,
             "group_id": group.pk,
             "role_id": None,
-            "permissions": []}
+            "permissions": [],
+            "is_active": True}
         self.assertDictEqual(ref_gm_data, gm_data)
         # add permission to group member
         group_member.permissions.append(read_permission)
@@ -117,6 +118,14 @@ class TestValidation(unittest.TestCase):
         # setting role when already set must fail
         with self.assertRaises(ValidationError):
             group_member.set_role(member_role)
+        # set member as inactive
+        group_member.is_active = False
+        group_member.save()
+        # verify
+        group_member.refresh_from_db()
+        gm_data = group_member.__dict__["_data"]
+        ref_gm_data.update({"is_active": False})
+        self.assertDictEqual(ref_gm_data, gm_data)
 
 """
     # Role in group tests
