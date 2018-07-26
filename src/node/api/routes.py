@@ -407,15 +407,18 @@ def get_group_member_info(id):
             perm = []
             for item in role_in_group.permissions:
                 perm.append(str(item.pk))
-            data = {"person_id": str(role_in_group.person_id.pk),
-                    "group_id": str(role_in_group.group_id.pk),
-                    "role_id": str(role_in_group.role_id.pk),
-                    "permissions": perm}
+            data = {}
+            data.update({   "person_id": str(role_in_group.person_id.pk),
+                            "group_id": str(role_in_group.group_id.pk),
+                            "permissions": perm})
+            if role_in_group.role_id:
+                data.update({"role_id": str(role_in_group.role_id.pk)})
             result = {"result": ERR.OK, "data": data}
         else:
             result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message" :str(e)}
     return jsonify(result), 200
 
 

@@ -503,29 +503,38 @@ class TestApi(unittest.TestCase):
     def test_group_member_normal(self):
         person_id = self.prepare_persons(1)[0]
         facility_ids = self.prepare_group()
+        group_id = facility_ids["group_id"]
         # verify that group member list is initially empty
-        gm_list = self.get_item_list("/groups/%s/group_members"%facility_ids["group_id"])
+        gm_list = self.get_item_list("/groups/%s/group_members"%group_id)
         self.assertEqual(gm_list, [])
         # add group_member without role
         post_data = {"person_id": person_id}
-        gm_id = self.post_item("/groups/%s/group_members"%facility_ids["group_id"], post_data)
+        gm_id = self.post_item("/groups/%s/group_members"%group_id, post_data)
         # verify
-        gm_list = self.get_item_list("/groups/%s/group_members" % facility_ids["group_id"])
+        gm_list = self.get_item_list("/groups/%s/group_members" % group_id)
         self.assertEqual(gm_list[0]["id"], gm_id)
+        gm_list = self.get_item_list("/persons/%s/group_members" % person_id)
+        self.assertEqual(gm_list[0]["id"], gm_id)
+        # verify
+        gm_info = self.get_item_data("/group_members/" + gm_id)
+        ref_gm_info = {"person_id": person_id,
+                       "group_id": group_id,
+                       "permissions": []}
+        self.assertDictEqual(ref_gm_info, gm_info)
         # add role to list of roles in group
         admin_id = self.post_item("/group_roles", {"name": "admin"})
-        self.post_modify_item("/groups/%s/role_list"%facility_ids["group_id"], {"role_list" : [admin_id]})
+        self.post_modify_item("/groups/%s/role_list"%group_id, {"role_list" : [admin_id]})
         # verify
-        role_list = self.get_item_list("/groups/%s/role_list" % facility_ids["group_id"])
+        role_list = self.get_item_list("/groups/%s/role_list" % group_id)
         self.assertEqual(role_list[0]["id"], admin_id)
-
-
         # set group role
+        self.post_modify_item("/group_members/%s/group_roles"%gm_id, {"group_role_id": admin_id})
+        # verify
+        gm_info = self.get_item_data("/group_members/" + gm_id)
+        ref_gm_info.update({"role_id" : admin_id})
+        self.assertDictEqual(ref_gm_info, gm_info)
 
-        # self.post_item("/group_members/%s/group_roles"%gm_id, {"group_role_id": role_id})
-
-
-
+        self.delete_item("/group_roles/" + admin_id)
         self.delete_item("/persons/" + person_id)
         self.delete_item("/groups/" + facility_ids["group_id"])
         self.delete_item("/departments/" + facility_ids["dep_id"])
@@ -548,7 +557,7 @@ class TestApi(unittest.TestCase):
         self.assertEqual(200, resp.status_code, "get response status code must be 200")
         resp_json = resp.json()
         if "error_message" in resp_json: print(resp_json["error_message"])
-        self.assertEqual(resp_json["result"], ERR.OK, "result must be ERR.OK")
+        self.assertEqual(ERR.OK, resp_json["result"], "result must be ERR.OK")
         return resp_json["data"]
 
     def post_item(self, url, data):
