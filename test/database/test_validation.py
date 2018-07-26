@@ -137,6 +137,17 @@ class TestValidation(unittest.TestCase):
             dup_group_member.person_id = person
             dup_group_member.set_role(member_role)
             dup_group_member.save()
+        # add second permission
+        write_permission = GroupPermission("write_info")
+        write_permission.save()
+        group_member.refresh_from_db()
+        group_member.permissions.append(write_permission)
+        group_member.save()
+        # verify
+        group_member.refresh_from_db()
+        gm_data = group_member.__dict__["_data"]
+        ref_gm_data.update({"permissions" : [read_permission.pk, write_permission.pk]})
+        self.assertDictEqual(ref_gm_data, gm_data)
         # try add invalid role
         inv_role = GroupRole("god-emperor")
         inv_role.save()
