@@ -191,7 +191,7 @@ def delete_group(id):
         result = {"result":ERR.DB}
     return jsonify(result), 200
 
-
+#TODO внести метод в документацию
 @bp.route("/groups/<string:id>/role_list", methods=['POST'])
 def set_role_list_for_group(id):
     req = request.get_json()
@@ -208,6 +208,20 @@ def set_role_list_for_group(id):
     except:
         result = {"result": ERR.DB}
 
+    return jsonify(result), 200
+
+#TODO внести метод в документацию
+@bp.route("/groups/<string:id>/role_list", methods=['GET'])
+def get_role_list_for_group(id):
+    list = []
+    try:
+        group =  Group(_id=id)
+        group.refresh_from_db()
+        for role in group.role_list:
+            list.append({"id" : str(role.pk)})
+        result = {"result": ERR.OK, "list": list}
+    except:
+        result = {"result": ERR.DB}
     return jsonify(result), 200
 
 
