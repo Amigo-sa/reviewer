@@ -414,7 +414,7 @@ def list_group_members_by_person_id(id):
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
-
+# TODO осветить в доках is_active
 @bp.route("/group_members/<string:id>", methods=['GET'])
 def get_group_member_info(id):
     try:
@@ -427,9 +427,11 @@ def get_group_member_info(id):
             data = {}
             data.update({   "person_id": str(role_in_group.person_id.pk),
                             "group_id": str(role_in_group.group_id.pk),
-                            "permissions": perm})
+                            "permissions": perm,
+                            "is_active": str(role_in_group.is_active)})
             if role_in_group.role_id:
                 data.update({"role_id": str(role_in_group.role_id.pk)})
+
             result = {"result": ERR.OK, "data": data}
         else:
             result = {"result": ERR.NO_DATA}

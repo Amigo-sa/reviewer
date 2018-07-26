@@ -528,7 +528,8 @@ class TestApi(unittest.TestCase):
         gm_info = self.get_item_data("/group_members/" + gm_id)
         ref_gm_info = {"person_id": person_id,
                        "group_id": group_id,
-                       "permissions": []}
+                       "permissions": [],
+                       "is_active" : "True"}
         self.assertDictEqual(ref_gm_info, gm_info)
         # add role to list of roles in group
         admin_id = self.post_item("/group_roles", {"name": "admin"})
@@ -542,6 +543,33 @@ class TestApi(unittest.TestCase):
         gm_info = self.get_item_data("/group_members/" + gm_id)
         ref_gm_info.update({"role_id" : admin_id})
         self.assertDictEqual(ref_gm_info, gm_info)
+        # add permissions
+        read_permission = self.post_item("/group_permissions", {"name" : "read_info"})
+        self.post_modify_item("/group_members/%s/permissions"%gm_id,
+                              {"group_permission_id" : read_permission})
+        write_permission = self.post_item("/group_permissions", {"name": "write_info"})
+        self.post_modify_item("/group_members/%s/permissions" % gm_id,
+                              {"group_permission_id": write_permission})
+        # verify
+        gm_info = self.get_item_data("/group_members/" + gm_id)
+        ref_gm_info.update({"permissions": [read_permission, write_permission]})
+        self.assertDictEqual(ref_gm_info, gm_info)
+        # delete permission
+        self.delete_item("/group_members/%s/permissions/%s"%(gm_id,write_permission))
+        # verify
+        gm_info = self.get_item_data("/group_members/" + gm_id)
+        ref_gm_info.update({"permissions": [read_permission]})
+        self.assertDictEqual(ref_gm_info, gm_info)
+        # set inactive
+        self.patch_item("/group_members/%s?is_active=false"%gm_id)
+        # verify
+        gm_info = self.get_item_data("/group_members/" + gm_id)
+        ref_gm_info.update({"is_active" : "False"})
+        self.assertDictEqual(ref_gm_info, gm_info)
+        # delete
+        self.delete_item("/group_members/" + gm_id)
+        resp_json = requests.get(self.api_URL+"/group_members/" + gm_id).json()
+        self.assertEqual(ERR.NO_DATA, resp_json["result"])
 
 
         """
@@ -595,8 +623,8 @@ class TestApi(unittest.TestCase):
         if "error_message" in resp_json: print(resp_json["error_message"])
         self.assertEqual(ERR.OK, resp_json["result"], "result must be ERR.OK")
 
-    def patch_item(self, url, data):
-        resp = requests.patch(url=self.api_URL + url, json=data)
+    def patch_item(self, url):
+        resp = requests.patch(url=self.api_URL + url)
         self.assertEqual(200, resp.status_code, "patch response status code must be 200")
         resp_json = resp.json()
         if "error_message" in resp_json: print(resp_json["error_message"])

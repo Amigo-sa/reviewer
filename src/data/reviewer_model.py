@@ -207,7 +207,7 @@ class GroupMember(MongoModel):
     role_id = fields.ReferenceField(GroupRole, on_delete=ReferenceField.DO_NOTHING, blank=True)
     permissions = fields.ListField(field=
                                    fields.ReferenceField(GroupPermission), blank=True)
-    is_active = fields.BooleanField(default=True)
+    is_active = fields.BooleanField(required=True, default=True)
 
     class Meta:
         write_concern = WriteConcern(j=True)
