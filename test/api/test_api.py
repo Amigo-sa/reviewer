@@ -66,8 +66,7 @@ class TestApi(unittest.TestCase):
         pass
 
     def setUp(self):
-
-        pass
+        requests.post(self.api_URL + "/wipe")
 
     def t_simple_normal(self, url_get, url_post, url_delete, *args, **kwargs):
         # read from empty DB
@@ -303,8 +302,11 @@ class TestApi(unittest.TestCase):
         self.assertEqual(len(list_8_9), 2, "must return requested number of items")
         for index, item in enumerate(list_8_9):
             self.assertEqual(item["id"], person_ids[index + 8])
+        """
+
         for person_id in person_ids:
             self.delete_doc("/persons/" + person_id)
+        """
 
     @staticmethod
     def assertDictListEqual(list1, list2):
@@ -415,12 +417,15 @@ class TestApi(unittest.TestCase):
         for person_id in person_ids:
             role_list = self.get_item_list("/persons/%s/general_roles" % person_id)
             self.assertEqual([], role_list, "all roles must be deleted")
+        """
+
         self.delete_doc("/departments/" + dep_1["id"])
         self.delete_doc("/departments/" + dep_2["id"])
         self.delete_doc("/organizations/" + org_1["id"])
         self.delete_doc("/organizations/" + org_2["id"])
         for person_id in person_ids:
             self.delete_doc("/persons/" + person_id)
+        """
 
     def test_person_hs(self):
         hs0_id, hs0_data = self.prepare_hs()
@@ -441,9 +446,9 @@ class TestApi(unittest.TestCase):
         self.assertDictListEqual(hs1_phs_list, ref_hs1_phs_list)
 
         p0_hs1_data = self.get_item_data("/persons/hard_skills/" + p0_hs1_id)
-        self.assertEqual(p0_hs1_data["person_id"], person_ids[0])
-        self.assertEqual(p0_hs1_data["hs_id"], hs1_id)
-        self.assertEqual(float(p0_hs1_data["level"]), 50.0)
+        self.assertEqual(person_ids[0], p0_hs1_data["person_id"])
+        self.assertEqual(hs1_id, p0_hs1_data["hs_id"])
+        self.assertEqual(50.0, float(p0_hs1_data["level"]),)
 
         all_phs_list = self.get_item_list("/persons/hard_skills")
         ref_all_phs_list = [{"id": p0_hs0_id}, {"id": p0_hs1_id},
@@ -455,11 +460,12 @@ class TestApi(unittest.TestCase):
 
         all_phs_list = self.get_item_list("/persons/hard_skills")
         self.assertDictListEqual([], all_phs_list)
-
+        """
         for person_id in person_ids:
             self.delete_item("/persons/" + person_id)
         for hs_id in [hs0_id, hs1_id, hs2_id]:
             self.delete_item("/hard_skills/" + hs_id)
+        """
             
     def test_person_ss(self):
         ss0_id, ss0_data = self.prepare_ss()
@@ -480,9 +486,9 @@ class TestApi(unittest.TestCase):
         self.assertDictListEqual(ss1_pss_list, ref_ss1_pss_list)
 
         p0_ss1_data = self.get_item_data("/persons/soft_skills/" + p0_ss1_id)
-        self.assertEqual(p0_ss1_data["person_id"], person_ids[0])
-        self.assertEqual(p0_ss1_data["ss_id"], ss1_id)
-        self.assertEqual(float(p0_ss1_data["level"]), 50.0)
+        self.assertEqual(person_ids[0], p0_ss1_data["person_id"])
+        self.assertEqual(ss1_id, p0_ss1_data["ss_id"])
+        self.assertEqual(50.0 ,float(p0_ss1_data["level"]))
 
         all_pss_list = self.get_item_list("/persons/soft_skills")
         ref_all_pss_list = [{"id": p0_ss0_id}, {"id": p0_ss1_id},
@@ -494,11 +500,14 @@ class TestApi(unittest.TestCase):
 
         all_pss_list = self.get_item_list("/persons/soft_skills")
         self.assertDictListEqual([], all_pss_list)
+        """
 
         for person_id in person_ids:
             self.delete_item("/persons/" + person_id)
         for ss_id in [ss0_id, ss1_id, ss2_id]:
             self.delete_item("/soft_skills/" + ss_id)
+        """
+
 
     def test_group_member_normal(self):
         person_id = self.prepare_persons(1)[0]
@@ -506,15 +515,15 @@ class TestApi(unittest.TestCase):
         group_id = facility_ids["group_id"]
         # verify that group member list is initially empty
         gm_list = self.get_item_list("/groups/%s/group_members"%group_id)
-        self.assertEqual(gm_list, [])
+        self.assertEqual( [], gm_list)
         # add group_member without role
         post_data = {"person_id": person_id}
         gm_id = self.post_item("/groups/%s/group_members"%group_id, post_data)
         # verify
         gm_list = self.get_item_list("/groups/%s/group_members" % group_id)
-        self.assertEqual(gm_list[0]["id"], gm_id)
+        self.assertEqual(gm_id, gm_list[0]["id"])
         gm_list = self.get_item_list("/persons/%s/group_members" % person_id)
-        self.assertEqual(gm_list[0]["id"], gm_id)
+        self.assertEqual(gm_id, gm_list[0]["id"])
         # verify
         gm_info = self.get_item_data("/group_members/" + gm_id)
         ref_gm_info = {"person_id": person_id,
@@ -526,7 +535,7 @@ class TestApi(unittest.TestCase):
         self.post_modify_item("/groups/%s/role_list"%group_id, {"role_list" : [admin_id]})
         # verify
         role_list = self.get_item_list("/groups/%s/role_list" % group_id)
-        self.assertEqual(role_list[0]["id"], admin_id)
+        self.assertEqual(admin_id, role_list[0]["id"])
         # set group role
         self.post_modify_item("/group_members/%s/group_roles"%gm_id, {"group_role_id": admin_id})
         # verify
@@ -534,11 +543,14 @@ class TestApi(unittest.TestCase):
         ref_gm_info.update({"role_id" : admin_id})
         self.assertDictEqual(ref_gm_info, gm_info)
 
+
+        """
         self.delete_item("/group_roles/" + admin_id)
         self.delete_item("/persons/" + person_id)
         self.delete_item("/groups/" + facility_ids["group_id"])
         self.delete_item("/departments/" + facility_ids["dep_id"])
         self.delete_item("/organizations/" + facility_ids["org_id"])
+        """
         pass
 
 
@@ -549,7 +561,7 @@ class TestApi(unittest.TestCase):
         self.assertEqual(200, resp.status_code, "get response status code must be 200")
         resp_json = resp.json()
         if "error_message" in resp_json: print(resp_json["error_message"])
-        self.assertEqual(resp_json["result"], ERR.OK, "result must be ERR.OK")
+        self.assertEqual(ERR.OK, resp_json["result"],"result must be ERR.OK")
         return resp_json["list"]
 
     def get_item_data(self, url):
@@ -564,7 +576,7 @@ class TestApi(unittest.TestCase):
         resp = requests.post(url=self.api_URL + url, json=data)
         self.assertEqual(200, resp.status_code, "post response status code must be 200")
         resp_json = resp.json()
-        self.assertEqual(resp_json["result"], ERR.OK, "post result must be ERR.OK")
+        self.assertEqual(ERR.OK, resp_json["result"],  "post result must be ERR.OK")
         if "error_message" in resp_json: print(resp_json["error_message"])
         self.assertTrue(resp_json["id"], "returned id must be not None")
         return resp_json["id"]
@@ -573,7 +585,7 @@ class TestApi(unittest.TestCase):
         resp = requests.post(url=self.api_URL + url, json=data)
         self.assertEqual(200, resp.status_code, "post response status code must be 200")
         resp_json = resp.json()
-        self.assertEqual(resp_json["result"], ERR.OK, "post result must be ERR.OK")
+        self.assertEqual(ERR.OK, resp_json["result"],"post result must be ERR.OK")
         if "error_message" in resp_json: print(resp_json["error_message"])
 
     def delete_item(self, url):
@@ -581,14 +593,14 @@ class TestApi(unittest.TestCase):
         self.assertEqual(200, resp.status_code, "delete response status code must be 200")
         resp_json = resp.json()
         if "error_message" in resp_json: print(resp_json["error_message"])
-        self.assertEqual(resp_json["result"], ERR.OK, "result must be ERR.OK")
+        self.assertEqual(ERR.OK, resp_json["result"], "result must be ERR.OK")
 
     def patch_item(self, url, data):
         resp = requests.patch(url=self.api_URL + url, json=data)
         self.assertEqual(200, resp.status_code, "patch response status code must be 200")
         resp_json = resp.json()
         if "error_message" in resp_json: print(resp_json["error_message"])
-        self.assertEqual(resp_json["result"], ERR.OK, "result must be ERR.OK")
+        self.assertEqual(ERR.OK, resp_json["result"], "result must be ERR.OK")
 
 if __name__ == "__main__":
     unittest.main(verbosity=1)

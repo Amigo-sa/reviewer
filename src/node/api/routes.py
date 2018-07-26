@@ -25,14 +25,31 @@ if __debug__:
                   result_string += "document: {0}<br>".format(document)
         return result_string
 
-@bp.route("/shutdown", methods = ['POST'])
-def shutdown():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
-    result = {"result": ERR.OK}
-    return jsonify(result), 200
+
+    from pymodm.connection import _get_db
+
+
+    @bp.route("/wipe", methods=['POST'])
+    def wipe():
+        try:
+            revDb = _get_db("reviewer")
+            colList = revDb.list_collection_names()
+            for col in colList:
+                revDb[col].delete_many({})
+            result = {"result": ERR.OK}
+        except:
+            result = {"result": ERR.DB}
+        return jsonify(result), 200
+
+
+    @bp.route("/shutdown", methods = ['POST'])
+    def shutdown():
+        func = request.environ.get('werkzeug.server.shutdown')
+        if func is None:
+            raise RuntimeError('Not running with the Werkzeug Server')
+        func()
+        result = {"result": ERR.OK}
+        return jsonify(result), 200
 
 @bp.route("/organizations", methods = ['POST'])
 def add_organization():
