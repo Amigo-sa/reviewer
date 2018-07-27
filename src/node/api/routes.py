@@ -390,7 +390,7 @@ def delete_group_member(id):
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
-
+# TODO переименуй остальные role_in_group, а то неаккуратненько
 @bp.route("/groups/<string:id>/group_members", methods=['GET'])
 def list_group_members_by_group_id(id):
     list = []
@@ -652,7 +652,7 @@ def find_persons():
     if 'group_id' in request.args:
         group_id = request.args['group_id']
         pipeline += ({"$lookup":
-                        {"from": "role_in_group",
+                        {"from": "group_member",
                          "localField": "_id",
                          "foreignField": "person_id",
                          "as": "role"}},

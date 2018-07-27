@@ -508,7 +508,7 @@ class TestApi(unittest.TestCase):
             self.delete_item("/soft_skills/" + ss_id)
         """
 
-
+    # TODO возможно, следует верификацию включить сюда, а не в отдельный тест
     def test_group_member_normal(self):
         person_id = self.prepare_persons(1)[0]
         facility_ids = self.prepare_group()
@@ -531,6 +531,11 @@ class TestApi(unittest.TestCase):
                        "permissions": [],
                        "is_active" : "True"}
         self.assertDictEqual(ref_gm_info, gm_info)
+        # verify with /persons
+        self.prepare_persons(2)
+        person_info = self.get_item_list("/persons?group_id=" + group_id)
+        self.assertEqual(1, len(person_info))
+        self.assertEqual(person_id, person_info[0]["id"])
         # add role to list of roles in group
         admin_id = self.post_item("/group_roles", {"name": "admin"})
         self.post_modify_item("/groups/%s/role_list"%group_id, {"role_list" : [admin_id]})
