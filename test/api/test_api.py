@@ -586,8 +586,87 @@ class TestApi(unittest.TestCase):
         """
         pass
 
-
-
+    def test_reviews_normal(self):
+        person_id = self.prepare_persons(1)[0]
+        facility_ids = self.prepare_group()
+        org_id = facility_ids["org_id"]
+        dep_id = facility_ids["dep_id"]
+        group_id = facility_ids["group_id"]
+        hs_id = self.prepare_hs()[0]
+        ss_id = self.prepare_ss()[0]
+        print(person_id, org_id, dep_id, group_id, hs_id, ss_id)
+        student_role = {
+            "person_id": person_id,
+            "department_id": dep_id,
+            "role_type": "Student",
+            "description": "sample_description"
+        }
+        student_role.update({"id": self.post_item("/general_roles", student_role)})
+        tutor_role = {
+            "person_id": person_id,
+            "department_id": dep_id,
+            "role_type": "Tutor",
+            "description": "sample_description"
+        }
+        tutor_role.update({"id": self.post_item("/general_roles", tutor_role)})
+        p_hs_id = self.post_item("/persons/%s/hard_skills" % person_id, {"hs_id" : hs_id})
+        p_ss_id = self.post_item("/persons/%s/soft_skills" % person_id, {"ss_id": ss_id})
+        gm_id = self.post_item("/groups/%s/group_members" % group_id, {"person_id": person_id})
+        g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name" : "sample_test_name",
+                                                                    "info" : "sample_test_info"})
+        subjects = { "StudentRole" : student_role["id"],
+                     "TutorRole" : tutor_role["id"],
+                     "HardSkill" : p_hs_id,
+                     "SoftSkill" : p_ss_id,
+                     "Group" : group_id,
+                     "GroupTest" : g_test_id,
+                     "GroupMember": gm_id}
+        rev_ids = {}
+        # add reviews
+        for subj_type, subj_id in subjects.items():
+            review_data = {"type" : subj_type,
+                           "reviewer_id" : person_id,
+                           "subject_id" : subj_id,
+                           "value" : "60.0",
+                           "description" : "sample_descr"}
+            cur_id = self.post_item("/reviews", review_data)
+            rev_ids.update({subj_id : cur_id})
+        # verify reviews
+        review_list = self.get_item_list("/reviews")
+        ref_review_list = [{"id" : rev_id} for subj_id, rev_id in rev_ids.items()]
+        self.assertDictListEqual(ref_review_list, review_list)
+        # verify with reviewer_id
+        person2_id = self.prepare_persons(1)[0]
+        review_list = self.get_item_list("/reviews?reviewer_id=" + person_id)
+        self.assertDictListEqual(ref_review_list, review_list)
+        review_list = self.get_item_list("/reviews?reviewer_id=" + person2_id)
+        self.assertDictListEqual([], review_list)
+        # verify with subject_id
+        for subj_id, rev_id in rev_ids.items():
+            review_list = self.get_item_list("/reviews?subject_id=" + subj_id)
+            self.assertEqual([{"id" : rev_id}], review_list)
+        # verify with review from person2
+        review_data = {"type": "StudentRole",
+                       "reviewer_id": person2_id,
+                       "subject_id": student_role["id"],
+                       "value": "80.0",
+                       "description": "sample_descr2"}
+        rev2_id = self.post_item("/reviews", review_data)
+        review_list = self.get_item_list("/reviews?subject_id=" + student_role["id"])
+        self.assertEqual([{"id": rev_ids[student_role["id"]]}, {"id": rev2_id}], review_list)
+        # delete review
+        self.delete_item("/reviews/" + rev_ids[student_role["id"]])
+        rev_ids.pop(student_role["id"])
+        # verify
+        review_list = self.get_item_list("/reviews?subject_id=" + student_role["id"])
+        self.assertEqual([{"id": rev2_id}], review_list)
+        # delete all reviews
+        self.delete_item("/reviews/" + rev2_id)
+        for subj_id, rev_id in rev_ids.items():
+            self.delete_item("/reviews/" + rev_id)
+        # verify for one subject
+        review_list = self.get_item_list("/reviews?subject_id=" + gm_id)
+        self.assertEqual([], review_list)
 
     def get_item_list(self, url):
         resp = requests.get(self.api_URL + url)
