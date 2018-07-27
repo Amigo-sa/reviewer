@@ -645,6 +645,14 @@ class TestApi(unittest.TestCase):
         for subj_id, rev_id in rev_ids.items():
             review_list = self.get_item_list("/reviews?subject_id=" + subj_id)
             self.assertEqual([{"id" : rev_id}], review_list)
+        # get review info
+        for subj_id, rev_id in rev_ids.items():
+            review_data = self.get_item_data("/reviews/" + rev_id)
+            ref_data = {"reviewer_id": person_id,
+                        "subject_id": subj_id,
+                        "value": 60.0,
+                        "description": "sample_descr"}
+            self.assertDictEqual(ref_data, review_data)
         # verify with review from person2
         review_data = {"type": "StudentRole",
                        "reviewer_id": person2_id,

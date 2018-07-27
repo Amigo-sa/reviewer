@@ -738,6 +738,38 @@ def get_person_info(id):
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
+# TODO добавить в документацию
+@bp.route("/reviews/<string:id>", methods=['GET'])
+def get_review_info(id):
+    try:
+        subject = None
+        if SRReview(_id=id) in SRReview.objects.raw({"_id":ObjectId(id)}):
+            subject = SRReview(_id=id)
+        elif TRReview(_id=id) in TRReview.objects.raw({"_id": ObjectId(id)}):
+            subject = TRReview(_id=id)
+        elif HSReview(_id=id) in HSReview.objects.raw({"_id": ObjectId(id)}):
+            subject = HSReview(_id=id)
+        elif SSReview(_id=id) in SSReview.objects.raw({"_id": ObjectId(id)}):
+            subject = SSReview(_id=id)
+        elif GroupReview(_id=id) in GroupReview.objects.raw({"_id": ObjectId(id)}):
+            subject = GroupReview(_id=id)
+        elif GroupTestReview(_id=id) in GroupTestReview.objects.raw({"_id": ObjectId(id)}):
+            subject = GroupTestReview(_id=id)
+        elif GroupMemberReview(_id=id) in GroupMemberReview.objects.raw({"_id": ObjectId(id)}):
+            subject = GroupMemberReview(_id=id)
+        else:
+            result = {"result": ERR.NO_DATA}
+            return jsonify(result), 200
+        subject.refresh_from_db()
+        data = {"reviewer_id" : str(subject.reviewer_id.pk),
+                "subject_id" : str(subject.subject_id.pk),
+                "value" : subject.value,
+                "description" : subject.description}
+        result = {"result": ERR.OK, "data": data}
+    except Exception as e:
+        result = {"result": ERR.DB, "error_info" : str(e)}
+    return jsonify(result), 200
+
 
 @bp.route("/reviews", methods = ['POST'])
 def post_review():
