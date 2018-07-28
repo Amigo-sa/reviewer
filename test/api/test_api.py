@@ -750,6 +750,42 @@ class TestApi(unittest.TestCase):
                                  person_id = p_id,
                                  result_data = "string")
 
+    def test_reviews_duplicate(self):
+        p_id = self.prepare_persons(1)[0]
+        fac_ids = self.prepare_group()
+        dep_id = fac_ids["dep_id"]
+        group_id = fac_ids["group_id"]
+        sr_id = self.post_item("/general_roles",
+                               {"person_id" : p_id,
+                                "department_id" : dep_id,
+                                "role_type" : "Student",
+                                "description" : "student_role_description"})
+        tr_id = self.post_item("/general_roles",
+                               {"person_id": p_id,
+                                "department_id": dep_id,
+                                "role_type": "Tutor",
+                                "description": "Tutor_role_description"})
+        p_hs_id = self.prepare_hs()[0]
+        p_ss_id = self.prepare_ss()[0]
+        g_test_id = self.post_item("/groups/%s/tests"%group_id, {"name" : "test_name",
+                                                        "info" : "test_info"})
+        gm_id = self.post_item("/groups/%s/group_members"%group_id,
+                               {"person_id" : p_id})
+        subjects = {"StudentRole": sr_id,
+                    "TutorRole": tr_id,
+                    "HardSkill": p_hs_id,
+                    "SoftSkill": p_ss_id,
+                    "Group": group_id,
+                    "GroupTest": g_test_id,
+                    "GroupMember": gm_id}
+        for subj_type, subj_id in subjects.items():
+            self.post_duplicate_item("/reviews",
+                                     "/reviews?subject_id=" + subj_id,
+                                     type= subj_type,
+                                     reviewer_id= p_id,
+                                     subject_id = subj_id,
+                                     value = "skill_level",
+                                     description = "string")
 
     def post_duplicate_item(self, url_post, url_get_list, **kwargs):
         data = self.generate_doc(kwargs.items())
