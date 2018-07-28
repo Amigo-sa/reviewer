@@ -1200,7 +1200,7 @@ def get_test_result_info(id):
             test_result.refresh_from_db()
             data = {"test_id": str(test_result.test_id.pk),
                     "person_id": str(test_result.person_id.pk),
-                    "result_data": str(test_result.result_data)}
+                    "result_data": test_result.result_data}
             result = {"result": ERR.OK, "data": data}
         else:
             result = {"result": ERR.NO_DATA}
