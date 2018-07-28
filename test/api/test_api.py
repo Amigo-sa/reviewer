@@ -793,18 +793,6 @@ class TestApi(unittest.TestCase):
         org_id = fac_ids["org_id"]
         dep_id = fac_ids["dep_id"]
         group_id = fac_ids["group_id"]
-        sr_id = self.post_item("/general_roles",
-                               {"person_id": p_id,
-                                "department_id": dep_id,
-                                "role_type": "Student",
-                                "description": "student_role_description"})
-        tr_id = self.post_item("/general_roles",
-                               {"person_id": p_id,
-                                "department_id": dep_id,
-                                "role_type": "Tutor",
-                                "description": "Tutor_role_description"})
-        p_hs_id = self.prepare_hs()[0]
-        p_ss_id = self.prepare_ss()[0]
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name": "test_name",
                                                                    "info": "test_info"})
         gm_id = self.post_item("/groups/%s/group_members" % group_id,
@@ -832,6 +820,43 @@ class TestApi(unittest.TestCase):
             resp = requests.post(url=self.api_URL + route, json={"noname":"novalue"})
             self.assertEqual(200, resp.status_code)
             self.assertEqual(ERR.INPUT, resp.json()["result"])
+
+    def test_post_invalid_reference(self):
+        # setup
+        p_id = self.prepare_persons(1)[0]
+        fac_ids = self.prepare_group()
+        org_id = fac_ids["org_id"]
+        dep_id = fac_ids["dep_id"]
+        group_id = fac_ids["group_id"]
+        sr_id = self.post_item("/general_roles",
+                               {"person_id": p_id,
+                                "department_id": dep_id,
+                                "role_type": "Student",
+                                "description": "student_role_description"})
+        tr_id = self.post_item("/general_roles",
+                               {"person_id": p_id,
+                                "department_id": dep_id,
+                                "role_type": "Tutor",
+                                "description": "Tutor_role_description"})
+        p_hs_id = self.prepare_hs()[0]
+        p_ss_id = self.prepare_ss()[0]
+        g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name": "test_name",
+                                                                   "info": "test_info"})
+        gm_id = self.post_item("/groups/%s/group_members" % group_id,
+                               {"person_id": p_id})
+        # tests
+        self.pass_invalid_ref("/organizations/" + p_id + "/departments",
+                                 name="string")
+        self.pass_invalid_ref("/departments/" + org_id + "/groups",
+                                 name="string")
+
+
+    def pass_invalid_ref(self, url_post, **kwargs):
+        data = self.generate_doc(kwargs.items())
+        resp = requests.post(url=self.api_URL + url_post, json=data)
+        self.assertEqual(200, resp.status_code, "post response status code must be 200")
+        resp_json = resp.json()
+        self.assertEqual(ERR.DB, resp_json["result"], "post result must be ERR.DB")
 
     def post_duplicate_item(self, url_post, url_get_list, **kwargs):
         data = self.generate_doc(kwargs.items())

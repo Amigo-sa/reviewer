@@ -200,6 +200,10 @@ class Group(MongoModel):
                                ("department_id", pymongo.DESCENDING)],
                               unique=True)]
 
+    def clean(self):
+        if not Department.objects.get({"_id": self.department_id.pk}):
+            raise ValidationError("не существует департамента с таким _id")
+
 
 class GroupMember(MongoModel):
     person_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
