@@ -42,21 +42,6 @@ class TestApi(unittest.TestCase):
                 print("Connection attempt %s failed" %str(attempts))
                 if attempts > 20: raise ConnectionError("could not connect to server")
         print("Connected")
-        # Подразумевается, что в delete_rule установлено правило CASCADE, поэтому остальные коллекции удалятся цепочкой
-        cls.clear_collection("/persons", "/persons")
-        cls.clear_collection("/organizations", "/organizations")
-        cls.clear_collection("/group_permissions", "/group_permissions")
-        cls.clear_collection("/group_roles", "/group_roles")
-        cls.clear_collection("/hard_skills", "/hard_skills")
-        cls.clear_collection("/soft_skills", "/soft_skills")
-
-    @classmethod
-    def clear_collection(cls, url_list, url_delete):
-        resp_json = requests.get(cls.api_URL + url_list).json()
-        if resp_json["list"]:
-            print("Warning: collection %s was not cleared after tests"%url_delete)
-            for doc in resp_json["list"]:
-                resp_json = requests.delete(url=cls.api_URL + url_delete+ "/" + doc["id"]).json()
 
     @classmethod
     def tearDownClass(cls):
@@ -296,16 +281,16 @@ class TestApi(unittest.TestCase):
         # post test result
         result_id = self.post_item("/tests/%s/results"%test_id, ref_result_data)
         # verify
-        list = self.get_item_list("/tests/results")
-        self.assertDictListEqual( [{"id":result_id}], list)
-        list = self.get_item_list("/tests/results?person_id=" + person_id)
-        self.assertDictListEqual([{"id": result_id}], list)
-        list = self.get_item_list("/tests/results?person_id=" + person2_id)
-        self.assertDictListEqual([], list)
-        list = self.get_item_list("/tests/results?test_id=" + test_id)
-        self.assertDictListEqual([{"id": result_id}], list)
-        list = self.get_item_list("/tests/results?test_id=" + test2_id)
-        self.assertDictListEqual([], list)
+        item_list = self.get_item_list("/tests/results")
+        self.assertDictListEqual([{"id":result_id}], item_list)
+        item_list = self.get_item_list("/tests/results?person_id=" + person_id)
+        self.assertDictListEqual([{"id": result_id}], item_list)
+        item_list = self.get_item_list("/tests/results?person_id=" + person2_id)
+        self.assertDictListEqual([], item_list)
+        item_list = self.get_item_list("/tests/results?test_id=" + test_id)
+        self.assertDictListEqual([{"id": result_id}], item_list)
+        item_list = self.get_item_list("/tests/results?test_id=" + test2_id)
+        self.assertDictListEqual([], item_list)
         # verify test result info
         result_data = self.get_item_data("/tests/results/" + result_id)
         ref_result_data.update({"test_id": test_id})
@@ -313,8 +298,8 @@ class TestApi(unittest.TestCase):
         # delete
         self.delete_item("/tests/results/" + result_id)
         # verify
-        list = self.get_item_list("/tests/results")
-        self.assertDictListEqual([], list)
+        item_list = self.get_item_list("/tests/results")
+        self.assertDictListEqual([], item_list)
 
     def test_find_person_limits(self):
         person_ids = self.prepare_persons(10)
@@ -330,11 +315,6 @@ class TestApi(unittest.TestCase):
         self.assertEqual(len(list_8_9), 2, "must return requested number of items")
         for index, item in enumerate(list_8_9):
             self.assertEqual(item["id"], person_ids[index + 8])
-        """
-
-        for person_id in person_ids:
-            self.delete_doc("/persons/" + person_id)
-        """
 
     @staticmethod
     def assertDictListEqual(list1, list2):
@@ -445,15 +425,6 @@ class TestApi(unittest.TestCase):
         for person_id in person_ids:
             role_list = self.get_item_list("/persons/%s/general_roles" % person_id)
             self.assertEqual([], role_list, "all roles must be deleted")
-        """
-
-        self.delete_doc("/departments/" + dep_1["id"])
-        self.delete_doc("/departments/" + dep_2["id"])
-        self.delete_doc("/organizations/" + org_1["id"])
-        self.delete_doc("/organizations/" + org_2["id"])
-        for person_id in person_ids:
-            self.delete_doc("/persons/" + person_id)
-        """
 
     def test_person_hs(self):
         hs0_id, hs0_data = self.prepare_hs()
@@ -488,13 +459,7 @@ class TestApi(unittest.TestCase):
 
         all_phs_list = self.get_item_list("/persons/hard_skills")
         self.assertDictListEqual([], all_phs_list)
-        """
-        for person_id in person_ids:
-            self.delete_item("/persons/" + person_id)
-        for hs_id in [hs0_id, hs1_id, hs2_id]:
-            self.delete_item("/hard_skills/" + hs_id)
-        """
-            
+
     def test_person_ss(self):
         ss0_id, ss0_data = self.prepare_ss()
         ss1_id, ss1_data = self.prepare_ss()
@@ -528,13 +493,6 @@ class TestApi(unittest.TestCase):
 
         all_pss_list = self.get_item_list("/persons/soft_skills")
         self.assertDictListEqual([], all_pss_list)
-        """
-
-        for person_id in person_ids:
-            self.delete_item("/persons/" + person_id)
-        for ss_id in [ss0_id, ss1_id, ss2_id]:
-            self.delete_item("/soft_skills/" + ss_id)
-        """
 
     # TODO возможно, следует верификацию включить сюда, а не в отдельный тест
     def test_group_member_normal(self):
@@ -603,16 +561,6 @@ class TestApi(unittest.TestCase):
         self.delete_item("/group_members/" + gm_id)
         resp_json = requests.get(self.api_URL+"/group_members/" + gm_id).json()
         self.assertEqual(ERR.NO_DATA, resp_json["result"])
-
-
-        """
-        self.delete_item("/group_roles/" + admin_id)
-        self.delete_item("/persons/" + person_id)
-        self.delete_item("/groups/" + facility_ids["group_id"])
-        self.delete_item("/departments/" + facility_ids["dep_id"])
-        self.delete_item("/organizations/" + facility_ids["org_id"])
-        """
-        pass
 
     def test_reviews_normal(self):
         person_id = self.prepare_persons(1)[0]
@@ -703,6 +651,67 @@ class TestApi(unittest.TestCase):
         # verify for one subject
         review_list = self.get_item_list("/reviews?subject_id=" + gm_id)
         self.assertEqual([], review_list)
+
+    def test_organization_duplicate(self):
+        self.post_duplicate_item("/organizations",
+                                 "/organizations",
+                                 name="String")
+
+    def test_person_duplicate(self):
+        self.post_duplicate_item("/persons",
+                             "/persons",
+                             first_name="string",
+                             middle_name="string",
+                             surname="string",
+                             birth_date="date",
+                             phone_no="number_string"
+                             )
+
+    def post_duplicate_item(self):
+        self.t_simple_normal("/soft_skills",
+                             "/soft_skills",
+                             name="string")
+
+    def test_hard_skill_duplicate(self):
+        self.post_duplicate_item("/hard_skills",
+                             "/hard_skills",
+                             name="string")
+
+    def test_group_roles_duplicate(self):
+        self.post_duplicate_item("/group_roles",
+                             "/group_roles",
+                             name="string")
+
+    def test_group_permissions_duplicate(self):
+        self.post_duplicate_item("/group_permissions",
+                             "/group_permissions",
+                             name="string")
+
+    def test_department_duplicate(self):
+        aux_org_id = self.prepare_organization()
+        self.post_duplicate_item("/organizations/" + aux_org_id + "/departments",
+                             "/organizations/" + aux_org_id + "/departments",
+                             name="string")
+
+    def test_group_duplicate(self):
+        aux_item_ids = self.prepare_department()
+        self.post_duplicate_item("/departments/" + aux_item_ids["dep_id"] + "/groups",
+                             "/departments/" + aux_item_ids["dep_id"] + "/groups",
+                             name="string")
+
+    def post_duplicate_item(self, url_post, url_get_list, **kwargs):
+        data = self.generate_doc(kwargs.items())
+        resp = requests.post(url=self.api_URL + url_post, json=data)
+        self.assertEqual(200, resp.status_code, "post response status code must be 200")
+        resp_json = resp.json()
+        self.assertEqual(ERR.OK, resp_json["result"], "post result must be ERR.OK")
+        resp = requests.post(url=self.api_URL + url_post, json=data)
+        self.assertEqual(200, resp.status_code, "post response status code must be 200")
+        resp_json = resp.json()
+        self.assertEqual(ERR.DB, resp_json["result"], "duplicate post result must be ERR.DB")
+        self.assertNotIn("id", resp_json, "returned id must be None")
+        item_list = self.get_item_list(url_get_list)
+        self.assertEqual(1, len(item_list))
 
     def get_item_list(self, url):
         resp = requests.get(self.api_URL + url)
