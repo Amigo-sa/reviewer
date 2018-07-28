@@ -667,10 +667,11 @@ class TestApi(unittest.TestCase):
                              phone_no="number_string"
                              )
 
-    def post_duplicate_item(self):
-        self.t_simple_normal("/soft_skills",
+    def test_soft_skill_duplicate(self):
+        self.post_duplicate_item("/soft_skills",
                              "/soft_skills",
                              name="string")
+
 
     def test_hard_skill_duplicate(self):
         self.post_duplicate_item("/hard_skills",
