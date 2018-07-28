@@ -700,6 +700,20 @@ class TestApi(unittest.TestCase):
                              "/departments/" + aux_item_ids["dep_id"] + "/groups",
                              name="string")
 
+    def test_person_hs_duplicate(self):
+        person_id = self.prepare_persons(1)[0]
+        hard_skill_id = self.prepare_hs()[0]
+        self.post_duplicate_item("/persons/%s/hard_skills"%person_id,
+                                 "/persons/hard_skills?person_id=" + person_id,
+                                 hs_id = hard_skill_id)
+
+    def test_person_ss_duplicate(self):
+        person_id = self.prepare_persons(1)[0]
+        soft_skill_id = self.prepare_ss()[0]
+        self.post_duplicate_item("/persons/%s/soft_skills"%person_id,
+                                 "/persons/soft_skills?person_id=" + person_id,
+                                 ss_id = soft_skill_id)
+
     def post_duplicate_item(self, url_post, url_get_list, **kwargs):
         data = self.generate_doc(kwargs.items())
         resp = requests.post(url=self.api_URL + url_post, json=data)
