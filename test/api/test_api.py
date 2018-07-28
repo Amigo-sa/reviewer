@@ -787,6 +787,52 @@ class TestApi(unittest.TestCase):
                                      value = "skill_level",
                                      description = "string")
 
+    def test_invalid_post(self):
+        p_id = self.prepare_persons(1)[0]
+        fac_ids = self.prepare_group()
+        org_id = fac_ids["org_id"]
+        dep_id = fac_ids["dep_id"]
+        group_id = fac_ids["group_id"]
+        sr_id = self.post_item("/general_roles",
+                               {"person_id": p_id,
+                                "department_id": dep_id,
+                                "role_type": "Student",
+                                "description": "student_role_description"})
+        tr_id = self.post_item("/general_roles",
+                               {"person_id": p_id,
+                                "department_id": dep_id,
+                                "role_type": "Tutor",
+                                "description": "Tutor_role_description"})
+        p_hs_id = self.prepare_hs()[0]
+        p_ss_id = self.prepare_ss()[0]
+        g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name": "test_name",
+                                                                   "info": "test_info"})
+        gm_id = self.post_item("/groups/%s/group_members" % group_id,
+                               {"person_id": p_id})
+        post_routes = [
+            "/organizations",
+            "/organizations/%s/departments"%org_id,
+            "/departments/%s/groups"%dep_id,
+            "/group_roles",
+            "/group_permissions",
+            "/groups/%s/group_members"%group_id,
+            "/group_members/%s/permissions"%gm_id,
+            "/group_members/%s/group_roles"%gm_id,
+            "/general_roles",
+            "/reviews",
+            "/persons",
+            "/persons/%s/soft_skills"%p_id,
+            "/persons/%s/hard_skills"%p_id,
+            "/soft_skills",
+            "/hard_skills",
+            "/groups/%s/tests"%group_id,
+            "/tests/%s/results"%g_test_id
+        ]
+        for route in post_routes:
+            resp = requests.post(url=self.api_URL + route, json={"noname":"novalue"})
+            self.assertEqual(200, resp.status_code)
+            self.assertEqual(ERR.INPUT, resp.json()["result"])
+
     def post_duplicate_item(self, url_post, url_get_list, **kwargs):
         data = self.generate_doc(kwargs.items())
         resp = requests.post(url=self.api_URL + url_post, json=data)
