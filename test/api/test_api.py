@@ -214,10 +214,6 @@ class TestApi(unittest.TestCase):
         self.assertEqual(resp_json["result"], ERR.OK, "aux soft skill must be created")
         return [resp_json["id"], post_data]
 
-    def delete_doc(self, url):
-        resp_json = requests.delete(url=self.api_URL + url).json()
-        self.assertEqual(resp_json["result"], ERR.OK, "the document must be deleted")
-
     def test_organization_normal(self):
         self.t_simple_normal(         "/organizations",
                                       "/organizations",
@@ -265,7 +261,7 @@ class TestApi(unittest.TestCase):
                                       "/organizations/" + aux_org_id + "/departments",
                                       "/departments",
                                         name="string")
-        self.delete_doc("/organizations/" + aux_org_id)
+        self.delete_item("/organizations/" + aux_org_id)
 
     def test_group_normal(self):
         aux_item_ids = self.prepare_department()
@@ -273,20 +269,52 @@ class TestApi(unittest.TestCase):
                              "/departments/" + aux_item_ids["dep_id"] + "/groups",
                              "/groups",
                              name="string")
-        self.delete_doc("/departments/" + aux_item_ids["dep_id"])
-        self.delete_doc("/organizations/" + aux_item_ids["org_id"])
+        self.delete_item("/departments/" + aux_item_ids["dep_id"])
+        self.delete_item("/organizations/" + aux_item_ids["org_id"])
 
     def test_group_test_normal(self):
         aux_doc_ids = self.prepare_group()
-        self.assertTrue(aux_doc_ids["group_id"], "aux group must be created")
         self.t_simple_normal("/groups/" + aux_doc_ids["group_id"] + "/tests",
                              "/groups/" + aux_doc_ids["group_id"] + "/tests",
                              "/tests",
                              name="string",
                              info="string")
-        self.delete_doc("/groups/" + aux_doc_ids["group_id"])
-        self.delete_doc("/departments/" + aux_doc_ids["dep_id"])
-        self.delete_doc("/organizations/" + aux_doc_ids["org_id"])
+        self.delete_item("/groups/" + aux_doc_ids["group_id"])
+        self.delete_item("/departments/" + aux_doc_ids["dep_id"])
+        self.delete_item("/organizations/" + aux_doc_ids["org_id"])
+
+    def test_group_test_result_normal(self):
+        group_id = self.prepare_group()["group_id"]
+        person_id, person2_id = self.prepare_persons(2)
+        test_data = {"name" : "sample_test_name",
+                     "info" : "sample_test_info"}
+        test_id = self.post_item("/groups/%s/tests"%group_id, test_data)
+        test2_id = self.post_item("/groups/%s/tests"%group_id, {"name" : "test 2",
+                                                                "info" : "test 2 info"})
+        ref_result_data = {"person_id": person_id,
+                       "result_data": ["result 1", "result 2"]}
+        # post test result
+        result_id = self.post_item("/tests/%s/results"%test_id, ref_result_data)
+        # verify
+        list = self.get_item_list("/tests/results")
+        self.assertDictListEqual( [{"id":result_id}], list)
+        list = self.get_item_list("/tests/results?person_id=" + person_id)
+        self.assertDictListEqual([{"id": result_id}], list)
+        list = self.get_item_list("/tests/results?person_id=" + person2_id)
+        self.assertDictListEqual([], list)
+        list = self.get_item_list("/tests/results?test_id=" + test_id)
+        self.assertDictListEqual([{"id": result_id}], list)
+        list = self.get_item_list("/tests/results?test_id=" + test2_id)
+        self.assertDictListEqual([], list)
+        # verify test result info
+        result_data = self.get_item_data("/tests/results/" + result_id)
+        ref_result_data.update({"test_id": test_id})
+        self.assertDictEqual(ref_result_data, result_data)
+        # delete
+        self.delete_item("/tests/results/" + result_id)
+        # verify
+        list = self.get_item_list("/tests/results")
+        self.assertDictListEqual([], list)
 
     def test_find_person_limits(self):
         person_ids = self.prepare_persons(10)
