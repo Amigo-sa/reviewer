@@ -734,6 +734,23 @@ class TestApi(unittest.TestCase):
                                  role_type = "Student",
                                  description = "string")
 
+    def test_group_member_duplicate(self):
+        p_id = self.prepare_persons(1)[0]
+        g_id = self.prepare_group()["group_id"]
+        self.post_duplicate_item("/groups/%s/group_members"%g_id,
+                                 "/persons/%s/group_members" % p_id,
+                                 person_id=p_id)
+
+    def test_test_result_duplicate(self):
+        p_id = self.prepare_persons(1)[0]
+        g_id = self.prepare_group()["group_id"]
+        t_id = self.post_item("/groups/%s/tests"%g_id,{"name" : "sample_test", "info": "sample_info"})
+        self.post_duplicate_item("/tests/%s/results"%t_id,
+                                 "/tests/results",
+                                 person_id = p_id,
+                                 result_data = "string")
+
+
     def post_duplicate_item(self, url_post, url_get_list, **kwargs):
         data = self.generate_doc(kwargs.items())
         resp = requests.post(url=self.api_URL + url_post, json=data)
