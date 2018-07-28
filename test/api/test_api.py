@@ -714,6 +714,26 @@ class TestApi(unittest.TestCase):
                                  "/persons/soft_skills?person_id=" + person_id,
                                  ss_id = soft_skill_id)
 
+    def test_tutor_role_duplicate(self):
+        p_id = self.prepare_persons(1)[0]
+        d_id = self.prepare_department()["dep_id"]
+        self.post_duplicate_item("/general_roles",
+                                 "/persons/%s/general_roles"%p_id,
+                                 person_id = p_id,
+                                 department_id = d_id,
+                                 role_type = "Tutor",
+                                 description = "string")
+
+    def test_student_role_duplicate(self):
+        p_id = self.prepare_persons(1)[0]
+        d_id = self.prepare_department()["dep_id"]
+        self.post_duplicate_item("/general_roles",
+                                 "/persons/%s/general_roles"%p_id,
+                                 person_id = p_id,
+                                 department_id = d_id,
+                                 role_type = "Student",
+                                 description = "string")
+
     def post_duplicate_item(self, url_post, url_get_list, **kwargs):
         data = self.generate_doc(kwargs.items())
         resp = requests.post(url=self.api_URL + url_post, json=data)
