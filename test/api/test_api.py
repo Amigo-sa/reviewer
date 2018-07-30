@@ -838,17 +838,25 @@ class TestApi(unittest.TestCase):
                                 "department_id": dep_id,
                                 "role_type": "Tutor",
                                 "description": "Tutor_role_description"})
-        p_hs_id = self.prepare_hs()[0]
-        p_ss_id = self.prepare_ss()[0]
+        hard_skill_id = self.prepare_hs()[0]
+        soft_skill_id = self.prepare_ss()[0]
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name": "test_name",
                                                                    "info": "test_info"})
         gm_id = self.post_item("/groups/%s/group_members" % group_id,
                                {"person_id": p_id})
         # tests
+        # department
         self.pass_invalid_ref("/organizations/" + p_id + "/departments",
                                  name="string")
+        # group
         self.pass_invalid_ref("/departments/" + org_id + "/groups",
                                  name="string")
+        # person hard skill
+        self.pass_invalid_ref("/persons/%s/hard_skills"%p_id,
+                              hs_id=org_id)
+        self.pass_invalid_ref("/persons/%s/hard_skills" % group_id,
+                              hs_id=hard_skill_id)
+        #self.pass_invalid_ref("/persons/%s")
 
 
     def pass_invalid_ref(self, url_post, **kwargs):

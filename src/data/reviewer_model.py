@@ -108,8 +108,8 @@ class HardSkill(MongoModel):
 
 
 class PersonHS(MongoModel):
-    person_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    hs_id = fields.ReferenceField(HardSkill, on_delete=ReferenceField.CASCADE)
+    person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    hs_id = ValidatedReferenceField(HardSkill, on_delete=ReferenceField.CASCADE)
     level = fields.FloatField()
 
     class Meta:
