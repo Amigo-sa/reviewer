@@ -244,7 +244,6 @@ class Group(MongoModel):
 class GroupMember(MongoModel):
 
     # TODO лучше реализовать это в виде validator
-
     def custom_clean(self):
         if self.role_id:
             target_group = Group.objects.get({"_id": self.group_id.pk})
@@ -315,8 +314,8 @@ class GroupTest(MongoModel):
 
 
 class TestResult(MongoModel):
-    test_id = fields.ReferenceField(GroupTest, on_delete=ReferenceField.CASCADE)
-    person_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    test_id = ValidatedReferenceField(GroupTest, on_delete=ReferenceField.CASCADE)
+    person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     result_data = fields.ListField(field=fields.CharField())
 
     class Meta:
@@ -329,8 +328,8 @@ class TestResult(MongoModel):
 
 
 class SSReview(MongoModel):
-    reviewer_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    subject_id = fields.ReferenceField(PersonSS, on_delete=ReferenceField.CASCADE)
+    reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    subject_id = ValidatedReferenceField(PersonSS, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
     description = fields.CharField()
 
@@ -344,8 +343,8 @@ class SSReview(MongoModel):
 
 
 class HSReview(MongoModel):
-    reviewer_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    subject_id = fields.ReferenceField(PersonHS, on_delete=ReferenceField.CASCADE)
+    reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    subject_id = ValidatedReferenceField(PersonHS, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
     description = fields.CharField()
 
@@ -359,8 +358,8 @@ class HSReview(MongoModel):
 
 
 class SRReview(MongoModel):
-    reviewer_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    subject_id = fields.ReferenceField(StudentRole, on_delete=ReferenceField.CASCADE)
+    reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    subject_id = ValidatedReferenceField(StudentRole, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
     description = fields.CharField()
 
@@ -374,8 +373,8 @@ class SRReview(MongoModel):
 
 
 class TRReview(MongoModel):
-    reviewer_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    subject_id = fields.ReferenceField(TutorRole, on_delete=ReferenceField.CASCADE)
+    reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    subject_id = ValidatedReferenceField(TutorRole, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
     description = fields.CharField()
 
@@ -389,8 +388,8 @@ class TRReview(MongoModel):
 
 
 class GroupReview(MongoModel):
-    reviewer_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    subject_id = fields.ReferenceField(Group, on_delete=ReferenceField.CASCADE)
+    reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    subject_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
     description = fields.CharField()
 
@@ -404,8 +403,8 @@ class GroupReview(MongoModel):
 
 
 class GroupMemberReview(MongoModel):
-    reviewer_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    subject_id = fields.ReferenceField(GroupMember, on_delete=ReferenceField.CASCADE)
+    reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    subject_id = ValidatedReferenceField(GroupMember, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
     description = fields.CharField()
 
@@ -419,8 +418,8 @@ class GroupMemberReview(MongoModel):
 
 
 class GroupTestReview(MongoModel):
-    reviewer_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    subject_id = fields.ReferenceField(GroupTest, on_delete=ReferenceField.CASCADE)
+    reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    subject_id = ValidatedReferenceField(GroupTest, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
     description = fields.CharField()
 
@@ -434,7 +433,7 @@ class GroupTestReview(MongoModel):
 
 
 class Survey(MongoModel):
-    group_id = fields.ReferenceField(Group, on_delete=ReferenceField.CASCADE)
+    group_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE)
     description = fields.CharField()
     survey_data = fields.DictField()
 

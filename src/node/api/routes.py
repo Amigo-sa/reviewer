@@ -1161,7 +1161,9 @@ def list_group_tests(id):
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
-
+# TODO посмотри плиз, что у тебя с кодами ошибок вот в каком смысле:
+# вот в данном роуте NO_DATA вообще не возвращается,
+# а есть роуты, когда если id не найден, возвращается NO_DATA
 @bp.route("/tests/<string:id>/results", methods = ['POST'])
 def add_test_result(id):
     req = request.get_json()

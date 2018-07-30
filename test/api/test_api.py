@@ -765,8 +765,11 @@ class TestApi(unittest.TestCase):
                                 "department_id": dep_id,
                                 "role_type": "Tutor",
                                 "description": "Tutor_role_description"})
-        p_hs_id = self.prepare_hs()[0]
-        p_ss_id = self.prepare_ss()[0]
+        hs_id = self.prepare_hs()[0]
+        ss_id = self.prepare_ss()[0]
+        p_hs_id = self.post_item("/persons/%s/hard_skills" % p_id, {"hs_id": hs_id})
+        p_ss_id = self.post_item("/persons/%s/soft_skills" % p_id, {"ss_id": ss_id})
+
         g_test_id = self.post_item("/groups/%s/tests"%group_id, {"name" : "test_name",
                                                         "info" : "test_info"})
         gm_id = self.post_item("/groups/%s/group_members"%group_id,
@@ -844,6 +847,9 @@ class TestApi(unittest.TestCase):
         soft_skill_id = self.prepare_ss()[0]
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name": "test_name",
                                                                    "info": "test_info"})
+        p_hs_id = self.post_item("/persons/%s/hard_skills" % p_id, {"hs_id": hard_skill_id})
+        p_ss_id = self.post_item("/persons/%s/soft_skills" % p_id, {"ss_id": soft_skill_id})
+
         gm_id = self.post_item("/groups/%s/group_members" % group_id,
                                {"person_id": p_id})
         g_role_id = self.post_item("/group_roles", {"name" : "sample_role"})
@@ -857,13 +863,13 @@ class TestApi(unittest.TestCase):
         self.pass_invalid_ref("/groups/" + group_id + "/role_list",
                               role_list=[dep_id])
         # person hard skill
-        self.pass_invalid_ref("/persons/%s/hard_skills"%p_id,
+        self.pass_invalid_ref("/persons/%s/hard_skills"%p2_id,
                               hs_id=org_id)
         self.pass_invalid_ref("/persons/%s/hard_skills" % group_id,
                               hs_id=hard_skill_id)
 
         # person soft skill
-        self.pass_invalid_ref("/persons/%s/soft_skills" % p_id,
+        self.pass_invalid_ref("/persons/%s/soft_skills" % p2_id,
                               ss_id=org_id)
         self.pass_invalid_ref("/persons/%s/soft_skills" % org_id,
                               ss_id=soft_skill_id)
@@ -897,6 +903,7 @@ class TestApi(unittest.TestCase):
                              person_id = p_id)
         self.pass_invalid_ref("/groups/%s/group_members" % group_id,
                               person_id=soft_skill_id)
+        # TODO пропущен тест с неверным group_member_id, т.к. возвращает NO_DATA
         self.pass_invalid_ref("/group_members/%s/group_roles" % gm_id,
                               group_role_id=p_id)
 
@@ -904,6 +911,39 @@ class TestApi(unittest.TestCase):
         self.pass_invalid_ref("/groups/%s/tests"%p_id,
                               name= "string",
                               info= "string")
+
+        # test_result
+        self.pass_invalid_ref("/tests/%s/results"%org_id,
+                              person_id= p_id,
+                              result_data= "string")
+
+        self.pass_invalid_ref("/tests/%s/results" % g_test_id,
+                              person_id=dep_id,
+                              result_data="string")
+
+        # reviews
+
+        subjects = {"StudentRole": sr_id,
+                    "TutorRole": tr_id,
+                    "HardSkill": p_hs_id,
+                    "SoftSkill": p_ss_id,
+                    "Group": group_id,
+                    "GroupTest": g_test_id,
+                    "GroupMember": gm_id}
+        for subj_type, subj_id in subjects.items():
+            self.pass_invalid_ref   ("/reviews",
+                                     type=subj_type,
+                                     reviewer_id=hard_skill_id,
+                                     subject_id=subj_id,
+                                     value="skill_level",
+                                     description="string")
+            self.pass_invalid_ref("/reviews",
+                                  type=subj_type,
+                                  reviewer_id=p_id,
+                                  subject_id=g_role_id,
+                                  value="skill_level",
+                                  description="string")
+
 
     def pass_invalid_ref(self, url_post, **kwargs):
         data = self.generate_doc(kwargs.items())
@@ -918,7 +958,8 @@ class TestApi(unittest.TestCase):
         resp = requests.post(url=self.api_URL + url_post, json=data)
         self.assertEqual(200, resp.status_code, "post response status code must be 200")
         resp_json = resp.json()
-        self.assertEqual(ERR.OK, resp_json["result"], "post result must be ERR.OK")
+        self.assertEqual(ERR.OK, resp_json["result"], "post result must be ERR.OK in "  +
+                         url_post + " " + str(data))
         resp = requests.post(url=self.api_URL + url_post, json=data)
         self.assertEqual(200, resp.status_code, "post response status code must be 200")
         resp_json = resp.json()
