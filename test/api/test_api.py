@@ -852,6 +852,7 @@ class TestApi(unittest.TestCase):
         # group
         self.pass_invalid_ref("/departments/" + org_id + "/groups",
                               name="string")
+        """
         self.pass_invalid_ref("/groups/" + group_id + "/role_list",
                               role_list=[org_id])
         # person hard skill
@@ -889,6 +890,7 @@ class TestApi(unittest.TestCase):
                               department_id=dep_id,
                               role_type="Student",
                               description="string")
+        """
 
     def pass_invalid_ref(self, url_post, **kwargs):
         data = self.generate_doc(kwargs.items())
