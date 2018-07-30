@@ -133,8 +133,8 @@ class SoftSkill(MongoModel):
 
 
 class PersonSS(MongoModel):
-    person_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    ss_id = fields.ReferenceField(SoftSkill, on_delete=ReferenceField.CASCADE)
+    person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    ss_id = ValidatedReferenceField(SoftSkill, on_delete=ReferenceField.CASCADE)
     level = fields.FloatField()
 
     class Meta:
@@ -147,8 +147,8 @@ class PersonSS(MongoModel):
 
 
 class TutorRole(MongoModel):
-    person_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    department_id = fields.ReferenceField(Department, on_delete=ReferenceField.CASCADE)
+    person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    department_id = ValidatedReferenceField(Department, on_delete=ReferenceField.CASCADE)
     discipline = fields.CharField()
 
     class Meta:
@@ -162,8 +162,8 @@ class TutorRole(MongoModel):
 
 
 class StudentRole(MongoModel):
-    person_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    department_id = fields.ReferenceField(Department, on_delete=ReferenceField.CASCADE)
+    person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    department_id = ValidatedReferenceField(Department, on_delete=ReferenceField.CASCADE)
     description = fields.CharField()
 
     class Meta:

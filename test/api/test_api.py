@@ -856,6 +856,37 @@ class TestApi(unittest.TestCase):
                               hs_id=org_id)
         self.pass_invalid_ref("/persons/%s/hard_skills" % group_id,
                               hs_id=hard_skill_id)
+
+        # person soft skill
+        self.pass_invalid_ref("/persons/%s/soft_skills" % p_id,
+                              ss_id=org_id)
+        self.pass_invalid_ref("/persons/%s/soft_skills" % org_id,
+                              ss_id=soft_skill_id)
+
+        # tutor_role
+        self.pass_invalid_ref("/general_roles",
+                              person_id= p_id,
+                              department_id = org_id,
+                              role_type = "Tutor",
+                              description = "string")
+        self.pass_invalid_ref("/general_roles",
+                              person_id=hard_skill_id,
+                              department_id=dep_id,
+                              role_type="Tutor",
+                              description="string")
+
+        # student_role
+        self.pass_invalid_ref("/general_roles",
+                              person_id=p_id,
+                              department_id=org_id,
+                              role_type="Student",
+                              description="string")
+        self.pass_invalid_ref("/general_roles",
+                              person_id=hard_skill_id,
+                              department_id=dep_id,
+                              role_type="Student",
+                              description="string")
+
         #self.pass_invalid_ref("/persons/%s")
 
 
