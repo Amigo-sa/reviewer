@@ -35,6 +35,19 @@ connect(settings.mongo.conn_string + "/" + settings.mongo.db_name,
         alias="reviewer")
 
 
+class ValidatedReferenceField(fields.ReferenceField):
+    def contribute_to_class(self, cls, name):
+        super().contribute_to_class(cls, name)
+        old_clean = getattr(cls, "clean", None)
+
+        def new_clean(instance):
+            ref_field = getattr(instance, name, None)
+            if not self.related_model.objects.get({"_id": ref_field.pk}):
+                raise ValidationError("ссылка на _id несуществующего объекта")
+            old_clean(instance)
+
+        setattr(cls, "clean", new_clean)
+
 class Service(MongoModel):
     version = fields.CharField()
 
@@ -72,7 +85,7 @@ class Organization(MongoModel):
 
 class Department(MongoModel):
     name = fields.CharField()
-    organization_id = fields.ReferenceField(Organization, on_delete=ReferenceField.CASCADE)
+    organization_id = ValidatedReferenceField(Organization, on_delete=ReferenceField.CASCADE)
 
     class Meta:
         write_concern = WriteConcern(j=True)
@@ -81,9 +94,7 @@ class Department(MongoModel):
         indexes = [IndexModel([("name", pymongo.DESCENDING),
                                ("organization_id", pymongo.DESCENDING)],
                               unique=True)]
-    def clean(self):
-        if not Organization.objects.get({"_id": self.organization_id.pk}):
-            raise ValidationError("не существует организации с таким _id")
+
 
 class HardSkill(MongoModel):
     name = fields.CharField()
@@ -187,7 +198,7 @@ class GroupPermission(MongoModel):
 
 
 class Group(MongoModel):
-    department_id = fields.ReferenceField(Department, on_delete=ReferenceField.CASCADE)
+    department_id = ValidatedReferenceField(Department, on_delete=ReferenceField.CASCADE)
     name = fields.CharField()
     role_list = fields.ListField(field=
                                  fields.ReferenceField(GroupRole))
@@ -199,10 +210,6 @@ class Group(MongoModel):
         indexes = [IndexModel([("name", pymongo.DESCENDING),
                                ("department_id", pymongo.DESCENDING)],
                               unique=True)]
-
-    def clean(self):
-        if not Department.objects.get({"_id": self.department_id.pk}):
-            raise ValidationError("не существует департамента с таким _id")
 
 
 class GroupMember(MongoModel):
