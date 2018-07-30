@@ -844,13 +844,16 @@ class TestApi(unittest.TestCase):
                                                                    "info": "test_info"})
         gm_id = self.post_item("/groups/%s/group_members" % group_id,
                                {"person_id": p_id})
+        gr_id = self.post_item("/group_roles", {"name" : "sample_role"})
         # tests
         # department
         self.pass_invalid_ref("/organizations/" + p_id + "/departments",
                                  name="string")
         # group
+        self.pass_invalid_ref("/groups/" + group_id + "/role_list",
+                              role_list=[org_id])
         self.pass_invalid_ref("/departments/" + org_id + "/groups",
-                                 name="string")
+                              name="string")
         # person hard skill
         self.pass_invalid_ref("/persons/%s/hard_skills"%p_id,
                               hs_id=org_id)
@@ -886,6 +889,8 @@ class TestApi(unittest.TestCase):
                               department_id=dep_id,
                               role_type="Student",
                               description="string")
+
+        #
 
         #self.pass_invalid_ref("/persons/%s")
 

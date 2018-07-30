@@ -198,6 +198,12 @@ class GroupPermission(MongoModel):
 
 
 class Group(MongoModel):
+
+    def clean(self):
+        for role in self.role_list:
+            if not GroupRole.objects.get({"_id": role.pk}):
+                raise ValidationError("ссылка на _id несуществующего объекта")
+
     department_id = ValidatedReferenceField(Department, on_delete=ReferenceField.CASCADE)
     name = fields.CharField()
     role_list = fields.ListField(field=
