@@ -39,13 +39,40 @@ class ValidatedReferenceField(fields.ReferenceField):
     def contribute_to_class(self, cls, name):
         super().contribute_to_class(cls, name)
         old_clean = getattr(cls, "clean", None)
+        custom_clean = getattr(cls, "custom_clean", None)
 
         def new_clean(instance):
             ref_field = getattr(instance, name, None)
-            if ref_field is not None:
+            ref_class = getattr(cls, name, None)
+            if ref_field is None:
+                if not ref_class.blank:
+                    raise ValidationError("ссылка на _id несуществующего объекта")
+            else:
                 if not self.related_model.objects.get({"_id": ref_field.pk}):
                     raise ValidationError("ссылка на _id несуществующего объекта")
             old_clean(instance)
+            if custom_clean: custom_clean(instance)
+
+        setattr(cls, "clean", new_clean)
+
+class ValidatedReferenceList(fields.ListField):
+    def contribute_to_class(self, cls, name):
+        super().contribute_to_class(cls, name)
+        old_clean = getattr(cls, "clean", None)
+        custom_clean = getattr(cls, "custom_clean", None)
+
+        def new_clean(instance):
+            ref_list = getattr(instance, name, None)
+            gname = getattr(instance, "name", None)
+            if gname is not None : print(gname)
+            for item in ref_list:
+                if item is None:
+                    raise ValidationError("ссылка на _id несуществующего объекта")
+                else:
+                    if not self._field.related_model.objects.get({"_id": item.pk}):
+                        raise ValidationError("ссылка на _id несуществующего объекта")
+            old_clean(instance)
+            if custom_clean: custom_clean(instance)
 
         setattr(cls, "clean", new_clean)
 
@@ -200,17 +227,10 @@ class GroupPermission(MongoModel):
 
 class Group(MongoModel):
 
-    def clean(self):
-        if not Department.objects.get({"_id": self.department_id.pk}):
-            raise ValidationError("ссылка на _id несуществующего объекта")
-        for role in self.role_list:
-            if not GroupRole.objects.get({"_id": role.pk}):
-                raise ValidationError("ссылка на _id несуществующего объекта")
-
-    department_id = fields.ReferenceField(Department, on_delete=ReferenceField.CASCADE)
+    department_id = ValidatedReferenceField(Department, on_delete=ReferenceField.CASCADE)
     name = fields.CharField()
-    role_list = fields.ListField(field=
-                                 fields.ReferenceField(GroupRole))
+    role_list = ValidatedReferenceList(field=
+                                       fields.ReferenceField(GroupRole))
 
     class Meta:
         write_concern = WriteConcern(j=True)
@@ -223,15 +243,21 @@ class Group(MongoModel):
 
 class GroupMember(MongoModel):
 
-    def clean(self):
-        for perm in self.permissions:
-            if not GroupPermission.objects.get({"_id": perm.pk}):
-                raise ValidationError("ссылка на _id несуществующего объекта")
+    # TODO лучше реализовать это в виде validator
 
-    person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    group_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE)
+    def custom_clean(self):
+        if self.role_id:
+            target_group = Group.objects.get({"_id": self.group_id.pk})
+            if self.role_id not in target_group.role_list:
+                raise ValidationError("Группа %s не предусматривает роль %s" % (
+                    target_group.name, self.role_id.name))
+        if [x for n, x in enumerate(self.permissions) if x in self.permissions[:n]]:
+            raise ValidationError("Разрешения не должны повторяться")
+
+    person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE, required=True, blank=False)
+    group_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE, required=True, blank=False)
     role_id = ValidatedReferenceField(GroupRole, on_delete=ReferenceField.DO_NOTHING, blank=True)
-    permissions = fields.ListField(field=
+    permissions = ValidatedReferenceList(field=
                                    fields.ReferenceField(GroupPermission), blank=True)
     is_active = fields.BooleanField(required=True, default=True)
 
@@ -244,16 +270,6 @@ class GroupMember(MongoModel):
                                ("role_id", pymongo.DESCENDING)],
                               unique=True)]
 
-    # TODO лучше реализовать это в виде validator
-    def clean(self):
-        if self.role_id:
-            target_group = Group.objects.get({"_id": self.group_id.pk})
-            if self.role_id not in target_group.role_list:
-                raise ValidationError("Группа %s не предусматривает роль %s" % (
-                    target_group.name, self.role_id.name))
-        if [x for n, x in enumerate(self.permissions) if x in self.permissions[:n]]:
-            raise ValidationError("Разрешения не должны повторяться")
-
     def set_role(self, role: GroupRole):
         if not role:
             raise ValidationError("Необходимо указать id роли")
@@ -265,7 +281,8 @@ class GroupMember(MongoModel):
         self.save()
 
 class GroupTest(MongoModel):
-    group_id = fields.ReferenceField(Group, on_delete=ReferenceField.CASCADE)
+
+    group_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE, blank=False)
     name = fields.CharField()
     info = fields.CharField()
 
@@ -273,6 +290,28 @@ class GroupTest(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+
+    """крайне важный нюанс работы pymodm:
+    1. если объект создаётся как 
+                    group_test = GroupTest(Group(_id=id), name, info)
+                    group_test.save(),
+    то в group_id, проходящей валидацию, всегда есть id. Путь даже и ссылается на
+    несуществующий объект.
+    2. если объект создаётся как 
+                    group_test = GroupTest(id, name, info)
+                    group_test.save(),
+    _и_ при этом в методе clean идёт обращение к self.group_id, невалидный group_id
+    устанавливается в None, валидный остаётся без изменений.
+    Если метода нет обращения к self.group_id, всё происходит как в п.1 
+    
+    Справедливо для всех коллекций
+    
+    Выводы:
+    - если предусмотреть оба варианта и быть готовым как к None, так и к невалидному
+    id, получится надёжнее ценой одного лишнего обращения к базе с поиском по _id. 
+    - использовать свои классы для валидации, пока не дойдём до суровой оптимизации.
+    """
+
 
 
 class TestResult(MongoModel):

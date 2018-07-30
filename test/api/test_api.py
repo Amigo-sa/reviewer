@@ -823,7 +823,9 @@ class TestApi(unittest.TestCase):
 
     def test_post_invalid_reference(self):
         # setup
-        p_id = self.prepare_persons(1)[0]
+        persons_ids = self.prepare_persons(2)
+        p_id = persons_ids[0]
+        p2_id = persons_ids[1]
         fac_ids = self.prepare_group()
         org_id = fac_ids["org_id"]
         dep_id = fac_ids["dep_id"]
@@ -844,7 +846,7 @@ class TestApi(unittest.TestCase):
                                                                    "info": "test_info"})
         gm_id = self.post_item("/groups/%s/group_members" % group_id,
                                {"person_id": p_id})
-        gr_id = self.post_item("/group_roles", {"name" : "sample_role"})
+        g_role_id = self.post_item("/group_roles", {"name" : "sample_role"})
         # tests
         # department
         self.pass_invalid_ref("/organizations/" + p_id + "/departments",
@@ -852,9 +854,8 @@ class TestApi(unittest.TestCase):
         # group
         self.pass_invalid_ref("/departments/" + org_id + "/groups",
                               name="string")
-        """
         self.pass_invalid_ref("/groups/" + group_id + "/role_list",
-                              role_list=[org_id])
+                              role_list=[dep_id])
         # person hard skill
         self.pass_invalid_ref("/persons/%s/hard_skills"%p_id,
                               hs_id=org_id)
@@ -890,7 +891,19 @@ class TestApi(unittest.TestCase):
                               department_id=dep_id,
                               role_type="Student",
                               description="string")
-        """
+
+        # group_member
+        self.pass_invalid_ref("/groups/%s/group_members"%hard_skill_id,
+                             person_id = p_id)
+        self.pass_invalid_ref("/groups/%s/group_members" % group_id,
+                              person_id=soft_skill_id)
+        self.pass_invalid_ref("/group_members/%s/group_roles" % gm_id,
+                              group_role_id=p_id)
+
+        # group_test
+        self.pass_invalid_ref("/groups/%s/tests"%p_id,
+                              name= "string",
+                              info= "string")
 
     def pass_invalid_ref(self, url_post, **kwargs):
         data = self.generate_doc(kwargs.items())
