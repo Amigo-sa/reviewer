@@ -443,4 +443,21 @@ class Survey(MongoModel):
         final = True
 
 
+class AuthUsers(MongoModel):
+    phone_no = fields.CharField()
+    auth_code = fields.CharField()
+    time_auth_code_send = fields.TimestampField()
+    is_approved = fields.BooleanField()
+    password = fields.CharField()
+    session = fields.CharField()
+    person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+        indexes = [IndexModel([("phone_no", pymongo.DESCENDING)],
+                              unique=True)]
+
+
 init_model()
