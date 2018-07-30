@@ -42,8 +42,9 @@ class ValidatedReferenceField(fields.ReferenceField):
 
         def new_clean(instance):
             ref_field = getattr(instance, name, None)
-            if not self.related_model.objects.get({"_id": ref_field.pk}):
-                raise ValidationError("ссылка на _id несуществующего объекта")
+            if ref_field is not None:
+                if not self.related_model.objects.get({"_id": ref_field.pk}):
+                    raise ValidationError("ссылка на _id несуществующего объекта")
             old_clean(instance)
 
         setattr(cls, "clean", new_clean)
@@ -219,9 +220,15 @@ class Group(MongoModel):
 
 
 class GroupMember(MongoModel):
-    person_id = fields.ReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    group_id = fields.ReferenceField(Group, on_delete=ReferenceField.CASCADE)
-    role_id = fields.ReferenceField(GroupRole, on_delete=ReferenceField.DO_NOTHING, blank=True)
+
+    def clean(self):
+        for perm in self.permissions:
+            if not GroupPermission.objects.get({"_id": perm.pk}):
+                raise ValidationError("ссылка на _id несуществующего объекта")
+
+    person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    group_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE)
+    role_id = ValidatedReferenceField(GroupRole, on_delete=ReferenceField.DO_NOTHING, blank=True)
     permissions = fields.ListField(field=
                                    fields.ReferenceField(GroupPermission), blank=True)
     is_active = fields.BooleanField(required=True, default=True)

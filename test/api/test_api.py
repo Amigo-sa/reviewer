@@ -850,10 +850,10 @@ class TestApi(unittest.TestCase):
         self.pass_invalid_ref("/organizations/" + p_id + "/departments",
                                  name="string")
         # group
-        self.pass_invalid_ref("/groups/" + group_id + "/role_list",
-                              role_list=[org_id])
         self.pass_invalid_ref("/departments/" + org_id + "/groups",
                               name="string")
+        self.pass_invalid_ref("/groups/" + group_id + "/role_list",
+                              role_list=[org_id])
         # person hard skill
         self.pass_invalid_ref("/persons/%s/hard_skills"%p_id,
                               hs_id=org_id)
@@ -890,17 +890,13 @@ class TestApi(unittest.TestCase):
                               role_type="Student",
                               description="string")
 
-        #
-
-        #self.pass_invalid_ref("/persons/%s")
-
-
     def pass_invalid_ref(self, url_post, **kwargs):
         data = self.generate_doc(kwargs.items())
         resp = requests.post(url=self.api_URL + url_post, json=data)
         self.assertEqual(200, resp.status_code, "post response status code must be 200")
         resp_json = resp.json()
-        self.assertEqual(ERR.DB, resp_json["result"], "post result must be ERR.DB")
+        self.assertEqual(ERR.DB, resp_json["result"], "post result must be ERR.DB in " +
+                         url_post + " " + str(data))
 
     def post_duplicate_item(self, url_post, url_get_list, **kwargs):
         data = self.generate_doc(kwargs.items())
