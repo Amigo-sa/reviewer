@@ -149,7 +149,7 @@ class TestValidation(unittest.TestCase):
         ref_gm_data.update({"permissions" : [read_permission.pk, write_permission.pk]})
         self.assertDictEqual(ref_gm_data, gm_data)
         # try add invalid role
-        """
+
         inv_role = GroupRole("god-emperor")
         inv_role.save()
         inv_group_member = GroupMember(person, group, None, [])
@@ -160,7 +160,7 @@ class TestValidation(unittest.TestCase):
         with self.assertRaises(ValidationError):
             group_member.permissions.append(read_permission)
             group_member.save()
-        """
+
 
 
 

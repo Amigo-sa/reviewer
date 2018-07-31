@@ -39,7 +39,6 @@ class ValidatedReferenceField(fields.ReferenceField):
     def contribute_to_class(self, cls, name):
         super().contribute_to_class(cls, name)
         old_clean = getattr(cls, "clean", None)
-        custom_clean = getattr(cls, "custom_clean", None)
 
         def new_clean(instance):
             print("Running RefField new_clean in " + str(cls))
@@ -52,7 +51,6 @@ class ValidatedReferenceField(fields.ReferenceField):
                 if not self.related_model.objects.get({"_id": ref_field.pk}):
                     raise ValidationError("ссылка на _id несуществующего объекта")
             old_clean(instance)
-            if custom_clean: custom_clean(instance)
 
         setattr(cls, "clean", new_clean)
 
@@ -60,13 +58,11 @@ class ValidatedReferenceList(fields.ListField):
     def contribute_to_class(self, cls, name):
         super().contribute_to_class(cls, name)
         old_clean = getattr(cls, "clean", None)
-        custom_clean = getattr(cls, "custom_clean", None)
 
         def new_clean(instance):
             print("Running RefList new_clean in " + str(cls))
             ref_list = getattr(instance, name, None)
             gname = getattr(instance, "name", None)
-            if gname is not None : print(gname)
             for item in ref_list:
                 if item is None:
                     raise ValidationError("ссылка на _id несуществующего объекта")
@@ -74,7 +70,6 @@ class ValidatedReferenceList(fields.ListField):
                     if not self._field.related_model.objects.get({"_id": item.pk}):
                         raise ValidationError("ссылка на _id несуществующего объекта")
             old_clean(instance)
-            if custom_clean: custom_clean(instance)
 
         setattr(cls, "clean", new_clean)
 
@@ -246,8 +241,9 @@ class Group(MongoModel):
 class GroupMember(MongoModel):
 
     # TODO лучше реализовать это в виде validator
-    def custom_clean(self):
-        print("running custom_clean in GroupMember")
+    # TODO реализовать в виде списка, иначе несовместимо с питоном <3.6
+    def clean(self):
+        print("running def clean in GroupMember")
         if self.role_id:
             target_group = Group.objects.get({"_id": self.group_id.pk})
             if self.role_id not in target_group.role_list:
