@@ -42,6 +42,7 @@ class ValidatedReferenceField(fields.ReferenceField):
         custom_clean = getattr(cls, "custom_clean", None)
 
         def new_clean(instance):
+            print("Running RefField new_clean in " + str(cls))
             ref_field = getattr(instance, name, None)
             ref_class = getattr(cls, name, None)
             if ref_field is None:
@@ -62,6 +63,7 @@ class ValidatedReferenceList(fields.ListField):
         custom_clean = getattr(cls, "custom_clean", None)
 
         def new_clean(instance):
+            print("Running RefList new_clean in " + str(cls))
             ref_list = getattr(instance, name, None)
             gname = getattr(instance, "name", None)
             if gname is not None : print(gname)
@@ -245,6 +247,7 @@ class GroupMember(MongoModel):
 
     # TODO лучше реализовать это в виде validator
     def custom_clean(self):
+        print("running custom_clean in GroupMember")
         if self.role_id:
             target_group = Group.objects.get({"_id": self.group_id.pk})
             if self.role_id not in target_group.role_list:
@@ -443,7 +446,7 @@ class Survey(MongoModel):
         final = True
 
 
-class AuthUsers(MongoModel):
+class AuthInfo(MongoModel):
     phone_no = fields.CharField()
     auth_code = fields.CharField()
     time_auth_code_send = fields.TimestampField()
