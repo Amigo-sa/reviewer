@@ -5,9 +5,10 @@ from threading import Thread
 from time import sleep
 from flask import request, jsonify
 import node.settings.errors as ERR
-
+import api_helper_methods as hm
 import requests
 from flask import Flask, Blueprint
+import datetime
 
 from node.node_server import start_server
 from node.settings import constants
@@ -107,7 +108,7 @@ class TestAuth(unittest.TestCase):
         pass
 
     def setUp(self):
-        pass
+        requests.post(self.api_URL + "/wipe")
 
     def test_send_sms(self):
         resp = requests.post(mock_url+"/send_sms",
@@ -116,6 +117,21 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(ERR.OK, resp.json()["result"])
         pass
 
+    def test_registration_invalid_person_phone(self):
+        persons = hm.prepare_two_persons(self, self.api_URL)
+
+        resp = requests.post(self.api_URL + "/register", json={
+            "phone_no" : persons[0]["phone_no"],
+            "person_id": persons[1]["id"]
+        })
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.DB, resp.json()["result"])
+
+
+
+        # test invalid person and/or phone
+        # test timeout did not expire
+        # test normal
 
 if __name__ == "__main__":
     unittest.main(verbosity = 1)

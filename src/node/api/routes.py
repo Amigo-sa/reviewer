@@ -57,15 +57,26 @@ def register_user():
     try:
         phone_no = req["phone_no"]
         person_id = req["person_id"]
+        person = Person(_id= person_id)
+        person.refresh_from_db()
+        if person.phone_no == phone_no:
 
+
+
+
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.DB}
         # check phone
         # generate auth code
         # store auth code
         # check timeout
         # contact smsc
         # generate session id
+
     except:
-        return jsonify({"result": ERR.INPUT}), 200
+        result = {"result": ERR.INPUT}
+    return jsonify(result), 200
 
 
 @bp.route("/confirm_registration", methods= ["POST"])
