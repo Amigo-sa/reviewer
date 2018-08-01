@@ -62,7 +62,6 @@ class ValidatedReferenceList(fields.ListField):
         def new_clean(instance):
             print("Running RefList new_clean in " + str(cls))
             ref_list = getattr(instance, name, None)
-            gname = getattr(instance, "name", None)
             for item in ref_list:
                 if item is None:
                     raise ValidationError("ссылка на _id несуществующего объекта")

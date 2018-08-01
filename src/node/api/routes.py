@@ -51,6 +51,38 @@ if __debug__:
         result = {"result": ERR.OK}
         return jsonify(result), 200
 
+@bp.route("/register", methods= ["POST"])
+def register_user():
+    req = request.get_json()
+    try:
+        phone_no = req["phone_no"]
+        person_id = req["person_id"]
+
+        # check phone
+        # generate auth code
+        # store auth code
+        # check timeout
+        # contact smsc
+        # generate session id
+    except:
+        return jsonify({"result": ERR.INPUT}), 200
+
+
+@bp.route("/confirm_registration", methods= ["POST"])
+def confirm_registration():
+    req = request.get_json()
+    try:
+        auth_code = req["auth_code"]
+        session_id = req["session_id"]
+        # check code and session
+        # approve phone_no
+        result = {"result": ERR.OK}
+    except:
+        result = {"result": ERR.INPUT}
+
+    return jsonify(result), 200
+
+
 @bp.route("/organizations", methods = ['POST'])
 def add_organization():
     req = request.get_json()
