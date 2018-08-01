@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 from bson import ObjectId
 import node.settings.errors as ERR
+from node.settings.constants import mock_smsc_url
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
+import datetime
+import random
+import requests
 
 bp = Blueprint('routes', __name__)
 
@@ -51,6 +55,7 @@ if __debug__:
         result = {"result": ERR.OK}
         return jsonify(result), 200
 
+# TODO добавить в док
 @bp.route("/register", methods= ["POST"])
 def register_user():
     req = request.get_json()
@@ -60,11 +65,23 @@ def register_user():
         person = Person(_id= person_id)
         person.refresh_from_db()
         if person.phone_no == phone_no:
-
-
-
-
-            result = {"result": ERR.OK}
+            auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
+            infoCount = auth_info._collection.count_documents({})
+            if infoCount:
+                print(infoCount)
+            else:
+                new_auth_info = AuthInfo()
+                new_auth_info.phone_no = phone_no
+                new_auth_info.person_id = person_id
+                new_auth_info.last_send = datetime.datetime.now()
+                code = gen_sms_code()
+                session_id = gen_session_id()
+                new_auth_info.session = session_id
+                new_auth_info.auth_code = code
+                new_auth_info.save()
+                send_sms(phone_no, code)
+            result = {"result": ERR.OK,
+                      "session" : session_id}
         else:
             result = {"result": ERR.DB}
         # check phone
@@ -74,20 +91,47 @@ def register_user():
         # contact smsc
         # generate session id
 
-    except:
+    except Exception as e:
         result = {"result": ERR.INPUT}
+        print(str(e))
     return jsonify(result), 200
 
+def gen_sms_code():
+    code = random.randint(0,9999)
+    codestr = "{0:04}".format(code)
+    print(codestr)
+    return codestr
+#TODO генерация сделана намеренно ущербной, чтобы в будущем устроить это всё по-человечески безопасно
+def gen_session_id():
+    code = random.randint(0,99999999)
+    codestr = "{0:08}".format(code)
+    print(codestr)
+    return codestr
 
+def send_sms(phone_no, message):
+    requests.post(mock_smsc_url + "/send_sms",json={
+        "auth_code" : message,
+        "phone_no" : phone_no
+    })
+
+
+# TODO добавить в док
 @bp.route("/confirm_registration", methods= ["POST"])
 def confirm_registration():
     req = request.get_json()
     try:
         auth_code = req["auth_code"]
         session_id = req["session_id"]
-        # check code and session
-        # approve phone_no
-        result = {"result": ERR.OK}
+        auth_info = AuthInfo.objects.get({"session": session_id})
+        if auth_info.auth_code == auth_code:
+            result = {"result": ERR.OK}
+            auth_info.is_approved = True
+            auth_info.auth_code = None
+            auth_info.session = None
+            auth_info.save()
+            print("user registered")
+        else:
+            result = {"result": ERR.INPUT}
     except:
         result = {"result": ERR.INPUT}
 

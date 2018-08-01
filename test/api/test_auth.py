@@ -17,16 +17,23 @@ mock_bp = Blueprint("mock_routes", __name__)
 mock_port = 5010
 mock_url = "http://127.0.0.1:" + str(mock_port)
 
+class Session():
+    def __init__(self):
+        self.id = None
+        self.received_code = None
+
+cur_session = Session()
+
 @mock_bp.route("/send_sms", methods= ["POST"])
 def mock_send_sms():
     req = request.get_json()
     try:
         auth_code = req["auth_code"]
-        session_id = req["session_id"]
-        resp = requests.post(constants.core_server_url + "/confirm_registration",
-                      json={"auth_code" : auth_code,
-                            "session_id" : session_id})
-        result = {"result": resp.json()["result"]}
+        phone_no = req["phone_no"]
+        print("sending sms to " + phone_no)
+        cur_session.received_code = auth_code
+        #result = {"result": resp.json()["result"]}
+        result = {"result" : ERR.OK}
     except KeyError:
         result = {"result" : ERR.INPUT}
     return jsonify(result), 200
@@ -109,13 +116,8 @@ class TestAuth(unittest.TestCase):
 
     def setUp(self):
         requests.post(self.api_URL + "/wipe")
-
-    def test_send_sms(self):
-        resp = requests.post(mock_url+"/send_sms",
-                      json= {"auth_code" : "code1",
-                             "session_id" : "id1"})
-        self.assertEqual(ERR.OK, resp.json()["result"])
-        pass
+        cur_session.id = None
+        cur_session.received_code = None
 
     def test_registration_invalid_person_phone(self):
         persons = hm.prepare_two_persons(self, self.api_URL)
@@ -127,6 +129,33 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.DB, resp.json()["result"])
 
+    def test_registration_normal(self):
+        # prepare persons
+        persons = hm.prepare_two_persons(self, self.api_URL)
+        # register previously unregistered person
+        resp = requests.post(self.api_URL + "/register", json={
+            "phone_no": persons[0]["phone_no"],
+            "person_id": persons[0]["id"]
+        })
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.OK, resp.json()["result"])
+        cur_session.id = resp.json()["session"]
+        # we get session id as a response for our /register request
+        print("Session ID is " + cur_session.id)
+        print("Waiting for SMS...")
+        # the send_sms route imitates:
+        # 1. sms sending by smsc;
+        # 2. sms reception by user and input the code in a form.
+        # when that route is requested, it stores auth_code in
+        # cur_session.received_code
+        while not (cur_session.id and cur_session.received_code):
+            pass
+        print("Got SMS with code " + cur_session.received_code)
+        resp = requests.post(constants.core_server_url + "/confirm_registration",
+                             json={"auth_code": cur_session.received_code,
+                                   "session_id": cur_session.id})
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.OK, resp.json()["result"])
 
 
         # test invalid person and/or phone
