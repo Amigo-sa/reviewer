@@ -32,7 +32,6 @@ def mock_send_sms():
         phone_no = req["phone_no"]
         print("sending sms to " + phone_no)
         cur_session.received_code = auth_code
-        #result = {"result": resp.json()["result"]}
         result = {"result" : ERR.OK}
     except KeyError:
         result = {"result" : ERR.INPUT}
@@ -119,27 +118,17 @@ class TestAuth(unittest.TestCase):
         cur_session.id = None
         cur_session.received_code = None
 
-    def test_registration_invalid_person_phone(self):
-        persons = hm.prepare_two_persons(self, self.api_URL)
-
-        resp = requests.post(self.api_URL + "/register", json={
-            "phone_no" : persons[0]["phone_no"],
-            "person_id": persons[1]["id"]
-        })
-        self.assertEqual(200, resp.status_code)
-        self.assertEqual(ERR.DB, resp.json()["result"])
-
     def test_registration_normal(self):
         # prepare persons
         persons = hm.prepare_two_persons(self, self.api_URL)
         # register previously unregistered person
-        resp = requests.post(self.api_URL + "/register", json={
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={
             "phone_no": persons[0]["phone_no"],
             "person_id": persons[0]["id"]
         })
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.OK, resp.json()["result"])
-        cur_session.id = resp.json()["session"]
+        cur_session.id = resp.json()["session_id"]
         # we get session id as a response for our /register request
         print("Session ID is " + cur_session.id)
         print("Waiting for SMS...")
@@ -151,7 +140,7 @@ class TestAuth(unittest.TestCase):
         while not (cur_session.id and cur_session.received_code):
             pass
         print("Got SMS with code " + cur_session.received_code)
-        resp = requests.post(constants.core_server_url + "/confirm_registration",
+        resp = requests.post(constants.core_server_url + "/finish_phone_confirmation",
                              json={"auth_code": cur_session.received_code,
                                    "session_id": cur_session.id})
         self.assertEqual(200, resp.status_code)

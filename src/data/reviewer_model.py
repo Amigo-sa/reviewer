@@ -444,10 +444,10 @@ class Survey(MongoModel):
 class AuthInfo(MongoModel):
     phone_no = fields.CharField()
     auth_code = fields.CharField(blank=True)
-    last_send = fields.TimestampField()
+    time_last_send = fields.TimestampField()
     is_approved = fields.BooleanField(default=False)
     password = fields.CharField()
-    session = fields.CharField(blank=True)
+    session_id = fields.CharField(blank=True)
     person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
 
     class Meta:

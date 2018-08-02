@@ -56,34 +56,39 @@ if __debug__:
         return jsonify(result), 200
 
 # TODO добавить в док
-@bp.route("/register", methods= ["POST"])
+@bp.route("/confirm_phone_no", methods= ["POST"])
 def register_user():
     req = request.get_json()
     try:
         phone_no = req["phone_no"]
-        person_id = req["person_id"]
-        person = Person(_id= person_id)
+        person = Person.objects.get({"phone_no": phone_no})
         person.refresh_from_db()
-        if person.phone_no == phone_no:
-            auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
-            infoCount = auth_info._collection.count_documents({})
-            if infoCount:
-                print(infoCount)
-            else:
-                new_auth_info = AuthInfo()
-                new_auth_info.phone_no = phone_no
-                new_auth_info.person_id = person_id
-                new_auth_info.last_send = datetime.datetime.now()
-                code = gen_sms_code()
-                session_id = gen_session_id()
-                new_auth_info.session = session_id
-                new_auth_info.auth_code = code
-                new_auth_info.save()
-                send_sms(phone_no, code)
+        auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
+        infoCount = auth_info._collection.count_documents({})
+        if infoCount:
+            print(infoCount)
+            old_auth_info = auth_info.first()
+            old_auth_info.last_send = datetime.datetime.now()
+            code = gen_sms_code()
+            session_id = gen_session_id()
+            old_auth_info.session_id = session_id
+            old_auth_info.auth_code = code
+            old_auth_info.save()
             result = {"result": ERR.OK,
-                      "session" : session_id}
+                      "session_id": session_id}
         else:
-            result = {"result": ERR.DB}
+            new_auth_info = AuthInfo()
+            new_auth_info.phone_no = phone_no
+            new_auth_info.person_id = person.pk
+            new_auth_info.last_send = datetime.datetime.now()
+            code = gen_sms_code()
+            session_id = gen_session_id()
+            new_auth_info.session_id = session_id
+            new_auth_info.auth_code = code
+            new_auth_info.save()
+            send_sms(phone_no, code)
+            result = {"result": ERR.OK,
+                  "session_id" : session_id}
         # check phone
         # generate auth code
         # store auth code
@@ -91,8 +96,11 @@ def register_user():
         # contact smsc
         # generate session id
 
-    except Exception as e:
+    except KeyError as e:
         result = {"result": ERR.INPUT}
+        print(str(e))
+    except Exception as e:
+        result = {"result": ERR.DB}
         print(str(e))
     return jsonify(result), 200
 
@@ -116,13 +124,13 @@ def send_sms(phone_no, message):
 
 
 # TODO добавить в док
-@bp.route("/confirm_registration", methods= ["POST"])
+@bp.route("/finish_phone_confirmation", methods= ["POST"])
 def confirm_registration():
     req = request.get_json()
     try:
         auth_code = req["auth_code"]
         session_id = req["session_id"]
-        auth_info = AuthInfo.objects.get({"session": session_id})
+        auth_info = AuthInfo.objects.get({"session_id": session_id})
         if auth_info.auth_code == auth_code:
             result = {"result": ERR.OK}
             auth_info.is_approved = True
@@ -132,8 +140,12 @@ def confirm_registration():
             print("user registered")
         else:
             result = {"result": ERR.INPUT}
-    except:
+    except KeyError as e:
         result = {"result": ERR.INPUT}
+        print(str(e))
+    except Exception as e:
+        result = {"result": ERR.DB}
+        print(str(e))
 
     return jsonify(result), 200
 
