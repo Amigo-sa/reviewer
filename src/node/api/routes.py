@@ -7,6 +7,7 @@ from data.reviewer_model import *
 import datetime
 import random
 import requests
+import hashlib
 
 bp = Blueprint('routes', __name__)
 
@@ -32,7 +33,6 @@ if __debug__:
 
     from pymodm.connection import _get_db
 
-
     @bp.route("/wipe", methods=['POST'])
     def wipe():
         try:
@@ -56,17 +56,75 @@ if __debug__:
         return jsonify(result), 200
 
 # TODO добавить в док
-@bp.route("/confirm_phone_no", methods= ["POST"])
-def register_user():
+@bp.route("/user_login", methods= ["POST"])
+def user_login():
     req = request.get_json()
     try:
         phone_no = req["phone_no"]
-        person = Person.objects.get({"phone_no": phone_no})
-        person.refresh_from_db()
+        password = req["password"]
+        auth_info = AuthInfo.objects.get({"phone_no": phone_no})
+        pass_hash = hash_password(password)
+        if auth_info.password == pass_hash:
+            session_id = gen_session_id()
+            auth_info.session_id = session_id
+            auth_info.save()
+            result = {"result": ERR.OK,
+                  "session_id": session_id}
+        else:
+            result = {"result": ERR.AUTH}
+    except KeyError as e:
+        result = {"result": ERR.INPUT}
+        print(str(e))
+    except Exception as e:
+        result = {"result": ERR.AUTH}
+        print(str(e))
+    return jsonify(result), 200
+
+# TODO добавить в док
+@bp.route("/create_user", methods= ["POST"])
+def create_user():
+    req = request.get_json()
+    try:
+        phone_no = req["phone_no"]
+        password = req["password"]
         auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
-        infoCount = auth_info._collection.count_documents({})
-        if infoCount:
-            print(infoCount)
+        rec_count = auth_info._collection.count_documents({})
+        # if user exists, abort. User must login instead (or reset password)
+        if rec_count:
+            result = {"result": ERR.AUTH}
+        else:
+            auth_info = AuthInfo()
+            auth_info.phone_no = phone_no
+
+
+        auth_info = AuthInfo.objects.get({"phone_no": phone_no})
+        pass_hash = hash_password(password)
+        if auth_info.password == pass_hash:
+            session_id = gen_session_id()
+            auth_info.session_id = session_id
+            auth_info.save()
+            result = {"result": ERR.OK,
+                  "session_id": session_id}
+        else:
+            result = {"result": ERR.AUTH}
+    except KeyError as e:
+        result = {"result": ERR.INPUT}
+        print(str(e))
+    except Exception as e:
+        result = {"result": ERR.AUTH}
+        print(str(e))
+    return jsonify(result), 200
+
+# TODO добавить в док
+@bp.route("/confirm_phone_no", methods= ["POST"])
+def confirm_phone():
+    req = request.get_json()
+    try:
+        phone_no = req["phone_no"]
+        auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
+        rec_count = auth_info._collection.count_documents({})
+        if rec_count:
+            print(rec_count)
             old_auth_info = auth_info.first()
             old_auth_info.last_send = datetime.datetime.now()
             code = gen_sms_code()
@@ -79,7 +137,6 @@ def register_user():
         else:
             new_auth_info = AuthInfo()
             new_auth_info.phone_no = phone_no
-            new_auth_info.person_id = person.pk
             new_auth_info.last_send = datetime.datetime.now()
             code = gen_sms_code()
             session_id = gen_session_id()
@@ -115,6 +172,11 @@ def gen_session_id():
     codestr = "{0:08}".format(code)
     print(codestr)
     return codestr
+def hash_password(password):
+    pass_hash = hashlib.sha256(b'Hello World')
+    hash_hex = pass_hash.hexdigest()
+    print(hash_hex)
+    return hash_hex
 
 def send_sms(phone_no, message):
     requests.post(mock_smsc_url + "/send_sms",json={
@@ -125,7 +187,7 @@ def send_sms(phone_no, message):
 
 # TODO добавить в док
 @bp.route("/finish_phone_confirmation", methods= ["POST"])
-def confirm_registration():
+def finish_phone_confirmation():
     req = request.get_json()
     try:
         auth_code = req["auth_code"]

@@ -12,10 +12,11 @@ from time import sleep
 import re
 #from src.data.reviewer_model import *
 
+node_port = 5002
 
 class NodeServer(Thread):
     def run(self):
-        start_server()
+        start_server(node_port)
 
 node_server_thread = NodeServer()
 
@@ -25,7 +26,7 @@ class TestApi(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Загрузка адреса сервера
-        cls.api_URL = constants.core_server_url
+        cls.api_URL =  "http://127.0.0.1:"+str(node_port)
         cls.gen_doc_ctr = 0
         print("Server starting...")
         node_server_thread.start()

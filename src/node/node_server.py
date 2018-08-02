@@ -9,13 +9,13 @@ from flask import Flask
 from node.api.routes import bp
 from pymodm.connection import connect
 
-def start_server():
+def start_server(port):
     app = Flask(__name__)
     app.register_blueprint(bp)
-    app.run()
+    app.run(port=port)
 
 if __name__ == "__main__":
-    start_server()
+    start_server(constants.node_server_port)
 
 def is_db_exists():
     rev_client = pymongo.MongoClient(constants.mongo_db)

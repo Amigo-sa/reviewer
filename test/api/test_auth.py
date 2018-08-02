@@ -16,6 +16,7 @@ from node.settings import constants
 mock_bp = Blueprint("mock_routes", __name__)
 mock_port = 5010
 mock_url = "http://127.0.0.1:" + str(mock_port)
+node_port = 5002
 
 class Session():
     def __init__(self):
@@ -58,7 +59,7 @@ def start_mock_server():
 
 class NodeServer(Thread):
     def run(self):
-        start_server()
+        start_server(node_port)
 
 class SmsMockServer(Thread):
     def run(self):
@@ -72,7 +73,7 @@ class TestAuth(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Загрузка адреса сервера
-        cls.api_URL = constants.core_server_url
+        cls.api_URL = "http://127.0.0.1:"+str(node_port)
         cls.gen_doc_ctr = 0
         print("Servers starting...")
         node_server_thread.start()
@@ -119,37 +120,23 @@ class TestAuth(unittest.TestCase):
         cur_session.received_code = None
 
     def test_registration_normal(self):
-        # prepare persons
-        persons = hm.prepare_two_persons(self, self.api_URL)
-        # register previously unregistered person
+        phone_no = "79803322212"
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
-            "phone_no": persons[0]["phone_no"],
-            "person_id": persons[0]["id"]
+            "phone_no": phone_no,
         })
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.OK, resp.json()["result"])
         cur_session.id = resp.json()["session_id"]
-        # we get session id as a response for our /register request
         print("Session ID is " + cur_session.id)
         print("Waiting for SMS...")
-        # the send_sms route imitates:
-        # 1. sms sending by smsc;
-        # 2. sms reception by user and input the code in a form.
-        # when that route is requested, it stores auth_code in
-        # cur_session.received_code
         while not (cur_session.id and cur_session.received_code):
             pass
         print("Got SMS with code " + cur_session.received_code)
-        resp = requests.post(constants.core_server_url + "/finish_phone_confirmation",
+        resp = requests.post(self.api_URL + "/finish_phone_confirmation",
                              json={"auth_code": cur_session.received_code,
                                    "session_id": cur_session.id})
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.OK, resp.json()["result"])
-
-
-        # test invalid person and/or phone
-        # test timeout did not expire
-        # test normal
 
 if __name__ == "__main__":
     unittest.main(verbosity = 1)
