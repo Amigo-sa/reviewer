@@ -446,7 +446,7 @@ class AuthInfo(MongoModel):
     auth_code = fields.CharField(blank=True)
     time_last_send = fields.TimestampField()
     is_approved = fields.BooleanField(default=False)
-    password = fields.CharField()
+    password = fields.CharField(blank=True)
     session_id = fields.CharField(blank=True)
     person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE, blank=True)
 

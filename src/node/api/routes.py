@@ -126,32 +126,21 @@ def confirm_phone():
         if rec_count:
             print(rec_count)
             old_auth_info = auth_info.first()
-            old_auth_info.last_send = datetime.datetime.now()
-            code = gen_sms_code()
-            session_id = gen_session_id()
-            old_auth_info.session_id = session_id
-            old_auth_info.auth_code = code
-            old_auth_info.save()
-            result = {"result": ERR.OK,
-                      "session_id": session_id}
-        else:
-            new_auth_info = AuthInfo()
-            new_auth_info.phone_no = phone_no
-            new_auth_info.last_send = datetime.datetime.now()
-            code = gen_sms_code()
-            session_id = gen_session_id()
-            new_auth_info.session_id = session_id
-            new_auth_info.auth_code = code
-            new_auth_info.save()
-            send_sms(phone_no, code)
-            result = {"result": ERR.OK,
-                  "session_id" : session_id}
-        # check phone
-        # generate auth code
-        # store auth code
-        # check timeout
-        # contact smsc
-        # generate session id
+            if old_auth_info.is_approved:
+                raise ValidationError("номер уже подтверждён")
+            else:
+                old_auth_info.delete()
+        new_auth_info = AuthInfo()
+        new_auth_info.phone_no = phone_no
+        new_auth_info.last_send = datetime.datetime.now()
+        code = gen_sms_code()
+        session_id = gen_session_id()
+        new_auth_info.session_id = session_id
+        new_auth_info.auth_code = code
+        new_auth_info.save()
+        send_sms(phone_no, code)
+        result = {"result": ERR.OK,
+              "session_id" : session_id}
 
     except KeyError as e:
         result = {"result": ERR.INPUT}
@@ -197,7 +186,6 @@ def finish_phone_confirmation():
             result = {"result": ERR.OK}
             auth_info.is_approved = True
             auth_info.auth_code = None
-            auth_info.session = None
             auth_info.save()
             print("user registered")
         else:
@@ -211,6 +199,29 @@ def finish_phone_confirmation():
 
     return jsonify(result), 200
 
+# TODO добавить в док
+@bp.route("/password", methods= ["POST"])
+def set_password():
+    req = request.get_json()
+    try:
+        password = req["password"]
+        session_id = req["session_id"]
+        auth_info = AuthInfo.objects.get({"session_id": session_id})
+        if auth_info.is_approved and auth_info.password is None:
+            pass_hash = hash_password(password)
+            auth_info.password = pass_hash
+            auth_info.save()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.INPUT}
+    except KeyError as e:
+        result = {"result": ERR.INPUT}
+        print(str(e))
+    except Exception as e:
+        result = {"result": ERR.DB}
+        print(str(e))
+
+    return jsonify(result), 200
 
 @bp.route("/organizations", methods = ['POST'])
 def add_organization():

@@ -128,15 +128,40 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(ERR.OK, resp.json()["result"])
         cur_session.id = resp.json()["session_id"]
         print("Session ID is " + cur_session.id)
-        print("Waiting for SMS...")
-        while not (cur_session.id and cur_session.received_code):
-            pass
         print("Got SMS with code " + cur_session.received_code)
         resp = requests.post(self.api_URL + "/finish_phone_confirmation",
                              json={"auth_code": cur_session.received_code,
                                    "session_id": cur_session.id})
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.OK, resp.json()["result"])
+
+    def test_login_normal(self):
+        phone_no, password = self.prepare_confirmed_user()
+        resp = requests.post(self.api_URL + "/user_login", json={
+            "phone_no": phone_no,
+            "password": password})
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.OK, resp.json()["result"])
+        self.assertTrue(resp.json()["session_id"])
+
+    def prepare_confirmed_user(self):
+        phone_no = "78007553535"
+        password = "sa"
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={
+            "phone_no": phone_no})
+        self.assertEqual(ERR.OK, resp.json()["result"])
+        cur_session.id = resp.json()["session_id"]
+        resp = requests.post(self.api_URL + "/finish_phone_confirmation",
+                             json={"auth_code": cur_session.received_code,
+                                   "session_id": cur_session.id})
+        self.assertEqual(ERR.OK, resp.json()["result"])
+        resp = requests.post(self.api_URL + "/password",
+                             json={"password": password,
+                                   "session_id" : cur_session.id})
+        self.assertEqual(ERR.OK, resp.json()["result"])
+        return phone_no, password
+
+
 
 if __name__ == "__main__":
     unittest.main(verbosity = 1)
