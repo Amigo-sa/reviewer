@@ -135,6 +135,14 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.OK, resp.json()["result"])
 
+    def test_registration_already_confirmed(self):
+        phone_no, password = self.prepare_confirmed_user()
+        resp = requests.post(self.api_URL + "/confirm_phone_no",
+                             json={"phone_no": phone_no})
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.AUTH, resp.json()["result"])
+
+
     def test_login_normal(self):
         phone_no, password = self.prepare_confirmed_user()
         resp = requests.post(self.api_URL + "/user_login", json={
@@ -142,7 +150,16 @@ class TestAuth(unittest.TestCase):
             "password": password})
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.OK, resp.json()["result"])
-        self.assertTrue(resp.json()["session_id"])
+        self.assertTrue(resp.json()["session_id"], "must return session_id")
+
+    def test_login_wrong_pass(self):
+        phone_no, password = self.prepare_confirmed_user()
+        resp = requests.post(self.api_URL + "/user_login", json={
+            "phone_no": phone_no,
+            "password": "blablabla"})
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.AUTH, resp.json()["result"])
+        self.assertFalse("session_id" in resp.json(), "must not return session_id")
 
     def prepare_confirmed_user(self):
         phone_no = "78007553535"

@@ -64,41 +64,8 @@ def user_login():
         password = req["password"]
         auth_info = AuthInfo.objects.get({"phone_no": phone_no})
         pass_hash = hash_password(password)
-        if auth_info.password == pass_hash:
-            session_id = gen_session_id()
-            auth_info.session_id = session_id
-            auth_info.save()
-            result = {"result": ERR.OK,
-                  "session_id": session_id}
-        else:
-            result = {"result": ERR.AUTH}
-    except KeyError as e:
-        result = {"result": ERR.INPUT}
-        print(str(e))
-    except Exception as e:
-        result = {"result": ERR.AUTH}
-        print(str(e))
-    return jsonify(result), 200
-
-# TODO добавить в док
-@bp.route("/create_user", methods= ["POST"])
-def create_user():
-    req = request.get_json()
-    try:
-        phone_no = req["phone_no"]
-        password = req["password"]
-        auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
-        rec_count = auth_info._collection.count_documents({})
-        # if user exists, abort. User must login instead (or reset password)
-        if rec_count:
-            result = {"result": ERR.AUTH}
-        else:
-            auth_info = AuthInfo()
-            auth_info.phone_no = phone_no
-
-
-        auth_info = AuthInfo.objects.get({"phone_no": phone_no})
-        pass_hash = hash_password(password)
+        print("pass is {0}\nhash is {1}\nsaved hash is {2}".format(
+              password, pass_hash, auth_info.password))
         if auth_info.password == pass_hash:
             session_id = gen_session_id()
             auth_info.session_id = session_id
@@ -127,7 +94,7 @@ def confirm_phone():
             print(rec_count)
             old_auth_info = auth_info.first()
             if old_auth_info.is_approved:
-                raise ValidationError("номер уже подтверждён")
+                raise NameError("номер уже подтверждён")
             else:
                 old_auth_info.delete()
         new_auth_info = AuthInfo()
@@ -144,6 +111,9 @@ def confirm_phone():
 
     except KeyError as e:
         result = {"result": ERR.INPUT}
+        print(str(e))
+    except NameError as e:
+        result = {"result": ERR.AUTH}
         print(str(e))
     except Exception as e:
         result = {"result": ERR.DB}
@@ -162,7 +132,7 @@ def gen_session_id():
     print(codestr)
     return codestr
 def hash_password(password):
-    pass_hash = hashlib.sha256(b'Hello World')
+    pass_hash = hashlib.sha256(password.encode("utf-8"))
     hash_hex = pass_hash.hexdigest()
     print(hash_hex)
     return hash_hex
