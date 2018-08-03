@@ -8,6 +8,7 @@ import datetime
 import random
 import requests
 import hashlib
+from pymodm.errors import DoesNotExist
 
 bp = Blueprint('routes', __name__)
 
@@ -104,6 +105,7 @@ def confirm_phone():
         session_id = gen_session_id()
         new_auth_info.session_id = session_id
         new_auth_info.auth_code = code
+        new_auth_info.attempts = 0
         new_auth_info.save()
         send_sms(phone_no, code)
         result = {"result": ERR.OK,
@@ -147,6 +149,7 @@ def send_sms(phone_no, message):
 # TODO добавить в док
 @bp.route("/finish_phone_confirmation", methods= ["POST"])
 def finish_phone_confirmation():
+    max_attempts = 3
     req = request.get_json()
     try:
         auth_code = req["auth_code"]
@@ -159,13 +162,29 @@ def finish_phone_confirmation():
             auth_info.save()
             print("user registered")
         else:
-            result = {"result": ERR.INPUT}
+            auth_info.attempts += 1
+            attempts_remain = max_attempts - auth_info.attempts
+            if attempts_remain > 0:
+                message = "wrong code, %s attempts remain"%attempts_remain
+            else:
+                message = "out of attempts, auth code destroyed"
+            result = {"result": ERR.AUTH,
+                      "error_info": message}
+            print("%s attempts remain"%attempts_remain)
+            if auth_info.attempts == max_attempts:
+                auth_info.auth_code = None
+                auth_info.session_id = None
+            auth_info.save()
     except KeyError as e:
         result = {"result": ERR.INPUT}
-        print(str(e))
+        print(repr(e))
+    except DoesNotExist as e:
+        result = {"result": ERR.AUTH,
+                  "error_info": "session expired"}
+        print(repr(e))
     except Exception as e:
         result = {"result": ERR.DB}
-        print(str(e))
+        print(repr(e))
 
     return jsonify(result), 200
 

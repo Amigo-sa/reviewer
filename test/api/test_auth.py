@@ -141,6 +141,38 @@ class TestAuth(unittest.TestCase):
                              json={"phone_no": phone_no})
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.AUTH, resp.json()["result"])
+        self.assertFalse("session_id" in resp.json(), "must not return session_id")
+
+    def test_wrong_sms_code(self):
+        phone_no = "79803322212"
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={
+            "phone_no": phone_no,
+        })
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.OK, resp.json()["result"])
+        cur_session.id = resp.json()["session_id"]
+        print("Session ID is " + cur_session.id)
+        print("Got SMS with code " + cur_session.received_code)
+        max_attempts = 3
+        for i in range(max_attempts - 1):
+            resp = requests.post(self.api_URL + "/finish_phone_confirmation",
+                                 json={"auth_code": "some_wrong_code",
+                                       "session_id": cur_session.id})
+            self.assertEqual(200, resp.status_code)
+            self.assertEqual(ERR.AUTH, resp.json()["result"])
+            self.assertEqual("wrong code, %s attempts remain"%(max_attempts - i - 1),
+                             resp.json()["error_info"])
+        resp = requests.post(self.api_URL + "/finish_phone_confirmation",
+                             json={"auth_code": "some_wrong_code",
+                                   "session_id": cur_session.id})
+        self.assertEqual("out of attempts, auth code destroyed",
+                         resp.json()["error_info"])
+        resp = requests.post(self.api_URL + "/finish_phone_confirmation",
+                             json={"auth_code": "some_wrong_code",
+                                   "session_id": cur_session.id})
+        self.assertEqual("session expired",
+                         resp.json()["error_info"])
+        print(resp.json())
 
 
     def test_login_normal(self):
@@ -157,6 +189,15 @@ class TestAuth(unittest.TestCase):
         resp = requests.post(self.api_URL + "/user_login", json={
             "phone_no": phone_no,
             "password": "blablabla"})
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.AUTH, resp.json()["result"])
+        self.assertFalse("session_id" in resp.json(), "must not return session_id")
+
+    def test_login_no_user(self):
+        phone_no, password = self.prepare_confirmed_user()
+        resp = requests.post(self.api_URL + "/user_login", json={
+            "phone_no": "99999999999",
+            "password": password})
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.AUTH, resp.json()["result"])
         self.assertFalse("session_id" in resp.json(), "must not return session_id")
