@@ -444,7 +444,7 @@ class Survey(MongoModel):
 class AuthInfo(MongoModel):
     phone_no = fields.CharField()
     auth_code = fields.CharField(blank=True)
-    time_last_send = fields.TimestampField()
+    last_send_time = fields.TimestampField()
     attempts = fields.IntegerField(default=0)
     is_approved = fields.BooleanField(default=False)
     password = fields.CharField(blank=True)

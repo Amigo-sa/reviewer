@@ -174,6 +174,49 @@ class TestAuth(unittest.TestCase):
                          resp.json()["error_info"])
         print(resp.json())
 
+    def test_sms_timeout(self):
+        phone_no = "79803322212"
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={
+            "phone_no": phone_no,
+        })
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.OK, resp.json()["result"])
+        cur_session.id = resp.json()["session_id"]
+        print("Session ID is " + cur_session.id)
+        print("Got SMS with code " + cur_session.received_code)
+        resp = requests.post(self.api_URL + "/session_aging", json={
+            "phone_no": phone_no,
+            "minutes": "20",
+        })
+        self.assertEqual(ERR.OK, resp.json()["result"])
+        resp = requests.post(self.api_URL + "/finish_phone_confirmation",
+                             json={"auth_code": cur_session.received_code,
+                                   "session_id": cur_session.id})
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.AUTH, resp.json()["result"])
+        self.assertEqual("session expired",
+                         resp.json()["error_info"])
+
+    def test_multiple_sms(self):
+        phone_no = "79803322212"
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
+        self.assertEqual(ERR.OK, resp.json()["result"])
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
+        self.assertEqual(ERR.AUTH, resp.json()["result"])
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
+        self.assertEqual(ERR.AUTH, resp.json()["result"])
+        resp = requests.post(self.api_URL + "/session_aging", json={
+            "phone_no": phone_no,
+            "minutes": "10"})
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
+        self.assertEqual(ERR.AUTH, resp.json()["result"])
+        resp = requests.post(self.api_URL + "/session_aging", json={
+            "phone_no": phone_no,
+            "minutes": "10"})
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
+        self.assertEqual(ERR.OK, resp.json()["result"])
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
+        self.assertEqual(ERR.AUTH, resp.json()["result"])
 
     def test_login_normal(self):
         phone_no, password = self.prepare_confirmed_user()

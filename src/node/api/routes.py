@@ -4,7 +4,7 @@ import node.settings.errors as ERR
 from node.settings.constants import mock_smsc_url
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
-import datetime
+from datetime import datetime, timezone, timedelta
 import random
 import requests
 import hashlib
@@ -56,6 +56,27 @@ if __debug__:
         result = {"result": ERR.OK}
         return jsonify(result), 200
 
+
+    @bp.route("/session_aging", methods=['POST'])
+    def age_sessions():
+        req = request.get_json()
+        try:
+            phone_no = req["phone_no"]
+            minutes = req["minutes"]
+            auth_info = AuthInfo.objects.get({"phone_no" : phone_no})
+            ts = auth_info.last_send_time
+            dt = ts.as_datetime()
+            print("old dt %s" % (dt))
+            dt -= timedelta(minutes=int(minutes))
+            print("new dt %s" % (dt))
+            auth_info.last_send_time = dt
+            auth_info.save()
+            result = {"result": ERR.OK}
+        except:
+            result = {"result": ERR.DB}
+        return jsonify(result), 200
+
+# TODO как защититься от брутфорса здесь?
 # TODO добавить в док
 @bp.route("/user_login", methods= ["POST"])
 def user_login():
@@ -65,14 +86,12 @@ def user_login():
         password = req["password"]
         auth_info = AuthInfo.objects.get({"phone_no": phone_no})
         pass_hash = hash_password(password)
-        print("pass is {0}\nhash is {1}\nsaved hash is {2}".format(
-              password, pass_hash, auth_info.password))
         if auth_info.password == pass_hash:
             session_id = gen_session_id()
             auth_info.session_id = session_id
             auth_info.save()
             result = {"result": ERR.OK,
-                  "session_id": session_id}
+                      "session_id": session_id}
         else:
             result = {"result": ERR.AUTH}
     except KeyError as e:
@@ -87,6 +106,8 @@ def user_login():
 @bp.route("/confirm_phone_no", methods= ["POST"])
 def confirm_phone():
     req = request.get_json()
+    # TODO в константы
+    sms_timeout = timedelta(minutes=15)
     try:
         phone_no = req["phone_no"]
         auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
@@ -97,10 +118,14 @@ def confirm_phone():
             if old_auth_info.is_approved:
                 raise NameError("номер уже подтверждён")
             else:
-                old_auth_info.delete()
+                last_send_time = old_auth_info.last_send_time.as_datetime()
+                if datetime.now(timezone.utc) < last_send_time + sms_timeout:
+                    raise NameError("слишком частые СМС")
+                else:
+                    old_auth_info.delete()
         new_auth_info = AuthInfo()
         new_auth_info.phone_no = phone_no
-        new_auth_info.last_send = datetime.datetime.now()
+        new_auth_info.last_send_time = datetime.now(timezone.utc)
         code = gen_sms_code()
         session_id = gen_session_id()
         new_auth_info.session_id = session_id
@@ -122,39 +147,21 @@ def confirm_phone():
         print(str(e))
     return jsonify(result), 200
 
-def gen_sms_code():
-    code = random.randint(0,9999)
-    codestr = "{0:04}".format(code)
-    print(codestr)
-    return codestr
-#TODO генерация сделана намеренно ущербной, чтобы в будущем устроить это всё по-человечески безопасно
-def gen_session_id():
-    code = random.randint(0,99999999)
-    codestr = "{0:08}".format(code)
-    print(codestr)
-    return codestr
-def hash_password(password):
-    pass_hash = hashlib.sha256(password.encode("utf-8"))
-    hash_hex = pass_hash.hexdigest()
-    print(hash_hex)
-    return hash_hex
-
-def send_sms(phone_no, message):
-    requests.post(mock_smsc_url + "/send_sms",json={
-        "auth_code" : message,
-        "phone_no" : phone_no
-    })
-
-
 # TODO добавить в док
 @bp.route("/finish_phone_confirmation", methods= ["POST"])
 def finish_phone_confirmation():
+    # TODO в константы!
     max_attempts = 3
+    confirm_timeout = timedelta(minutes=15)
     req = request.get_json()
     try:
         auth_code = req["auth_code"]
         session_id = req["session_id"]
         auth_info = AuthInfo.objects.get({"session_id": session_id})
+        sent_time = auth_info.last_send_time.as_datetime()
+        if sent_time < datetime.now(timezone.utc) - confirm_timeout:
+            # TODO описать ошибку более внятно, мб создать новый класс
+            raise DoesNotExist("слишком поздно!")
         if auth_info.auth_code == auth_code:
             result = {"result": ERR.OK}
             auth_info.is_approved = True
@@ -211,6 +218,32 @@ def set_password():
         print(str(e))
 
     return jsonify(result), 200
+
+def gen_sms_code():
+    code = random.randint(0,9999)
+    codestr = "{0:04}".format(code)
+    print(codestr)
+    return codestr
+#TODO генерация сделана намеренно ущербной, чтобы в будущем устроить это всё по-человечески безопасно
+def gen_session_id():
+    code = random.randint(0,99999999)
+    codestr = "{0:08}".format(code)
+    print(codestr)
+    return codestr
+def hash_password(password):
+    pass_hash = hashlib.sha256(password.encode("utf-8"))
+    hash_hex = pass_hash.hexdigest()
+    print(hash_hex)
+    return hash_hex
+#TODO заменить на реальный SMSC
+def send_sms(phone_no, message):
+    requests.post(mock_smsc_url + "/send_sms",json={
+        "auth_code" : message,
+        "phone_no" : phone_no
+    })
+
+
+
 
 @bp.route("/organizations", methods = ['POST'])
 def add_organization():
