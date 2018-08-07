@@ -627,7 +627,7 @@ def list_group_members_by_person_id(id):
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
-# TODO осветить в доках is_active
+
 @bp.route("/group_members/<string:id>", methods=['GET'])
 def get_group_member_info(id):
     try:
@@ -951,11 +951,10 @@ def get_person_info(id):
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
-# TODO добавить в документацию
+
 @bp.route("/reviews/<string:id>", methods=['GET'])
 def get_review_info(id):
     try:
-        subject = None
         if SRReview(_id=id) in SRReview.objects.raw({"_id":ObjectId(id)}):
             subject = SRReview(_id=id)
         elif TRReview(_id=id) in TRReview.objects.raw({"_id": ObjectId(id)}):
@@ -980,7 +979,7 @@ def get_review_info(id):
                 "description" : subject.description}
         result = {"result": ERR.OK, "data": data}
     except Exception as e:
-        result = {"result": ERR.DB, "error_info" : str(e)}
+        result = {"result": ERR.DB, "error_message" : str(e)}
     return jsonify(result), 200
 
 
