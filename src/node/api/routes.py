@@ -416,35 +416,40 @@ def delete_group(id):
         result = {"result":ERR.DB}
     return jsonify(result), 200
 
-#TODO внести метод в документацию
+
 @bp.route("/groups/<string:id>/role_list", methods=['POST'])
 def set_role_list_for_group(id):
     req = request.get_json()
     try:
         role_list = req['role_list']
-    except:
+        if Group(_id=id) in Group.objects.raw({"_id": ObjectId(id)}):
+            group = Group(_id=id)
+            group.refresh_from_db()
+            group.role_list = role_list
+            group.save()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
-    try:
-        group = Group(_id=id)
-        group.refresh_from_db()
-        group.role_list = role_list
-        group.save()
-        result = {"result": ERR.OK}
     except:
         result = {"result": ERR.DB}
 
     return jsonify(result), 200
 
-#TODO внести метод в документацию
+
 @bp.route("/groups/<string:id>/role_list", methods=['GET'])
 def get_role_list_for_group(id):
     list = []
     try:
-        group =  Group(_id=id)
-        group.refresh_from_db()
-        for role in group.role_list:
-            list.append({"id" : str(role.pk)})
-        result = {"result": ERR.OK, "list": list}
+        if Group(_id=id) in Group.objects.raw({"_id": ObjectId(id)}):
+            group =  Group(_id=id)
+            group.refresh_from_db()
+            for role in group.role_list:
+                list.append({"id" : str(role.pk)})
+            result = {"result": ERR.OK, "list": list}
+        else:
+            result = {"result": ERR.NO_DATA}
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
@@ -570,13 +575,13 @@ def add_group_member(id):
         else:
             permissions = []
 
-        role_in_group = GroupMember(Person(_id=person_id),
+        group_member = GroupMember(Person(_id=person_id),
                                     Group(_id=id),
                                     group_role,
                                     permissions)
-        role_in_group.save()
+        group_member.save()
         result = {"result":ERR.OK,
-                  "id": str(role_in_group.pk)}
+                  "id": str(group_member.pk)}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
     except Exception as ex:
@@ -598,13 +603,13 @@ def delete_group_member(id):
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
-# TODO переименуй остальные role_in_group, а то неаккуратненько
+
 @bp.route("/groups/<string:id>/group_members", methods=['GET'])
 def list_group_members_by_group_id(id):
     list = []
     try:
-        for role_in_group in  GroupMember.objects.raw({"group_id": ObjectId(id)}):
-            list.append({"id": str(role_in_group.pk)})
+        for group_member in  GroupMember.objects.raw({"group_id": ObjectId(id)}):
+            list.append({"id": str(group_member.pk)})
         result = {"result": ERR.OK, "list":list}
     except:
         result = {"result": ERR.DB}
@@ -615,8 +620,8 @@ def list_group_members_by_group_id(id):
 def list_group_members_by_person_id(id):
     list = []
     try:
-        for role_in_group in GroupMember.objects.raw({"person_id": ObjectId(id)}):
-            list.append({"id": str(role_in_group.pk)})
+        for group_member in GroupMember.objects.raw({"person_id": ObjectId(id)}):
+            list.append({"id": str(group_member.pk)})
         result = {"result": ERR.OK, "list":list}
     except:
         result = {"result": ERR.DB}
@@ -627,18 +632,18 @@ def list_group_members_by_person_id(id):
 def get_group_member_info(id):
     try:
         if GroupMember(_id=id) in GroupMember.objects.raw({"_id": ObjectId(id)}):
-            role_in_group = GroupMember(_id=id)
-            role_in_group.refresh_from_db()
+            group_member = GroupMember(_id=id)
+            group_member.refresh_from_db()
             perm = []
-            for item in role_in_group.permissions:
+            for item in group_member.permissions:
                 perm.append(str(item.pk))
             data = {}
-            data.update({   "person_id": str(role_in_group.person_id.pk),
-                            "group_id": str(role_in_group.group_id.pk),
+            data.update({   "person_id": str(group_member.person_id.pk),
+                            "group_id": str(group_member.group_id.pk),
                             "permissions": perm,
-                            "is_active": str(role_in_group.is_active)})
-            if role_in_group.role_id:
-                data.update({"role_id": str(role_in_group.role_id.pk)})
+                            "is_active": str(group_member.is_active)})
+            if group_member.role_id:
+                data.update({"role_id": str(group_member.role_id.pk)})
 
             result = {"result": ERR.OK, "data": data}
         else:
@@ -658,12 +663,12 @@ def add_permissions_to_group_member(id):
         return jsonify({"result": ERR.INPUT}), 200
     try:
         if GroupMember(_id=id) in GroupMember.objects.raw({"_id": ObjectId(id)}):
-            role_in_group = GroupMember(_id=id)
-            role_in_group.refresh_from_db()
+            group_member = GroupMember(_id=id)
+            group_member.refresh_from_db()
             permission = GroupPermission(_id=group_permission_id)
             permission.refresh_from_db()
-            role_in_group.permissions.append(permission)
-            role_in_group.save()
+            group_member.permissions.append(permission)
+            group_member.save()
             result = {"result": ERR.OK}
         else:
             result = {"result": ERR.NO_DATA}
@@ -677,15 +682,15 @@ def add_permissions_to_group_member(id):
 def delete_permissions_from_group_member(id1, id2):
     try:
         if GroupMember(_id=id1) in GroupMember.objects.raw({"_id": ObjectId(id1)}):
-            role_in_group = GroupMember(_id=id1)
-            role_in_group.refresh_from_db()
+            group_member = GroupMember(_id=id1)
+            group_member.refresh_from_db()
             permission = GroupPermission(_id=id2)
             permission.refresh_from_db()
-            if permission not in role_in_group.permissions:
+            if permission not in group_member.permissions:
                 result = {"result": ERR.NO_DATA}
             else:
-                role_in_group.permissions.remove(permission)
-                role_in_group.save()
+                group_member.permissions.remove(permission)
+                group_member.save()
                 result = {"result": ERR.OK}
         else:
             result = {"result": ERR.NO_DATA}
