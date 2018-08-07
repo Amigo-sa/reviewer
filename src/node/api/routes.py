@@ -8,6 +8,7 @@ from datetime import datetime, timezone, timedelta
 import random
 import requests
 import hashlib
+import re
 
 
 bp = Blueprint('routes', __name__)
@@ -117,6 +118,8 @@ def confirm_phone():
     sms_timeout = timedelta(minutes=constants.sms_timeout_minutes)
     try:
         phone_no = str(req["phone_no"])
+        if not check_phone_format(phone_no):
+            raise KeyError()
         auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
         rec_count = auth_info.count()
         if rec_count:
@@ -255,8 +258,9 @@ def send_sms(phone_no, message):
         "auth_code" : message,
         "phone_no" : phone_no
     })
-
-
+def check_phone_format(phone_no):
+    pattern = r"^7\d{10}$"
+    return re.match(pattern, phone_no)
 
 
 @bp.route("/organizations", methods = ['POST'])
