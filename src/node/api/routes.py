@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from bson import ObjectId
 import node.settings.errors as ERR
-from node.settings.constants import mock_smsc_url
+import node.settings.constants as constants
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
 from datetime import datetime, timezone, timedelta
 import random
 import requests
 import hashlib
-from pymodm.errors import DoesNotExist
+
 
 bp = Blueprint('routes', __name__)
 
@@ -76,6 +76,9 @@ if __debug__:
             result = {"result": ERR.DB}
         return jsonify(result), 200
 
+class AuthError(Exception):
+    pass
+
 # TODO как защититься от брутфорса здесь?
 # TODO добавить в док
 @bp.route("/user_login", methods= ["POST"])
@@ -102,25 +105,23 @@ def user_login():
         print(str(e))
     return jsonify(result), 200
 
-# TODO добавить в док
+
 @bp.route("/confirm_phone_no", methods= ["POST"])
 def confirm_phone():
     req = request.get_json()
-    # TODO в константы
-    sms_timeout = timedelta(minutes=15)
+    sms_timeout = timedelta(minutes=constants.sms_timeout_minutes)
     try:
-        phone_no = req["phone_no"]
+        phone_no = str(req["phone_no"])
         auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
-        rec_count = auth_info._collection.count_documents({})
+        rec_count = auth_info.count()
         if rec_count:
-            print(rec_count)
             old_auth_info = auth_info.first()
             if old_auth_info.is_approved:
-                raise NameError("номер уже подтверждён")
+                raise AuthError("номер уже подтверждён")
             else:
                 last_send_time = old_auth_info.last_send_time.as_datetime()
                 if datetime.now(timezone.utc) < last_send_time + sms_timeout:
-                    raise NameError("слишком частые СМС")
+                    raise AuthError("слишком частые СМС")
                 else:
                     old_auth_info.delete()
         new_auth_info = AuthInfo()
@@ -132,62 +133,70 @@ def confirm_phone():
         new_auth_info.auth_code = code
         new_auth_info.attempts = 0
         new_auth_info.save()
-        send_sms(phone_no, code)
+        try:
+            send_sms(phone_no, code)
+        except:
+            raise AuthError("не удалось отправить смс")
         result = {"result": ERR.OK,
-              "session_id" : session_id}
+                  "session_id": session_id}
 
     except KeyError as e:
         result = {"result": ERR.INPUT}
-        print(str(e))
-    except NameError as e:
-        result = {"result": ERR.AUTH}
-        print(str(e))
+    except AuthError as e:
+        result = {"result": ERR.AUTH,
+                  "error_message": str(e)}
     except Exception as e:
-        result = {"result": ERR.DB}
         print(str(e))
+        result = {"result": ERR.DB}
+
     return jsonify(result), 200
 
-# TODO добавить в док
+
 @bp.route("/finish_phone_confirmation", methods= ["POST"])
 def finish_phone_confirmation():
-    # TODO в константы!
-    max_attempts = 3
-    confirm_timeout = timedelta(minutes=15)
+    max_attempts = constants.confirmation_max_attempts
+    confirm_timeout = timedelta(minutes=constants.confirmation_timeout_minutes)
     req = request.get_json()
     try:
         auth_code = req["auth_code"]
-        session_id = req["session_id"]
-        auth_info = AuthInfo.objects.get({"session_id": session_id})
-        sent_time = auth_info.last_send_time.as_datetime()
-        if sent_time < datetime.now(timezone.utc) - confirm_timeout:
-            # TODO описать ошибку более внятно, мб создать новый класс
-            raise DoesNotExist("слишком поздно!")
-        if auth_info.auth_code == auth_code:
-            result = {"result": ERR.OK}
-            auth_info.is_approved = True
-            auth_info.auth_code = None
-            auth_info.save()
-            print("user registered")
-        else:
-            auth_info.attempts += 1
-            attempts_remain = max_attempts - auth_info.attempts
-            if attempts_remain > 0:
-                message = "wrong code, %s attempts remain"%attempts_remain
-            else:
-                message = "out of attempts, auth code destroyed"
-            result = {"result": ERR.AUTH,
-                      "error_info": message}
-            print("%s attempts remain"%attempts_remain)
-            if auth_info.attempts == max_attempts:
+        session_id = str(req["session_id"])
+        auth_info = AuthInfo.objects.raw({"session_id": session_id})
+        if auth_info.count():
+            auth_info = auth_info.first()
+            sent_time = auth_info.last_send_time.as_datetime()
+            if auth_info.is_approved:
+                result = {"result": ERR.OK}
+            elif sent_time < datetime.now(timezone.utc) - confirm_timeout:
+                raise AuthError("session expired")
+            elif auth_info.auth_code == auth_code:
+                result = {"result": ERR.OK}
+                auth_info.is_approved = True
                 auth_info.auth_code = None
-                auth_info.session_id = None
-            auth_info.save()
+                auth_info.save()
+            else:
+                auth_info.attempts += 1
+                attempts_remain = max_attempts - auth_info.attempts
+                if attempts_remain > 0:
+                    message = "wrong code, %s attempts remain"%attempts_remain
+                else:
+                    message = "out of attempts, auth code destroyed"
+                result = {"result": ERR.AUTH,
+                          "error_message": message}
+                print("%s attempts remain"%attempts_remain)
+                if auth_info.attempts == max_attempts:
+                    auth_info.auth_code = None
+                    auth_info.session_id = None
+                auth_info.save()
+        else:
+            # выдаем ошибку аутентификации так как такой сессии не установлено
+            result = {"result": ERR.AUTH_NO_SESSION,
+                      "error_message": "no session found"}
     except KeyError as e:
         result = {"result": ERR.INPUT}
         print(repr(e))
-    except DoesNotExist as e:
+    except AuthError as e:
         result = {"result": ERR.AUTH,
-                  "error_info": "session expired"}
+                  "error_message": str(e)}
         print(repr(e))
     except Exception as e:
         result = {"result": ERR.DB}
@@ -237,7 +246,7 @@ def hash_password(password):
     return hash_hex
 #TODO заменить на реальный SMSC
 def send_sms(phone_no, message):
-    requests.post(mock_smsc_url + "/send_sms",json={
+    requests.post(constants.mock_smsc_url + "/send_sms",json={
         "auth_code" : message,
         "phone_no" : phone_no
     })
