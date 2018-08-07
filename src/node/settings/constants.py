@@ -6,3 +6,4 @@ node_server_port = 5000
 sms_timeout_minutes = 1
 confirmation_timeout_minutes = 1
 confirmation_max_attempts = 3
+authorization_max_attempts = 5

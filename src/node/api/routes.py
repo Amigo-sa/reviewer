@@ -79,8 +79,7 @@ if __debug__:
 class AuthError(Exception):
     pass
 
-# TODO как защититься от брутфорса здесь?
-# TODO добавить в док
+
 @bp.route("/user_login", methods= ["POST"])
 def user_login():
     req = request.get_json()
@@ -97,6 +96,12 @@ def user_login():
                       "session_id": session_id}
         else:
             result = {"result": ERR.AUTH}
+            if auth_info.attempts >= constants.authorization_max_attempts:
+                auth_info.is_approved = False
+                auth_info.password = None
+            else:
+                auth_info.attempts += 1
+            auth_info.save()
     except KeyError as e:
         result = {"result": ERR.INPUT}
         print(str(e))
@@ -204,7 +209,7 @@ def finish_phone_confirmation():
 
     return jsonify(result), 200
 
-# TODO добавить в док
+
 @bp.route("/password", methods= ["POST"])
 def set_password():
     req = request.get_json()
@@ -223,7 +228,7 @@ def set_password():
         result = {"result": ERR.INPUT}
         print(str(e))
     except Exception as e:
-        result = {"result": ERR.DB}
+        result = {"result": ERR.AUTH}
         print(str(e))
 
     return jsonify(result), 200
