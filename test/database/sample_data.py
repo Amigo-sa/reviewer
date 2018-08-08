@@ -568,7 +568,8 @@ def fill_db():
                 last_send_time = datetime.datetime.now(datetime.timezone.utc),
                 is_approved = True,
                 password = "0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c",
-                session_id = "12345"
+                session_id = "12345",
+                permissions = 1
             )
     }
     print("Filling db...")

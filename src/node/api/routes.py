@@ -8,7 +8,7 @@ from datetime import datetime, timezone, timedelta
 import random
 import requests
 import hashlib
-
+from functools import wraps
 
 bp = Blueprint('routes', __name__)
 
@@ -257,9 +257,32 @@ def send_sms(phone_no, message):
     })
 
 
+def required_auth(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            auth_token = auth_header.split(" ")[1]
+        else:
+            auth_token = ''
+        try:
+            auth_info = AuthInfo.objects.raw({"session_id": auth_token})
+            if auth_info.count():
+                auth_info = auth_info.first()
+            else:
+                return jsonify({"result": ERR.AUTH}), 200
+            if auth_info.permissions & 1:
+                return f(*args, **kwargs)
+            else:
+                return jsonify({"result": ERR.AUTH}), 200
+        except:
+            return jsonify({"result": ERR.DB}), 200
+
+    return decorated_function
 
 
 @bp.route("/organizations", methods = ['POST'])
+@required_auth
 def add_organization():
     req = request.get_json()
     try:
@@ -303,6 +326,7 @@ def add_person():
 
 
 @bp.route("/organizations/<string:id>", methods = ['DELETE'])
+@required_auth
 def delete_organization(id):
     try:
         if Organization(_id=id) in Organization.objects.raw({"_id":ObjectId(id)}):
@@ -314,7 +338,9 @@ def delete_organization(id):
         result = {"result":ERR.DB}
     return jsonify(result), 200
 
+
 @bp.route("/persons/<string:id>", methods = ['DELETE'])
+@required_auth
 def delete_person(id):
     try:
         if Person(_id=id) in Person.objects.raw({"_id":ObjectId(id)}):
@@ -328,6 +354,7 @@ def delete_person(id):
 
 
 @bp.route("/organizations", methods = ['GET'])
+@required_auth
 def list_organizations():
     list = []
     try:
