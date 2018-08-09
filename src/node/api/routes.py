@@ -257,32 +257,42 @@ def send_sms(phone_no, message):
     })
 
 
-def required_auth(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        auth_header = request.headers.get('Authorization')
-        if auth_header:
-            auth_token = auth_header.split(" ")[1]
-        else:
-            auth_token = ''
-        try:
-            auth_info = AuthInfo.objects.raw({"session_id": auth_token})
-            if auth_info.count():
-                auth_info = auth_info.first()
+def required_auth(required_permissions = "admin"):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            auth_header = request.headers.get('Authorization')
+            if auth_header:
+                auth_token = auth_header.split(" ")[1]
             else:
-                return jsonify({"result": ERR.AUTH}), 200
-            if auth_info.permissions & 1:
-                return f(*args, **kwargs)
-            else:
-                return jsonify({"result": ERR.AUTH}), 200
-        except:
-            return jsonify({"result": ERR.DB}), 200
+                auth_token = ''
+            try:
+                auth_info = AuthInfo.objects.raw({"session_id": auth_token})
+                if auth_info.count():
+                    auth_info = auth_info.first()
+                else:
+                    return jsonify({"result": ERR.AUTH}), 200
+                if required_permissions == "admin":
+                    if auth_info.permissions & 1:
+                        return f(*args, **kwargs)
+                    else:
+                        return jsonify({"result": ERR.AUTH}), 200
+                elif required_permissions == "user":
+                    if auth_info.person_id or auth_info.permissions & 1:
+                        return f(*args, **kwargs)
+                    else:
+                        return jsonify({"result": ERR.AUTH}), 200
+                else:
+                    pass
+            except:
+                return jsonify({"result": ERR.DB}), 200
+            return jsonify({"result": ERR.AUTH}), 200
 
-    return decorated_function
-
+        return decorated_function
+    return decorator
 
 @bp.route("/organizations", methods = ['POST'])
-@required_auth
+@required_auth("admin")
 def add_organization():
     req = request.get_json()
     try:
@@ -300,6 +310,7 @@ def add_organization():
     return jsonify(result), 200
 
 @bp.route("/persons", methods = ['POST'])
+@required_auth("admin")
 def add_person():
     req = request.get_json()
     try:
@@ -326,7 +337,7 @@ def add_person():
 
 
 @bp.route("/organizations/<string:id>", methods = ['DELETE'])
-@required_auth
+@required_auth("admin")
 def delete_organization(id):
     try:
         if Organization(_id=id) in Organization.objects.raw({"_id":ObjectId(id)}):
@@ -340,7 +351,7 @@ def delete_organization(id):
 
 
 @bp.route("/persons/<string:id>", methods = ['DELETE'])
-@required_auth
+@required_auth("admin")
 def delete_person(id):
     try:
         if Person(_id=id) in Person.objects.raw({"_id":ObjectId(id)}):
@@ -354,7 +365,7 @@ def delete_person(id):
 
 
 @bp.route("/organizations", methods = ['GET'])
-@required_auth
+@required_auth("user")
 def list_organizations():
     list = []
     try:
@@ -369,6 +380,7 @@ def list_organizations():
 
 
 @bp.route("/organizations/<string:id>/departments", methods = ['POST'])
+@required_auth("admin")
 def add_department(id):
     req = request.get_json()
     try:
@@ -389,6 +401,7 @@ def add_department(id):
 
 
 @bp.route("/departments/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_department(id):
     try:
         if Department(_id=id) in Department.objects.raw({"_id":ObjectId(id)}):
@@ -402,6 +415,7 @@ def delete_department(id):
 
 
 @bp.route("/organizations/<string:id>/departments", methods = ['GET'])
+@required_auth("user")
 def list_departments(id):
     list = []
     try:
@@ -419,6 +433,7 @@ def list_departments(id):
 
 
 @bp.route("/departments/<string:id>/groups", methods = ['POST'])
+@required_auth("admin")
 def add_group(id):
     req = request.get_json()
     try:
@@ -439,6 +454,7 @@ def add_group(id):
 
 
 @bp.route("/groups/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_group(id):
     try:
         if Group(_id=id) in Group.objects.raw({"_id":ObjectId(id)}):
@@ -452,6 +468,7 @@ def delete_group(id):
 
 
 @bp.route("/groups/<string:id>/role_list", methods=['POST'])
+@required_auth("admin")
 def set_role_list_for_group(id):
     req = request.get_json()
     try:
@@ -477,6 +494,7 @@ def set_role_list_for_group(id):
 
 
 @bp.route("/groups/<string:id>/role_list", methods=['GET'])
+@required_auth("user")
 def get_role_list_for_group(id):
     list = []
     try:
@@ -494,6 +512,7 @@ def get_role_list_for_group(id):
 
 
 @bp.route("/departments/<string:id>/groups", methods = ['GET'])
+@required_auth("user")
 def list_groups(id):
     list = []
     try:
