@@ -30,6 +30,7 @@ from data.reviewer_model import (Department,
                                  TRReview,
                                  TestResult,
                                  TutorRole,
+                                 AuthInfo,
                                  get_dependent_list,
                                  init_model)
 
@@ -559,6 +560,17 @@ def fill_db():
                  "начинать в 9:20": 25.0, }
             )
     }
+
+    auth_users = {
+        "admin":
+            AuthInfo(
+                phone_no = "88001112233",
+                last_send_time = datetime.datetime.now(datetime.timezone.utc),
+                is_approved = True,
+                password = "0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c",
+                session_id = "12345"
+            )
+    }
     print("Filling db...")
     print("Fill script version is " + fill_script_version)
     service = Service(fill_script_version)
@@ -608,6 +620,8 @@ def fill_db():
     for key, item in group_test_reviews.items():
         item.save()
     for key, item in surveys.items():
+        item.save()
+    for key, item in auth_users.items():
         item.save()
     print("done")
 
