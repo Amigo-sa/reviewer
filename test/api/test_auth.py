@@ -235,12 +235,12 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(ERR.AUTH, resp.json()["result"])
         resp = requests.post(self.api_URL + "/session_aging", json={
             "phone_no": phone_no,
-            "minutes": "10"})
+            "minutes": "1"})
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
         self.assertEqual(ERR.AUTH, resp.json()["result"])
         resp = requests.post(self.api_URL + "/session_aging", json={
             "phone_no": phone_no,
-            "minutes": "10"})
+            "minutes": "1"})
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
         self.assertEqual(ERR.OK, resp.json()["result"])
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
