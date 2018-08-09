@@ -59,12 +59,6 @@ class TestApi(unittest.TestCase):
                                  "blah " + admin_req["session_id"]}
 
 
-    def test_org_auth(self):
-        resp = requests.post(self.api_URL + "/organizations" ,
-                      json={"name": "MPEI"},
-                      headers = self.admin_header)
-        self.assertEqual(ERR.OK, resp.json()["result"])
-
     def t_simple_normal(self, url_get, url_post, url_delete, *args, **kwargs):
         # read from empty DB
         read_list = self.get_item_list(url_get)
@@ -94,9 +88,9 @@ class TestApi(unittest.TestCase):
             parent_id = re.findall("\w+", url_post)[1]
             for added_item in add_list:
                 item_data = self.get_item_data("/tests/" + added_item["id"])
-                self.assertEqual(item_data["data"]["info"], added_item["info"], "test info must match")
-                self.assertEqual(item_data["data"]["name"], added_item["name"], "test name must match")
-                self.assertEqual(item_data["data"]["group_id"], parent_id, "group_ids must match")
+                self.assertEqual(item_data["info"], added_item["info"], "test info must match")
+                self.assertEqual(item_data["name"], added_item["name"], "test name must match")
+                self.assertEqual(item_data["group_id"], parent_id, "group_ids must match")
         if url_delete == "/persons":
             for person in add_list:
                 person_info = self.get_item_data("/persons/"+person["id"])
@@ -183,15 +177,13 @@ class TestApi(unittest.TestCase):
 
     def prepare_hs(self):
         post_data = self.generate_doc(dict(name="string").items())
-        resp_json = requests.post(url=self.api_URL + '/hard_skills', json=post_data).json()
-        self.assertEqual(resp_json["result"], ERR.OK, "aux hard skill must be created")
-        return [resp_json["id"], post_data]
+        hs_id = self.post_item('/hard_skills', post_data)
+        return [hs_id, post_data]
 
     def prepare_ss(self):
         post_data = self.generate_doc(dict(name="string").items())
-        resp_json = requests.post(url=self.api_URL + '/soft_skills', json=post_data).json()
-        self.assertEqual(resp_json["result"], ERR.OK, "aux soft skill must be created")
-        return [resp_json["id"], post_data]
+        ss_id = self.post_item('/soft_skills', post_data)
+        return [ss_id, post_data]
 
     def test_organization_normal(self):
         self.t_simple_normal(         "/organizations",
@@ -553,7 +545,7 @@ class TestApi(unittest.TestCase):
         self.assertDictEqual(ref_gm_info, gm_info)
         # delete
         self.delete_item("/group_members/" + gm_id)
-        resp_json = requests.get(self.api_URL+"/group_members/" + gm_id).json()
+        resp_json = requests.get(self.api_URL+"/group_members/" + gm_id, headers = self.admin_header).json()
         self.assertEqual(ERR.NO_DATA, resp_json["result"])
 
     def test_reviews_normal(self):
@@ -814,7 +806,7 @@ class TestApi(unittest.TestCase):
             "/tests/%s/results"%g_test_id
         ]
         for route in post_routes:
-            resp = requests.post(url=self.api_URL + route, json={"noname":"novalue"})
+            resp = requests.post(url=self.api_URL + route, json={"noname":"novalue"}, headers = self.admin_header)
             self.assertEqual(200, resp.status_code)
             self.assertEqual(ERR.INPUT, resp.json()["result"])
 
@@ -941,7 +933,7 @@ class TestApi(unittest.TestCase):
 
     def pass_invalid_ref(self, url_post, **kwargs):
         data = self.generate_doc(kwargs.items())
-        resp = requests.post(url=self.api_URL + url_post, json=data)
+        resp = requests.post(url=self.api_URL + url_post, json=data, headers = self.admin_header)
         self.assertEqual(200, resp.status_code, "post response status code must be 200")
         resp_json = resp.json()
         self.assertEqual(ERR.NO_DATA, resp_json["result"], "post result must be ERR.NO_DATA in " +
@@ -949,12 +941,8 @@ class TestApi(unittest.TestCase):
 
     def post_duplicate_item(self, url_post, url_get_list, **kwargs):
         data = self.generate_doc(kwargs.items())
-        resp = requests.post(url=self.api_URL + url_post, json=data)
-        self.assertEqual(200, resp.status_code, "post response status code must be 200")
-        resp_json = resp.json()
-        self.assertEqual(ERR.OK, resp_json["result"], "post result must be ERR.OK in "  +
-                         url_post + " " + str(data))
-        resp = requests.post(url=self.api_URL + url_post, json=data)
+        self.post_item(url_post, data)
+        resp = requests.post(url=self.api_URL + url_post, json=data, headers = self.admin_header)
         self.assertEqual(200, resp.status_code, "post response status code must be 200")
         resp_json = resp.json()
         self.assertEqual(ERR.DB, resp_json["result"], "duplicate post result must be ERR.DB")
