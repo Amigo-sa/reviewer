@@ -53,6 +53,17 @@ class TestApi(unittest.TestCase):
 
     def setUp(self):
         requests.post(self.api_URL + "/wipe")
+        admin_req = requests.post(self.api_URL + "/first_admin").json()
+        self.assertEqual(ERR.OK, admin_req["result"])
+        self.admin_header = {"Authorization":
+                                 "blah " + admin_req["session_id"]}
+
+
+    def test_org_auth(self):
+        resp = requests.post(self.api_URL + "/organizations" ,
+                      json={"name": "MPEI"},
+                      headers = self.admin_header)
+        self.assertEqual(ERR.OK, resp.json()["result"])
 
     def t_simple_normal(self, url_get, url_post, url_delete, *args, **kwargs):
         # read from empty DB

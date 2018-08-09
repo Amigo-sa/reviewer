@@ -47,6 +47,23 @@ if __debug__:
         return jsonify(result), 200
 
 
+    @bp.route("/first_admin", methods=['POST'])
+    def prepare_first_admin():
+        try:
+            auth_info = AuthInfo()
+            auth_info.is_approved = True
+            auth_info.phone_no = "79032233223"
+            auth_info.password = hash_password("boov")
+            session_id = gen_session_id()
+            auth_info.session_id = session_id
+            auth_info.permissions = 1
+            result = {"result": ERR.OK,
+                      "session_id" : session_id}
+            auth_info.save()
+        except:
+            result = {"result": ERR.DB}
+        return jsonify(result), 200
+
     @bp.route("/shutdown", methods = ['POST'])
     def shutdown():
         func = request.environ.get('werkzeug.server.shutdown')
