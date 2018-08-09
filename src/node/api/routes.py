@@ -257,7 +257,7 @@ def send_sms(phone_no, message):
     })
 
 
-def required_auth(required_permissions = "admin"):
+def required_auth(required_permissions="admin"):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -272,20 +272,24 @@ def required_auth(required_permissions = "admin"):
                     auth_info = auth_info.first()
                 else:
                     return jsonify({"result": ERR.AUTH}), 200
+                if auth_info.permissions & 1:
+                    return f(*args, **kwargs)
                 if required_permissions == "admin":
-                    if auth_info.permissions & 1:
+                    return jsonify({"result": ERR.AUTH}), 200
+                if required_permissions == "user" and auth_info.person_id:
+                    person_id = kwargs["id"]
+                    if person_id == str(auth_info.person_id.pk):
                         return f(*args, **kwargs)
-                    else:
-                        return jsonify({"result": ERR.AUTH}), 200
-                elif required_permissions == "user":
-                    if auth_info.person_id or auth_info.permissions & 1:
+                if required_permissions == "group_member" and auth_info.person_id:
+                    if Person.objects.raw({"_id": auth_info.person_id.pk}).count():
+                        for group_member in GroupMember.objects.raw({"person_id": auth_info.person_id.pk}):
+                            if str(group_member.pk) == kwargs["id"]:
+                                return f(*args, **kwargs)
+                if required_permissions == "reviewer" and auth_info.person_id:
+                    if str(auth_info.person_id.pk) == request.get_json()['reviewer_id']:
                         return f(*args, **kwargs)
-                    else:
-                        return jsonify({"result": ERR.AUTH}), 200
-                else:
-                    pass
             except:
-                return jsonify({"result": ERR.DB}), 200
+                return jsonify({"result": ERR.AUTH}), 200
             return jsonify({"result": ERR.AUTH}), 200
 
         return decorated_function
@@ -351,7 +355,7 @@ def delete_organization(id):
 
 
 @bp.route("/persons/<string:id>", methods = ['DELETE'])
-@required_auth("admin")
+@required_auth("user")
 def delete_person(id):
     try:
         if Person(_id=id) in Person.objects.raw({"_id":ObjectId(id)}):
@@ -365,7 +369,6 @@ def delete_person(id):
 
 
 @bp.route("/organizations", methods = ['GET'])
-@required_auth("user")
 def list_organizations():
     list = []
     try:
@@ -415,7 +418,6 @@ def delete_department(id):
 
 
 @bp.route("/organizations/<string:id>/departments", methods = ['GET'])
-@required_auth("user")
 def list_departments(id):
     list = []
     try:
@@ -494,7 +496,6 @@ def set_role_list_for_group(id):
 
 
 @bp.route("/groups/<string:id>/role_list", methods=['GET'])
-@required_auth("user")
 def get_role_list_for_group(id):
     list = []
     try:
@@ -512,7 +513,6 @@ def get_role_list_for_group(id):
 
 
 @bp.route("/departments/<string:id>/groups", methods = ['GET'])
-@required_auth("user")
 def list_groups(id):
     list = []
     try:
@@ -530,6 +530,7 @@ def list_groups(id):
 
 
 @bp.route("/group_roles", methods = ['POST'])
+@required_auth("admin")
 def add_group_role():
     req = request.get_json()
     try:
@@ -548,6 +549,7 @@ def add_group_role():
 
 
 @bp.route("/group_roles/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_group_role(id):
     try:
         if GroupRole(_id=id) in GroupRole.objects.raw({"_id":ObjectId(id)}):
@@ -575,6 +577,7 @@ def list_group_roles():
 
 
 @bp.route("/group_permissions", methods = ['POST'])
+@required_auth("admin")
 def add_group_permission():
     req = request.get_json()
     try:
@@ -593,6 +596,7 @@ def add_group_permission():
 
 
 @bp.route("/group_permissions/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_group_permission(id):
     try:
         if GroupPermission(_id=id) in GroupPermission.objects.raw({"_id":ObjectId(id)}):
@@ -620,6 +624,7 @@ def list_group_permissions():
 
 
 @bp.route("/groups/<string:id>/group_members", methods=['POST'])
+@required_auth("admin")
 def add_group_member(id):
     req = request.get_json()
     try:
@@ -665,6 +670,7 @@ def add_group_member(id):
 
 
 @bp.route("/group_members/<string:id>", methods=['DELETE'])
+@required_auth("admin")
 def delete_group_member(id):
     try:
         if GroupMember(_id=id) in GroupMember.objects.raw({"_id":ObjectId(id)}):
@@ -708,6 +714,7 @@ def list_group_members_by_person_id(id):
 
 
 @bp.route("/group_members/<string:id>", methods=['GET'])
+@required_auth("group_member")
 def get_group_member_info(id):
     try:
         if GroupMember(_id=id) in GroupMember.objects.raw({"_id": ObjectId(id)}):
@@ -734,6 +741,7 @@ def get_group_member_info(id):
 
 
 @bp.route("/group_members/<string:id>/permissions", methods = ['POST'])
+@required_auth("admin")
 def add_permissions_to_group_member(id):
     req = request.get_json()
     try:
@@ -758,6 +766,7 @@ def add_permissions_to_group_member(id):
 
 
 @bp.route("/group_members/<string:id1>/permissions/<string:id2>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_permissions_from_group_member(id1, id2):
     try:
         if GroupMember.objects.raw({"_id": ObjectId(id1)}).count()\
@@ -780,6 +789,7 @@ def delete_permissions_from_group_member(id1, id2):
     return jsonify(result), 200
 
 @bp.route("/group_members/<string:id>/group_roles", methods = ['POST'])
+@required_auth("admin")
 def add_group_role_to_group_member(id):
     req = request.get_json()
     try:
@@ -804,6 +814,7 @@ def add_group_role_to_group_member(id):
 
 
 @bp.route("/group_members/<string:id>", methods = ['PATCH'])
+@required_auth("admin")
 def change_group_member_status(id):
     if 'is_active' in request.args:
         string = request.args['is_active']
@@ -832,6 +843,7 @@ def change_group_member_status(id):
 
 
 @bp.route("/general_roles", methods=['POST'])
+@required_auth("admin")
 def add_general_role():
     req = request.get_json()
     try:
@@ -867,6 +879,7 @@ def add_general_role():
 
 
 @bp.route("/general_roles/<string:id>", methods=['DELETE'])
+@required_auth("admin")
 def delete_general_role(id):
     try:
         if TutorRole(_id=id) in TutorRole.objects.raw({"_id":ObjectId(id)}):
@@ -1025,6 +1038,7 @@ def find_persons():
 
 
 @bp.route("/persons/<string:id>", methods=['GET'])
+@required_auth("user")
 def get_person_info(id):
     try:
         if Person(_id=id) in Person.objects.raw({"_id": ObjectId(id)}):
@@ -1077,6 +1091,7 @@ def get_review_info(id):
 
 
 @bp.route("/reviews", methods = ['POST'])
+@required_auth("reviewer")
 def post_review():
     req = request.get_json()
     try:
@@ -1136,6 +1151,7 @@ def post_review():
 
 
 @bp.route("/reviews/<string:id>", methods=['DELETE'])
+@required_auth("admin")
 def delete_review(id):
     try:
         result = {"result": ERR.NO_DATA}
@@ -1164,7 +1180,7 @@ def delete_review(id):
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
-# TODO доделать метод в части проверки на существование reviewer_id и subject_id
+
 @bp.route("/reviews", methods=['GET'])
 def find_reviews():
     lst = []
@@ -1207,6 +1223,7 @@ def find_reviews():
 
 
 @bp.route("/soft_skills", methods = ['POST'])
+@required_auth("admin")
 def add_soft_skill():
     req = request.get_json()
     try:
@@ -1224,6 +1241,7 @@ def add_soft_skill():
 
 
 @bp.route("/soft_skills/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_soft_skill(id):
     try:
         if SoftSkill(_id=id) in SoftSkill.objects.raw({"_id":ObjectId(id)}):
@@ -1251,6 +1269,7 @@ def list_soft_skills():
 
 
 @bp.route("/hard_skills", methods = ['POST'])
+@required_auth("admin")
 def add_hard_skill():
     req = request.get_json()
     try:
@@ -1268,6 +1287,7 @@ def add_hard_skill():
 
 
 @bp.route("/hard_skills/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_hard_skill(id):
     try:
         if HardSkill(_id=id) in HardSkill.objects.raw({"_id":ObjectId(id)}):
@@ -1295,6 +1315,7 @@ def list_hard_skills():
 
 
 @bp.route("/persons/<string:id>/soft_skills", methods=['POST'])
+@required_auth("admin")
 def add_person_soft_skill(id):
     req = request.get_json()
     try:
@@ -1319,6 +1340,7 @@ def add_person_soft_skill(id):
 
 
 @bp.route("/persons/<string:id>/hard_skills", methods=['POST'])
+@required_auth("admin")
 def add_person_hard_skill(id):
     req = request.get_json()
     try:
@@ -1343,6 +1365,7 @@ def add_person_hard_skill(id):
 
 
 @bp.route("/persons/soft_skills/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_person_soft_skill(id):
     try:
         if PersonSS(_id=id) in PersonSS.objects.raw({"_id":ObjectId(id)}):
@@ -1356,6 +1379,7 @@ def delete_person_soft_skill(id):
 
 
 @bp.route("/persons/hard_skills/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_person_hard_skill(id):
     try:
         if PersonHS(_id=id) in PersonHS.objects.raw({"_id":ObjectId(id)}):
@@ -1463,6 +1487,7 @@ def get_person_hard_skill_info(id):
 
 
 @bp.route("/groups/<string:id>/tests", methods = ['POST'])
+@required_auth("admin")
 def add_group_test(id):
     req = request.get_json()
     try:
@@ -1483,6 +1508,7 @@ def add_group_test(id):
 
 
 @bp.route("/tests/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_group_test(id):
     try:
         if GroupTest(_id=id) in GroupTest.objects.raw({"_id":ObjectId(id)}):
@@ -1529,6 +1555,7 @@ def list_group_tests(id):
 
 
 @bp.route("/tests/<string:id>/results", methods = ['POST'])
+@required_auth("admin")
 def add_test_result(id):
     req = request.get_json()
     try:
@@ -1550,6 +1577,7 @@ def add_test_result(id):
 
 
 @bp.route("/tests/results/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_test_result(id):
     try:
         if TestResult(_id=id) in TestResult.objects.raw({"_id":ObjectId(id)}):
