@@ -67,28 +67,19 @@ class TestApi(unittest.TestCase):
 
     def t_simple_normal(self, url_get, url_post, url_delete, *args, **kwargs):
         # read from empty DB
-        resp = requests.get(self.api_URL + url_get)
-        self.assertEqual(200, resp.status_code, "get response status code must be 200")
-        resp_json = resp.json()
-        self.assertEqual(resp_json["result"], ERR.OK, "result must be ERR.OK")
-        read_list = resp_json["list"]
+        read_list = self.get_item_list(url_get)
         self.assertListEqual([],read_list, "initial DB must not contain any " + url_delete)
         # write items to DB
         add_list = []
         items_to_write = 2
         for item_ctr in range(items_to_write):
             cur_item = self.generate_doc(kwargs.items())
-            resp = requests.post(url=self.api_URL + url_post, json=cur_item)
-            self.assertEqual(200, resp.status_code, "post response status code must be 200")
-            resp_json = resp.json()
-            self.assertEqual(resp_json["result"], ERR.OK, "post result must be ERR.OK")
-            self.assertTrue(resp_json["id"], "returned id must be not None")
-            cur_item.update({"id" : resp_json["id"]})
+            cur_id = self.post_item(url_post, cur_item)
+            cur_item.update({"id" : cur_id})
             add_list.append(cur_item)
         print("sample data for " + url_post + ":\n" + str(add_list))
         # verify written items
-        resp_json = requests.get(self.api_URL + url_get).json()
-        read_list = resp_json["list"]
+        read_list = self.get_item_list(url_get)
         total_match = 0
         for added_item in add_list:
             item_match = 0
@@ -102,11 +93,10 @@ class TestApi(unittest.TestCase):
         if url_delete == "/tests":
             parent_id = re.findall("\w+", url_post)[1]
             for added_item in add_list:
-                resp_json = requests.get(self.api_URL + "/tests/" + added_item["id"]).json()
-                self.assertEqual(resp_json["result"], ERR.OK, "the get test info result must be ERR.OK")
-                self.assertEqual(resp_json["data"]["info"], added_item["info"], "test info must match")
-                self.assertEqual(resp_json["data"]["name"], added_item["name"], "test name must match")
-                self.assertEqual(resp_json["data"]["group_id"], parent_id, "group_ids must match")
+                item_data = self.get_item_data("/tests/" + added_item["id"])
+                self.assertEqual(item_data["data"]["info"], added_item["info"], "test info must match")
+                self.assertEqual(item_data["data"]["name"], added_item["name"], "test name must match")
+                self.assertEqual(item_data["data"]["group_id"], parent_id, "group_ids must match")
         if url_delete == "/persons":
             for person in add_list:
                 person_info = self.get_item_data("/persons/"+person["id"])
@@ -117,13 +107,9 @@ class TestApi(unittest.TestCase):
                 self.assertEqual(person["birth_date"], person_info["birth_date"])
         # delete items
         for item in add_list:
-            resp = requests.delete(url=self.api_URL + url_delete + "/" + item["id"])
-            self.assertEqual(200, resp.status_code, "delete response status code must be 200")
-            resp_json = resp.json()
-            self.assertEqual(resp_json["result"], ERR.OK, "result must be ERR.OK")
+            self.delete_item(url_delete + "/" + item["id"])
         # verify deletion
-        resp_json = requests.get(self.api_URL + url_get).json()
-        read_list = resp_json["list"]
+        read_list = self.get_item_list(url_get)
         self.assertListEqual([], read_list, "docs must be erased from DB")
 
     @classmethod
@@ -162,27 +148,24 @@ class TestApi(unittest.TestCase):
 
     def prepare_organization(self) -> str:
         post_data = self.generate_doc(dict(name="string").items())
-        resp_json = requests.post(url=self.api_URL + '/organizations', json=post_data).json()
-        self.assertEqual(resp_json["result"],ERR.OK, "aux organization must be created")
-        return resp_json["id"]
+        org_id = self.post_item('/organizations', post_data)
+        return org_id
 
     def prepare_department(self) -> dict:
         aux_org_id = self.prepare_organization()
         self.assertTrue(aux_org_id, "auxiliary organization must be created")
         post_data = self.generate_doc(dict(name="string").items())
-        resp_json = requests.post(url=self.api_URL + '/organizations/' + aux_org_id + "/departments", json=post_data).json()
-        self.assertEqual(resp_json["result"], ERR.OK, "aux department must be created")
-        return {"dep_id" : resp_json["id"],
+        dep_id = self.post_item('/organizations/' + aux_org_id + "/departments",post_data)
+        return {"dep_id" : dep_id,
                 "org_id" : aux_org_id}
 
     def prepare_group(self) -> dict:
         aux_items_ids = self.prepare_department()
         self.assertTrue(aux_items_ids["dep_id"], "aux department must be created")
         post_data = self.generate_doc(dict(name="string").items())
-        resp_json = requests.post(url=self.api_URL + '/departments/' + aux_items_ids["dep_id"] + "/groups",
-                                  json=post_data).json()
-        self.assertEqual(resp_json["result"], ERR.OK, "aux group must be created")
-        aux_items_ids.update({"group_id": resp_json["id"]})
+        group_id = self.post_item('/departments/' + aux_items_ids["dep_id"] + "/groups",
+                                  post_data)
+        aux_items_ids.update({"group_id": group_id})
         return aux_items_ids
 
     def prepare_persons(self, person_count):
@@ -194,9 +177,8 @@ class TestApi(unittest.TestCase):
         id_list = []
         for person_ctr in range(person_count):
             cur_person = self.generate_doc(person_type_list.items())
-            resp_json = requests.post(url=self.api_URL + "/persons", json=cur_person).json()
-            self.assertEqual(resp_json["result"], ERR.OK, "aux person must be added")
-            id_list.append(resp_json["id"])
+            p_id = self.post_item("/persons", cur_person)
+            id_list.append(p_id)
         return id_list
 
     def prepare_hs(self):
@@ -981,7 +963,7 @@ class TestApi(unittest.TestCase):
         self.assertEqual(1, len(item_list))
 
     def get_item_list(self, url):
-        resp = requests.get(self.api_URL + url)
+        resp = requests.get(self.api_URL + url, headers = self.admin_header)
         self.assertEqual(200, resp.status_code, "get response status code must be 200")
         resp_json = resp.json()
         if "error_message" in resp_json: print(resp_json["error_message"])
@@ -989,7 +971,7 @@ class TestApi(unittest.TestCase):
         return resp_json["list"]
 
     def get_item_data(self, url):
-        resp = requests.get(self.api_URL + url)
+        resp = requests.get(self.api_URL + url, headers = self.admin_header)
         self.assertEqual(200, resp.status_code, "get response status code must be 200")
         resp_json = resp.json()
         if "error_message" in resp_json: print(resp_json["error_message"])
@@ -997,7 +979,7 @@ class TestApi(unittest.TestCase):
         return resp_json["data"]
 
     def post_item(self, url, data):
-        resp = requests.post(url=self.api_URL + url, json=data)
+        resp = requests.post(url=self.api_URL + url, json=data, headers = self.admin_header)
         self.assertEqual(200, resp.status_code, "post response status code must be 200")
         resp_json = resp.json()
         self.assertEqual(ERR.OK, resp_json["result"],  "post result must be ERR.OK")
@@ -1006,21 +988,21 @@ class TestApi(unittest.TestCase):
         return resp_json["id"]
 
     def post_modify_item(self, url, data):
-        resp = requests.post(url=self.api_URL + url, json=data)
+        resp = requests.post(url=self.api_URL + url, json=data, headers = self.admin_header)
         self.assertEqual(200, resp.status_code, "post response status code must be 200")
         resp_json = resp.json()
         self.assertEqual(ERR.OK, resp_json["result"],"post result must be ERR.OK")
         if "error_message" in resp_json: print(resp_json["error_message"])
 
     def delete_item(self, url):
-        resp = requests.delete(url=self.api_URL + url)
+        resp = requests.delete(url=self.api_URL + url, headers = self.admin_header)
         self.assertEqual(200, resp.status_code, "delete response status code must be 200")
         resp_json = resp.json()
         if "error_message" in resp_json: print(resp_json["error_message"])
         self.assertEqual(ERR.OK, resp_json["result"], "result must be ERR.OK")
 
     def patch_item(self, url):
-        resp = requests.patch(url=self.api_URL + url)
+        resp = requests.patch(url=self.api_URL + url, headers = self.admin_header)
         self.assertEqual(200, resp.status_code, "patch response status code must be 200")
         resp_json = resp.json()
         if "error_message" in resp_json: print(resp_json["error_message"])
