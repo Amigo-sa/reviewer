@@ -26,6 +26,14 @@ def post_item_as(instance, url, data, headers):
     instance.assertEqual(200, resp.status_code, "post response status code must be 200")
     return resp.json()
 
+def delete_item_as(instance, url, headers):
+    if not isinstance(instance, unittest.TestCase):
+        raise TypeError
+    resp = requests.delete(url=url,
+                         headers=headers)
+    instance.assertEqual(200, resp.status_code, "delete response status code must be 200")
+    return resp.json()
+
 
 def prepare_two_persons(instance, api_url):
     person_data = dict(

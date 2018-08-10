@@ -125,23 +125,59 @@ class TestAuth(unittest.TestCase):
                                  "blah " + admin_req["session_id"]}
 
     def test_user_restricted_access(self):
+        # prepare user
+        resp_json = requests.post(self.api_URL + "/logged_in_person").json()
+        print(resp_json)
+        user_person_id = resp_json["person_id"]
+        user_session_id = resp_json["session_id"]
+        user_header = {"Authorization":
+                                 "blah " + user_session_id}
+        # prepare stuff for modification attempts
+        org_id = hm.post_item(self, self.api_URL + "/organizations", {"name" : "sample_org"})
+        dep_id = hm.post_item(self, self.api_URL + "/organizations/%s/departments" % org_id,
+                              {"name" : "sample_org"})
+        restricted_post_list = [
+            "/organizations",
+            "/persons",
+            "/organizations/%s/departments"%org_id
+        ]
+        restricted_delete_list = [
+            "/organizations/%s" % org_id,
+            "/departments/%s" % dep_id
+        ]
+        post_data = {"sample" : "data"}
+        for url in restricted_post_list:
+            resp_json = hm.post_item_as(self, self.api_URL + url,
+                                        post_data, user_header)
+            self.assertEqual(ERR.AUTH, resp_json["result"],
+                             "%s is restricted to post for simple user"%url)
+        for url in restricted_delete_list:
+            resp_json = hm.delete_item_as(self, self.api_URL + url, user_header)
+            self.assertEqual(ERR.AUTH, resp_json["result"],
+                             "%s is restricted to delete for simple user" % url)
+
+
+    def test_user_allowed_access(self):
         phone_no, password = self.prepare_confirmed_user()
         resp = requests.post(self.api_URL + "/user_login", json={
             "phone_no": phone_no,
             "password": password})
         user_session_id = resp.json()["session_id"]
         user_header = {"Authorization":
-                                 "blah " + user_session_id}
-        restricted_post_list = [
-            "/organizations",
-            "/persons",
-
+                           "blah " + user_session_id}
+        allowed_post_list = [
+            #"/organizations",
+            #"/persons",
         ]
-        post_data = {"sample" : "data"}
-        for url in restricted_post_list:
+        post_data = {"sample": "data"}
+        for url in allowed_post_list:
             resp_json = hm.post_item_as(self, self.api_URL + url,
                                         post_data, user_header)
-            self.assertEqual(ERR.AUTH, resp_json["result"])
+            self.assertNotEqual(ERR.AUTH, resp_json["result"],
+                             "%s must not return ERR.AUTH for simple user" % url)
+
+    def test_no_auth_restricted_access(self):
+        pass
 
 
     def test_registration_normal(self):
