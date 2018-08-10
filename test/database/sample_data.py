@@ -45,7 +45,7 @@ def clear_db():
         print("dropped collection " + col)
     print("done")
 
-connect(settings.mongo.conn_string + "/" + settings.mongo.db_name_test,
+connect(settings.mongo.conn_string + "/" + constants.db_name_test,
         alias="reviewer")
 
 def fill_db():
