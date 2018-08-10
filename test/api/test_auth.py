@@ -143,6 +143,33 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(ERR.AUTH, resp.json()["result"])
         self.assertFalse("session_id" in resp.json(), "must not return session_id")
 
+    def test_wrong_phone_no_format(self):
+        phone_no = "797803322212"
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={
+            "phone_no": phone_no,
+        })
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.INPUT, resp.json()["result"])
+        phone_no = "99703322212"
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={
+            "phone_no": phone_no,
+        })
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.INPUT, resp.json()["result"])
+        phone_no = "797033x2212"
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={
+            "phone_no": phone_no,
+        })
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.INPUT, resp.json()["result"])
+        phone_no = "7970332"
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json={
+            "phone_no": phone_no,
+        })
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.INPUT, resp.json()["result"])
+
+
     def test_wrong_sms_code(self):
         phone_no = "79803322212"
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
@@ -161,17 +188,19 @@ class TestAuth(unittest.TestCase):
             self.assertEqual(200, resp.status_code)
             self.assertEqual(ERR.AUTH, resp.json()["result"])
             self.assertEqual("wrong code, %s attempts remain"%(max_attempts - i - 1),
-                             resp.json()["error_info"])
+                             resp.json()["error_message"])
         resp = requests.post(self.api_URL + "/finish_phone_confirmation",
                              json={"auth_code": "some_wrong_code",
                                    "session_id": cur_session.id})
         self.assertEqual("out of attempts, auth code destroyed",
-                         resp.json()["error_info"])
+                         resp.json()["error_message"])
         resp = requests.post(self.api_URL + "/finish_phone_confirmation",
                              json={"auth_code": "some_wrong_code",
                                    "session_id": cur_session.id})
-        self.assertEqual("session expired",
-                         resp.json()["error_info"])
+        self.assertEqual(ERR.AUTH_NO_SESSION,
+                         resp.json()["result"])
+        self.assertEqual("no session found",
+                         resp.json()["error_message"])
         print(resp.json())
 
     def test_sms_timeout(self):
@@ -194,8 +223,7 @@ class TestAuth(unittest.TestCase):
                                    "session_id": cur_session.id})
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.AUTH, resp.json()["result"])
-        self.assertEqual("session expired",
-                         resp.json()["error_info"])
+
 
     def test_multiple_sms(self):
         phone_no = "79803322212"
@@ -207,12 +235,12 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(ERR.AUTH, resp.json()["result"])
         resp = requests.post(self.api_URL + "/session_aging", json={
             "phone_no": phone_no,
-            "minutes": "10"})
+            "minutes": "1"})
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
         self.assertEqual(ERR.AUTH, resp.json()["result"])
         resp = requests.post(self.api_URL + "/session_aging", json={
             "phone_no": phone_no,
-            "minutes": "10"})
+            "minutes": "1"})
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
         self.assertEqual(ERR.OK, resp.json()["result"])
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})

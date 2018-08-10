@@ -12,7 +12,7 @@ db_name = "reviewer"
 
 # auth
 mock_smsc_url = "http://127.0.0.1:5010"
-sms_timeout_minutes = 1
-confirmation_timeout_minutes = 1
+sms_timeout_minutes = 2
+confirmation_timeout_minutes = 2
 confirmation_max_attempts = 3
 authorization_max_attempts = 5

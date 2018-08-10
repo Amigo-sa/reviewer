@@ -8,6 +8,7 @@ from datetime import datetime, timezone, timedelta
 import random
 import requests
 import hashlib
+import re
 
 
 bp = Blueprint('routes', __name__)
@@ -117,6 +118,8 @@ def confirm_phone():
     sms_timeout = timedelta(minutes=constants.sms_timeout_minutes)
     try:
         phone_no = str(req["phone_no"])
+        if not check_phone_format(phone_no):
+            raise KeyError()
         auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
         rec_count = auth_info.count()
         if rec_count:
@@ -255,8 +258,9 @@ def send_sms(phone_no, message):
         "auth_code" : message,
         "phone_no" : phone_no
     })
-
-
+def check_phone_format(phone_no):
+    pattern = r"^7\d{10}$"
+    return re.match(pattern, phone_no)
 
 
 @bp.route("/organizations", methods = ['POST'])
@@ -346,13 +350,15 @@ def add_department(id):
     req = request.get_json()
     try:
         name = req['name']
-    except:
+        if Organization(_id=id) in Organization.objects.raw({"_id": ObjectId(id)}):
+            department = Department(name, Organization(_id=id))
+            department.save()
+            result = {"result":ERR.OK,
+                      "id": str(department.pk)}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
-    try:
-        department = Department(name, Organization(_id=id))
-        department.save()
-        result = {"result":ERR.OK,
-                  "id": str(department.pk)}
     except:
         result = {"result":ERR.DB}
 
@@ -376,11 +382,14 @@ def delete_department(id):
 def list_departments(id):
     list = []
     try:
-        for department in  Department.objects.raw({"organization_id":ObjectId(id)}):
-            list.append({"id":str(department.pk),
-                         "name":department.name}
-                        )
-        result = {"result": ERR.OK, "list":list}
+        if Organization(_id=id) in Organization.objects.raw({"_id": ObjectId(id)}):
+            for department in  Department.objects.raw({"organization_id":ObjectId(id)}):
+                list.append({"id":str(department.pk),
+                             "name":department.name}
+                            )
+            result = {"result": ERR.OK, "list":list}
+        else:
+            result = {"result": ERR.NO_DATA}
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
@@ -391,13 +400,15 @@ def add_group(id):
     req = request.get_json()
     try:
         name = req['name']
-    except:
+        if Department(_id=id) in Department.objects.raw({"_id": ObjectId(id)}):
+            group = Group(Department(_id=id), name)
+            group.save()
+            result = {"result":ERR.OK,
+                      "id": str(group.pk)}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
-    try:
-        group = Group(Department(_id=id), name)
-        group.save()
-        result = {"result":ERR.OK,
-                  "id": str(group.pk)}
     except:
         result = {"result":ERR.DB}
 
@@ -422,7 +433,11 @@ def set_role_list_for_group(id):
     req = request.get_json()
     try:
         role_list = req['role_list']
-        if Group(_id=id) in Group.objects.raw({"_id": ObjectId(id)}):
+        err = ERR.OK
+        for group_role_id in role_list:
+            if not GroupRole.objects.raw({"_id": ObjectId(group_role_id)}).count():
+                err = ERR.NO_DATA
+        if Group(_id=id) in Group.objects.raw({"_id": ObjectId(id)}) and err == ERR.OK:
             group = Group(_id=id)
             group.refresh_from_db()
             group.role_list = role_list
@@ -459,11 +474,14 @@ def get_role_list_for_group(id):
 def list_groups(id):
     list = []
     try:
-        for group in  Group.objects.raw({"department_id":ObjectId(id)}):
-            list.append({"id":str(group.pk),
-                         "name":group.name}
-                        )
-        result = {"result": ERR.OK, "list":list}
+        if Department(_id=id) in Department.objects.raw({"_id": ObjectId(id)}):
+            for group in  Group.objects.raw({"department_id":ObjectId(id)}):
+                list.append({"id":str(group.pk),
+                             "name":group.name}
+                            )
+            result = {"result": ERR.OK, "list":list}
+        else:
+            result = {"result": ERR.NO_DATA}
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
@@ -564,24 +582,37 @@ def add_group_member(id):
     req = request.get_json()
     try:
         person_id = req['person_id']
+        if Group.objects.raw({"_id": ObjectId(id)}).count() \
+                and Person.objects.raw({"_id": ObjectId(person_id)}).count():
+            err = ERR.OK
+        else:
+            err = ERR.NO_DATA
         if 'role_id' in req:
             role_id = req['role_id']
-            group_role = GroupRole(_id=role_id)
+            if not GroupRole.objects.raw({"_id": ObjectId(role_id)}).count():
+                err = ERR.NO_DATA
+            else:
+                group_role = GroupRole(_id=role_id)
         else:
             group_role = None
         if 'default_permission_id' in req:
             default_permission_id = req['default_permission_id']
-            permissions = [GroupPermission(_id=default_permission_id)]
+            if not GroupPermission.objects.raw({"_id": ObjectId(default_permission_id)}).count():
+                err = ERR.NO_DATA
+            else:
+                permissions = [GroupPermission(_id=default_permission_id)]
         else:
             permissions = []
-
-        group_member = GroupMember(Person(_id=person_id),
-                                    Group(_id=id),
-                                    group_role,
-                                    permissions)
-        group_member.save()
-        result = {"result":ERR.OK,
-                  "id": str(group_member.pk)}
+        if err == ERR.OK:
+            group_member = GroupMember(Person(_id=person_id),
+                                        Group(_id=id),
+                                        group_role,
+                                        permissions)
+            group_member.save()
+            result = {"result":ERR.OK,
+                      "id": str(group_member.pk)}
+        else:
+            result = {"result": ERR.NO_DATA}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
     except Exception as ex:
@@ -608,9 +639,12 @@ def delete_group_member(id):
 def list_group_members_by_group_id(id):
     list = []
     try:
-        for group_member in  GroupMember.objects.raw({"group_id": ObjectId(id)}):
-            list.append({"id": str(group_member.pk)})
-        result = {"result": ERR.OK, "list":list}
+        if Group(_id=id) in Group.objects.raw({"_id": ObjectId(id)}):
+            for group_member in  GroupMember.objects.raw({"group_id": ObjectId(id)}):
+                list.append({"id": str(group_member.pk)})
+            result = {"result": ERR.OK, "list":list}
+        else:
+            result = {"result": ERR.NO_DATA}
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
@@ -620,9 +654,12 @@ def list_group_members_by_group_id(id):
 def list_group_members_by_person_id(id):
     list = []
     try:
-        for group_member in GroupMember.objects.raw({"person_id": ObjectId(id)}):
-            list.append({"id": str(group_member.pk)})
-        result = {"result": ERR.OK, "list":list}
+        if Person(_id=id) in Person.objects.raw({"_id": ObjectId(id)}):
+            for group_member in GroupMember.objects.raw({"person_id": ObjectId(id)}):
+                list.append({"id": str(group_member.pk)})
+            result = {"result": ERR.OK, "list":list}
+        else:
+            result = {"result": ERR.NO_DATA}
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
@@ -659,10 +696,8 @@ def add_permissions_to_group_member(id):
     req = request.get_json()
     try:
         group_permission_id = req['group_permission_id']
-    except:
-        return jsonify({"result": ERR.INPUT}), 200
-    try:
-        if GroupMember(_id=id) in GroupMember.objects.raw({"_id": ObjectId(id)}):
+        if GroupMember.objects.raw({"_id": ObjectId(id)}).count() \
+                and GroupPermission.objects.raw({"_id": ObjectId(group_permission_id)}).count():
             group_member = GroupMember(_id=id)
             group_member.refresh_from_db()
             permission = GroupPermission(_id=group_permission_id)
@@ -672,6 +707,8 @@ def add_permissions_to_group_member(id):
             result = {"result": ERR.OK}
         else:
             result = {"result": ERR.NO_DATA}
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
     except:
         result = {"result":ERR.DB}
 
@@ -681,7 +718,8 @@ def add_permissions_to_group_member(id):
 @bp.route("/group_members/<string:id1>/permissions/<string:id2>", methods = ['DELETE'])
 def delete_permissions_from_group_member(id1, id2):
     try:
-        if GroupMember(_id=id1) in GroupMember.objects.raw({"_id": ObjectId(id1)}):
+        if GroupMember.objects.raw({"_id": ObjectId(id1)}).count()\
+                and GroupPermission.objects.raw({"_id": ObjectId(id2)}).count():
             group_member = GroupMember(_id=id1)
             group_member.refresh_from_db()
             permission = GroupPermission(_id=id2)
@@ -704,7 +742,8 @@ def add_group_role_to_group_member(id):
     req = request.get_json()
     try:
         group_role_id = req['group_role_id']
-        if GroupMember(_id=id) in GroupMember.objects.raw({"_id": ObjectId(id)}):
+        if GroupMember.objects.raw({"_id": ObjectId(id)}).count()\
+                and GroupRole.objects.raw({"_id": ObjectId(group_role_id)}).count():
             group_member = GroupMember(_id=id)
             group_member.refresh_from_db()
             group_role = GroupRole(_id=group_role_id)
@@ -758,26 +797,27 @@ def add_general_role():
         department_id = req['department_id']
         role_type = req['role_type']
         description = req['description']
-    except:
-        return jsonify({"result": ERR.INPUT}), 200
-    try:
-        if role_type == "Tutor":
+        if not Person.objects.raw({"_id": ObjectId(person_id)}).count()\
+                or not Department.objects.raw({"_id": ObjectId(department_id)}).count():
+            result = {"result": ERR.NO_DATA}
+        elif role_type == "Tutor":
             tutor_role = TutorRole(Person(_id=person_id),
                                    Department(_id=department_id),
                                    description)
             tutor_role.save()
             result = {"result": ERR.OK,
                       "id": str(tutor_role.pk)}
+        elif role_type == "Student":
+            student_role = StudentRole(Person(_id=person_id),
+                                       Department(_id=department_id),
+                                       description)
+            student_role.save()
+            result = {"result": ERR.OK,
+                      "id": str(student_role.pk)}
         else:
-            if role_type == "Student":
-                student_role = StudentRole(Person(_id=person_id),
-                                           Department(_id=department_id),
-                                           description)
-                student_role.save()
-                result = {"result": ERR.OK,
-                          "id": str(student_role.pk)}
-            else:
-                return jsonify({"result": ERR.INPUT}), 200
+            return jsonify({"result": ERR.INPUT}), 200
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
     except:
         result = {"result":ERR.DB}
 
@@ -790,12 +830,11 @@ def delete_general_role(id):
         if TutorRole(_id=id) in TutorRole.objects.raw({"_id":ObjectId(id)}):
             TutorRole(_id=id).delete()
             result = {"result": ERR.OK}
+        elif StudentRole(_id=id) in StudentRole.objects.raw({"_id":ObjectId(id)}):
+            StudentRole(_id=id).delete()
+            result = {"result": ERR.OK}
         else:
-            if StudentRole(_id=id) in StudentRole.objects.raw({"_id":ObjectId(id)}):
-                StudentRole(_id=id).delete()
-                result = {"result": ERR.OK}
-            else:
-                result = {"result": ERR.NO_DATA}
+            result = {"result": ERR.NO_DATA}
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
@@ -812,17 +851,16 @@ def get_general_roles_data(id):
                     "role_type": "Student",
                     "description": student_role.description}
             result = {"result": ERR.OK, "data": data}
+        elif TutorRole(_id=id) in TutorRole.objects.raw({"_id": ObjectId(id)}):
+            tutor_role = TutorRole(_id=id)
+            tutor_role.refresh_from_db()
+            data = {"person_id": str(tutor_role.person_id.pk),
+                    "department_id": str(tutor_role.department_id.pk),
+                    "role_type": "Tutor",
+                    "description": tutor_role.discipline}
+            result = {"result": ERR.OK, "data": data}
         else:
-            if TutorRole(_id=id) in TutorRole.objects.raw({"_id": ObjectId(id)}):
-                tutor_role = TutorRole(_id=id)
-                tutor_role.refresh_from_db()
-                data = {"person_id": str(tutor_role.person_id.pk),
-                        "department_id": str(tutor_role.department_id.pk),
-                        "role_type": "Tutor",
-                        "description": tutor_role.discipline}
-                result = {"result": ERR.OK, "data": data}
-            else:
-                result = {"result": ERR.NO_DATA}
+            result = {"result": ERR.NO_DATA}
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
@@ -832,11 +870,14 @@ def get_general_roles_data(id):
 def list_roles_by_person_id(id):
     list = []
     try:
-        for role in StudentRole.objects.raw({"person_id": ObjectId(id)}):
-            list.append({"id": str(role.pk)})
-        for role in TutorRole.objects.raw({"person_id": ObjectId(id)}):
-            list.append({"id": str(role.pk)})
-        result = {"result": ERR.OK, "list":list}
+        if Person.objects.raw({"_id": ObjectId(id)}).count():
+            for role in StudentRole.objects.raw({"person_id": ObjectId(id)}):
+                list.append({"id": str(role.pk)})
+            for role in TutorRole.objects.raw({"person_id": ObjectId(id)}):
+                list.append({"id": str(role.pk)})
+            result = {"result": ERR.OK, "list":list}
+        else:
+            result = {"result": ERR.NO_DATA}
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
@@ -862,41 +903,51 @@ def find_persons():
                       "localField": "_id",
                       "foreignField": "person_id",
                       "as": "student_role"}})
+    err = ERR.OK
     if 'group_id' in request.args:
         group_id = request.args['group_id']
-        pipeline += ({"$lookup":
-                        {"from": "group_member",
-                         "localField": "_id",
-                         "foreignField": "person_id",
-                         "as": "role"}},
-                     {"$match":
-                         {"role.group_id": ObjectId(group_id)}},
-                     )
-    else:
-        if 'department_id' in request.args:
-            department_id = request.args['department_id']
+        if Group.objects.raw({"_id": ObjectId(group_id)}).count():
+            pipeline += ({"$lookup":
+                            {"from": "group_member",
+                             "localField": "_id",
+                             "foreignField": "person_id",
+                             "as": "role"}},
+                         {"$match":
+                             {"role.group_id": ObjectId(group_id)}},
+                         )
+        else:
+            err = ERR.NO_DATA
+    elif 'department_id' in request.args:
+        department_id = request.args['department_id']
+        if Department.objects.raw({"_id": ObjectId(department_id)}).count():
             pipeline += ({"$match":
-                             {"$or": [{"tutor_role.department_id": ObjectId(department_id)},
-                                      {"student_role.department_id": ObjectId(department_id)}]}},
+                                {"$or": [{"tutor_role.department_id": ObjectId(department_id)},
+                                        {"student_role.department_id": ObjectId(department_id)}]}},
             )
         else:
-            if 'organization_id' in request.args:
-                organization_id = request.args['organization_id']
-                departments = []
-                for department in Department.objects.raw({"organization_id": ObjectId(organization_id)}):
-                    departments.append(department.pk)
-                pipeline += ({"$match":
-                                 {"$or": [{"tutor_role.department_id": {"$in" : departments}},
-                                          {"student_role.department_id": {"$in" : departments}}]}},
-                            )
-            """ #оставим этот код на случай если понадобится отфильтровать безрольных пользователей
-            else:
-                pipeline += ({"$match":
-                                  {"$or": [{"tutor_role.department_id": {"$exists": True}},
-                                           {"student_role.department_id": {"$exists": True}}]}},
-                             )"""
+            err = ERR.NO_DATA
+    elif 'organization_id' in request.args:
+        organization_id = request.args['organization_id']
+        if Organization.objects.raw({"_id": ObjectId(organization_id)}).count():
+            departments = []
+            for department in Department.objects.raw({"organization_id": ObjectId(organization_id)}):
+                departments.append(department.pk)
+            pipeline += ({"$match":
+                                {"$or": [{"tutor_role.department_id": {"$in" : departments}},
+                                        {"student_role.department_id": {"$in" : departments}}]}},
+                        )
+        else:
+            err = ERR.NO_DATA
+    """ #оставим этот код на случай если понадобится отфильтровать безрольных пользователей
+    else:
+        pipeline += ({"$match":
+                            {"$or": [{"tutor_role.department_id": {"$exists": True}},
+                                    {"student_role.department_id": {"$exists": True}}]}},
+                    )"""
     pipeline += ({"$skip": skip},
                  {"$limit": limit})
+    if err == ERR.NO_DATA:
+        return jsonify({"result": ERR.NO_DATA}), 200
     try:
         list = []
         for person in Person.objects.aggregate(*pipeline):
@@ -992,9 +1043,6 @@ def post_review():
         subject_id = ObjectId(req['subject_id'])
         value = req['value']
         description = req['description']
-    except:
-        return jsonify({"result": ERR.INPUT}), 200
-    try:
         obj = {
             "StudentRole":
                 SRReview(reviewer_id, subject_id, value, description),
@@ -1011,12 +1059,34 @@ def post_review():
             "GroupMember":
                 GroupMemberReview(reviewer_id, subject_id, value, description)
         }
+        subj_class = {
+            "StudentRole":
+                StudentRole,
+            "TutorRole":
+                TutorRole,
+            "HardSkill":
+                PersonHS,
+            "SoftSkill":
+                PersonSS,
+            "Group":
+                Group,
+            "GroupTest":
+                GroupTest,
+            "GroupMember":
+                GroupMember
+        }
         if type not in obj:
             result = {"result": ERR.INPUT}
         else:
-            obj[type].save()
-            result = {"result":ERR.OK,
-                      "id": str(obj[type].pk)}
+            if subj_class[type].objects.raw({"_id":ObjectId(subject_id)}).count() \
+                    and Person.objects.raw({"_id":ObjectId(reviewer_id)}).count():
+                obj[type].save()
+                result = {"result":ERR.OK,
+                          "id": str(obj[type].pk)}
+            else:
+                result = {"result": ERR.NO_DATA}
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
     except:
         result = {"result":ERR.DB}
 
@@ -1052,34 +1122,42 @@ def delete_review(id):
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
-
+# TODO доделать метод в части проверки на существование reviewer_id и subject_id
 @bp.route("/reviews", methods=['GET'])
 def find_reviews():
     lst = []
     query = {}
-    if 'reviewer_id' in request.args:
-        reviewer_id = request.args['reviewer_id']
-        query.update({"reviewer_id": ObjectId(reviewer_id)})
-    if 'subject_id' in request.args:
-        subject_id = request.args['subject_id']
-        query.update({"subject_id": ObjectId(subject_id)})
-
     try:
-        for review in SRReview.objects.raw(query):
-            lst.append({"id": str(review.pk)})
-        for review in TRReview.objects.raw(query):
-            lst.append({"id": str(review.pk)})
-        for review in HSReview.objects.raw(query):
-            lst.append({"id": str(review.pk)})
-        for review in SSReview.objects.raw(query):
-            lst.append({"id": str(review.pk)})
-        for review in GroupReview.objects.raw(query):
-            lst.append({"id": str(review.pk)})
-        for review in GroupTestReview.objects.raw(query):
-            lst.append({"id": str(review.pk)})
-        for review in GroupMemberReview.objects.raw(query):
-            lst.append({"id": str(review.pk)})
-        result = {"result": ERR.OK, "list": lst}
+        err = ERR.OK
+        if 'reviewer_id' in request.args:
+            reviewer_id = request.args['reviewer_id']
+            if Person.objects.raw({"_id":ObjectId(reviewer_id)}).count():
+                query.update({"reviewer_id": ObjectId(reviewer_id)})
+            else:
+                err = ERR.NO_DATA
+        if 'subject_id' in request.args:
+            subject_id = request.args['subject_id']
+            query.update({"subject_id": ObjectId(subject_id)})
+        if err == ERR.OK:
+            for review in SRReview.objects.raw(query):
+                lst.append({"id": str(review.pk)})
+            for review in TRReview.objects.raw(query):
+                lst.append({"id": str(review.pk)})
+            for review in HSReview.objects.raw(query):
+                lst.append({"id": str(review.pk)})
+            for review in SSReview.objects.raw(query):
+                lst.append({"id": str(review.pk)})
+            for review in GroupReview.objects.raw(query):
+                lst.append({"id": str(review.pk)})
+            for review in GroupTestReview.objects.raw(query):
+                lst.append({"id": str(review.pk)})
+            for review in GroupMemberReview.objects.raw(query):
+                lst.append({"id": str(review.pk)})
+            result = {"result": ERR.OK, "list": lst}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except KeyError:
+        result = {"result": ERR.INPUT}
     except Exception as ex:
         print(ex)
         result = {"result": ERR.DB}
@@ -1179,13 +1257,17 @@ def add_person_soft_skill(id):
     req = request.get_json()
     try:
         ss_id = req['ss_id']
-        default_level = 50.0
-        person_ss = PersonSS(Person(_id=id),
-                             SoftSkill(_id=ss_id),
-                             default_level)
-        person_ss.save()
-        result = {"result":ERR.OK,
-                  "id": str(person_ss.pk)}
+        if Person.objects.raw({"_id":ObjectId(id)}).count() and \
+                SoftSkill.objects.raw({"_id":ObjectId(ss_id)}).count():
+            default_level = 50.0
+            person_ss = PersonSS(Person(_id=id),
+                                 SoftSkill(_id=ss_id),
+                                 default_level)
+            person_ss.save()
+            result = {"result":ERR.OK,
+                      "id": str(person_ss.pk)}
+        else:
+            result = {"result": ERR.NO_DATA}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
     except:
@@ -1199,13 +1281,17 @@ def add_person_hard_skill(id):
     req = request.get_json()
     try:
         hs_id = req['hs_id']
-        default_level = 50.0
-        person_hs = PersonHS(Person(_id=id),
-                             HardSkill(_id=hs_id),
-                             default_level)
-        person_hs.save()
-        result = {"result":ERR.OK,
-                  "id": str(person_hs.pk)}
+        if Person.objects.raw({"_id":ObjectId(id)}).count() and \
+                HardSkill.objects.raw({"_id":ObjectId(hs_id)}).count():
+            default_level = 50.0
+            person_hs = PersonHS(Person(_id=id),
+                                 HardSkill(_id=hs_id),
+                                 default_level)
+            person_hs.save()
+            result = {"result":ERR.OK,
+                      "id": str(person_hs.pk)}
+        else:
+            result = {"result": ERR.NO_DATA}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
     except:
@@ -1244,16 +1330,26 @@ def delete_person_hard_skill(id):
 def find_person_soft_skills():
     lst = []
     query = {}
+    err = ERR.OK
     if 'person_id' in request.args:
         person_id = request.args['person_id']
-        query.update({"person_id": ObjectId(person_id)})
+        if not Person.objects.raw({"_id":ObjectId(person_id)}).count():
+            err = ERR.NO_DATA
+        else:
+            query.update({"person_id": ObjectId(person_id)})
     if 'ss_id' in request.args:
         ss_id = request.args['ss_id']
-        query.update({"ss_id": ObjectId(ss_id)})
+        if not SoftSkill.objects.raw({"_id":ObjectId(ss_id)}).count():
+            err = ERR.NO_DATA
+        else:
+            query.update({"ss_id": ObjectId(ss_id)})
     try:
-        for person_ss in PersonSS.objects.raw(query):
-            lst.append({"id": str(person_ss.pk)})
-        result = {"result": ERR.OK, "list": lst}
+        if err == ERR.OK:
+            for person_ss in PersonSS.objects.raw(query):
+                lst.append({"id": str(person_ss.pk)})
+            result = {"result": ERR.OK, "list": lst}
+        else:
+            result = {"result": ERR.NO_DATA}
     except Exception as ex:
         print(ex)
         result = {"result": ERR.DB}
@@ -1264,16 +1360,26 @@ def find_person_soft_skills():
 def find_person_hard_skills():
     lst = []
     query = {}
+    err = ERR.OK
     if 'person_id' in request.args:
         person_id = request.args['person_id']
-        query.update({"person_id": ObjectId(person_id)})
+        if not Person.objects.raw({"_id":ObjectId(person_id)}).count():
+            err = ERR.NO_DATA
+        else:
+            query.update({"person_id": ObjectId(person_id)})
     if 'hs_id' in request.args:
         hs_id = request.args['hs_id']
-        query.update({"hs_id": ObjectId(hs_id)})
+        if not HardSkill.objects.raw({"_id":ObjectId(hs_id)}).count():
+            err = ERR.NO_DATA
+        else:
+            query.update({"hs_id": ObjectId(hs_id)})
     try:
-        for person_hs in PersonHS.objects.raw(query):
-            lst.append({"id": str(person_hs.pk)})
-        result = {"result": ERR.OK, "list": lst}
+        if err == ERR.OK:
+            for person_hs in PersonHS.objects.raw(query):
+                lst.append({"id": str(person_hs.pk)})
+            result = {"result": ERR.OK, "list": lst}
+        else:
+            result = {"result": ERR.NO_DATA}
     except Exception as ex:
         print(ex)
         result = {"result": ERR.DB}
@@ -1320,10 +1426,13 @@ def add_group_test(id):
     try:
         name = req['name']
         info = req['info']
-        group_test = GroupTest(Group(_id=id), name, info)
-        group_test.save()
-        result = {"result":ERR.OK,
-                  "id": str(group_test.pk)}
+        if Group.objects.raw({"_id": ObjectId(id)}).count():
+            group_test = GroupTest(Group(_id=id), name, info)
+            group_test.save()
+            result = {"result":ERR.OK,
+                      "id": str(group_test.pk)}
+        else:
+            result = {"result": ERR.NO_DATA}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
     except:
@@ -1365,27 +1474,32 @@ def get_group_test_info(id):
 def list_group_tests(id):
     list = []
     try:
-        for group_test in GroupTest.objects.raw({"group_id": ObjectId(id)}):
-            list.append({"id": str(group_test.pk),
-                        "name": group_test.name})
-        result = {"result": ERR.OK, "list":list}
+        if Group.objects.raw({"_id": ObjectId(id)}).count():
+            for group_test in GroupTest.objects.raw({"group_id": ObjectId(id)}):
+                list.append({"id": str(group_test.pk),
+                            "name": group_test.name})
+            result = {"result": ERR.OK, "list":list}
+        else:
+            result = {"result": ERR.NO_DATA}
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
-# TODO посмотри плиз, что у тебя с кодами ошибок вот в каком смысле:
-# вот в данном роуте NO_DATA вообще не возвращается,
-# а есть роуты, когда если id не найден, возвращается NO_DATA
+
 @bp.route("/tests/<string:id>/results", methods = ['POST'])
 def add_test_result(id):
     req = request.get_json()
     try:
         person_id = req['person_id']
         result_data = req['result_data']
-        test_result = TestResult(GroupTest(_id=id), Person(_id=person_id), result_data)
-        test_result.save()
-        result = {"result":ERR.OK,
-                  "id": str(test_result.pk)}
+        if GroupTest.objects.raw({"_id": ObjectId(id)}).count() and \
+                Person.objects.raw({"_id": ObjectId(person_id)}).count():
+            test_result = TestResult(GroupTest(_id=id), Person(_id=person_id), result_data)
+            test_result.save()
+            result = {"result":ERR.OK,
+                      "id": str(test_result.pk)}
+        else:
+            result = {"result": ERR.NO_DATA}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
     except:
@@ -1427,16 +1541,26 @@ def get_test_result_info(id):
 def find_test_results():
     lst = []
     query = {}
+    err = ERR.OK
     if 'person_id' in request.args:
         person_id = request.args['person_id']
-        query.update({"person_id": ObjectId(person_id)})
+        if Person.objects.raw({"_id": ObjectId(person_id)}).count():
+            query.update({"person_id": ObjectId(person_id)})
+        else:
+            err = ERR.NO_DATA
     if 'test_id' in request.args:
         test_id = request.args['test_id']
-        query.update({"test_id": ObjectId(test_id)})
+        if GroupTest.objects.raw({"_id": ObjectId(test_id)}).count():
+            query.update({"test_id": ObjectId(test_id)})
+        else:
+            err = ERR.NO_DATA
     try:
-        for test_result in TestResult.objects.raw(query):
-            lst.append({"id": str(test_result.pk)})
-        result = {"result": ERR.OK, "list": lst}
+        if err == ERR.OK:
+            for test_result in TestResult.objects.raw(query):
+                lst.append({"id": str(test_result.pk)})
+            result = {"result": ERR.OK, "list": lst}
+        else:
+            result = {"result": ERR.NO_DATA}
     except Exception as ex:
         print(ex)
         result = {"result": ERR.DB}

@@ -951,7 +951,7 @@ class TestApi(unittest.TestCase):
         resp = requests.post(url=self.api_URL + url_post, json=data)
         self.assertEqual(200, resp.status_code, "post response status code must be 200")
         resp_json = resp.json()
-        self.assertEqual(ERR.DB, resp_json["result"], "post result must be ERR.DB in " +
+        self.assertEqual(ERR.NO_DATA, resp_json["result"], "post result must be ERR.NO_DATA in " +
                          url_post + " " + str(data))
 
     def post_duplicate_item(self, url_post, url_get_list, **kwargs):
