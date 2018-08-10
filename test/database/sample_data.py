@@ -2,7 +2,8 @@
 import context
 import datetime
 import random
-from pymodm.connection import _get_db
+from pymodm.connection import connect
+from node.settings import constants
 
 fill_script_version = "0.3"
 
@@ -44,6 +45,8 @@ def clear_db():
         print("dropped collection " + col)
     print("done")
 
+connect(settings.mongo.conn_string + "/" + settings.mongo.db_name_test,
+        alias="reviewer")
 
 def fill_db():
     persons = {

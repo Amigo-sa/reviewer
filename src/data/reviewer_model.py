@@ -4,7 +4,7 @@ from pymongo.write_concern import WriteConcern
 from pymodm.errors import ValidationError
 from pymongo.operations import IndexModel
 import pymongo
-from pymodm.connection import connect, _get_db
+from pymodm.connection import connect
 import data.settings as settings
 
 from collections import Counter
