@@ -133,18 +133,50 @@ class TestAuth(unittest.TestCase):
         user_header = {"Authorization":
                                  "blah " + user_session_id}
         # prepare stuff for modification attempts
+        other_person_id = hm.post_item(self, self.api_URL + "/persons",
+                                       dict(first_name="Владимир",
+                                            middle_name="Ильич",
+                                            surname="Ленин",
+                                            birth_date=datetime.date(1870, 4, 22).isoformat(),
+                                            phone_no="+78007773737"))
         org_id = hm.post_item(self, self.api_URL + "/organizations", {"name" : "sample_org"})
         dep_id = hm.post_item(self, self.api_URL + "/organizations/%s/departments" % org_id,
-                              {"name" : "sample_org"})
+                              {"name" : "sample_dep"})
+        group_id = hm.post_item(self, self.api_URL + "/departments/%s/groups" % dep_id,
+                              {"name": "sample_group"})
+        group_role_id = hm.post_item(self, self.api_URL + "/group_roles",
+                                {"name": "sample_group_role"})
+        group_perm_id = hm.post_item(self, self.api_URL + "/group_permissions",
+                                     {"name": "sample_group_permission"})
+        resp_json = requests.post(self.api_URL + "/groups/%s/role_list"%group_id,
+                      json={"role_list" : [group_role_id]}, headers=self.admin_header).json()
+        print(resp_json)
+        group_member_id = hm.post_item(self, self.api_URL + "/groups/%s/group_members"%group_id,
+                                     {"person_id": user_person_id,
+                                      "role_id" : group_role_id})
+        # lists
         restricted_post_list = [
             "/organizations",
             "/persons",
-            "/organizations/%s/departments"%org_id
+            "/organizations/%s/departments"%org_id,
+            "/departments/%s/groups"%dep_id,
+            "/groups/%s/role_list"%group_id,
+            "/group_roles",
+            "/group_permissions",
+            "/groups/%s/group_members"%group_id,
+            "/group_members/%s/permissions"%group_member_id,
+
         ]
         restricted_delete_list = [
             "/organizations/%s" % org_id,
-            "/departments/%s" % dep_id
+            "/departments/%s" % dep_id,
+            "/groups/%s" % group_id,
+            "/group_roles/%s" % group_role_id,
+            "/group_permissions/%s" %group_perm_id,
+            "/persons/%s" %other_person_id,
+            "/group_members/%s" %group_member_id
         ]
+        # trying posts and deletes
         post_data = {"sample" : "data"}
         for url in restricted_post_list:
             resp_json = hm.post_item_as(self, self.api_URL + url,
