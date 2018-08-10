@@ -18,6 +18,7 @@ mock_port = 5010
 mock_url = "http://127.0.0.1:" + str(mock_port)
 node_port = 5002
 
+
 class Session():
     def __init__(self):
         self.id = None
@@ -118,6 +119,30 @@ class TestAuth(unittest.TestCase):
         requests.post(self.api_URL + "/wipe")
         cur_session.id = None
         cur_session.received_code = None
+        admin_req = requests.post(self.api_URL + "/first_admin").json()
+        self.assertEqual(ERR.OK, admin_req["result"])
+        self.admin_header = {"Authorization":
+                                 "blah " + admin_req["session_id"]}
+
+    def test_user_restricted_access(self):
+        phone_no, password = self.prepare_confirmed_user()
+        resp = requests.post(self.api_URL + "/user_login", json={
+            "phone_no": phone_no,
+            "password": password})
+        user_session_id = resp.json()["session_id"]
+        user_header = {"Authorization":
+                                 "blah " + user_session_id}
+        restricted_post_list = [
+            "/organizations",
+            "/persons",
+
+        ]
+        post_data = {"sample" : "data"}
+        for url in restricted_post_list:
+            resp_json = hm.post_item_as(self, self.api_URL + url,
+                                        post_data, user_header)
+            self.assertEqual(ERR.AUTH, resp_json["result"])
+
 
     def test_registration_normal(self):
         phone_no = "79803322212"

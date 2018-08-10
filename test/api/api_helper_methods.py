@@ -9,13 +9,22 @@ import random
 def post_item(instance, url, data):
     if not isinstance(instance, unittest.TestCase):
         raise TypeError
-    resp = requests.post(url=url, json=data)
+    resp = requests.post(url=url, json=data, headers = instance.admin_header)
     instance.assertEqual(200, resp.status_code, "post response status code must be 200")
     resp_json = resp.json()
     instance.assertEqual(ERR.OK, resp_json["result"],  "post result must be ERR.OK")
     if "error_message" in resp_json: print(resp_json["error_message"])
     instance.assertTrue(resp_json["id"], "returned id must be not None")
     return resp_json["id"]
+
+def post_item_as(instance, url, data, headers):
+    if not isinstance(instance, unittest.TestCase):
+        raise TypeError
+    resp = requests.post(url=url,
+                         json=data,
+                         headers=headers)
+    instance.assertEqual(200, resp.status_code, "post response status code must be 200")
+    return resp.json()
 
 
 def prepare_two_persons(instance, api_url):
