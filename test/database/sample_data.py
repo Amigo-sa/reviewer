@@ -2,7 +2,7 @@
 import context
 import datetime
 import random
-from pymodm.connection import connect
+from pymodm.connection import connect, _get_db
 from node.settings import constants
 
 fill_script_version = "0.3"
@@ -38,7 +38,7 @@ from data.reviewer_model import (Department,
 
 def clear_db():
     print("clearing db...")
-    revDb = _get_db(constants.db_name_test)
+    revDb = _get_db("reviewer")
     colList = revDb.list_collection_names()
     for col in colList:
         revDb.drop_collection(col)
