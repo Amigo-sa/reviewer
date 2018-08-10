@@ -36,7 +36,7 @@ from data.reviewer_model import (Department,
 
 def clear_db():
     print("clearing db...")
-    revDb = _get_db("reviewer")
+    revDb = _get_db(constants.db_name_test)
     colList = revDb.list_collection_names()
     for col in colList:
         revDb.drop_collection(col)

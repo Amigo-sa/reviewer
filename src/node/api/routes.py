@@ -16,7 +16,7 @@ if __debug__:
     import node.settings.constants as constants
     import pymongo
     rev_client = pymongo.MongoClient(constants.mongo_db)
-    rev_db = rev_client["reviewer"]
+    rev_db = rev_client[constants.db_name_test]
 
     @bp.route('/')
     @bp.route('/index')
@@ -37,7 +37,7 @@ if __debug__:
     @bp.route("/wipe", methods=['POST'])
     def wipe():
         try:
-            revDb = _get_db("reviewer")
+            revDb = _get_db(constants.db_name)
             colList = revDb.list_collection_names()
             for col in colList:
                 revDb[col].delete_many({})

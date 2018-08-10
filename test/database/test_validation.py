@@ -46,7 +46,7 @@ from data.reviewer_model import (Department,
 test_version = "0.3"
 
 def clear_db():
-    revDb = _get_db("reviewer")
+    revDb = _get_db(constants.)
     colList = revDb.list_collection_names()
     for col in colList:
         revDb[col].delete_many({})
