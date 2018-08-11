@@ -815,10 +815,6 @@ def post_review():
         value = req['value']
         description = req['description']
         obj = {
-            "HardSkill":
-                HSReview(reviewer_id, subject_id, value, description),
-            "SoftSkill":
-                SSReview(reviewer_id, subject_id, value, description),
             "Group":
                 GroupReview(reviewer_id, subject_id, value, description),
             "GroupTest":
@@ -827,10 +823,6 @@ def post_review():
                 GroupMemberReview(reviewer_id, subject_id, value, description)
         }
         subj_class = {
-            "HardSkill":
-                PersonHS,
-            "SoftSkill":
-                PersonSS,
             "Group":
                 Group,
             "GroupTest":
@@ -889,6 +881,66 @@ def post_general_role_review(id):
         result = {"result":ERR.DB}
 
     return jsonify(result), 200
+
+
+def post_person_skill_review(skill_review_cls, p_id, s_id):
+    req = request.get_json()
+    try:
+        reviewer_id = ObjectId(req['reviewer_id'])
+        value = req['value']
+        description = req['description']
+        person_skill_cls = None
+        query = {}
+        query.update({"person_id": ObjectId(p_id)})
+        if skill_review_cls == HSReview:
+            person_skill_cls = PersonHS
+            skill_cls = HardSkill
+            query.update({"hs_id": ObjectId(s_id)})
+        elif skill_review_cls == SSReview:
+            person_skill_cls = PersonSS
+            skill_cls = SoftSkill
+            query.update({"ss_id": ObjectId(s_id)})
+        else:
+            raise Exception("post_person_skill_review() invalid args")
+        if not Person.objects.raw({"_id":reviewer_id}).count():
+            return jsonify({"result": ERR.NO_DATA}), 200
+        if not Person.objects.raw({"_id":ObjectId(p_id)}).count():
+            return jsonify({"result": ERR.NO_DATA}), 200
+        if not skill_cls.objects.raw({"_id":ObjectId(s_id)}).count():
+            return jsonify({"result": ERR.NO_DATA}), 200
+        person_s = person_skill_cls.objects.raw(query)
+        if person_s.count():
+            person_s = person_s.first()
+        else:
+            default_level = 50.0
+            person_s = person_skill_cls(Person(_id=p_id),
+                                        skill_cls(_id=s_id),
+                                        default_level)
+            person_s.save()
+        s_review = skill_review_cls(reviewer_id, person_s.pk, value, description)
+        s_review.save()
+
+        result = {"result": ERR.OK,
+                  "id": str(s_review.pk)}
+
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
+
+    return jsonify(result), 200
+
+@bp.route("/persons/<string:p_id>/hard_skills/<string:hs_id>/reviews", methods = ['POST'])
+@required_auth("reviewer")
+def post_person_hard_skill_review(p_id, hs_id):
+    return post_person_skill_review(HSReview, p_id, hs_id)
+
+
+@bp.route("/persons/<string:p_id>/soft_skills/<string:ss_id>/reviews", methods = ['POST'])
+@required_auth("reviewer")
+def post_person_soft_skill_review(p_id, ss_id):
+    return post_person_skill_review(SSReview, p_id, ss_id)
 
 
 @bp.route("/reviews/<string:id>", methods=['DELETE'])

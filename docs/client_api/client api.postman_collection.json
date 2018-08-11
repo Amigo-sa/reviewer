@@ -3663,6 +3663,244 @@
 					]
 				},
 				{
+					"name": "post_person_hard_skill_review",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "740a7382-8e17-4ca3-81a4-23f0ec106abe",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"hs_id\", \"5b6f0e572131370e7888657b\");",
+									"pm.environment.set(\"reviewer_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"value\",90.0);",
+									"pm.environment.set(\"description\", \"Экспертный уровень\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/{{person_id}}/hard_skills/{{hs_id}}/reviews",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"{{person_id}}",
+								"hard_skills",
+								"{{hs_id}}",
+								"reviews"
+							]
+						},
+						"description": "Оставить отзыв о профессиональном навыке пользователя"
+					},
+					"response": [
+						{
+							"name": "post_person_hard_skill_review",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewer_id\":\"5b6ef7682131371b80f429f5\",\n\t\"value\": 90.0,\n\t\"description\":\"Эксперный уровень\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/persons/5b6ef7682131371b80f429f5/hard_skills/5b6ef7682131371b80f42a03/reviews",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"persons",
+										"5b6ef7682131371b80f429f5",
+										"hard_skills",
+										"5b6ef7682131371b80f42a03",
+										"reviews"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 11 Aug 2018 16:15:03 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"id\":\"5b6f0b8721313722a8d93c5c\",\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "post_person_soft_skill_review",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7b9b15f7-9185-4d3c-bf22-e8527d32d110",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"ss_id\", \"5b6f0e572131370e7888657b\");",
+									"pm.environment.set(\"reviewer_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"value\",90.0);",
+									"pm.environment.set(\"description\", \"Просто супер\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/{{person_id}}/soft_skills/{{ss_id}}/reviews",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"{{person_id}}",
+								"soft_skills",
+								"{{ss_id}}",
+								"reviews"
+							]
+						},
+						"description": "Оставить отзыв о личностной характеристике пользователя"
+					},
+					"response": [
+						{
+							"name": "post_person_soft_skill_review",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewer_id\":5b6f15102131372208622123\",\n\t\"value\":99.0,\n\t\"description\":\"Просто супер\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/persons/5b6f15102131372208622123/soft_skills/5b6f15102131372208622abc/reviews",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"persons",
+										"5b6f15102131372208622123",
+										"soft_skills",
+										"5b6f15102131372208622abc",
+										"reviews"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 11 Aug 2018 16:55:44 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"id\":\"5b6f15102131372208622010\",\"result\":0}\n"
+						}
+					]
+				},
+				{
 					"name": "delete_review",
 					"event": [
 						{
