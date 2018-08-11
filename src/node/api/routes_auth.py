@@ -50,6 +50,40 @@ def user_login():
     return jsonify(result), 200
 
 
+@bp.route("/oauth/token", methods= ["POST"])
+def grant_oauth_token():
+    try:
+        phone_no = request.form["username"]
+        password = request.form["password"]
+        auth_info = AuthInfo.objects.get({"phone_no": phone_no})
+        pass_hash = hash_password(password)
+        if auth_info.password == pass_hash:
+            session_id = gen_session_id()
+            auth_info.session_id = session_id
+            auth_info.save()
+            result = {"access_token": str(session_id),
+                      "token_type": "bearer",
+                      "expires_in": 86400
+                      }
+            return jsonify(result), 200
+
+        result = {"error": "invalid_grant",
+                  "error_description": "Invalid login or password"}
+        if auth_info.attempts >= constants.authorization_max_attempts:
+            auth_info.is_approved = False
+            auth_info.password = None
+        else:
+            auth_info.attempts += 1
+        auth_info.save()
+        return jsonify(result), 400
+    except KeyError as e:
+        result = {"error": "invalid_request",
+                  "error_description": "Invalid parameters"}
+        return jsonify(result), 400
+    except Exception as e:
+        return 404
+
+
 @bp.route("/confirm_phone_no", methods= ["POST"])
 def confirm_phone():
     req = request.get_json()
