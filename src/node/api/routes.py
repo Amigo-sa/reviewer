@@ -804,17 +804,18 @@ def get_review_info(id):
     return jsonify(result), 200
 
 
-@bp.route("/reviews", methods = ['POST'])
-@required_auth("reviewer")
-def post_review():
+def post_review(review_type, subject_id):
     req = request.get_json()
     try:
-        type = req['type']
         reviewer_id = ObjectId(req['reviewer_id'])
-        subject_id = ObjectId(req['subject_id'])
+        subject_id = ObjectId(subject_id)
         value = req['value']
         description = req['description']
         obj = {
+            "StudentRole":
+                SRReview(reviewer_id, subject_id, value, description),
+            "TutorRole":
+                TRReview(reviewer_id, subject_id, value, description),
             "Group":
                 GroupReview(reviewer_id, subject_id, value, description),
             "GroupTest":
@@ -823,6 +824,10 @@ def post_review():
                 GroupMemberReview(reviewer_id, subject_id, value, description)
         }
         subj_class = {
+            "StudentRole":
+                StudentRole,
+            "TutorRole":
+                TutorRole,
             "Group":
                 Group,
             "GroupTest":
@@ -830,14 +835,14 @@ def post_review():
             "GroupMember":
                 GroupMember
         }
-        if type not in obj:
+        if review_type not in obj:
             result = {"result": ERR.INPUT}
         else:
-            if subj_class[type].objects.raw({"_id":ObjectId(subject_id)}).count() \
+            if subj_class[review_type].objects.raw({"_id":ObjectId(subject_id)}).count() \
                     and Person.objects.raw({"_id":ObjectId(reviewer_id)}).count():
-                obj[type].save()
+                obj[review_type].save()
                 result = {"result":ERR.OK,
-                          "id": str(obj[type].pk)}
+                          "id": str(obj[review_type].pk)}
             else:
                 result = {"result": ERR.NO_DATA}
     except KeyError:
@@ -851,36 +856,37 @@ def post_review():
 @bp.route("/general_roles/<string:id>/reviews", methods = ['POST'])
 @required_auth("reviewer")
 def post_general_role_review(id):
-    req = request.get_json()
     try:
-        reviewer_id = ObjectId(req['reviewer_id'])
-        subject_id = ObjectId(id)
-        value = req['value']
-        description = req['description']
-        if StudentRole.objects.raw({"_id":ObjectId(subject_id)}).count():
-            type = "StudentRole"
-        elif TutorRole.objects.raw({"_id":ObjectId(subject_id)}).count():
-            type = "TutorRole"
+        if StudentRole.objects.raw({"_id":ObjectId(id)}).count():
+            review_type = "StudentRole"
+        elif TutorRole.objects.raw({"_id":ObjectId(id)}).count():
+            review_type = "TutorRole"
         else:
             return jsonify({"result": ERR.NO_DATA}), 200
-        obj = {
-            "StudentRole":
-                SRReview(reviewer_id, subject_id, value, description),
-            "TutorRole":
-                TRReview(reviewer_id, subject_id, value, description)
-        }
-        if Person.objects.raw({"_id": ObjectId(reviewer_id)}).count():
-            obj[type].save()
-            result = {"result": ERR.OK,
-                      "id": str(obj[type].pk)}
-        else:
-            result = {"result": ERR.NO_DATA}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
     except:
-        result = {"result":ERR.DB}
+        return jsonify({"result": ERR.DB}), 200
 
-    return jsonify(result), 200
+    return post_review(review_type, id)
+
+
+@bp.route("/groups/<string:id>/reviews", methods = ['POST'])
+@required_auth("reviewer")
+def post_group_review(id):
+    return post_review("Group", id)
+
+
+@bp.route("/tests/<string:id>/reviews", methods = ['POST'])
+@required_auth("reviewer")
+def post_group_test_review(id):
+    return post_review("GroupTest", id)
+
+
+@bp.route("/group_members/<string:id>/reviews", methods = ['POST'])
+@required_auth("reviewer")
+def post_group_member_review(id):
+    return post_review("GroupMember", id)
 
 
 def post_person_skill_review(skill_review_cls, p_id, s_id):

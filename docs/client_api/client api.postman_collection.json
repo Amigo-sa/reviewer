@@ -3438,127 +3438,16 @@
 			"name": "reviews",
 			"item": [
 				{
-					"name": "post_review",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "a4cb99da-a567-46cf-8a7c-dd1ba31b138f",
-								"type": "text/javascript",
-								"exec": [
-									"pm.environment.set(\"type\", \"GroupMember\");",
-									"pm.environment.set(\"reviewer_id\", \"5b6c83fb2131371d5ceeaca8\");",
-									"pm.environment.set(\"subject_id\", \"5b4ebab62131371208ceb122\");",
-									"pm.environment.set(\"value\",90.0);",
-									"pm.environment.set(\"description\", \"Очень круто\");"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"type\":\"{{type}}\",\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"subject_id\":\"{{subject_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
-						},
-						"url": {
-							"raw": "http://127.0.0.1:5000/reviews",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "5000",
-							"path": [
-								"reviews"
-							]
-						},
-						"description": "Публикует отзыв о чем-либо\nв type передается тип отзыва:\nStudentRole - на студента\nTutorRole - на преподавателя\nHardSkill - на hard skill пользователя\nSoftSkill - на soft skill пользователя\nGroup - на группу\nGroupTest - на тест для группы\nGroupMember - на участника группы"
-					},
-					"response": [
-						{
-							"name": "post_review",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"disabled": false
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"type\":\"GroupMember\",\n\t\"reviewer_id\":\"5b4ebab42131371208ceb0c9\",\n\t\"subject_id\":\"5b4ebab62131371208ceb122\",\n\t\"value\": 93.0,\n\t\"description\":\"Молодец !\"\n}"
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/reviews",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"reviews"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Length",
-									"value": "45",
-									"name": "Content-Length",
-									"description": "The length of the response body in octets (8-bit bytes)"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
-								},
-								{
-									"key": "Date",
-									"value": "Sun, 22 Jul 2018 19:39:25 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Server",
-									"value": "Werkzeug/0.14.1 Python/3.6.5",
-									"name": "Server",
-									"description": "A name for the server"
-								}
-							],
-							"cookie": [],
-							"body": "{\"id\":\"5b54dd6d2131371308dded1d\",\"result\":0}\n"
-						}
-					]
-				},
-				{
 					"name": "post_general_role_review",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "92178e6f-867a-4505-8660-60610f1e2f60",
+								"id": "8751ea46-03d5-4938-ae08-5034526cbb8c",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"role_id\", \"5b6ecc78213137200c6e781e\");",
-									"pm.environment.set(\"reviewer_id\", \"5b6ecc78213137200c6e77d8\");",
+									"pm.environment.set(\"role_id\", \"5b6f0e582131370e788865b3\");",
+									"pm.environment.set(\"reviewer_id\", \"5b6f0e572131370e7888656d\");",
 									"pm.environment.set(\"value\",90.0);",
 									"pm.environment.set(\"description\", \"Классный чел\");"
 								]
@@ -3897,6 +3786,234 @@
 							],
 							"cookie": [],
 							"body": "{\"id\":\"5b6f15102131372208622010\",\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "post_group_review",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "505d18f7-6836-4dc6-b69e-06440e4bbc74",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_id\", \"5b6f0e582131370e788865c8\");",
+									"pm.environment.set(\"reviewer_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"value\",90.0);",
+									"pm.environment.set(\"description\", \"Хорошая группа\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/groups/{{group_id}}/reviews",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"groups",
+								"{{group_id}}",
+								"reviews"
+							]
+						},
+						"description": "Оставить отзыв о группе"
+					},
+					"response": [
+						{
+							"name": "post_group_review",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewer_id\":\"5b6f1a002131371bd44ac85c\",\n\t\"value\": 11.0,\n\t\"description\":\"Так себе группа\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/groups/5b6f0e582131370e788865c8/reviews",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"groups",
+										"5b6f0e582131370e788865c8",
+										"reviews"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 11 Aug 2018 17:16:48 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"id\":\"5b6f1a002131371bd44ac85c\",\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "post_group_member_review",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1fb0917a-2cef-4558-a224-7d43a9d7675d",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_member_id\", \"5b6f0e582131370e788865ca\");",
+									"pm.environment.set(\"reviewer_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"value\",90.0);",
+									"pm.environment.set(\"description\", \"Отличный товарищ\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/group_members/{{group_member_id}}/reviews",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"group_members",
+								"{{group_member_id}}",
+								"reviews"
+							]
+						},
+						"description": "Оставить отзыв об участнике группы"
+					},
+					"response": [
+						{
+							"name": "post_group_member_review",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewer_id\":\"5b6f0e582131370e788865ca\",\n\t\"value\": 88.0,\n\t\"description\":\"Отличный товарищ\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/group_members/5b6f0e582131370e788865ca/reviews",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"group_members",
+										"5b6f0e582131370e788865ca",
+										"reviews"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 11 Aug 2018 17:24:49 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"id\":\"5b6f1be12131372234656ca0\",\"result\":0}\n"
 						}
 					]
 				},
