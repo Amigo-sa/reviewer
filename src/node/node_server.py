@@ -8,10 +8,12 @@ import pymongo
 from flask import Flask
 from node.api.routes import bp as routes
 from node.api.routes_debug import bp as routes_debug
+from node.api.routes_auth import bp as routes_auth
 from pymodm.connection import connect
 
 app = Flask(__name__)
 app.register_blueprint(routes_debug)
+app.register_blueprint(routes_auth)
 app.register_blueprint(routes)
 
 

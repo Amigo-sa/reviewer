@@ -5,7 +5,7 @@ import node.settings.constants as constants
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
 from datetime import datetime, timezone, timedelta, date
-from node.api.routes import hash_password, gen_session_id
+from node.api.routes_auth import hash_password, gen_session_id
 
 bp = Blueprint('routes_debug', __name__)
 
