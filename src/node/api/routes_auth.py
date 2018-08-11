@@ -28,7 +28,7 @@ def user_login():
         auth_info = AuthInfo.objects.get({"phone_no": phone_no})
         pass_hash = hash_password(password)
         if auth_info.password == pass_hash:
-            session_id = gen_session_id()
+            session_id = gen_session_id(pass_hash)
             auth_info.session_id = session_id
             auth_info.save()
             result = {"result": ERR.OK,
@@ -58,7 +58,7 @@ def grant_oauth_token():
         auth_info = AuthInfo.objects.get({"phone_no": phone_no})
         pass_hash = hash_password(password)
         if auth_info.password == pass_hash:
-            session_id = gen_session_id()
+            session_id = gen_session_id(pass_hash)
             auth_info.session_id = session_id
             auth_info.save()
             result = {"access_token": str(session_id),
@@ -108,7 +108,7 @@ def confirm_phone():
         new_auth_info.phone_no = phone_no
         new_auth_info.last_send_time = datetime.now(timezone.utc)
         code = gen_sms_code()
-        session_id = gen_session_id()
+        session_id = gen_session_id(code)
         new_auth_info.session_id = session_id
         new_auth_info.auth_code = code
         new_auth_info.attempts = 0
@@ -208,23 +208,31 @@ def set_password():
 
     return jsonify(result), 200
 
+
 def gen_sms_code():
     code = random.randint(0,9999)
     codestr = "{0:04}".format(code)
     print(codestr)
     return codestr
-#TODO генерация сделана намеренно ущербной, чтобы в будущем устроить это всё по-человечески безопасно
-def gen_session_id():
-    code = random.randint(0,99999999)
-    codestr = "{0:08}".format(code)
-    print(codestr)
-    return codestr
+
+
+def gen_session_id(seed="some_string"):
+    timestamp = datetime.now(timezone.utc).microsecond
+    seed += str(timestamp)
+
+    seed_hash = hashlib.sha256(seed.encode("utf-8")).hexdigest()
+
+    return seed_hash[:16]
+
+
 def hash_password(password):
     pass_hash = hashlib.sha256(password.encode("utf-8"))
     hash_hex = pass_hash.hexdigest()
     print(hash_hex)
     return hash_hex
-#TODO заменить на реальный SMSC
+
+
+# TODO заменить на реальный SMSC
 def send_sms(phone_no, message):
     requests.post(constants.mock_smsc_url + "/send_sms",json={
         "auth_code" : message,
