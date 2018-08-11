@@ -45,9 +45,6 @@ def clear_db():
         print("dropped collection " + col)
     print("done")
 
-connect(constants.mongo_db + "/" + constants.db_name_test,
-        alias="reviewer")
-
 def fill_db():
     persons = {
         "Leni4":
@@ -788,6 +785,14 @@ def display_data():
             item.survey_data))
 
 if __name__ == "__main__":
+    db_name = constants.db_name
+    if len(sys.argv) > 1:
+        if '--help' in str(sys.argv):
+            print("usage: sample_data.py [--test] fill test database otherwise fill main database")
+            exit()
+        if '--test' in str(sys.argv):
+            db_name = constants.db_name_test
+    connect(constants.mongo_db + "/" + db_name, alias="reviewer")
     clear_db()
     fill_db()
     display_data()

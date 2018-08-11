@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 from pymodm import MongoModel, fields, ReferenceField
 from pymongo.write_concern import WriteConcern
 from pymodm.errors import ValidationError
@@ -6,6 +7,7 @@ from pymongo.operations import IndexModel
 import pymongo
 from pymodm.connection import connect
 import data.settings as settings
+from node.settings import constants
 
 from collections import Counter
 
@@ -30,9 +32,11 @@ def init_model():
     GroupPermission.register_delete_rule(
         GroupMember, "permissions", fields.ReferenceField.PULL)
 
-
-connect(settings.mongo.conn_string + "/" + settings.mongo.db_name,
-        alias="reviewer")
+db_name = constants.db_name
+if len(sys.argv) > 1:
+    if '--test' in str(sys.argv):
+        db_name = constants.db_name_test
+connect(constants.mongo_db + "/" + db_name, alias="reviewer")
 
 
 class ValidatedReferenceField(fields.ReferenceField):
