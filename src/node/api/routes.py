@@ -39,6 +39,7 @@ def add_organization():
 
     return jsonify(result), 200
 
+
 @bp.route("/persons", methods = ['POST'])
 @required_auth("admin")
 def add_person():
@@ -161,6 +162,7 @@ def add_group(id):
 @required_auth("admin")
 def delete_group(id):
     return delete_resource(Group, id)
+
 
 @bp.route("/groups/<string:id>/role_list", methods=['POST'])
 @required_auth("admin")
@@ -892,6 +894,7 @@ def post_person_skill_review(skill_review_cls, p_id, s_id):
 
     return jsonify(result), 200
 
+
 @bp.route("/persons/<string:p_id>/hard_skills/<string:hs_id>/reviews", methods = ['POST'])
 @required_auth("reviewer")
 def post_person_hard_skill_review(p_id, hs_id):
@@ -976,22 +979,39 @@ def find_reviews():
     return jsonify(result), 200
 
 
-@bp.route("/soft_skills", methods = ['POST'])
-@required_auth("admin")
-def add_soft_skill():
+def add_skill(skill_cls):
     req = request.get_json()
     try:
         name = req['name']
-        soft_skill = SoftSkill(name)
-        soft_skill.save()
+        skill = skill_cls(name)
+        skill.save()
         result = {"result":ERR.OK,
-                  "id": str(soft_skill.pk)}
+                  "id": str(skill.pk)}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
     except:
         result = {"result":ERR.DB}
 
     return jsonify(result), 200
+
+
+def list_skills(skill_cls):
+    list = []
+    try:
+        for skill in  skill_cls.objects.all():
+            list.append({"id":str(skill.pk),
+                         "name":skill.name}
+                        )
+        result = {"result": ERR.OK, "list":list}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/soft_skills", methods = ['POST'])
+@required_auth("admin")
+def add_soft_skill():
+    return add_skill(SoftSkill)
 
 
 @bp.route("/soft_skills/<string:id>", methods = ['DELETE'])
@@ -1002,34 +1022,13 @@ def delete_soft_skill(id):
 
 @bp.route("/soft_skills", methods = ['GET'])
 def list_soft_skills():
-    list = []
-    try:
-        for soft_skill in  SoftSkill.objects.all():
-            list.append({"id":str(soft_skill.pk),
-                         "name":soft_skill.name}
-                        )
-        result = {"result": ERR.OK, "list":list}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return list_skills(SoftSkill)
 
 
 @bp.route("/hard_skills", methods = ['POST'])
 @required_auth("admin")
 def add_hard_skill():
-    req = request.get_json()
-    try:
-        name = req['name']
-        hard_skill = HardSkill(name)
-        hard_skill.save()
-        result = {"result":ERR.OK,
-                  "id": str(hard_skill.pk)}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
+    return add_skill(HardSkill)
 
 
 @bp.route("/hard_skills/<string:id>", methods = ['DELETE'])
@@ -1040,110 +1039,89 @@ def delete_hard_skill(id):
 
 @bp.route("/hard_skills", methods = ['GET'])
 def list_hard_skills():
-    list = []
+    return list_skills(HardSkill)
+
+
+def find_person_skills(skill_cls):
+    lst = []
+    query = {}
+    err = ERR.OK
+    if skill_cls == SoftSkill:
+        tag = "ss_id"
+        person_skill_cls = PersonSS
+    elif skill_cls == HardSkill:
+        tag = "hs_id"
+        person_skill_cls = PersonHS
+    else:
+        raise Exception("bad func usage")
+
+    if 'person_id' in request.args:
+        person_id = request.args['person_id']
+        if not Person.objects.raw({"_id":ObjectId(person_id)}).count():
+            err = ERR.NO_DATA
+        else:
+            query.update({"person_id": ObjectId(person_id)})
+    if tag in request.args:
+        s_id = request.args[tag]
+        if not skill_cls.objects.raw({"_id":ObjectId(s_id)}).count():
+            err = ERR.NO_DATA
+        else:
+            query.update({tag: ObjectId(s_id)})
     try:
-        for hard_skill in  HardSkill.objects.all():
-            list.append({"id":str(hard_skill.pk),
-                         "name":hard_skill.name}
-                        )
-        result = {"result": ERR.OK, "list":list}
-    except:
+        if err == ERR.OK:
+            for person_s in person_skill_cls.objects.raw(query):
+                lst.append({"id": str(person_s.pk)})
+            result = {"result": ERR.OK, "list": lst}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except Exception as ex:
+        print(ex)
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
 
 @bp.route("/persons/soft_skills", methods=['GET'])
 def find_person_soft_skills():
-    lst = []
-    query = {}
-    err = ERR.OK
-    if 'person_id' in request.args:
-        person_id = request.args['person_id']
-        if not Person.objects.raw({"_id":ObjectId(person_id)}).count():
-            err = ERR.NO_DATA
-        else:
-            query.update({"person_id": ObjectId(person_id)})
-    if 'ss_id' in request.args:
-        ss_id = request.args['ss_id']
-        if not SoftSkill.objects.raw({"_id":ObjectId(ss_id)}).count():
-            err = ERR.NO_DATA
-        else:
-            query.update({"ss_id": ObjectId(ss_id)})
-    try:
-        if err == ERR.OK:
-            for person_ss in PersonSS.objects.raw(query):
-                lst.append({"id": str(person_ss.pk)})
-            result = {"result": ERR.OK, "list": lst}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except Exception as ex:
-        print(ex)
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return find_person_skills(SoftSkill)
 
 
 @bp.route("/persons/hard_skills", methods=['GET'])
 def find_person_hard_skills():
-    lst = []
-    query = {}
-    err = ERR.OK
-    if 'person_id' in request.args:
-        person_id = request.args['person_id']
-        if not Person.objects.raw({"_id":ObjectId(person_id)}).count():
-            err = ERR.NO_DATA
-        else:
-            query.update({"person_id": ObjectId(person_id)})
-    if 'hs_id' in request.args:
-        hs_id = request.args['hs_id']
-        if not HardSkill.objects.raw({"_id":ObjectId(hs_id)}).count():
-            err = ERR.NO_DATA
-        else:
-            query.update({"hs_id": ObjectId(hs_id)})
+    return find_person_skills(HardSkill)
+
+
+def get_person_skill_info(skill_cls, id):
+    if skill_cls == SoftSkill:
+        tag = "ss_id"
+        person_skill_cls = PersonSS
+    elif skill_cls == HardSkill:
+        tag = "hs_id"
+        person_skill_cls = PersonHS
+    else:
+        raise Exception("bad func usage")
     try:
-        if err == ERR.OK:
-            for person_hs in PersonHS.objects.raw(query):
-                lst.append({"id": str(person_hs.pk)})
-            result = {"result": ERR.OK, "list": lst}
+        if person_skill_cls(_id=id) in person_skill_cls.objects.raw({"_id": ObjectId(id)}):
+            person_s = person_skill_cls(_id=id)
+            person_s.refresh_from_db()
+            data = {"person_id": str(person_s.person_id.pk),
+                    tag: str(person_s.ss_id.pk),
+                    "level": str(person_s.level)}
+            result = {"result": ERR.OK, "data": data}
         else:
             result = {"result": ERR.NO_DATA}
-    except Exception as ex:
-        print(ex)
+    except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
 
 @bp.route("/persons/soft_skills/<string:id>", methods=['GET'])
 def get_person_soft_skill_info(id):
-    try:
-        if PersonSS(_id=id) in PersonSS.objects.raw({"_id": ObjectId(id)}):
-            person_ss = PersonSS(_id=id)
-            person_ss.refresh_from_db()
-            data = {"person_id": str(person_ss.person_id.pk),
-                    "ss_id": str(person_ss.ss_id.pk),
-                    "level": str(person_ss.level)}
-            result = {"result": ERR.OK, "data": data}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return get_person_skill_info(SoftSkill, id)
 
 
 @bp.route("/persons/hard_skills/<string:id>", methods=['GET'])
 def get_person_hard_skill_info(id):
-    try:
-        if PersonHS(_id=id) in PersonHS.objects.raw({"_id": ObjectId(id)}):
-            person_hs = PersonHS(_id=id)
-            person_hs.refresh_from_db()
-            data = {"person_id": str(person_hs.person_id.pk),
-                    "hs_id": str(person_hs.hs_id.pk),
-                    "level": str(person_hs.level)}
-            result = {"result": ERR.OK, "data": data}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return get_person_skill_info(HardSkill, id)
 
 
 @bp.route("/groups/<string:id>/tests", methods = ['POST'])
