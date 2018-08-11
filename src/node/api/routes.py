@@ -9,6 +9,18 @@ from node.api.routes_auth import required_auth
 bp = Blueprint('routes', __name__)
 
 
+def delete_resource(cls, _id):
+    try:
+        if cls(_id=_id) in cls.objects.raw({"_id":ObjectId(_id)}):
+            cls(_id=_id).delete()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
+    return jsonify(result), 200
+
+
 @bp.route("/organizations", methods = ['POST'])
 @required_auth("admin")
 def add_organization():
@@ -57,29 +69,13 @@ def add_person():
 @bp.route("/organizations/<string:id>", methods = ['DELETE'])
 @required_auth("admin")
 def delete_organization(id):
-    try:
-        if Organization(_id=id) in Organization.objects.raw({"_id":ObjectId(id)}):
-            Organization(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(Organization, id)
 
 
 @bp.route("/persons/<string:id>", methods = ['DELETE'])
 @required_auth("user")
 def delete_person(id):
-    try:
-        if Person(_id=id) in Person.objects.raw({"_id":ObjectId(id)}):
-            Person(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(Person, id)
 
 
 @bp.route("/organizations", methods = ['GET'])
@@ -120,15 +116,7 @@ def add_department(id):
 @bp.route("/departments/<string:id>", methods = ['DELETE'])
 @required_auth("admin")
 def delete_department(id):
-    try:
-        if Department(_id=id) in Department.objects.raw({"_id":ObjectId(id)}):
-            Department(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(Department, id)
 
 
 @bp.route("/organizations/<string:id>/departments", methods = ['GET'])
@@ -172,16 +160,7 @@ def add_group(id):
 @bp.route("/groups/<string:id>", methods = ['DELETE'])
 @required_auth("admin")
 def delete_group(id):
-    try:
-        if Group(_id=id) in Group.objects.raw({"_id":ObjectId(id)}):
-            Group(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
-
+    return delete_resource(Group, id)
 
 @bp.route("/groups/<string:id>/role_list", methods=['POST'])
 @required_auth("admin")
@@ -265,15 +244,7 @@ def add_group_role():
 @bp.route("/group_roles/<string:id>", methods = ['DELETE'])
 @required_auth("admin")
 def delete_group_role(id):
-    try:
-        if GroupRole(_id=id) in GroupRole.objects.raw({"_id":ObjectId(id)}):
-            GroupRole(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(GroupRole, id)
 
 
 @bp.route("/group_roles", methods = ['GET'])
@@ -312,16 +283,7 @@ def add_group_permission():
 @bp.route("/group_permissions/<string:id>", methods = ['DELETE'])
 @required_auth("admin")
 def delete_group_permission(id):
-    try:
-        if GroupPermission(_id=id) in GroupPermission.objects.raw({"_id":ObjectId(id)}):
-            GroupPermission(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
-
+    return delete_resource(GroupPermission, id)
 
 @bp.route("/group_permissions", methods = ['GET'])
 def list_group_permissions():
@@ -386,15 +348,7 @@ def add_group_member(id):
 @bp.route("/group_members/<string:id>", methods=['DELETE'])
 @required_auth("admin")
 def delete_group_member(id):
-    try:
-        if GroupMember(_id=id) in GroupMember.objects.raw({"_id":ObjectId(id)}):
-            GroupMember(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(GroupMember, id)
 
 
 @bp.route("/groups/<string:id>/group_members", methods=['GET'])
@@ -501,6 +455,7 @@ def delete_permissions_from_group_member(id1, id2):
         result = {"result":ERR.DB}
 
     return jsonify(result), 200
+
 
 @bp.route("/group_members/<string:id>/group_roles", methods = ['POST'])
 @required_auth("admin")
@@ -1042,15 +997,7 @@ def add_soft_skill():
 @bp.route("/soft_skills/<string:id>", methods = ['DELETE'])
 @required_auth("admin")
 def delete_soft_skill(id):
-    try:
-        if SoftSkill(_id=id) in SoftSkill.objects.raw({"_id":ObjectId(id)}):
-            SoftSkill(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(SoftSkill, id)
 
 
 @bp.route("/soft_skills", methods = ['GET'])
@@ -1088,15 +1035,7 @@ def add_hard_skill():
 @bp.route("/hard_skills/<string:id>", methods = ['DELETE'])
 @required_auth("admin")
 def delete_hard_skill(id):
-    try:
-        if HardSkill(_id=id) in HardSkill.objects.raw({"_id":ObjectId(id)}):
-            HardSkill(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(HardSkill, id)
 
 
 @bp.route("/hard_skills", methods = ['GET'])
@@ -1231,15 +1170,7 @@ def add_group_test(id):
 @bp.route("/tests/<string:id>", methods = ['DELETE'])
 @required_auth("admin")
 def delete_group_test(id):
-    try:
-        if GroupTest(_id=id) in GroupTest.objects.raw({"_id":ObjectId(id)}):
-            GroupTest(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(GroupTest, id)
 
 
 @bp.route("/tests/<string:id>", methods=['GET'])
@@ -1300,15 +1231,7 @@ def add_test_result(id):
 @bp.route("/tests/results/<string:id>", methods = ['DELETE'])
 @required_auth("admin")
 def delete_test_result(id):
-    try:
-        if TestResult(_id=id) in TestResult.objects.raw({"_id":ObjectId(id)}):
-            TestResult(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(TestResult, id)
 
 
 @bp.route("/tests/results/<string:id>", methods=['GET'])
