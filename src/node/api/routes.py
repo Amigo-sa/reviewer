@@ -317,7 +317,7 @@ def required_auth(required_permissions="admin"):
                     auth_info = auth_info.first()
                 else:
                     return jsonify({"result": ERR.AUTH}), 200
-                if auth_info.permissions & 1:
+                if auth_info.permissions & 1 and required_permissions != "reviewer":
                     return f(*args, **kwargs)
                 if required_permissions == "admin":
                     return jsonify({"result": ERR.AUTH}), 200
@@ -1196,7 +1196,7 @@ def post_review():
 
 
 @bp.route("/reviews/<string:id>", methods=['DELETE'])
-@required_auth("admin")
+@required_auth("reviewer")
 def delete_review(id):
     try:
         result = {"result": ERR.NO_DATA}
