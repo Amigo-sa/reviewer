@@ -1146,10 +1146,6 @@ def post_review():
         value = req['value']
         description = req['description']
         obj = {
-            "StudentRole":
-                SRReview(reviewer_id, subject_id, value, description),
-            "TutorRole":
-                TRReview(reviewer_id, subject_id, value, description),
             "HardSkill":
                 HSReview(reviewer_id, subject_id, value, description),
             "SoftSkill":
@@ -1162,10 +1158,6 @@ def post_review():
                 GroupMemberReview(reviewer_id, subject_id, value, description)
         }
         subj_class = {
-            "StudentRole":
-                StudentRole,
-            "TutorRole":
-                TutorRole,
             "HardSkill":
                 PersonHS,
             "SoftSkill":
@@ -1187,6 +1179,41 @@ def post_review():
                           "id": str(obj[type].pk)}
             else:
                 result = {"result": ERR.NO_DATA}
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
+
+@bp.route("/general_roles/<string:id>/reviews", methods = ['POST'])
+@required_auth("reviewer")
+def post_general_role_review(id):
+    req = request.get_json()
+    try:
+        reviewer_id = ObjectId(req['reviewer_id'])
+        subject_id = ObjectId(id)
+        value = req['value']
+        description = req['description']
+        if StudentRole.objects.raw({"_id":ObjectId(subject_id)}).count():
+            type = "StudentRole"
+        elif TutorRole.objects.raw({"_id":ObjectId(subject_id)}).count():
+            type = "TutorRole"
+        else:
+            return jsonify({"result": ERR.NO_DATA}), 200
+        obj = {
+            "StudentRole":
+                SRReview(reviewer_id, subject_id, value, description),
+            "TutorRole":
+                TRReview(reviewer_id, subject_id, value, description)
+        }
+        if Person.objects.raw({"_id": ObjectId(reviewer_id)}).count():
+            obj[type].save()
+            result = {"result": ERR.OK,
+                      "id": str(obj[type].pk)}
+        else:
+            result = {"result": ERR.NO_DATA}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
     except:
