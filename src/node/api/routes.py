@@ -19,7 +19,7 @@ if __debug__:
     import node.settings.constants as constants
     import pymongo
     rev_client = pymongo.MongoClient(constants.mongo_db)
-    rev_db = rev_client[constants.db_name_test]
+    rev_db = rev_client[constants.db_name]
 
     @bp.route('/')
     @bp.route('/index')
