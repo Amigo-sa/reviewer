@@ -10,11 +10,14 @@ from node.api.routes import bp as routes
 from node.api.routes_debug import bp as routes_debug
 from pymodm.connection import connect
 
+app = Flask(__name__)
+app.register_blueprint(routes_debug)
+app.register_blueprint(routes)
+
+
 def start_server(port):
-    app = Flask(__name__)
-    app.register_blueprint(routes_debug)
-    app.register_blueprint(routes)
     app.run(port=port)
+
 
 if __name__ == "__main__":
     start_server(constants.node_server_port)
