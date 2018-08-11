@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import sys
 import context
 import datetime
 import random
-from pymodm.connection import _get_db
+from pymodm.connection import connect, _get_db
+from node.settings import constants
 
 fill_script_version = "0.3"
 
@@ -43,7 +45,6 @@ def clear_db():
         revDb.drop_collection(col)
         print("dropped collection " + col)
     print("done")
-
 
 def fill_db():
     persons = {
@@ -796,6 +797,14 @@ def display_data():
             item.survey_data))
 
 if __name__ == "__main__":
+    db_name = constants.db_name
+    if len(sys.argv) > 1:
+        if '--help' in str(sys.argv):
+            print("usage: sample_data.py [--test] fill test database otherwise fill main database")
+            exit()
+        if '--test' in str(sys.argv):
+            db_name = constants.db_name_test
+    connect(constants.mongo_db + "/" + db_name, alias="reviewer")
     clear_db()
     fill_db()
     display_data()

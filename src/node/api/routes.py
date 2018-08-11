@@ -9,6 +9,9 @@ import random
 import requests
 import hashlib
 from functools import wraps
+import re
+
+
 
 bp = Blueprint('routes', __name__)
 
@@ -16,7 +19,7 @@ if __debug__:
     import node.settings.constants as constants
     import pymongo
     rev_client = pymongo.MongoClient(constants.mongo_db)
-    rev_db = rev_client["reviewer"]
+    rev_db = rev_client[constants.db_name_test]
 
     @bp.route('/')
     @bp.route('/index')
@@ -37,7 +40,7 @@ if __debug__:
     @bp.route("/wipe", methods=['POST'])
     def wipe():
         try:
-            revDb = _get_db("reviewer")
+            revDb = _get_db(constants.db_name)
             colList = revDb.list_collection_names()
             for col in colList:
                 revDb[col].delete_many({})
@@ -162,6 +165,8 @@ def confirm_phone():
     sms_timeout = timedelta(minutes=constants.sms_timeout_minutes)
     try:
         phone_no = str(req["phone_no"])
+        if not check_phone_format(phone_no):
+            raise KeyError()
         auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
         rec_count = auth_info.count()
         if rec_count:
@@ -302,6 +307,11 @@ def send_sms(phone_no, message):
     })
 
 
+def check_phone_format(phone_no):
+    pattern = r"^7\d{10}$"
+    return re.match(pattern, phone_no)
+
+
 def required_auth(required_permissions="admin"):
     def decorator(f):
         @wraps(f)
@@ -339,6 +349,7 @@ def required_auth(required_permissions="admin"):
 
         return decorated_function
     return decorator
+
 
 @bp.route("/organizations", methods = ['POST'])
 @required_auth("admin")

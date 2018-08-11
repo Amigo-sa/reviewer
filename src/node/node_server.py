@@ -22,7 +22,7 @@ def is_db_exists():
 
     try:
         rev_db_names = rev_client.list_database_names()
-        if "reviewer" in rev_db_names:
+        if constants.db_name in rev_db_names:
             return True
         else:
             return False
@@ -35,7 +35,7 @@ if __debug__:
     def print_something_from_db():
 
         rev_client = pymongo.MongoClient(constants.mongo_db)
-        rev_db = rev_client["reviewer"]
+        rev_db = rev_client[constants.db_name_test]
         col_person = rev_db["Person"]
         cursor = col_person.find({})
 
