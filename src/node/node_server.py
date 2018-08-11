@@ -9,9 +9,10 @@ from flask import Flask
 from node.api.routes import bp
 from pymodm.connection import connect
 
+app = Flask(__name__)
+app.register_blueprint(bp)
+	
 def start_server(port):
-    app = Flask(__name__)
-    app.register_blueprint(bp)
     app.run(port=port)
 
 if __name__ == "__main__":
