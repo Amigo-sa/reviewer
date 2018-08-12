@@ -56,7 +56,12 @@ class TestApi(unittest.TestCase):
         admin_req = requests.post(self.api_URL + "/first_admin").json()
         self.assertEqual(ERR.OK, admin_req["result"])
         self.admin_header = {"Authorization":
-                                 "blah " + admin_req["session_id"]}
+                                 "Bearer " + admin_req["session_id"]}
+        reviewer_req = requests.post(self.api_URL + "/logged_in_person").json()
+        self.assertEqual(ERR.OK, reviewer_req["result"])
+        self.reviewer_header = {"Authorization":
+                                 "Bearer " + reviewer_req["session_id"]}
+        self.reviewer_id = reviewer_req["person_id"]
 
 
     def t_simple_normal(self, url_get, url_post, url_delete, *args, **kwargs):
@@ -786,6 +791,11 @@ class TestApi(unittest.TestCase):
                                                                    "info": "test_info"})
         gm_id = self.post_item("/groups/%s/group_members" % group_id,
                                {"person_id": p_id})
+        sr_id = self.post_item("/general_roles",
+                               {"person_id": p_id,
+                                "department_id": dep_id,
+                                "role_type": "Student",
+                                "description": "student_role_description"})
         post_routes = [
             "/organizations",
             "/organizations/%s/departments"%org_id,
@@ -796,19 +806,23 @@ class TestApi(unittest.TestCase):
             "/group_members/%s/permissions"%gm_id,
             "/group_members/%s/group_roles"%gm_id,
             "/general_roles",
-            "/reviews",
+            "/general_roles/%s/reviews"%sr_id, # TODO реализовать все функции reviews
             "/persons",
-            "/persons/%s/soft_skills"%p_id,
-            "/persons/%s/hard_skills"%p_id,
             "/soft_skills",
             "/hard_skills",
             "/groups/%s/tests"%group_id,
             "/tests/%s/results"%g_test_id
         ]
         for route in post_routes:
-            resp = requests.post(url=self.api_URL + route, json={"noname":"novalue"}, headers = self.admin_header)
-            self.assertEqual(200, resp.status_code)
-            self.assertEqual(ERR.INPUT, resp.json()["result"])
+            if "reviews" in route:
+                headers = self.reviewer_header
+                json_value = {"reviewer_id" : self.reviewer_id, "noname":"novalue"}
+            else:
+                headers = self.admin_header
+                json_value = {"noname": "novalue"}
+            resp = requests.post(url=self.api_URL + route, json=json_value, headers = headers)
+            self.assertEqual(200, resp.status_code, msg="url = "+route)
+            self.assertEqual(ERR.INPUT, resp.json()["result"], msg="url = "+route)
 
     def test_post_invalid_reference(self):
         # setup
