@@ -10,6 +10,7 @@ import requests
 import hashlib
 from functools import wraps
 import re
+from node.thirdparty import smsc_api
 
 
 bp = Blueprint('routes_auth', __name__)
@@ -232,12 +233,15 @@ def hash_password(password):
     return hash_hex
 
 
-# TODO заменить на реальный SMSC
+# TODO смски работают, но я пока закомментил блок потому что не знаю как тестировать
 def send_sms(phone_no, message):
     requests.post(constants.mock_smsc_url + "/send_sms",json={
         "auth_code" : message,
         "phone_no" : phone_no
     })
+    # smsc = smsc_api.SMSC()
+    # smsc.send_sms(phone_no, message)
+    # print(smsc.get_balance())
 
 
 def check_phone_format(phone_no):
