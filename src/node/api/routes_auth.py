@@ -11,6 +11,7 @@ import hashlib
 from functools import wraps
 import re
 from node.thirdparty import smsc_api
+import os
 
 
 bp = Blueprint('routes_auth', __name__)
@@ -29,7 +30,7 @@ def user_login():
         auth_info = AuthInfo.objects.get({"phone_no": phone_no})
         pass_hash = hash_password(password)
         if auth_info.password == pass_hash:
-            session_id = gen_session_id(pass_hash)
+            session_id = gen_session_id()
             auth_info.session_id = session_id
             auth_info.save()
             result = {"result": ERR.OK,
@@ -59,7 +60,7 @@ def grant_oauth_token():
         auth_info = AuthInfo.objects.get({"phone_no": phone_no})
         pass_hash = hash_password(password)
         if auth_info.password == pass_hash:
-            session_id = gen_session_id(pass_hash)
+            session_id = gen_session_id()
             auth_info.session_id = session_id
             auth_info.save()
             result = {"access_token": str(session_id),
@@ -109,7 +110,7 @@ def confirm_phone():
         new_auth_info.phone_no = phone_no
         new_auth_info.last_send_time = datetime.now(timezone.utc)
         code = gen_sms_code()
-        session_id = gen_session_id(code)
+        session_id = gen_session_id()
         new_auth_info.session_id = session_id
         new_auth_info.auth_code = code
         new_auth_info.attempts = 0
@@ -217,13 +218,8 @@ def gen_sms_code():
     return codestr
 
 
-def gen_session_id(seed="some_string"):
-    timestamp = datetime.now(timezone.utc).microsecond
-    seed += str(timestamp)
-
-    seed_hash = hashlib.sha256(seed.encode("utf-8")).hexdigest()
-
-    return seed_hash[:16]
+def gen_session_id():
+    return os.urandom(16).hex()
 
 
 def hash_password(password):
