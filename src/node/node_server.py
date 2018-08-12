@@ -17,12 +17,15 @@ app.register_blueprint(routes_auth)
 app.register_blueprint(routes)
 
 
-def start_server(port):
-    app.run(port=port)
+def start_server(port, protocol="http"):
+    if protocol == "http":
+        app.run(port=port)
+    elif protocol == "https":
+        app.run(port=port, ssl_context=('cert.pem', 'key.pem'))
 
 
 if __name__ == "__main__":
-    start_server(constants.node_server_port)
+    start_server(constants.node_server_port, protocol="https")
 
 def is_db_exists():
     rev_client = pymongo.MongoClient(constants.mongo_db)
