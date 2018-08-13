@@ -57,10 +57,12 @@ class TestApi(unittest.TestCase):
         self.assertEqual(ERR.OK, admin_req["result"])
         self.admin_header = {"Authorization":
                                  "Bearer " + admin_req["session_id"]}
+
+    def setup_reviewer(self):
         reviewer_req = requests.post(self.api_URL + "/logged_in_person").json()
         self.assertEqual(ERR.OK, reviewer_req["result"])
         self.reviewer_header = {"Authorization":
-                                 "Bearer " + reviewer_req["session_id"]}
+                                    "Bearer " + reviewer_req["session_id"]}
         self.reviewer_id = reviewer_req["person_id"]
 
 
@@ -417,73 +419,6 @@ class TestApi(unittest.TestCase):
             role_list = self.get_item_list("/persons/%s/general_roles" % person_id)
             self.assertEqual([], role_list, "all roles must be deleted")
 
-    def test_person_hs(self):
-        hs0_id, hs0_data = self.prepare_hs()
-        hs1_id, hs1_data = self.prepare_hs()
-        hs2_id, hs2_data = self.prepare_hs()
-        person_ids = self.prepare_persons(2)
-        p0_hs0_id = self.post_item("/persons/%s/hard_skills" % person_ids[0], {"hs_id" : hs0_id})
-        p0_hs1_id = self.post_item("/persons/%s/hard_skills" % person_ids[0], {"hs_id" : hs1_id})
-        p1_hs1_id = self.post_item("/persons/%s/hard_skills" % person_ids[1], {"hs_id" : hs1_id})
-        p1_hs2_id = self.post_item("/persons/%s/hard_skills" % person_ids[1], {"hs_id": hs2_id})
-
-        p1_hs_list = self.get_item_list("/persons/hard_skills?person_id="+person_ids[0])
-        ref_p1_hs_list = [{"id": p0_hs0_id}, {"id": p0_hs1_id}]
-        self.assertDictListEqual(p1_hs_list, ref_p1_hs_list)
-
-        hs1_phs_list = self.get_item_list("/persons/hard_skills?hs_id="+hs1_id)
-        ref_hs1_phs_list = [{"id": p0_hs1_id}, {"id": p1_hs1_id}]
-        self.assertDictListEqual(hs1_phs_list, ref_hs1_phs_list)
-
-        p0_hs1_data = self.get_item_data("/persons/hard_skills/" + p0_hs1_id)
-        self.assertEqual(person_ids[0], p0_hs1_data["person_id"])
-        self.assertEqual(hs1_id, p0_hs1_data["hs_id"])
-        self.assertEqual(50.0, float(p0_hs1_data["level"]),)
-
-        all_phs_list = self.get_item_list("/persons/hard_skills")
-        ref_all_phs_list = [{"id": p0_hs0_id}, {"id": p0_hs1_id},
-                            {"id": p1_hs1_id}, {"id": p1_hs2_id}]
-        self.assertDictListEqual(ref_all_phs_list, all_phs_list)
-
-        for p_hs_id in [p0_hs0_id, p0_hs1_id, p1_hs1_id, p1_hs2_id]:
-            self.delete_item("/persons/hard_skills/"+p_hs_id)
-
-        all_phs_list = self.get_item_list("/persons/hard_skills")
-        self.assertDictListEqual([], all_phs_list)
-
-    def test_person_ss(self):
-        ss0_id, ss0_data = self.prepare_ss()
-        ss1_id, ss1_data = self.prepare_ss()
-        ss2_id, ss2_data = self.prepare_ss()
-        person_ids = self.prepare_persons(2)
-        p0_ss0_id = self.post_item("/persons/%s/soft_skills" % person_ids[0], {"ss_id": ss0_id})
-        p0_ss1_id = self.post_item("/persons/%s/soft_skills" % person_ids[0], {"ss_id": ss1_id})
-        p1_ss1_id = self.post_item("/persons/%s/soft_skills" % person_ids[1], {"ss_id": ss1_id})
-        p1_ss2_id = self.post_item("/persons/%s/soft_skills" % person_ids[1], {"ss_id": ss2_id})
-
-        p1_ss_list = self.get_item_list("/persons/soft_skills?person_id="+person_ids[0])
-        ref_p1_ss_list = [{"id": p0_ss0_id}, {"id": p0_ss1_id}]
-        self.assertDictListEqual(p1_ss_list, ref_p1_ss_list)
-
-        ss1_pss_list = self.get_item_list("/persons/soft_skills?ss_id="+ss1_id)
-        ref_ss1_pss_list = [{"id": p0_ss1_id}, {"id": p1_ss1_id}]
-        self.assertDictListEqual(ss1_pss_list, ref_ss1_pss_list)
-
-        p0_ss1_data = self.get_item_data("/persons/soft_skills/" + p0_ss1_id)
-        self.assertEqual(person_ids[0], p0_ss1_data["person_id"])
-        self.assertEqual(ss1_id, p0_ss1_data["ss_id"])
-        self.assertEqual(50.0 ,float(p0_ss1_data["level"]))
-
-        all_pss_list = self.get_item_list("/persons/soft_skills")
-        ref_all_pss_list = [{"id": p0_ss0_id}, {"id": p0_ss1_id},
-                            {"id": p1_ss1_id}, {"id": p1_ss2_id}]
-        self.assertDictListEqual(ref_all_pss_list, all_pss_list)
-
-        for p_ss_id in [p0_ss0_id, p0_ss1_id, p1_ss1_id, p1_ss2_id]:
-            self.delete_item("/persons/soft_skills/"+p_ss_id)
-
-        all_pss_list = self.get_item_list("/persons/soft_skills")
-        self.assertDictListEqual([], all_pss_list)
 
     # TODO возможно, следует верификацию включить сюда, а не в отдельный тест
     def test_group_member_normal(self):
@@ -553,6 +488,8 @@ class TestApi(unittest.TestCase):
         resp_json = requests.get(self.api_URL+"/group_members/" + gm_id, headers = self.admin_header).json()
         self.assertEqual(ERR.NO_DATA, resp_json["result"])
 
+    # TODO сделать
+    @unittest.skip("сделать")
     def test_reviews_normal(self):
         person_id = self.prepare_persons(1)[0]
         facility_ids = self.prepare_group()
@@ -576,15 +513,11 @@ class TestApi(unittest.TestCase):
             "description": "sample_description"
         }
         tutor_role.update({"id": self.post_item("/general_roles", tutor_role)})
-        p_hs_id = self.post_item("/persons/%s/hard_skills" % person_id, {"hs_id" : hs_id})
-        p_ss_id = self.post_item("/persons/%s/soft_skills" % person_id, {"ss_id": ss_id})
         gm_id = self.post_item("/groups/%s/group_members" % group_id, {"person_id": person_id})
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name" : "sample_test_name",
                                                                     "info" : "sample_test_info"})
         subjects = { "StudentRole" : student_role["id"],
                      "TutorRole" : tutor_role["id"],
-                     "HardSkill" : p_hs_id,
-                     "SoftSkill" : p_ss_id,
                      "Group" : group_id,
                      "GroupTest" : g_test_id,
                      "GroupMember": gm_id}
@@ -691,19 +624,6 @@ class TestApi(unittest.TestCase):
                              "/departments/" + aux_item_ids["dep_id"] + "/groups",
                              name="string")
 
-    def test_person_hs_duplicate(self):
-        person_id = self.prepare_persons(1)[0]
-        hard_skill_id = self.prepare_hs()[0]
-        self.post_duplicate_item("/persons/%s/hard_skills"%person_id,
-                                 "/persons/hard_skills?person_id=" + person_id,
-                                 hs_id = hard_skill_id)
-
-    def test_person_ss_duplicate(self):
-        person_id = self.prepare_persons(1)[0]
-        soft_skill_id = self.prepare_ss()[0]
-        self.post_duplicate_item("/persons/%s/soft_skills"%person_id,
-                                 "/persons/soft_skills?person_id=" + person_id,
-                                 ss_id = soft_skill_id)
 
     def test_tutor_role_duplicate(self):
         p_id = self.prepare_persons(1)[0]
@@ -741,6 +661,8 @@ class TestApi(unittest.TestCase):
                                  person_id = p_id,
                                  result_data = "string")
 
+    #TODO сделать
+    @unittest.skip("сделать")
     def test_reviews_duplicate(self):
         p_id = self.prepare_persons(1)[0]
         fac_ids = self.prepare_group()
@@ -758,8 +680,7 @@ class TestApi(unittest.TestCase):
                                 "description": "Tutor_role_description"})
         hs_id = self.prepare_hs()[0]
         ss_id = self.prepare_ss()[0]
-        p_hs_id = self.post_item("/persons/%s/hard_skills" % p_id, {"hs_id": hs_id})
-        p_ss_id = self.post_item("/persons/%s/soft_skills" % p_id, {"ss_id": ss_id})
+
 
         g_test_id = self.post_item("/groups/%s/tests"%group_id, {"name" : "test_name",
                                                         "info" : "test_info"})
@@ -767,8 +688,6 @@ class TestApi(unittest.TestCase):
                                {"person_id" : p_id})
         subjects = {"StudentRole": sr_id,
                     "TutorRole": tr_id,
-                    "HardSkill": p_hs_id,
-                    "SoftSkill": p_ss_id,
                     "Group": group_id,
                     "GroupTest": g_test_id,
                     "GroupMember": gm_id}
@@ -782,6 +701,7 @@ class TestApi(unittest.TestCase):
                                      description = "string")
 
     def test_invalid_post(self):
+        self.setup_reviewer()
         p_id = self.prepare_persons(1)[0]
         fac_ids = self.prepare_group()
         org_id = fac_ids["org_id"]
@@ -847,8 +767,6 @@ class TestApi(unittest.TestCase):
         soft_skill_id = self.prepare_ss()[0]
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name": "test_name",
                                                                    "info": "test_info"})
-        p_hs_id = self.post_item("/persons/%s/hard_skills" % p_id, {"hs_id": hard_skill_id})
-        p_ss_id = self.post_item("/persons/%s/soft_skills" % p_id, {"ss_id": soft_skill_id})
 
         gm_id = self.post_item("/groups/%s/group_members" % group_id,
                                {"person_id": p_id})
@@ -862,17 +780,6 @@ class TestApi(unittest.TestCase):
                               name="string")
         self.pass_invalid_ref("/groups/" + group_id + "/role_list",
                               role_list=[dep_id])
-        # person hard skill
-        self.pass_invalid_ref("/persons/%s/hard_skills"%p2_id,
-                              hs_id=org_id)
-        self.pass_invalid_ref("/persons/%s/hard_skills" % group_id,
-                              hs_id=hard_skill_id)
-
-        # person soft skill
-        self.pass_invalid_ref("/persons/%s/soft_skills" % p2_id,
-                              ss_id=org_id)
-        self.pass_invalid_ref("/persons/%s/soft_skills" % org_id,
-                              ss_id=soft_skill_id)
 
         # tutor_role
         self.pass_invalid_ref("/general_roles",
@@ -922,11 +829,9 @@ class TestApi(unittest.TestCase):
                               result_data="string")
 
         # reviews
-
+        #TODO доделать
         subjects = {"StudentRole": sr_id,
                     "TutorRole": tr_id,
-                    "HardSkill": p_hs_id,
-                    "SoftSkill": p_ss_id,
                     "Group": group_id,
                     "GroupTest": g_test_id,
                     "GroupMember": gm_id}
