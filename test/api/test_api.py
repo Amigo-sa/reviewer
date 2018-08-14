@@ -829,7 +829,17 @@ class TestApi(unittest.TestCase):
                               result_data="string")
 
         # reviews
+        self.setup_reviewer()
+        #student role/tutor_role
+        self.pass_invalid_ref("/general_roles/%s/reviews" %group_id,
+                              auth="reviewer",
+                              reviewer_id=self.reviewer_id,
+                              value="skill_level",
+                              description="string"
+                              )
+
         #TODO доделать
+        '''
         subjects = {"StudentRole": sr_id,
                     "TutorRole": tr_id,
                     "Group": group_id,
@@ -848,11 +858,15 @@ class TestApi(unittest.TestCase):
                                   subject_id=g_role_id,
                                   value="skill_level",
                                   description="string")
+            '''
 
-
-    def pass_invalid_ref(self, url_post, **kwargs):
+    def pass_invalid_ref(self, url_post, auth = "admin", **kwargs):
         data = self.generate_doc(kwargs.items())
-        resp = requests.post(url=self.api_URL + url_post, json=data, headers = self.admin_header)
+        if auth == "reviewer":
+            auth_header = self.reviewer_header
+        else:
+            auth_header = self.admin_header
+        resp = requests.post(url=self.api_URL + url_post, json=data, headers = auth_header)
         self.assertEqual(200, resp.status_code, "post response status code must be 200")
         resp_json = resp.json()
         self.assertEqual(ERR.NO_DATA, resp_json["result"], "post result must be ERR.NO_DATA in " +
