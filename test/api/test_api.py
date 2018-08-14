@@ -716,6 +716,10 @@ class TestApi(unittest.TestCase):
                                 "department_id": dep_id,
                                 "role_type": "Student",
                                 "description": "student_role_description"})
+        hs_id = self.post_item("/hard_skills",
+                               {"name": "hard_skill_name"})
+        ss_id = self.post_item("/soft_skills",
+                               {"name": "soft_skill_name"})
         post_routes = [
             "/organizations",
             "/organizations/%s/departments"%org_id,
@@ -726,7 +730,12 @@ class TestApi(unittest.TestCase):
             "/group_members/%s/permissions"%gm_id,
             "/group_members/%s/group_roles"%gm_id,
             "/general_roles",
-            "/general_roles/%s/reviews"%sr_id, # TODO реализовать все функции reviews
+            "/general_roles/%s/reviews"%sr_id, 
+            "/groups/%s/reviews"%group_id,
+            "/tests/%s/reviews" % g_test_id,
+            "/group_members/%s/reviews" % gm_id,
+            "/persons/%s/hard_skills/%s/reviews" % (p_id, hs_id),
+            "/persons/%s/soft_skills/%s/reviews" % (p_id, ss_id),
             "/persons",
             "/soft_skills",
             "/hard_skills",
