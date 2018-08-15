@@ -730,7 +730,7 @@ class TestApi(unittest.TestCase):
             "/group_members/%s/permissions"%gm_id,
             "/group_members/%s/group_roles"%gm_id,
             "/general_roles",
-            "/general_roles/%s/reviews"%sr_id, 
+            "/general_roles/%s/reviews"%sr_id,
             "/groups/%s/reviews"%group_id,
             "/tests/%s/reviews" % g_test_id,
             "/group_members/%s/reviews" % gm_id,
@@ -839,35 +839,43 @@ class TestApi(unittest.TestCase):
 
         # reviews
         self.setup_reviewer()
-        #student role/tutor_role
         self.pass_invalid_ref("/general_roles/%s/reviews" %group_id,
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
                               value="skill_level",
                               description="string"
                               )
+        self.pass_invalid_ref("/groups/%s/reviews" %hard_skill_id,
+                              auth="reviewer",
+                              reviewer_id=self.reviewer_id,
+                              value="skill_level",
+                              description="string"
+                              )
+        self.pass_invalid_ref("/group_members/%s/reviews" %hard_skill_id,
+                              auth="reviewer",
+                              reviewer_id=self.reviewer_id,
+                              value="skill_level",
+                              description="string"
+                              )
+        self.pass_invalid_ref("/tests/%s/reviews" % hard_skill_id,
+                              auth="reviewer",
+                              reviewer_id=self.reviewer_id,
+                              value="skill_level",
+                              description="string"
+                              )
+        self.pass_invalid_ref("/persons/%s/hard_skills/%s/reviews" %(p_id,p_id),
+                              auth="reviewer",
+                              reviewer_id=self.reviewer_id,
+                              value="skill_level",
+                              description="string"
+                              )
+        self.pass_invalid_ref("/persons/%s/soft_skills/%s/reviews" % (p_id, p_id),
+                              auth="reviewer",
+                              reviewer_id=self.reviewer_id,
+                              value="skill_level",
+                              description="string"
+                              )
 
-        #TODO доделать
-        '''
-        subjects = {"StudentRole": sr_id,
-                    "TutorRole": tr_id,
-                    "Group": group_id,
-                    "GroupTest": g_test_id,
-                    "GroupMember": gm_id}
-        for subj_type, subj_id in subjects.items():
-            self.pass_invalid_ref   ("/reviews",
-                                     type=subj_type,
-                                     reviewer_id=hard_skill_id,
-                                     subject_id=subj_id,
-                                     value="skill_level",
-                                     description="string")
-            self.pass_invalid_ref("/reviews",
-                                  type=subj_type,
-                                  reviewer_id=p_id,
-                                  subject_id=g_role_id,
-                                  value="skill_level",
-                                  description="string")
-            '''
 
     def pass_invalid_ref(self, url_post, auth = "admin", **kwargs):
         data = self.generate_doc(kwargs.items())
