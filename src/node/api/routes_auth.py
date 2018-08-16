@@ -88,12 +88,13 @@ def grant_oauth_token():
 
 @bp.route("/confirm_phone_no", methods= ["POST"])
 def confirm_phone():
+    auth_err= None
     req = request.get_json()
     sms_timeout = timedelta(minutes=constants.sms_timeout_minutes)
     try:
         phone_no = str(req["phone_no"])
         if not check_phone_format(phone_no):
-            raise KeyError()
+            return jsonify({"result": ERR.AUTH_INVALID_PHONE}), 200
         auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
         rec_count = auth_info.count()
         if rec_count:
@@ -103,6 +104,7 @@ def confirm_phone():
             else:
                 last_send_time = old_auth_info.last_send_time.as_datetime()
                 if datetime.now(timezone.utc) < last_send_time + sms_timeout:
+                    auth_err = ERR.AUTH_SMS_TIMEOUT
                     raise AuthError("слишком частые СМС")
                 else:
                     old_auth_info.delete()
@@ -125,7 +127,8 @@ def confirm_phone():
     except KeyError as e:
         result = {"result": ERR.INPUT}
     except AuthError as e:
-        result = {"result": ERR.AUTH,
+        err = auth_err if auth_err else ERR.AUTH
+        result = {"result": err,
                   "error_message": str(e)}
     except Exception as e:
         print(str(e))
@@ -162,7 +165,7 @@ def finish_phone_confirmation():
                     message = "wrong code, %s attempts remain"%attempts_remain
                 else:
                     message = "out of attempts, auth code destroyed"
-                result = {"result": ERR.AUTH,
+                result = {"result": ERR.AUTH_CODE_INCORRECT,
                           "error_message": message}
                 print("%s attempts remain"%attempts_remain)
                 if auth_info.attempts == max_attempts:
