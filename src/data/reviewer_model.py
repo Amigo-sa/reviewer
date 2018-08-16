@@ -454,6 +454,7 @@ class AuthInfo(MongoModel):
     password = fields.CharField(blank=True)
     session_id = fields.CharField(blank=True)
     person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE, blank=True)
+    permissions = fields.IntegerField(default=0)
 
     class Meta:
         write_concern = WriteConcern(j=True)

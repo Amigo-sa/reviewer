@@ -7,11 +7,9 @@
 	},
 	"item": [
 		{
-			"_postman_id": "9cee9afb-c0aa-469f-81c6-b706723bc65f",
 			"name": "registration",
 			"item": [
 				{
-					"_postman_id": "a3a8fe5c-0770-4066-94ea-9803c89df206",
 					"name": "confirm_phone",
 					"event": [
 						{
@@ -55,7 +53,6 @@
 					},
 					"response": [
 						{
-							"id": "3c0e5692-2824-4468-a645-fd56968d4380",
 							"name": "confirm_phone",
 							"originalRequest": {
 								"method": "POST",
@@ -120,7 +117,6 @@
 					]
 				},
 				{
-					"_postman_id": "93502881-bfb5-4e29-a992-139c139a54b1",
 					"name": "finish_phone_confirmation",
 					"event": [
 						{
@@ -165,7 +161,6 @@
 					},
 					"response": [
 						{
-							"id": "e02af4f7-fd00-4c5d-a0da-fd8c42464d5e",
 							"name": "finish_phone_confirmation",
 							"originalRequest": {
 								"method": "POST",
@@ -230,7 +225,6 @@
 					]
 				},
 				{
-					"_postman_id": "f20b1514-0622-4be8-8ebb-d43dbe121056",
 					"name": "set_password",
 					"event": [
 						{
@@ -275,7 +269,6 @@
 					},
 					"response": [
 						{
-							"id": "9ff72fd5-a4ba-4ad7-b73a-626f743c1603",
 							"name": "set_password",
 							"originalRequest": {
 								"method": "POST",
@@ -340,16 +333,15 @@
 					]
 				},
 				{
-					"_postman_id": "d4f51448-9b57-46e0-be1e-ab6f005a5836",
 					"name": "user_login",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c075de39-4953-409e-8221-4509b0245d26",
+								"id": "ec92c0f6-b313-4fb0-9864-60c0f2a4aca6",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"phone_no\", \"88803334451\");",
+									"pm.environment.set(\"phone_no\", \"88001112233\");",
 									"pm.environment.set(\"password\", \"1111\");"
 								]
 							}
@@ -385,7 +377,6 @@
 					},
 					"response": [
 						{
-							"id": "0e025251-ff38-4ba9-8c72-993089b54098",
 							"name": "user_login",
 							"originalRequest": {
 								"method": "POST",
@@ -453,11 +444,9 @@
 			"description": "Функции для регистрации, аутентификации, авторизации пользователей"
 		},
 		{
-			"_postman_id": "57c4d724-5bb5-4a30-9450-587699126822",
 			"name": "organizations",
 			"item": [
 				{
-					"_postman_id": "8fb57739-5713-433d-b424-6b58a59aa4d9",
 					"name": "add_organization",
 					"request": {
 						"method": "POST",
@@ -489,7 +478,6 @@
 					},
 					"response": [
 						{
-							"id": "d88fad85-7bdf-48ea-8f18-8875631ada3a",
 							"name": "add_organization_example_success",
 							"originalRequest": {
 								"method": "POST",
@@ -554,7 +542,6 @@
 					]
 				},
 				{
-					"_postman_id": "aab52699-acc6-4031-a659-cb7909707159",
 					"name": "delete_organization",
 					"event": [
 						{
@@ -604,7 +591,6 @@
 					},
 					"response": [
 						{
-							"id": "464d65a4-c3d1-4f67-9b31-2ee3b0147738",
 							"name": "delete_organization_success",
 							"originalRequest": {
 								"method": "DELETE",
@@ -664,7 +650,6 @@
 					]
 				},
 				{
-					"_postman_id": "8aa87914-096b-41a3-859a-e99473d5a323",
 					"name": "list_organizations",
 					"request": {
 						"method": "GET",
@@ -691,7 +676,6 @@
 					},
 					"response": [
 						{
-							"id": "f46c470e-65fa-4089-901e-c03d73c07881",
 							"name": "list_organizations_success",
 							"originalRequest": {
 								"method": "GET",
@@ -775,11 +759,9 @@
 			]
 		},
 		{
-			"_postman_id": "c40929b0-009d-46ca-b6c0-41490e9a828d",
 			"name": "departments",
 			"item": [
 				{
-					"_postman_id": "c62eb3eb-9279-4974-9813-1b2a4eac32fe",
 					"name": "add_department",
 					"event": [
 						{
@@ -825,7 +807,6 @@
 					},
 					"response": [
 						{
-							"id": "f5a23097-61b3-4dda-bf59-15f857b7bb95",
 							"name": "add_department",
 							"originalRequest": {
 								"method": "POST",
@@ -892,7 +873,6 @@
 					]
 				},
 				{
-					"_postman_id": "fb172e14-4402-4709-86b2-f62864ec0211",
 					"name": "delete_department",
 					"event": [
 						{
@@ -932,7 +912,6 @@
 					},
 					"response": [
 						{
-							"id": "2482ac38-8be0-461d-8350-861d14c9e45a",
 							"name": "delete_department",
 							"originalRequest": {
 								"method": "DELETE",
@@ -992,7 +971,6 @@
 					]
 				},
 				{
-					"_postman_id": "a2194d8b-b56e-4e70-8596-69ee0d61661c",
 					"name": "list_departments",
 					"event": [
 						{
@@ -1033,7 +1011,6 @@
 					},
 					"response": [
 						{
-							"id": "f4d70f21-0f4b-4a05-bef2-7835c5b90183",
 							"name": "list_departments",
 							"originalRequest": {
 								"method": "GET",
@@ -1097,15 +1074,12 @@
 			"description": "Функции для работы с департаментами"
 		},
 		{
-			"_postman_id": "4a142b5b-895c-4ee0-8692-26a6fe6d338f",
 			"name": "groups",
 			"item": [
 				{
-					"_postman_id": "0b1469c4-1cfd-41a5-89d5-fbafd361ffa7",
 					"name": "group_role_set",
 					"item": [
 						{
-							"_postman_id": "c5e54ca4-00a3-4024-9d16-a4ac18234072",
 							"name": "add_group_role",
 							"request": {
 								"method": "POST",
@@ -1137,7 +1111,6 @@
 							},
 							"response": [
 								{
-									"id": "53375bb6-8f98-4146-bf9f-8be0d3f9e4cd",
 									"name": "add_group_role",
 									"originalRequest": {
 										"method": "POST",
@@ -1202,7 +1175,6 @@
 							]
 						},
 						{
-							"_postman_id": "e71d9228-ecf7-45ab-b0de-5e3c246bedf1",
 							"name": "delete_group_role",
 							"event": [
 								{
@@ -1242,7 +1214,6 @@
 							},
 							"response": [
 								{
-									"id": "1937dd99-d51b-4534-8d77-15872bf7ee37",
 									"name": "delete_group_role",
 									"originalRequest": {
 										"method": "DELETE",
@@ -1302,7 +1273,6 @@
 							]
 						},
 						{
-							"_postman_id": "1c2149fc-9f2b-4635-b1d0-e1f15124982c",
 							"name": "list_group_roles",
 							"request": {
 								"method": "GET",
@@ -1329,7 +1299,6 @@
 							},
 							"response": [
 								{
-									"id": "8f4af977-0fef-4653-b0dd-2cc635ee0d8e",
 									"name": "list_group_roles",
 									"originalRequest": {
 										"method": "GET",
@@ -1392,11 +1361,9 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"_postman_id": "73e94f1d-b25a-44e2-8327-4db5d85dc913",
 					"name": "permissions_set",
 					"item": [
 						{
-							"_postman_id": "ef938737-6b6d-4265-9ebf-4f9e0d629e66",
 							"name": "add_group_permission",
 							"request": {
 								"method": "POST",
@@ -1428,7 +1395,6 @@
 							},
 							"response": [
 								{
-									"id": "3cd5aec3-275f-48eb-973e-69fdfe9d8a25",
 									"name": "add_group_permission",
 									"originalRequest": {
 										"method": "POST",
@@ -1493,7 +1459,6 @@
 							]
 						},
 						{
-							"_postman_id": "0c68bb19-4193-49a7-8454-135bb3ae954f",
 							"name": "delete_group_permission",
 							"event": [
 								{
@@ -1533,7 +1498,6 @@
 							},
 							"response": [
 								{
-									"id": "4a2aa9f0-f56a-4fc0-a4ec-1c1ad1301104",
 									"name": "delete_group_permission",
 									"originalRequest": {
 										"method": "DELETE",
@@ -1593,7 +1557,6 @@
 							]
 						},
 						{
-							"_postman_id": "f350a945-76b0-47a8-ad6b-22e0cade1445",
 							"name": "list_group_permissions",
 							"request": {
 								"method": "GET",
@@ -1620,7 +1583,6 @@
 							},
 							"response": [
 								{
-									"id": "c30b7ed8-d410-45e1-93c7-15f575f91105",
 									"name": "list_group_permissions",
 									"originalRequest": {
 										"method": "GET",
@@ -1683,11 +1645,9 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"_postman_id": "d3881a65-5227-4d9a-ac2f-9763a65b9bf7",
 					"name": "group_members",
 					"item": [
 						{
-							"_postman_id": "a4047972-b666-433f-a5a5-f9e05d91c638",
 							"name": "add_group_member",
 							"event": [
 								{
@@ -1736,7 +1696,6 @@
 							},
 							"response": [
 								{
-									"id": "815b36fd-79fd-4f94-ab67-12cb36721988",
 									"name": "add_group_member_only_person",
 									"originalRequest": {
 										"method": "POST",
@@ -1801,7 +1760,6 @@
 									"body": "{\"id\":\"5b58200d2131371274f22706\",\"result\":0}\n"
 								},
 								{
-									"id": "3b1704d4-347f-4487-90eb-efbad31e8cb9",
 									"name": "add_group_member",
 									"originalRequest": {
 										"method": "POST",
@@ -1866,7 +1824,6 @@
 									"body": "{\"id\":\"5b54d60e2131371308dded15\",\"result\":0}\n"
 								},
 								{
-									"id": "1e135af0-4f86-4b25-83c8-98d1974f9890",
 									"name": "add_group_member_wo_permissions",
 									"originalRequest": {
 										"method": "POST",
@@ -1933,7 +1890,6 @@
 							]
 						},
 						{
-							"_postman_id": "8541f793-f665-4c35-bd96-bcb38d6366ff",
 							"name": "delete_group_member",
 							"event": [
 								{
@@ -1973,7 +1929,6 @@
 							},
 							"response": [
 								{
-									"id": "ce1d4b18-5f51-4cbf-a61a-285fdbe828e5",
 									"name": "delete_group_member",
 									"originalRequest": {
 										"method": "DELETE",
@@ -2033,7 +1988,6 @@
 							]
 						},
 						{
-							"_postman_id": "164dbc5a-6776-41fc-aa36-ca2a504120fb",
 							"name": "get_group_member_info",
 							"event": [
 								{
@@ -2073,7 +2027,6 @@
 							},
 							"response": [
 								{
-									"id": "d5d59eb1-cd7f-4e0b-84aa-a618abebabe9",
 									"name": "get_group_member_info",
 									"originalRequest": {
 										"method": "GET",
@@ -2133,7 +2086,6 @@
 							]
 						},
 						{
-							"_postman_id": "d61a040b-66d4-424b-897e-6fd221e93929",
 							"name": "add_permissions_to_group_member",
 							"event": [
 								{
@@ -2180,7 +2132,6 @@
 							},
 							"response": [
 								{
-									"id": "7cb0ad97-a759-4833-97c6-a11bc08ad5b2",
 									"name": "add_permissions_to_group_member",
 									"originalRequest": {
 										"method": "POST",
@@ -2246,7 +2197,6 @@
 							]
 						},
 						{
-							"_postman_id": "0ac6b4af-af36-40df-a6e9-2d9fd000cd5b",
 							"name": "delete_permissions_from_group_member",
 							"event": [
 								{
@@ -2289,7 +2239,6 @@
 							},
 							"response": [
 								{
-									"id": "a9c3f597-a7d0-43e2-8215-b32c7ba81298",
 									"name": "delete_permissions_from_group_member",
 									"originalRequest": {
 										"method": "DELETE",
@@ -2326,7 +2275,6 @@
 							]
 						},
 						{
-							"_postman_id": "a4c247ac-170b-4451-92b2-f41f447a3474",
 							"name": "list_group_members_by_group_id",
 							"event": [
 								{
@@ -2367,7 +2315,6 @@
 							},
 							"response": [
 								{
-									"id": "394670f4-a113-42a0-8864-52ae535f0427",
 									"name": "list_roles_in_group_by_group_id",
 									"originalRequest": {
 										"method": "GET",
@@ -2428,7 +2375,6 @@
 							]
 						},
 						{
-							"_postman_id": "7a70bc11-1210-4984-953d-f6da02f2aa35",
 							"name": "add_group_role_to_group_member",
 							"event": [
 								{
@@ -2475,7 +2421,6 @@
 							},
 							"response": [
 								{
-									"id": "6ac420a7-a953-458e-84eb-8360c3e8f0b1",
 									"name": "add_group_role_to_group_member",
 									"originalRequest": {
 										"method": "POST",
@@ -2540,7 +2485,6 @@
 							]
 						},
 						{
-							"_postman_id": "e3225e31-3dd7-4405-b071-d463c1692210",
 							"name": "set_group_member_status",
 							"event": [
 								{
@@ -2587,7 +2531,6 @@
 							},
 							"response": [
 								{
-									"id": "70e6bc56-4632-4a0d-9525-a5652e808a91",
 									"name": "set_group_member_status",
 									"originalRequest": {
 										"method": "PATCH",
@@ -2657,7 +2600,6 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"_postman_id": "abe2442b-dcc1-4d3a-b282-cf0d07828ea7",
 					"name": "add_group",
 					"event": [
 						{
@@ -2703,7 +2645,6 @@
 					},
 					"response": [
 						{
-							"id": "8025d66b-ee1c-455a-b355-cfcd7439077c",
 							"name": "add_group",
 							"originalRequest": {
 								"method": "POST",
@@ -2770,7 +2711,6 @@
 					]
 				},
 				{
-					"_postman_id": "a8d9e301-f086-4319-a6fc-9c4a0f0c5942",
 					"name": "delete_group",
 					"event": [
 						{
@@ -2810,7 +2750,6 @@
 					},
 					"response": [
 						{
-							"id": "c836f175-7aeb-4561-9691-13322e58c6fe",
 							"name": "delete_group",
 							"originalRequest": {
 								"method": "DELETE",
@@ -2870,7 +2809,6 @@
 					]
 				},
 				{
-					"_postman_id": "e4dcb860-d5e1-4db4-b768-87e18f13954d",
 					"name": "list_groups",
 					"event": [
 						{
@@ -2911,7 +2849,6 @@
 					},
 					"response": [
 						{
-							"id": "5fca8240-09e6-4d70-bf7a-cc6b113e5dbe",
 							"name": "list_groups",
 							"originalRequest": {
 								"method": "GET",
@@ -2972,7 +2909,6 @@
 					]
 				},
 				{
-					"_postman_id": "d333932c-f00e-4284-b110-879cc9fba2ff",
 					"name": "set_group_role_list",
 					"event": [
 						{
@@ -3019,7 +2955,6 @@
 					},
 					"response": [
 						{
-							"id": "421db2b2-e2c1-4e99-85a7-87394495481c",
 							"name": "set_group_role_list",
 							"originalRequest": {
 								"method": "POST",
@@ -3086,7 +3021,6 @@
 					]
 				},
 				{
-					"_postman_id": "0367cd41-5d2e-4e25-917e-b2d009b09807",
 					"name": "list_group_role_list",
 					"event": [
 						{
@@ -3127,7 +3061,6 @@
 					},
 					"response": [
 						{
-							"id": "c26ac11d-057d-4295-b3b4-841789e9bec8",
 							"name": "list_group_role_list",
 							"originalRequest": {
 								"method": "GET",
@@ -3191,11 +3124,9 @@
 			"description": "Функции для работы с группами"
 		},
 		{
-			"_postman_id": "68e401fa-fc4f-4d56-97bb-97d54119c20f",
 			"name": "general roles",
 			"item": [
 				{
-					"_postman_id": "5f8f0d31-4e99-41fe-9672-8b33dc85d502",
 					"name": "add_general_role",
 					"event": [
 						{
@@ -3241,7 +3172,6 @@
 					},
 					"response": [
 						{
-							"id": "39c3a528-1814-4c41-98bc-c90d8f57a67e",
 							"name": "add_general_role_tutor",
 							"originalRequest": {
 								"method": "POST",
@@ -3306,7 +3236,6 @@
 					]
 				},
 				{
-					"_postman_id": "48f30110-8e96-48cc-b420-6fd65d1a2f57",
 					"name": "delete_general_role",
 					"event": [
 						{
@@ -3346,7 +3275,6 @@
 					},
 					"response": [
 						{
-							"id": "95c26a9a-45f3-4919-a789-c3e54a80d4b3",
 							"name": "delete_general_role",
 							"originalRequest": {
 								"method": "DELETE",
@@ -3406,7 +3334,6 @@
 					]
 				},
 				{
-					"_postman_id": "482cab0e-36d8-4a1c-9f12-abf9a836afa1",
 					"name": "get_general_roles_data",
 					"event": [
 						{
@@ -3446,7 +3373,6 @@
 					},
 					"response": [
 						{
-							"id": "34ffb861-4bc9-4612-960e-6da5a20bb928",
 							"name": "get_general_roles_data",
 							"originalRequest": {
 								"method": "GET",
@@ -3509,24 +3435,21 @@
 			"description": "Функции для работы с ролями пользователей"
 		},
 		{
-			"_postman_id": "b13c13e4-dc32-4751-a75f-1a32aa09b038",
 			"name": "reviews",
 			"item": [
 				{
-					"_postman_id": "8fdf8273-121b-4829-8ae2-a39bb5083f5e",
-					"name": "post_review",
+					"name": "post_general_role_review",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d91994ef-9569-4201-8a26-04b9a6029540",
+								"id": "8751ea46-03d5-4938-ae08-5034526cbb8c",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"type\", \"RoleInGroup\");",
-									"pm.environment.set(\"reviewer_id\", \"5b4ebab42131371208ceb0c9\");",
-									"pm.environment.set(\"subject_id\", \"5b4ebab62131371208ceb122\");",
+									"pm.environment.set(\"role_id\", \"5b6f0e582131370e788865b3\");",
+									"pm.environment.set(\"reviewer_id\", \"5b6f0e572131370e7888656d\");",
 									"pm.environment.set(\"value\",90.0);",
-									"pm.environment.set(\"description\", \"Очень круто\");"
+									"pm.environment.set(\"description\", \"Классный чел\");"
 								]
 							}
 						}
@@ -3541,10 +3464,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"type\":\"{{type}}\",\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"subject_id\":\"{{subject_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
+							"raw": "{\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/reviews",
+							"raw": "http://127.0.0.1:5000/general_roles/{{role_id}}/reviews",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -3554,15 +3477,16 @@
 							],
 							"port": "5000",
 							"path": [
+								"general_roles",
+								"{{role_id}}",
 								"reviews"
 							]
 						},
-						"description": "Публикует отзыв о чем-либо\nв type передается тип отзыва:\nStudentRole - на студента\nTutorRole - на преподавателя\nHardSkill - на hard skill пользователя\nSoftSkill - на soft skill пользователя\nGroup - на группу\nGroupTest - на тест для группы\nGroupMember - на участника группы"
+						"description": "Оставить отзыв о роли (Студент или Преподаватель)"
 					},
 					"response": [
 						{
-							"id": "83472cb0-22e2-4a2c-aa14-131ed6ba9b23",
-							"name": "post_review",
+							"name": "post_general_role_review",
 							"originalRequest": {
 								"method": "POST",
 								"header": [
@@ -3574,10 +3498,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"type\":\"GroupMember\",\n\t\"reviewer_id\":\"5b4ebab42131371208ceb0c9\",\n\t\"subject_id\":\"5b4ebab62131371208ceb122\",\n\t\"value\": 93.0,\n\t\"description\":\"Молодец !\"\n}"
+									"raw": "{\n\t\"reviewer_id\":\"5b6ecc78213137200c6e77d8\",\n\t\"value\": 90.0,\n\t\"description\":\"Классный чел\"\n}"
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/reviews",
+									"raw": "http://127.0.0.1:5000/general_roles/5b6ecc78213137200c6e781e/reviews",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -3587,6 +3511,8 @@
 									],
 									"port": "5000",
 									"path": [
+										"general_roles",
+										"5b6ecc78213137200c6e781e",
 										"reviews"
 									]
 								}
@@ -3609,7 +3535,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Sun, 22 Jul 2018 19:39:25 GMT",
+									"value": "Sat, 11 Aug 2018 13:49:05 GMT",
 									"name": "Date",
 									"description": "The date and time that the message was sent"
 								},
@@ -3621,12 +3547,477 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\"id\":\"5b54dd6d2131371308dded1d\",\"result\":0}\n"
+							"body": "{\"id\":\"5b6ee9512131371a44ee9343\",\"result\":0}\n"
 						}
 					]
 				},
 				{
-					"_postman_id": "240fdd76-5b8d-4fb2-adc7-bad40c0852a0",
+					"name": "post_person_hard_skill_review",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "740a7382-8e17-4ca3-81a4-23f0ec106abe",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"hs_id\", \"5b6f0e572131370e7888657b\");",
+									"pm.environment.set(\"reviewer_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"value\",90.0);",
+									"pm.environment.set(\"description\", \"Экспертный уровень\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/{{person_id}}/hard_skills/{{hs_id}}/reviews",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"{{person_id}}",
+								"hard_skills",
+								"{{hs_id}}",
+								"reviews"
+							]
+						},
+						"description": "Оставить отзыв о профессиональном навыке пользователя"
+					},
+					"response": [
+						{
+							"name": "post_person_hard_skill_review",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewer_id\":\"5b6ef7682131371b80f429f5\",\n\t\"value\": 90.0,\n\t\"description\":\"Эксперный уровень\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/persons/5b6ef7682131371b80f429f5/hard_skills/5b6ef7682131371b80f42a03/reviews",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"persons",
+										"5b6ef7682131371b80f429f5",
+										"hard_skills",
+										"5b6ef7682131371b80f42a03",
+										"reviews"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 11 Aug 2018 16:15:03 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"id\":\"5b6f0b8721313722a8d93c5c\",\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "post_person_soft_skill_review",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7b9b15f7-9185-4d3c-bf22-e8527d32d110",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"ss_id\", \"5b6f0e572131370e7888657b\");",
+									"pm.environment.set(\"reviewer_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"value\",90.0);",
+									"pm.environment.set(\"description\", \"Просто супер\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/persons/{{person_id}}/soft_skills/{{ss_id}}/reviews",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"persons",
+								"{{person_id}}",
+								"soft_skills",
+								"{{ss_id}}",
+								"reviews"
+							]
+						},
+						"description": "Оставить отзыв о личностной характеристике пользователя"
+					},
+					"response": [
+						{
+							"name": "post_person_soft_skill_review",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewer_id\":5b6f15102131372208622123\",\n\t\"value\":99.0,\n\t\"description\":\"Просто супер\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/persons/5b6f15102131372208622123/soft_skills/5b6f15102131372208622abc/reviews",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"persons",
+										"5b6f15102131372208622123",
+										"soft_skills",
+										"5b6f15102131372208622abc",
+										"reviews"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 11 Aug 2018 16:55:44 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"id\":\"5b6f15102131372208622010\",\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "post_group_review",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "505d18f7-6836-4dc6-b69e-06440e4bbc74",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_id\", \"5b6f0e582131370e788865c8\");",
+									"pm.environment.set(\"reviewer_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"value\",90.0);",
+									"pm.environment.set(\"description\", \"Хорошая группа\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/groups/{{group_id}}/reviews",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"groups",
+								"{{group_id}}",
+								"reviews"
+							]
+						},
+						"description": "Оставить отзыв о группе"
+					},
+					"response": [
+						{
+							"name": "post_group_review",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewer_id\":\"5b6f1a002131371bd44ac85c\",\n\t\"value\": 11.0,\n\t\"description\":\"Так себе группа\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/groups/5b6f0e582131370e788865c8/reviews",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"groups",
+										"5b6f0e582131370e788865c8",
+										"reviews"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 11 Aug 2018 17:16:48 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"id\":\"5b6f1a002131371bd44ac85c\",\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "post_group_member_review",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1fb0917a-2cef-4558-a224-7d43a9d7675d",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_member_id\", \"5b6f0e582131370e788865ca\");",
+									"pm.environment.set(\"reviewer_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"value\",90.0);",
+									"pm.environment.set(\"description\", \"Отличный товарищ\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/group_members/{{group_member_id}}/reviews",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"group_members",
+								"{{group_member_id}}",
+								"reviews"
+							]
+						},
+						"description": "Оставить отзыв об участнике группы"
+					},
+					"response": [
+						{
+							"name": "post_group_member_review",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewer_id\":\"5b6f0e582131370e788865ca\",\n\t\"value\": 88.0,\n\t\"description\":\"Отличный товарищ\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/group_members/5b6f0e582131370e788865ca/reviews",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"group_members",
+										"5b6f0e582131370e788865ca",
+										"reviews"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 11 Aug 2018 17:24:49 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"id\":\"5b6f1be12131372234656ca0\",\"result\":0}\n"
+						}
+					]
+				},
+				{
 					"name": "delete_review",
 					"event": [
 						{
@@ -3666,7 +4057,6 @@
 					},
 					"response": [
 						{
-							"id": "d470d241-f739-4d41-b5e3-a9e436b5f360",
 							"name": "delete_review",
 							"originalRequest": {
 								"method": "DELETE",
@@ -3726,7 +4116,6 @@
 					]
 				},
 				{
-					"_postman_id": "bc18b188-a94b-440c-a837-a0a76ee13fee",
 					"name": "get_review_info",
 					"event": [
 						{
@@ -3766,7 +4155,6 @@
 					},
 					"response": [
 						{
-							"id": "4caf60c4-f2ec-4001-b637-c911a31eff33",
 							"name": "get_review_info",
 							"originalRequest": {
 								"method": "GET",
@@ -3826,7 +4214,6 @@
 					]
 				},
 				{
-					"_postman_id": "e2bf589c-e2aa-45ee-8291-efed66032c44",
 					"name": "find_reviews",
 					"event": [
 						{
@@ -3876,7 +4263,6 @@
 					},
 					"response": [
 						{
-							"id": "4930e07c-99a1-4053-9294-2e4ed12124bd",
 							"name": "find_reviews",
 							"originalRequest": {
 								"method": "GET",
@@ -3948,11 +4334,9 @@
 			"description": "Функции для работы с ревью"
 		},
 		{
-			"_postman_id": "316c1c33-8a4d-4a78-a333-0a231be341ec",
 			"name": "persons",
 			"item": [
 				{
-					"_postman_id": "4aa54e84-5774-40dc-80e9-ecf8121f781d",
 					"name": "add_person",
 					"request": {
 						"method": "POST",
@@ -3984,7 +4368,6 @@
 					},
 					"response": [
 						{
-							"id": "bccffabb-8b0f-41eb-aaaa-afbea1cda2e9",
 							"name": "add_person",
 							"originalRequest": {
 								"method": "POST",
@@ -4049,7 +4432,6 @@
 					]
 				},
 				{
-					"_postman_id": "7e3b1f6f-f823-4571-8ef7-79036c0ec5e7",
 					"name": "find_persons",
 					"event": [
 						{
@@ -4112,7 +4494,6 @@
 					},
 					"response": [
 						{
-							"id": "2ccd10ec-d15e-4364-b043-541b6e2ce354",
 							"name": "find_persons",
 							"originalRequest": {
 								"method": "GET",
@@ -4195,7 +4576,6 @@
 					]
 				},
 				{
-					"_postman_id": "3b306a0b-1639-4dff-9e62-ed35a5a7fcf8",
 					"name": "delete_person",
 					"event": [
 						{
@@ -4232,7 +4612,6 @@
 					},
 					"response": [
 						{
-							"id": "4aaa9edb-183d-4de3-97a2-bbe82f834616",
 							"name": "delete_person",
 							"originalRequest": {
 								"method": "DELETE",
@@ -4289,7 +4668,6 @@
 					]
 				},
 				{
-					"_postman_id": "4c87eb4c-be9b-4eee-bf08-5f8b598420d2",
 					"name": "get_person_info",
 					"event": [
 						{
@@ -4329,7 +4707,6 @@
 					},
 					"response": [
 						{
-							"id": "2718c663-8f86-4052-9b9a-f7478efade91",
 							"name": "get_person_info_success",
 							"originalRequest": {
 								"method": "GET",
@@ -4389,7 +4766,6 @@
 					]
 				},
 				{
-					"_postman_id": "c59b7f80-f315-4d58-9e0f-07ee2b9aa816",
 					"name": "list_group_members_by_person_id",
 					"event": [
 						{
@@ -4430,7 +4806,6 @@
 					},
 					"response": [
 						{
-							"id": "b4111217-be1b-49c3-a091-3543a976679c",
 							"name": "list_group_members_by_person_id",
 							"originalRequest": {
 								"method": "GET",
@@ -4491,7 +4866,6 @@
 					]
 				},
 				{
-					"_postman_id": "c9711e28-2b54-4f3a-bc52-17a935b64a8e",
 					"name": "list_roles_by_person_id",
 					"event": [
 						{
@@ -4532,7 +4906,6 @@
 					},
 					"response": [
 						{
-							"id": "23cb127b-488d-4670-aab7-8043a9e238b8",
 							"name": "list_roles_by_person_id",
 							"originalRequest": {
 								"method": "GET",
@@ -4593,7 +4966,6 @@
 					]
 				},
 				{
-					"_postman_id": "baa66dca-2fef-48da-8dd7-a69dc6709377",
 					"name": "add_person_soft_skill",
 					"event": [
 						{
@@ -4640,7 +5012,6 @@
 					},
 					"response": [
 						{
-							"id": "5b07d006-3da8-4721-ad1e-f565fc2b8222",
 							"name": "add_person_soft_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -4707,7 +5078,6 @@
 					]
 				},
 				{
-					"_postman_id": "d150f4f7-97d8-4c1d-b1e7-fe3c346f7fa6",
 					"name": "delete_person_soft_skill",
 					"event": [
 						{
@@ -4748,7 +5118,6 @@
 					},
 					"response": [
 						{
-							"id": "e9bd6ebf-b1e8-4f72-a07f-bf704f8ad988",
 							"name": "delete_person_soft_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -4809,7 +5178,6 @@
 					]
 				},
 				{
-					"_postman_id": "d4d07c15-9777-4ba9-a5c1-2128e30c2909",
 					"name": "find_person_soft_skills",
 					"event": [
 						{
@@ -4860,7 +5228,6 @@
 					},
 					"response": [
 						{
-							"id": "2c446737-f075-4046-bc00-7a23b87c2fe8",
 							"name": "find_person_soft_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -4930,7 +5297,6 @@
 					]
 				},
 				{
-					"_postman_id": "d1742896-f816-42ea-8df2-8c5cc3148d69",
 					"name": "get_person_soft_skill_info",
 					"event": [
 						{
@@ -4971,7 +5337,6 @@
 					},
 					"response": [
 						{
-							"id": "5c54c2ff-1dc8-4abe-99c7-3c0f332400b2",
 							"name": "get_person_soft_skill_info",
 							"originalRequest": {
 								"method": "GET",
@@ -5032,7 +5397,6 @@
 					]
 				},
 				{
-					"_postman_id": "134ab7db-ff81-4ff7-baf7-81f1f02b7c91",
 					"name": "add_person_hard_skill",
 					"event": [
 						{
@@ -5079,7 +5443,6 @@
 					},
 					"response": [
 						{
-							"id": "b05c34b0-d199-4b5d-86de-6f62c10d8e14",
 							"name": "add_person_hard_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -5146,7 +5509,6 @@
 					]
 				},
 				{
-					"_postman_id": "d8a66763-e5d9-47e7-9f3c-00e672212b1f",
 					"name": "delete_person_hard_skill",
 					"event": [
 						{
@@ -5187,7 +5549,6 @@
 					},
 					"response": [
 						{
-							"id": "1d6f217e-f5d0-4245-b861-93b0b809da9e",
 							"name": "delete_person_hard_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5248,7 +5609,6 @@
 					]
 				},
 				{
-					"_postman_id": "802843da-b10c-434e-a27b-c9313db3bee4",
 					"name": "find_person_hard_skills",
 					"event": [
 						{
@@ -5299,7 +5659,6 @@
 					},
 					"response": [
 						{
-							"id": "d8882fc1-fd7e-43f0-a42d-1f6e473b05e1",
 							"name": "find_person_hard_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -5369,7 +5728,6 @@
 					]
 				},
 				{
-					"_postman_id": "6ddbe171-103e-4b28-a6ed-624a7a2298b8",
 					"name": "get_person_hard_skill_info",
 					"event": [
 						{
@@ -5410,7 +5768,6 @@
 					},
 					"response": [
 						{
-							"id": "ad7424ea-c341-44b0-948d-67558a4f4405",
 							"name": "get_person_hard_skill_info",
 							"originalRequest": {
 								"method": "GET",
@@ -5474,11 +5831,9 @@
 			"description": "Функции для работы с данными пользователей"
 		},
 		{
-			"_postman_id": "56096e2d-1d41-4644-8a97-db1bd5e4c67f",
 			"name": "skills",
 			"item": [
 				{
-					"_postman_id": "b89e3bff-37e4-40bb-92c6-f88e2eda5b86",
 					"name": "add_soft_skill",
 					"request": {
 						"method": "POST",
@@ -5510,7 +5865,6 @@
 					},
 					"response": [
 						{
-							"id": "1e2bd82e-8035-42d2-b752-e4d4b7ea2310",
 							"name": "add_soft_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -5575,7 +5929,6 @@
 					]
 				},
 				{
-					"_postman_id": "d75b255e-69f7-41a1-8080-c5801f0a4174",
 					"name": "delete_soft_skill",
 					"event": [
 						{
@@ -5615,7 +5968,6 @@
 					},
 					"response": [
 						{
-							"id": "11566db9-b55c-4a4c-bfd1-966491046fc6",
 							"name": "delete_soft_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5675,7 +6027,6 @@
 					]
 				},
 				{
-					"_postman_id": "f28038e5-94db-44d9-989e-0848452e5c4d",
 					"name": "list_soft_skills",
 					"request": {
 						"method": "GET",
@@ -5702,7 +6053,6 @@
 					},
 					"response": [
 						{
-							"id": "0756b2f8-78bd-4f86-b617-a129a1de2d62",
 							"name": "list_soft_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -5761,7 +6111,6 @@
 					]
 				},
 				{
-					"_postman_id": "52eb488a-9d1e-4116-80fd-fd7bd015de8e",
 					"name": "add_hard_skill",
 					"request": {
 						"method": "POST",
@@ -5793,7 +6142,6 @@
 					},
 					"response": [
 						{
-							"id": "ab750e6d-3121-47e3-bf90-db2c2c04c5db",
 							"name": "add_hard_skill",
 							"originalRequest": {
 								"method": "POST",
@@ -5858,7 +6206,6 @@
 					]
 				},
 				{
-					"_postman_id": "367e9d40-94b2-4264-a4da-ba9837ff2a92",
 					"name": "delete_hard_skill",
 					"event": [
 						{
@@ -5898,7 +6245,6 @@
 					},
 					"response": [
 						{
-							"id": "c2ce3755-a93e-4afc-aa1c-6a2c22131f11",
 							"name": "delete_hard_skill",
 							"originalRequest": {
 								"method": "DELETE",
@@ -5958,7 +6304,6 @@
 					]
 				},
 				{
-					"_postman_id": "42e1ad40-3d79-425c-ab26-eda4d237c7f0",
 					"name": "list_hard_skills",
 					"request": {
 						"method": "GET",
@@ -5985,7 +6330,6 @@
 					},
 					"response": [
 						{
-							"id": "250c2cb5-40f6-4d23-a24a-7b6096d0a546",
 							"name": "list_hard_skills",
 							"originalRequest": {
 								"method": "GET",
@@ -6047,11 +6391,9 @@
 			"description": "Функции для работы с навыками пользователей"
 		},
 		{
-			"_postman_id": "3d57e731-1dbb-4814-9444-c0f8a416684e",
 			"name": "tests",
 			"item": [
 				{
-					"_postman_id": "fbab7743-8701-46c4-8505-f33ad686281e",
 					"name": "add_group_test",
 					"event": [
 						{
@@ -6097,7 +6439,6 @@
 					},
 					"response": [
 						{
-							"id": "5db40531-c17c-42e3-a0c8-119b00747415",
 							"name": "add_group_test",
 							"originalRequest": {
 								"method": "POST",
@@ -6164,7 +6505,6 @@
 					]
 				},
 				{
-					"_postman_id": "13871231-d405-4f23-9379-cb843509d9c3",
 					"name": "delete_group_test",
 					"event": [
 						{
@@ -6204,7 +6544,6 @@
 					},
 					"response": [
 						{
-							"id": "947eda09-e2d2-4f67-9535-09b9abfafbb4",
 							"name": "delete_group_test",
 							"originalRequest": {
 								"method": "DELETE",
@@ -6264,7 +6603,6 @@
 					]
 				},
 				{
-					"_postman_id": "1d0e2672-56ce-4b56-9acd-fa448eae1c23",
 					"name": "get_group_test_info",
 					"event": [
 						{
@@ -6304,7 +6642,6 @@
 					},
 					"response": [
 						{
-							"id": "7900d07c-6fd6-49b4-9ee1-724f34814a34",
 							"name": "get_group_test_info",
 							"originalRequest": {
 								"method": "GET",
@@ -6364,7 +6701,6 @@
 					]
 				},
 				{
-					"_postman_id": "bde841a0-49cd-46cf-b574-84bead2f958b",
 					"name": "list_group_tests",
 					"event": [
 						{
@@ -6405,7 +6741,6 @@
 					},
 					"response": [
 						{
-							"id": "9ed1cc31-bc94-48d4-b101-9b3cf32911a5",
 							"name": "list_group_tests",
 							"originalRequest": {
 								"method": "GET",
@@ -6466,7 +6801,6 @@
 					]
 				},
 				{
-					"_postman_id": "4b9f4e41-f8ba-4e8b-bed5-dd1e15a593d4",
 					"name": "add_test_result",
 					"event": [
 						{
@@ -6513,7 +6847,6 @@
 					},
 					"response": [
 						{
-							"id": "61718097-ce93-47b4-b5f2-4c2c83b8e49d",
 							"name": "add_test_result",
 							"originalRequest": {
 								"method": "POST",
@@ -6580,7 +6913,6 @@
 					]
 				},
 				{
-					"_postman_id": "596e191a-8faf-4196-86ef-fe78b20ab32b",
 					"name": "delete_test_result",
 					"event": [
 						{
@@ -6621,7 +6953,6 @@
 					},
 					"response": [
 						{
-							"id": "c50c55e3-1de9-4054-828b-bddfbcf205ca",
 							"name": "delete_test_result",
 							"originalRequest": {
 								"method": "DELETE",
@@ -6682,7 +7013,6 @@
 					]
 				},
 				{
-					"_postman_id": "01dd3e98-5096-46de-997c-aa99961583e5",
 					"name": "get_test_result_info",
 					"event": [
 						{
@@ -6723,7 +7053,6 @@
 					},
 					"response": [
 						{
-							"id": "f0074e49-13ab-455b-bb89-a48381e9812b",
 							"name": "get_test_result_info",
 							"originalRequest": {
 								"method": "GET",
@@ -6784,7 +7113,6 @@
 					]
 				},
 				{
-					"_postman_id": "53c1efe4-7fbf-491a-b938-433d4bd0bcc3",
 					"name": "find_test_results",
 					"event": [
 						{
@@ -6835,7 +7163,6 @@
 					},
 					"response": [
 						{
-							"id": "69b89554-e737-4d6a-8a01-528ce1b1bae7",
 							"name": "find_test_results",
 							"originalRequest": {
 								"method": "GET",
@@ -6928,6 +7255,38 @@
 					}
 				}
 			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "55555",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "3b5c4b71-5aad-4dac-838d-195aaf7f6c15",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "5ffe5f2e-ec53-4116-ac32-12245440b385",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

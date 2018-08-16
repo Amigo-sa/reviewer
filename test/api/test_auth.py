@@ -18,6 +18,7 @@ mock_port = 5010
 mock_url = "http://127.0.0.1:" + str(mock_port)
 node_port = 5002
 
+
 class Session():
     def __init__(self):
         self.id = None
@@ -118,6 +119,98 @@ class TestAuth(unittest.TestCase):
         requests.post(self.api_URL + "/wipe")
         cur_session.id = None
         cur_session.received_code = None
+        admin_req = requests.post(self.api_URL + "/first_admin").json()
+        self.assertEqual(ERR.OK, admin_req["result"])
+        self.admin_header = {"Authorization":
+                                 "blah " + admin_req["session_id"]}
+
+    def test_user_restricted_access(self):
+        # prepare user
+        resp_json = requests.post(self.api_URL + "/logged_in_person").json()
+        print(resp_json)
+        user_person_id = resp_json["person_id"]
+        user_session_id = resp_json["session_id"]
+        user_header = {"Authorization":
+                                 "blah " + user_session_id}
+        # prepare stuff for modification attempts
+        other_person_id = hm.post_item(self, self.api_URL + "/persons",
+                                       dict(first_name="Владимир",
+                                            middle_name="Ильич",
+                                            surname="Ленин",
+                                            birth_date=datetime.date(1870, 4, 22).isoformat(),
+                                            phone_no="+78007773737"))
+        org_id = hm.post_item(self, self.api_URL + "/organizations", {"name" : "sample_org"})
+        dep_id = hm.post_item(self, self.api_URL + "/organizations/%s/departments" % org_id,
+                              {"name" : "sample_dep"})
+        group_id = hm.post_item(self, self.api_URL + "/departments/%s/groups" % dep_id,
+                              {"name": "sample_group"})
+        group_role_id = hm.post_item(self, self.api_URL + "/group_roles",
+                                {"name": "sample_group_role"})
+        group_perm_id = hm.post_item(self, self.api_URL + "/group_permissions",
+                                     {"name": "sample_group_permission"})
+        resp_json = requests.post(self.api_URL + "/groups/%s/role_list"%group_id,
+                      json={"role_list" : [group_role_id]}, headers=self.admin_header).json()
+        print(resp_json)
+        group_member_id = hm.post_item(self, self.api_URL + "/groups/%s/group_members"%group_id,
+                                     {"person_id": user_person_id,
+                                      "role_id" : group_role_id})
+        # lists
+        restricted_post_list = [
+            "/organizations",
+            "/persons",
+            "/organizations/%s/departments"%org_id,
+            "/departments/%s/groups"%dep_id,
+            "/groups/%s/role_list"%group_id,
+            "/group_roles",
+            "/group_permissions",
+            "/groups/%s/group_members"%group_id,
+            "/group_members/%s/permissions"%group_member_id,
+
+        ]
+        restricted_delete_list = [
+            "/organizations/%s" % org_id,
+            "/departments/%s" % dep_id,
+            "/groups/%s" % group_id,
+            "/group_roles/%s" % group_role_id,
+            "/group_permissions/%s" %group_perm_id,
+            "/persons/%s" %other_person_id,
+            "/group_members/%s" %group_member_id
+        ]
+        # trying posts and deletes
+        post_data = {"sample" : "data"}
+        for url in restricted_post_list:
+            resp_json = hm.post_item_as(self, self.api_URL + url,
+                                        post_data, user_header)
+            self.assertEqual(ERR.AUTH, resp_json["result"],
+                             "%s is restricted to post for simple user"%url)
+        for url in restricted_delete_list:
+            resp_json = hm.delete_item_as(self, self.api_URL + url, user_header)
+            self.assertEqual(ERR.AUTH, resp_json["result"],
+                             "%s is restricted to delete for simple user" % url)
+
+
+    def test_user_allowed_access(self):
+        phone_no, password = self.prepare_confirmed_user()
+        resp = requests.post(self.api_URL + "/user_login", json={
+            "phone_no": phone_no,
+            "password": password})
+        user_session_id = resp.json()["session_id"]
+        user_header = {"Authorization":
+                           "blah " + user_session_id}
+        allowed_post_list = [
+            #"/organizations",
+            #"/persons",
+        ]
+        post_data = {"sample": "data"}
+        for url in allowed_post_list:
+            resp_json = hm.post_item_as(self, self.api_URL + url,
+                                        post_data, user_header)
+            self.assertNotEqual(ERR.AUTH, resp_json["result"],
+                             "%s must not return ERR.AUTH for simple user" % url)
+
+    def test_no_auth_restricted_access(self):
+        pass
+
 
     def test_registration_normal(self):
         phone_no = "79803322212"

@@ -6,17 +6,26 @@ from threading import Thread
 from node.settings import constants
 import pymongo
 from flask import Flask
-from node.api.routes import bp
+from node.api.routes import bp as routes
+from node.api.routes_debug import bp as routes_debug
+from node.api.routes_auth import bp as routes_auth
 from pymodm.connection import connect
 
 app = Flask(__name__)
-app.register_blueprint(bp)
-	
-def start_server(port):
-    app.run(port=port)
+app.register_blueprint(routes_debug)
+app.register_blueprint(routes_auth)
+app.register_blueprint(routes)
+
+
+def start_server(port, protocol="http"):
+    if protocol == "http":
+        app.run(port=port)
+    elif protocol == "https":
+        app.run(port=port, ssl_context=('cert.pem', 'key.pem'))
+
 
 if __name__ == "__main__":
-    start_server(constants.node_server_port)
+    start_server(constants.node_server_port, protocol="https")
 
 def is_db_exists():
     rev_client = pymongo.MongoClient(constants.mongo_db)

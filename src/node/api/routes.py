@@ -4,266 +4,25 @@ import node.settings.errors as ERR
 import node.settings.constants as constants
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
-from datetime import datetime, timezone, timedelta
-import random
-import requests
-import hashlib
-import re
-
+from node.api.routes_auth import required_auth
 
 bp = Blueprint('routes', __name__)
 
-if __debug__:
-    import node.settings.constants as constants
-    import pymongo
-    rev_client = pymongo.MongoClient(constants.mongo_db)
-    rev_db = rev_client[constants.db_name_test]
 
-    @bp.route('/')
-    @bp.route('/index')
-    def index():
-        collection_names = rev_db.list_collection_names()
-        result_string = "Db content: <br>"
-        for name in collection_names:
-            result_string += "Column: {0}<br>".format(name)
-            collection = rev_db[name]
-            cursor = collection.find({})
-            for document in cursor:
-                  result_string += "document: {0}<br>".format(document)
-        return result_string
-
-
-    from pymodm.connection import _get_db
-
-    @bp.route("/wipe", methods=['POST'])
-    def wipe():
-        try:
-            revDb = _get_db(constants.db_name)
-            colList = revDb.list_collection_names()
-            for col in colList:
-                revDb[col].delete_many({})
-            result = {"result": ERR.OK}
-        except:
-            result = {"result": ERR.DB}
-        return jsonify(result), 200
-
-
-    @bp.route("/shutdown", methods = ['POST'])
-    def shutdown():
-        func = request.environ.get('werkzeug.server.shutdown')
-        if func is None:
-            raise RuntimeError('Not running with the Werkzeug Server')
-        func()
-        result = {"result": ERR.OK}
-        return jsonify(result), 200
-
-
-    @bp.route("/session_aging", methods=['POST'])
-    def age_sessions():
-        req = request.get_json()
-        try:
-            phone_no = req["phone_no"]
-            minutes = req["minutes"]
-            auth_info = AuthInfo.objects.get({"phone_no" : phone_no})
-            ts = auth_info.last_send_time
-            dt = ts.as_datetime()
-            print("old dt %s" % (dt))
-            dt -= timedelta(minutes=int(minutes))
-            print("new dt %s" % (dt))
-            auth_info.last_send_time = dt
-            auth_info.save()
-            result = {"result": ERR.OK}
-        except:
-            result = {"result": ERR.DB}
-        return jsonify(result), 200
-
-class AuthError(Exception):
-    pass
-
-
-@bp.route("/user_login", methods= ["POST"])
-def user_login():
-    req = request.get_json()
+def delete_resource(cls, _id):
     try:
-        phone_no = req["phone_no"]
-        password = req["password"]
-        auth_info = AuthInfo.objects.get({"phone_no": phone_no})
-        pass_hash = hash_password(password)
-        if auth_info.password == pass_hash:
-            session_id = gen_session_id()
-            auth_info.session_id = session_id
-            auth_info.save()
-            result = {"result": ERR.OK,
-                      "session_id": session_id}
-        else:
-            result = {"result": ERR.AUTH}
-            if auth_info.attempts >= constants.authorization_max_attempts:
-                auth_info.is_approved = False
-                auth_info.password = None
-            else:
-                auth_info.attempts += 1
-            auth_info.save()
-    except KeyError as e:
-        result = {"result": ERR.INPUT}
-        print(str(e))
-    except Exception as e:
-        result = {"result": ERR.AUTH}
-        print(str(e))
-    return jsonify(result), 200
-
-
-@bp.route("/confirm_phone_no", methods= ["POST"])
-def confirm_phone():
-    req = request.get_json()
-    sms_timeout = timedelta(minutes=constants.sms_timeout_minutes)
-    try:
-        phone_no = str(req["phone_no"])
-        if not check_phone_format(phone_no):
-            raise KeyError()
-        auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
-        rec_count = auth_info.count()
-        if rec_count:
-            old_auth_info = auth_info.first()
-            if old_auth_info.is_approved:
-                raise AuthError("номер уже подтверждён")
-            else:
-                last_send_time = old_auth_info.last_send_time.as_datetime()
-                if datetime.now(timezone.utc) < last_send_time + sms_timeout:
-                    raise AuthError("слишком частые СМС")
-                else:
-                    old_auth_info.delete()
-        new_auth_info = AuthInfo()
-        new_auth_info.phone_no = phone_no
-        new_auth_info.last_send_time = datetime.now(timezone.utc)
-        code = gen_sms_code()
-        session_id = gen_session_id()
-        new_auth_info.session_id = session_id
-        new_auth_info.auth_code = code
-        new_auth_info.attempts = 0
-        new_auth_info.save()
-        try:
-            send_sms(phone_no, code)
-        except:
-            raise AuthError("не удалось отправить смс")
-        result = {"result": ERR.OK,
-                  "session_id": session_id}
-
-    except KeyError as e:
-        result = {"result": ERR.INPUT}
-    except AuthError as e:
-        result = {"result": ERR.AUTH,
-                  "error_message": str(e)}
-    except Exception as e:
-        print(str(e))
-        result = {"result": ERR.DB}
-
-    return jsonify(result), 200
-
-
-@bp.route("/finish_phone_confirmation", methods= ["POST"])
-def finish_phone_confirmation():
-    max_attempts = constants.confirmation_max_attempts
-    confirm_timeout = timedelta(minutes=constants.confirmation_timeout_minutes)
-    req = request.get_json()
-    try:
-        auth_code = req["auth_code"]
-        session_id = str(req["session_id"])
-        auth_info = AuthInfo.objects.raw({"session_id": session_id})
-        if auth_info.count():
-            auth_info = auth_info.first()
-            sent_time = auth_info.last_send_time.as_datetime()
-            if auth_info.is_approved:
-                result = {"result": ERR.OK}
-            elif sent_time < datetime.now(timezone.utc) - confirm_timeout:
-                raise AuthError("session expired")
-            elif auth_info.auth_code == auth_code:
-                result = {"result": ERR.OK}
-                auth_info.is_approved = True
-                auth_info.auth_code = None
-                auth_info.save()
-            else:
-                auth_info.attempts += 1
-                attempts_remain = max_attempts - auth_info.attempts
-                if attempts_remain > 0:
-                    message = "wrong code, %s attempts remain"%attempts_remain
-                else:
-                    message = "out of attempts, auth code destroyed"
-                result = {"result": ERR.AUTH,
-                          "error_message": message}
-                print("%s attempts remain"%attempts_remain)
-                if auth_info.attempts == max_attempts:
-                    auth_info.auth_code = None
-                    auth_info.session_id = None
-                auth_info.save()
-        else:
-            # выдаем ошибку аутентификации так как такой сессии не установлено
-            result = {"result": ERR.AUTH_NO_SESSION,
-                      "error_message": "no session found"}
-    except KeyError as e:
-        result = {"result": ERR.INPUT}
-        print(repr(e))
-    except AuthError as e:
-        result = {"result": ERR.AUTH,
-                  "error_message": str(e)}
-        print(repr(e))
-    except Exception as e:
-        result = {"result": ERR.DB}
-        print(repr(e))
-
-    return jsonify(result), 200
-
-
-@bp.route("/password", methods= ["POST"])
-def set_password():
-    req = request.get_json()
-    try:
-        password = req["password"]
-        session_id = req["session_id"]
-        auth_info = AuthInfo.objects.get({"session_id": session_id})
-        if auth_info.is_approved and auth_info.password is None:
-            pass_hash = hash_password(password)
-            auth_info.password = pass_hash
-            auth_info.save()
+        if cls(_id=_id) in cls.objects.raw({"_id":ObjectId(_id)}):
+            cls(_id=_id).delete()
             result = {"result": ERR.OK}
         else:
-            result = {"result": ERR.INPUT}
-    except KeyError as e:
-        result = {"result": ERR.INPUT}
-        print(str(e))
-    except Exception as e:
-        result = {"result": ERR.AUTH}
-        print(str(e))
-
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result":ERR.DB}
     return jsonify(result), 200
-
-def gen_sms_code():
-    code = random.randint(0,9999)
-    codestr = "{0:04}".format(code)
-    print(codestr)
-    return codestr
-#TODO генерация сделана намеренно ущербной, чтобы в будущем устроить это всё по-человечески безопасно
-def gen_session_id():
-    code = random.randint(0,99999999)
-    codestr = "{0:08}".format(code)
-    print(codestr)
-    return codestr
-def hash_password(password):
-    pass_hash = hashlib.sha256(password.encode("utf-8"))
-    hash_hex = pass_hash.hexdigest()
-    print(hash_hex)
-    return hash_hex
-#TODO заменить на реальный SMSC
-def send_sms(phone_no, message):
-    requests.post(constants.mock_smsc_url + "/send_sms",json={
-        "auth_code" : message,
-        "phone_no" : phone_no
-    })
-def check_phone_format(phone_no):
-    pattern = r"^7\d{10}$"
-    return re.match(pattern, phone_no)
 
 
 @bp.route("/organizations", methods = ['POST'])
+@required_auth("admin")
 def add_organization():
     req = request.get_json()
     try:
@@ -280,7 +39,9 @@ def add_organization():
 
     return jsonify(result), 200
 
+
 @bp.route("/persons", methods = ['POST'])
+@required_auth("admin")
 def add_person():
     req = request.get_json()
     try:
@@ -307,28 +68,15 @@ def add_person():
 
 
 @bp.route("/organizations/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_organization(id):
-    try:
-        if Organization(_id=id) in Organization.objects.raw({"_id":ObjectId(id)}):
-            Organization(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(Organization, id)
+
 
 @bp.route("/persons/<string:id>", methods = ['DELETE'])
+@required_auth("user")
 def delete_person(id):
-    try:
-        if Person(_id=id) in Person.objects.raw({"_id":ObjectId(id)}):
-            Person(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(Person, id)
 
 
 @bp.route("/organizations", methods = ['GET'])
@@ -346,6 +94,7 @@ def list_organizations():
 
 
 @bp.route("/organizations/<string:id>/departments", methods = ['POST'])
+@required_auth("admin")
 def add_department(id):
     req = request.get_json()
     try:
@@ -366,16 +115,9 @@ def add_department(id):
 
 
 @bp.route("/departments/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_department(id):
-    try:
-        if Department(_id=id) in Department.objects.raw({"_id":ObjectId(id)}):
-            Department(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(Department, id)
 
 
 @bp.route("/organizations/<string:id>/departments", methods = ['GET'])
@@ -396,6 +138,7 @@ def list_departments(id):
 
 
 @bp.route("/departments/<string:id>/groups", methods = ['POST'])
+@required_auth("admin")
 def add_group(id):
     req = request.get_json()
     try:
@@ -416,19 +159,13 @@ def add_group(id):
 
 
 @bp.route("/groups/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_group(id):
-    try:
-        if Group(_id=id) in Group.objects.raw({"_id":ObjectId(id)}):
-            Group(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(Group, id)
 
 
 @bp.route("/groups/<string:id>/role_list", methods=['POST'])
+@required_auth("admin")
 def set_role_list_for_group(id):
     req = request.get_json()
     try:
@@ -488,6 +225,7 @@ def list_groups(id):
 
 
 @bp.route("/group_roles", methods = ['POST'])
+@required_auth("admin")
 def add_group_role():
     req = request.get_json()
     try:
@@ -506,16 +244,9 @@ def add_group_role():
 
 
 @bp.route("/group_roles/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_group_role(id):
-    try:
-        if GroupRole(_id=id) in GroupRole.objects.raw({"_id":ObjectId(id)}):
-            GroupRole(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(GroupRole, id)
 
 
 @bp.route("/group_roles", methods = ['GET'])
@@ -533,6 +264,7 @@ def list_group_roles():
 
 
 @bp.route("/group_permissions", methods = ['POST'])
+@required_auth("admin")
 def add_group_permission():
     req = request.get_json()
     try:
@@ -551,17 +283,9 @@ def add_group_permission():
 
 
 @bp.route("/group_permissions/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_group_permission(id):
-    try:
-        if GroupPermission(_id=id) in GroupPermission.objects.raw({"_id":ObjectId(id)}):
-            GroupPermission(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
-
+    return delete_resource(GroupPermission, id)
 
 @bp.route("/group_permissions", methods = ['GET'])
 def list_group_permissions():
@@ -578,6 +302,7 @@ def list_group_permissions():
 
 
 @bp.route("/groups/<string:id>/group_members", methods=['POST'])
+@required_auth("admin")
 def add_group_member(id):
     req = request.get_json()
     try:
@@ -623,16 +348,9 @@ def add_group_member(id):
 
 
 @bp.route("/group_members/<string:id>", methods=['DELETE'])
+@required_auth("admin")
 def delete_group_member(id):
-    try:
-        if GroupMember(_id=id) in GroupMember.objects.raw({"_id":ObjectId(id)}):
-            GroupMember(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(GroupMember, id)
 
 
 @bp.route("/groups/<string:id>/group_members", methods=['GET'])
@@ -666,6 +384,7 @@ def list_group_members_by_person_id(id):
 
 
 @bp.route("/group_members/<string:id>", methods=['GET'])
+@required_auth("group_member")
 def get_group_member_info(id):
     try:
         if GroupMember(_id=id) in GroupMember.objects.raw({"_id": ObjectId(id)}):
@@ -692,6 +411,7 @@ def get_group_member_info(id):
 
 
 @bp.route("/group_members/<string:id>/permissions", methods = ['POST'])
+@required_auth("admin")
 def add_permissions_to_group_member(id):
     req = request.get_json()
     try:
@@ -716,6 +436,7 @@ def add_permissions_to_group_member(id):
 
 
 @bp.route("/group_members/<string:id1>/permissions/<string:id2>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_permissions_from_group_member(id1, id2):
     try:
         if GroupMember.objects.raw({"_id": ObjectId(id1)}).count()\
@@ -737,7 +458,9 @@ def delete_permissions_from_group_member(id1, id2):
 
     return jsonify(result), 200
 
+
 @bp.route("/group_members/<string:id>/group_roles", methods = ['POST'])
+@required_auth("admin")
 def add_group_role_to_group_member(id):
     req = request.get_json()
     try:
@@ -762,6 +485,7 @@ def add_group_role_to_group_member(id):
 
 
 @bp.route("/group_members/<string:id>", methods = ['PATCH'])
+@required_auth("admin")
 def change_group_member_status(id):
     if 'is_active' in request.args:
         string = request.args['is_active']
@@ -790,6 +514,7 @@ def change_group_member_status(id):
 
 
 @bp.route("/general_roles", methods=['POST'])
+@required_auth("admin")
 def add_general_role():
     req = request.get_json()
     try:
@@ -825,6 +550,7 @@ def add_general_role():
 
 
 @bp.route("/general_roles/<string:id>", methods=['DELETE'])
+@required_auth("admin")
 def delete_general_role(id):
     try:
         if TutorRole(_id=id) in TutorRole.objects.raw({"_id":ObjectId(id)}):
@@ -983,6 +709,7 @@ def find_persons():
 
 
 @bp.route("/persons/<string:id>", methods=['GET'])
+@required_auth("user")
 def get_person_info(id):
     try:
         if Person(_id=id) in Person.objects.raw({"_id": ObjectId(id)}):
@@ -1034,13 +761,11 @@ def get_review_info(id):
     return jsonify(result), 200
 
 
-@bp.route("/reviews", methods = ['POST'])
-def post_review():
+def post_review(review_type, subject_id):
     req = request.get_json()
     try:
-        type = req['type']
         reviewer_id = ObjectId(req['reviewer_id'])
-        subject_id = ObjectId(req['subject_id'])
+        subject_id = ObjectId(subject_id)
         value = req['value']
         description = req['description']
         obj = {
@@ -1048,10 +773,6 @@ def post_review():
                 SRReview(reviewer_id, subject_id, value, description),
             "TutorRole":
                 TRReview(reviewer_id, subject_id, value, description),
-            "HardSkill":
-                HSReview(reviewer_id, subject_id, value, description),
-            "SoftSkill":
-                SSReview(reviewer_id, subject_id, value, description),
             "Group":
                 GroupReview(reviewer_id, subject_id, value, description),
             "GroupTest":
@@ -1064,10 +785,6 @@ def post_review():
                 StudentRole,
             "TutorRole":
                 TutorRole,
-            "HardSkill":
-                PersonHS,
-            "SoftSkill":
-                PersonSS,
             "Group":
                 Group,
             "GroupTest":
@@ -1075,14 +792,14 @@ def post_review():
             "GroupMember":
                 GroupMember
         }
-        if type not in obj:
+        if review_type not in obj:
             result = {"result": ERR.INPUT}
         else:
-            if subj_class[type].objects.raw({"_id":ObjectId(subject_id)}).count() \
+            if subj_class[review_type].objects.raw({"_id":ObjectId(subject_id)}).count() \
                     and Person.objects.raw({"_id":ObjectId(reviewer_id)}).count():
-                obj[type].save()
+                obj[review_type].save()
                 result = {"result":ERR.OK,
-                          "id": str(obj[type].pk)}
+                          "id": str(obj[review_type].pk)}
             else:
                 result = {"result": ERR.NO_DATA}
     except KeyError:
@@ -1093,7 +810,105 @@ def post_review():
     return jsonify(result), 200
 
 
+@bp.route("/general_roles/<string:id>/reviews", methods = ['POST'])
+@required_auth("reviewer")
+def post_general_role_review(id):
+    try:
+        if StudentRole.objects.raw({"_id":ObjectId(id)}).count():
+            review_type = "StudentRole"
+        elif TutorRole.objects.raw({"_id":ObjectId(id)}).count():
+            review_type = "TutorRole"
+        else:
+            return jsonify({"result": ERR.NO_DATA}), 200
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
+    except:
+        return jsonify({"result": ERR.DB}), 200
+
+    return post_review(review_type, id)
+
+
+@bp.route("/groups/<string:id>/reviews", methods = ['POST'])
+@required_auth("reviewer")
+def post_group_review(id):
+    return post_review("Group", id)
+
+
+@bp.route("/tests/<string:id>/reviews", methods = ['POST'])
+@required_auth("reviewer")
+def post_group_test_review(id):
+    return post_review("GroupTest", id)
+
+
+@bp.route("/group_members/<string:id>/reviews", methods = ['POST'])
+@required_auth("reviewer")
+def post_group_member_review(id):
+    return post_review("GroupMember", id)
+
+
+def post_person_skill_review(skill_review_cls, p_id, s_id):
+    req = request.get_json()
+    try:
+        reviewer_id = ObjectId(req['reviewer_id'])
+        value = req['value']
+        description = req['description']
+        person_skill_cls = None
+        query = {}
+        query.update({"person_id": ObjectId(p_id)})
+        if skill_review_cls == HSReview:
+            person_skill_cls = PersonHS
+            skill_cls = HardSkill
+            query.update({"hs_id": ObjectId(s_id)})
+        elif skill_review_cls == SSReview:
+            person_skill_cls = PersonSS
+            skill_cls = SoftSkill
+            query.update({"ss_id": ObjectId(s_id)})
+        else:
+            raise Exception("post_person_skill_review() invalid args")
+        if not Person.objects.raw({"_id":reviewer_id}).count():
+            return jsonify({"result": ERR.NO_DATA}), 200
+        if not Person.objects.raw({"_id":ObjectId(p_id)}).count():
+            return jsonify({"result": ERR.NO_DATA}), 200
+        if not skill_cls.objects.raw({"_id":ObjectId(s_id)}).count():
+            return jsonify({"result": ERR.NO_DATA}), 200
+        person_s = person_skill_cls.objects.raw(query)
+        if person_s.count():
+            person_s = person_s.first()
+        else:
+            default_level = 50.0
+            person_s = person_skill_cls(Person(_id=p_id),
+                                        skill_cls(_id=s_id),
+                                        default_level)
+            person_s.save()
+        s_review = skill_review_cls(reviewer_id, person_s.pk, value, description)
+        s_review.save()
+
+        result = {"result": ERR.OK,
+                  "id": str(s_review.pk)}
+
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
+
+    return jsonify(result), 200
+
+
+@bp.route("/persons/<string:p_id>/hard_skills/<string:hs_id>/reviews", methods = ['POST'])
+@required_auth("reviewer")
+def post_person_hard_skill_review(p_id, hs_id):
+    return post_person_skill_review(HSReview, p_id, hs_id)
+
+
+@bp.route("/persons/<string:p_id>/soft_skills/<string:ss_id>/reviews", methods = ['POST'])
+@required_auth("reviewer")
+def post_person_soft_skill_review(p_id, ss_id):
+    return post_person_skill_review(SSReview, p_id, ss_id)
+
+
 @bp.route("/reviews/<string:id>", methods=['DELETE'])
+@required_auth("reviewer")
 def delete_review(id):
     try:
         result = {"result": ERR.NO_DATA}
@@ -1122,7 +937,7 @@ def delete_review(id):
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
-# TODO доделать метод в части проверки на существование reviewer_id и subject_id
+
 @bp.route("/reviews", methods=['GET'])
 def find_reviews():
     lst = []
@@ -1164,15 +979,14 @@ def find_reviews():
     return jsonify(result), 200
 
 
-@bp.route("/soft_skills", methods = ['POST'])
-def add_soft_skill():
+def add_skill(skill_cls):
     req = request.get_json()
     try:
         name = req['name']
-        soft_skill = SoftSkill(name)
-        soft_skill.save()
+        skill = skill_cls(name)
+        skill.save()
         result = {"result":ERR.OK,
-                  "id": str(soft_skill.pk)}
+                  "id": str(skill.pk)}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
     except:
@@ -1181,246 +995,137 @@ def add_soft_skill():
     return jsonify(result), 200
 
 
-@bp.route("/soft_skills/<string:id>", methods = ['DELETE'])
-def delete_soft_skill(id):
+def list_skills(skill_cls):
+    list = []
     try:
-        if SoftSkill(_id=id) in SoftSkill.objects.raw({"_id":ObjectId(id)}):
-            SoftSkill(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
+        for skill in  skill_cls.objects.all():
+            list.append({"id":str(skill.pk),
+                         "name":skill.name}
+                        )
+        result = {"result": ERR.OK, "list":list}
     except:
-        result = {"result":ERR.DB}
+        result = {"result": ERR.DB}
     return jsonify(result), 200
+
+
+@bp.route("/soft_skills", methods = ['POST'])
+@required_auth("admin")
+def add_soft_skill():
+    return add_skill(SoftSkill)
+
+
+@bp.route("/soft_skills/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
+def delete_soft_skill(id):
+    return delete_resource(SoftSkill, id)
 
 
 @bp.route("/soft_skills", methods = ['GET'])
 def list_soft_skills():
-    list = []
-    try:
-        for soft_skill in  SoftSkill.objects.all():
-            list.append({"id":str(soft_skill.pk),
-                         "name":soft_skill.name}
-                        )
-        result = {"result": ERR.OK, "list":list}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return list_skills(SoftSkill)
 
 
 @bp.route("/hard_skills", methods = ['POST'])
+@required_auth("admin")
 def add_hard_skill():
-    req = request.get_json()
-    try:
-        name = req['name']
-        hard_skill = HardSkill(name)
-        hard_skill.save()
-        result = {"result":ERR.OK,
-                  "id": str(hard_skill.pk)}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
+    return add_skill(HardSkill)
 
 
 @bp.route("/hard_skills/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_hard_skill(id):
-    try:
-        if HardSkill(_id=id) in HardSkill.objects.raw({"_id":ObjectId(id)}):
-            HardSkill(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(HardSkill, id)
 
 
 @bp.route("/hard_skills", methods = ['GET'])
 def list_hard_skills():
-    list = []
+    return list_skills(HardSkill)
+
+
+def find_person_skills(skill_cls):
+    lst = []
+    query = {}
+    err = ERR.OK
+    if skill_cls == SoftSkill:
+        tag = "ss_id"
+        person_skill_cls = PersonSS
+    elif skill_cls == HardSkill:
+        tag = "hs_id"
+        person_skill_cls = PersonHS
+    else:
+        raise Exception("bad func usage")
+
+    if 'person_id' in request.args:
+        person_id = request.args['person_id']
+        if not Person.objects.raw({"_id":ObjectId(person_id)}).count():
+            err = ERR.NO_DATA
+        else:
+            query.update({"person_id": ObjectId(person_id)})
+    if tag in request.args:
+        s_id = request.args[tag]
+        if not skill_cls.objects.raw({"_id":ObjectId(s_id)}).count():
+            err = ERR.NO_DATA
+        else:
+            query.update({tag: ObjectId(s_id)})
     try:
-        for hard_skill in  HardSkill.objects.all():
-            list.append({"id":str(hard_skill.pk),
-                         "name":hard_skill.name}
-                        )
-        result = {"result": ERR.OK, "list":list}
-    except:
+        if err == ERR.OK:
+            for person_s in person_skill_cls.objects.raw(query):
+                lst.append({"id": str(person_s.pk)})
+            result = {"result": ERR.OK, "list": lst}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except Exception as ex:
+        print(ex)
         result = {"result": ERR.DB}
-    return jsonify(result), 200
-
-
-@bp.route("/persons/<string:id>/soft_skills", methods=['POST'])
-def add_person_soft_skill(id):
-    req = request.get_json()
-    try:
-        ss_id = req['ss_id']
-        if Person.objects.raw({"_id":ObjectId(id)}).count() and \
-                SoftSkill.objects.raw({"_id":ObjectId(ss_id)}).count():
-            default_level = 50.0
-            person_ss = PersonSS(Person(_id=id),
-                                 SoftSkill(_id=ss_id),
-                                 default_level)
-            person_ss.save()
-            result = {"result":ERR.OK,
-                      "id": str(person_ss.pk)}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
-
-
-@bp.route("/persons/<string:id>/hard_skills", methods=['POST'])
-def add_person_hard_skill(id):
-    req = request.get_json()
-    try:
-        hs_id = req['hs_id']
-        if Person.objects.raw({"_id":ObjectId(id)}).count() and \
-                HardSkill.objects.raw({"_id":ObjectId(hs_id)}).count():
-            default_level = 50.0
-            person_hs = PersonHS(Person(_id=id),
-                                 HardSkill(_id=hs_id),
-                                 default_level)
-            person_hs.save()
-            result = {"result":ERR.OK,
-                      "id": str(person_hs.pk)}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
-
-
-@bp.route("/persons/soft_skills/<string:id>", methods = ['DELETE'])
-def delete_person_soft_skill(id):
-    try:
-        if PersonSS(_id=id) in PersonSS.objects.raw({"_id":ObjectId(id)}):
-            PersonSS(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
-
-
-@bp.route("/persons/hard_skills/<string:id>", methods = ['DELETE'])
-def delete_person_hard_skill(id):
-    try:
-        if PersonHS(_id=id) in PersonHS.objects.raw({"_id":ObjectId(id)}):
-            PersonHS(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
     return jsonify(result), 200
 
 
 @bp.route("/persons/soft_skills", methods=['GET'])
 def find_person_soft_skills():
-    lst = []
-    query = {}
-    err = ERR.OK
-    if 'person_id' in request.args:
-        person_id = request.args['person_id']
-        if not Person.objects.raw({"_id":ObjectId(person_id)}).count():
-            err = ERR.NO_DATA
-        else:
-            query.update({"person_id": ObjectId(person_id)})
-    if 'ss_id' in request.args:
-        ss_id = request.args['ss_id']
-        if not SoftSkill.objects.raw({"_id":ObjectId(ss_id)}).count():
-            err = ERR.NO_DATA
-        else:
-            query.update({"ss_id": ObjectId(ss_id)})
-    try:
-        if err == ERR.OK:
-            for person_ss in PersonSS.objects.raw(query):
-                lst.append({"id": str(person_ss.pk)})
-            result = {"result": ERR.OK, "list": lst}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except Exception as ex:
-        print(ex)
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return find_person_skills(SoftSkill)
 
 
 @bp.route("/persons/hard_skills", methods=['GET'])
 def find_person_hard_skills():
-    lst = []
-    query = {}
-    err = ERR.OK
-    if 'person_id' in request.args:
-        person_id = request.args['person_id']
-        if not Person.objects.raw({"_id":ObjectId(person_id)}).count():
-            err = ERR.NO_DATA
-        else:
-            query.update({"person_id": ObjectId(person_id)})
-    if 'hs_id' in request.args:
-        hs_id = request.args['hs_id']
-        if not HardSkill.objects.raw({"_id":ObjectId(hs_id)}).count():
-            err = ERR.NO_DATA
-        else:
-            query.update({"hs_id": ObjectId(hs_id)})
+    return find_person_skills(HardSkill)
+
+
+def get_person_skill_info(skill_cls, id):
+    if skill_cls == SoftSkill:
+        tag = "ss_id"
+        person_skill_cls = PersonSS
+    elif skill_cls == HardSkill:
+        tag = "hs_id"
+        person_skill_cls = PersonHS
+    else:
+        raise Exception("bad func usage")
     try:
-        if err == ERR.OK:
-            for person_hs in PersonHS.objects.raw(query):
-                lst.append({"id": str(person_hs.pk)})
-            result = {"result": ERR.OK, "list": lst}
+        if person_skill_cls(_id=id) in person_skill_cls.objects.raw({"_id": ObjectId(id)}):
+            person_s = person_skill_cls(_id=id)
+            person_s.refresh_from_db()
+            data = {"person_id": str(person_s.person_id.pk),
+                    tag: str(person_s.ss_id.pk),
+                    "level": str(person_s.level)}
+            result = {"result": ERR.OK, "data": data}
         else:
             result = {"result": ERR.NO_DATA}
-    except Exception as ex:
-        print(ex)
+    except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
 
 @bp.route("/persons/soft_skills/<string:id>", methods=['GET'])
 def get_person_soft_skill_info(id):
-    try:
-        if PersonSS(_id=id) in PersonSS.objects.raw({"_id": ObjectId(id)}):
-            person_ss = PersonSS(_id=id)
-            person_ss.refresh_from_db()
-            data = {"person_id": str(person_ss.person_id.pk),
-                    "ss_id": str(person_ss.ss_id.pk),
-                    "level": str(person_ss.level)}
-            result = {"result": ERR.OK, "data": data}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return get_person_skill_info(SoftSkill, id)
 
 
 @bp.route("/persons/hard_skills/<string:id>", methods=['GET'])
 def get_person_hard_skill_info(id):
-    try:
-        if PersonHS(_id=id) in PersonHS.objects.raw({"_id": ObjectId(id)}):
-            person_hs = PersonHS(_id=id)
-            person_hs.refresh_from_db()
-            data = {"person_id": str(person_hs.person_id.pk),
-                    "hs_id": str(person_hs.hs_id.pk),
-                    "level": str(person_hs.level)}
-            result = {"result": ERR.OK, "data": data}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return get_person_skill_info(HardSkill, id)
 
 
 @bp.route("/groups/<string:id>/tests", methods = ['POST'])
+@required_auth("admin")
 def add_group_test(id):
     req = request.get_json()
     try:
@@ -1441,16 +1146,9 @@ def add_group_test(id):
 
 
 @bp.route("/tests/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_group_test(id):
-    try:
-        if GroupTest(_id=id) in GroupTest.objects.raw({"_id":ObjectId(id)}):
-            GroupTest(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(GroupTest, id)
 
 
 @bp.route("/tests/<string:id>", methods=['GET'])
@@ -1487,6 +1185,7 @@ def list_group_tests(id):
 
 
 @bp.route("/tests/<string:id>/results", methods = ['POST'])
+@required_auth("admin")
 def add_test_result(id):
     req = request.get_json()
     try:
@@ -1508,16 +1207,9 @@ def add_test_result(id):
 
 
 @bp.route("/tests/results/<string:id>", methods = ['DELETE'])
+@required_auth("admin")
 def delete_test_result(id):
-    try:
-        if TestResult(_id=id) in TestResult.objects.raw({"_id":ObjectId(id)}):
-            TestResult(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return delete_resource(TestResult, id)
 
 
 @bp.route("/tests/results/<string:id>", methods=['GET'])
