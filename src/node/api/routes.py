@@ -1103,8 +1103,14 @@ def get_person_skill_info(skill_cls, id):
         if person_skill_cls(_id=id) in person_skill_cls.objects.raw({"_id": ObjectId(id)}):
             person_s = person_skill_cls(_id=id)
             person_s.refresh_from_db()
+            if skill_cls == SoftSkill:
+                person_skill_id = person_s.ss_id
+            elif skill_cls == HardSkill:
+                person_skill_id = person_s.hs_id
+            else:
+                raise Exception("bad func usage")
             data = {"person_id": str(person_s.person_id.pk),
-                    tag: str(person_s.ss_id.pk),
+                    tag: str(person_skill_id.pk),
                     "level": str(person_s.level)}
             result = {"result": ERR.OK, "data": data}
         else:
