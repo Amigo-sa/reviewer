@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "1be461a1-11b9-4ee8-8450-30d5ec353cd2",
 		"name": "client api",
-		"description": "Вызовы функций клиентского api для node server",
+		"description": "Вызовы функций клиентского api для node server\n\nДля запросов требующих авторизации надо добавлять хедер вида:\nAuthorization: Bearer {{token}}\nгде token - это токен авторизации, получаемый в функции /user_login по ключу session_id\nно лучше воспользоваться встроенной функцией авторизации для всей коллекции",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -15,10 +15,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "56387477-80c5-44ea-95a8-098be5e1e19a",
+								"id": "f025cbb2-f02c-47bf-977f-46cc3aa150cc",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"phone_no\", \"88803334451\");"
+									"pm.environment.set(\"phone_no\", \"72803334452\");"
 								]
 							}
 						}
@@ -36,15 +36,10 @@
 							"raw": "{\n\t\"phone_no\":\"{{phone_no}}\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/confirm_phone_no",
-							"protocol": "http",
+							"raw": "{{server_url}}/confirm_phone_no",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{server_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"confirm_phone_no"
 							]
@@ -52,6 +47,63 @@
 						"description": "Функция для подтверждения номера телефона пользователя"
 					},
 					"response": [
+						{
+							"name": "confirm_phone_bad_format",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"phone_no\":\"88803334451\"\n}"
+								},
+								"url": {
+									"raw": "{{server_url}}/confirm_phone_no",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"confirm_phone_no"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "13",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 Aug 2018 17:12:44 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"result\": 6\n}"
+						},
 						{
 							"name": "confirm_phone",
 							"originalRequest": {
@@ -65,7 +117,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"phone_no\":\"88803334451\"\n}"
+									"raw": "{\n\t\"phone_no\":\"78803334451\"\n}"
 								},
 								"url": {
 									"raw": "http://127.0.0.1:5000/confirm_phone_no",
@@ -112,7 +164,235 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"result\": 0\n}"
+							"body": "{\n    \"result\": 0,\n    \"session_id\": \"cdf6452488c4e009bba03b8006d59f24\"\n}"
+						},
+						{
+							"name": "confirm_phone_sms_failure",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"phone_no\":\"78803334451\"\n}"
+								},
+								"url": {
+									"raw": "{{server_url}}/confirm_phone_no",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"confirm_phone_no"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "161",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 Aug 2018 18:40:08 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"error_message\":\"\\u043d\\u0435 \\u0443\\u0434\\u0430\\u043b\\u043e\\u0441\\u044c \\u043e\\u0442\\u043f\\u0440\\u0430\\u0432\\u0438\\u0442\\u044c \\u0441\\u043c\\u0441\",\"result\":4}\n"
+						},
+						{
+							"name": "confirm_phone_bad_json",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\n}"
+								},
+								"url": {
+									"raw": "{{server_url}}/confirm_phone_no",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"confirm_phone_no"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "13",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 Aug 2018 18:45:15 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"result\":1}\n"
+						},
+						{
+							"name": "confirm_phone_timeout",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"phone_no\":\"78803334451\"\n}"
+								},
+								"url": {
+									"raw": "{{server_url}}/confirm_phone_no",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"confirm_phone_no"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "130",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 Aug 2018 19:21:13 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"error_message\":\"\\u0441\\u043b\\u0438\\u0448\\u043a\\u043e\\u043c \\u0447\\u0430\\u0441\\u0442\\u044b\\u0435 \\u0421\\u041c\\u0421\",\"result\":7}\n"
+						},
+						{
+							"name": "confirm_phone_already_done",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\n}"
+								},
+								"url": {
+									"raw": "{{server_url}}/confirm_phone_no",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"confirm_phone_no"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "148",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 Aug 2018 18:36:48 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"error_message\":\"\\u043d\\u043e\\u043c\\u0435\\u0440 \\u0443\\u0436\\u0435 \\u043f\\u043e\\u0434\\u0442\\u0432\\u0435\\u0440\\u0436\\u0434\\u0451\\u043d\",\"result\":4}\n"
 						}
 					]
 				},
@@ -122,11 +402,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "56a643e5-9f84-47e5-ab3f-5de437b8f1c5",
+								"id": "a1a4ab2d-24b7-4be8-9b1d-80d3b63f737f",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"auth_code\", \"3323\");",
-									"pm.environment.set(\"session_id\", \"57451888\");"
+									"pm.environment.set(\"auth_code\", \"0469\");",
+									"pm.environment.set(\"session_id\", \"cdf6452488c4e009bba03b8006d59f24\");"
 								]
 							}
 						}
@@ -144,15 +424,10 @@
 							"raw": "{\n\t\"auth_code\":\"{{auth_code}}\",\n\t\"session_id\": \"{{session_id}}\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/finish_phone_confirmation",
-							"protocol": "http",
+							"raw": "{{server_url}}/finish_phone_confirmation",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{server_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"finish_phone_confirmation"
 							]
@@ -173,7 +448,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"auth_code\":\"1234\",\n\t\"session_id\": \"80747940\"\n}"
+									"raw": "{\n\t\"auth_code\":\"1234\",\n\t\"session_id\": \"6cff542d842763ee782eb40f6c19ac4a\"\n}"
 								},
 								"url": {
 									"raw": "http://127.0.0.1:5000/finish_phone_confirmation",
@@ -221,6 +496,177 @@
 							],
 							"cookie": [],
 							"body": "{\"result\":0}\n"
+						},
+						{
+							"name": "finish_phone_confirmation_wrong_code",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"auth_code\":\"1234\",\n\t\"session_id\": \"6cff542d842763ee782eb40f6c19ac4a\"\n}"
+								},
+								"url": {
+									"raw": "{{server_url}}/finish_phone_confirmation",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"finish_phone_confirmation"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "61",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 Aug 2018 19:06:01 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"error_message\":\"wrong code, 2 attempts remain\",\"result\":8}\n"
+						},
+						{
+							"name": "finish_phone_confirmation_no_session",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"auth_code\":\"1234\",\n\t\"session_id\": \"6cff542d842763ee782eb40f6c19ac4a\"\n}"
+								},
+								"url": {
+									"raw": "{{server_url}}/finish_phone_confirmation",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"finish_phone_confirmation"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "48",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 Aug 2018 18:48:00 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"error_message\":\"no session found\",\"result\":5}\n"
+						},
+						{
+							"name": "finish_phone_confirmation_session_expired",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"auth_code\":\"1234\",\n\t\"session_id\": \"6cff542d842763ee782eb40f6c19ac4a\"\n}"
+								},
+								"url": {
+									"raw": "{{server_url}}/finish_phone_confirmation",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"finish_phone_confirmation"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "47",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 Aug 2018 04:27:00 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"error_message\":\"session expired\",\"result\":9}\n"
 						}
 					]
 				},
@@ -252,15 +698,10 @@
 							"raw": "{\n\t\"password\":\"{{password}}\",\n\t\"session_id\": \"{{session_id}}\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/password",
-							"protocol": "http",
+							"raw": "{{server_url}}/password",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{server_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"password"
 							]
@@ -268,6 +709,63 @@
 						"description": "Функция для установки пароля аутентифицированного пользователя"
 					},
 					"response": [
+						{
+							"name": "set_password_bad_auth",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"password\":\"1111\",\n\t\"session_id\": \"80747940\"\n}"
+								},
+								"url": {
+									"raw": "{{server_url}}/password",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"password"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "13",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 Aug 2018 17:47:54 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"result\":4}\n"
+						},
 						{
 							"name": "set_password",
 							"originalRequest": {
@@ -338,7 +836,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "ec92c0f6-b313-4fb0-9864-60c0f2a4aca6",
+								"id": "5eecacb3-1d50-403d-9c8a-a5bb3f953ddd",
 								"type": "text/javascript",
 								"exec": [
 									"pm.environment.set(\"phone_no\", \"88001112233\");",
@@ -360,15 +858,10 @@
 							"raw": "{\n\t\"phone_no\": \"{{phone_no}}\",\n\t\"password\":\"{{password}}\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/user_login",
-							"protocol": "http",
+							"raw": "{{server_url}}/user_login",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{server_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"user_login"
 							]
@@ -436,7 +929,69 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\"result\":0,\"session_id\":\"88486296\"}\n"
+							"body": "{\n    \"result\": 0,\n    \"session_id\": \"65855f243adc5806e47fbf5a34a935c6\"\n}"
+						},
+						{
+							"name": "user_login_invalid_password",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"phone_no\": \"88803334451\",\n\t\"password\":\"2222\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/user_login",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"user_login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "13",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 Aug 2018 18:34:25 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"result\":4}\n"
 						}
 					]
 				}
@@ -449,11 +1004,18 @@
 				{
 					"name": "add_organization",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer adf7b398fdd8e3c54fa5c540a682bded"
 							}
 						],
 						"body": {
@@ -461,15 +1023,10 @@
 							"raw": "{\n\t\"name\":\"МИФИ\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/organizations",
-							"protocol": "http",
+							"raw": "{{server_url}}/organizations",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{server_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"organizations"
 							]
@@ -557,31 +1114,34 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "4a9b8b88-760e-42a2-92ec-51e96c1700a5",
+								"id": "afd741e1-70a0-4df6-9773-2db5ed5d8148",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"organization_id\", \"5b50ec752131370f188d0bf9\");"
+									"pm.environment.set(\"organization_id\", \"5b75bd722131370cc0941ae1\");"
 								]
 							}
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer adf7b398fdd8e3c54fa5c540a682bded"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/organizations/{{organization_id}}",
-							"protocol": "http",
+							"raw": "{{server_url}}/organizations/{{organization_id}}",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{server_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"organizations",
 								"{{organization_id}}"
@@ -659,15 +1219,10 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/organizations",
-							"protocol": "http",
+							"raw": "{{server_url}}/organizations",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{server_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"organizations"
 							]
@@ -4966,218 +5521,6 @@
 					]
 				},
 				{
-					"name": "add_person_soft_skill",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "1fb4cac0-8ae2-4149-9bee-111f4d2b9de1",
-								"type": "text/javascript",
-								"exec": [
-									"pm.environment.set(\"person_id\", \"5b4e38d02131371ce8dd8246\");",
-									"pm.environment.set(\"ss_id\", \"5b4e38d02131371ce8dd8246\");"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"ss_id\":\"{{ss_id}}\"\n}"
-						},
-						"url": {
-							"raw": "http://127.0.0.1:5000/persons/{{person_id}}/soft_skills",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "5000",
-							"path": [
-								"persons",
-								"{{person_id}}",
-								"soft_skills"
-							]
-						},
-						"description": "Добавляет личностную характеристику пользователю"
-					},
-					"response": [
-						{
-							"name": "add_person_soft_skill",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"disabled": false
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"ss_id\":\"5b54c4a72131371cb0cbdd5b\"\n}"
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/persons/5b54c4a72131371cb0cbdd45/soft_skills",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"persons",
-										"5b54c4a72131371cb0cbdd45",
-										"soft_skills"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Length",
-									"value": "45",
-									"name": "Content-Length",
-									"description": "The length of the response body in octets (8-bit bytes)"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
-								},
-								{
-									"key": "Date",
-									"value": "Mon, 23 Jul 2018 17:01:18 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Server",
-									"value": "Werkzeug/0.14.1 Python/3.6.5",
-									"name": "Server",
-									"description": "A name for the server"
-								}
-							],
-							"cookie": [],
-							"body": "{\"id\":\"5b5609de213137138060e250\",\"result\":0}\n"
-						}
-					]
-				},
-				{
-					"name": "delete_person_soft_skill",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "47236589-f608-4caa-82de-287db44ebe8a",
-								"type": "text/javascript",
-								"exec": [
-									"pm.environment.set(\"person_ss_id\", \"5b4e38d02131371ce8dd8246\");"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "http://127.0.0.1:5000/persons/soft_skills/{{person_ss_id}}",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "5000",
-							"path": [
-								"persons",
-								"soft_skills",
-								"{{person_ss_id}}"
-							]
-						},
-						"description": "Удаляет личностную характеристику пользователя"
-					},
-					"response": [
-						{
-							"name": "delete_person_soft_skill",
-							"originalRequest": {
-								"method": "DELETE",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/persons/soft_skills/5b5609de213137138060e250",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"persons",
-										"soft_skills",
-										"5b5609de213137138060e250"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Length",
-									"value": "13",
-									"name": "Content-Length",
-									"description": "The length of the response body in octets (8-bit bytes)"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
-								},
-								{
-									"key": "Date",
-									"value": "Mon, 23 Jul 2018 17:59:31 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Server",
-									"value": "Werkzeug/0.14.1 Python/3.6.5",
-									"name": "Server",
-									"description": "A name for the server"
-								}
-							],
-							"cookie": [],
-							"body": "{\"result\":0}\n"
-						}
-					]
-				},
-				{
 					"name": "find_person_soft_skills",
 					"event": [
 						{
@@ -5302,10 +5645,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "96090e81-77c3-48a4-b6ce-b7ac6c6500ee",
+								"id": "26b9b103-65a5-4738-b78d-59ebfb186e6c",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"person_ss_id\", \"5b4e38d02131371ce8dd8246\");"
+									"pm.environment.set(\"person_ss_id\", \"5b75a4852131370ffc236e56\");"
 								]
 							}
 						}
@@ -5318,15 +5661,10 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/soft_skills/{{person_ss_id}}",
-							"protocol": "http",
+							"raw": "{{server_url}}/persons/soft_skills/{{person_ss_id}}",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{server_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"persons",
 								"soft_skills",
@@ -5397,218 +5735,6 @@
 					]
 				},
 				{
-					"name": "add_person_hard_skill",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "d0e908cd-a711-4edf-a968-ddb984cad8a6",
-								"type": "text/javascript",
-								"exec": [
-									"pm.environment.set(\"person_id\", \"5b4e38d02131371ce8dd8246\");",
-									"pm.environment.set(\"hs_id\", \"5b4e38d02131371ce8dd8246\");"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"hs_id\":\"{{hs_id}}\"\n}"
-						},
-						"url": {
-							"raw": "http://127.0.0.1:5000/persons/{{person_id}}/hard_skills",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "5000",
-							"path": [
-								"persons",
-								"{{person_id}}",
-								"hard_skills"
-							]
-						},
-						"description": "Добавляет профессиональный навык пользователю"
-					},
-					"response": [
-						{
-							"name": "add_person_hard_skill",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"disabled": false
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"hs_id\":\"5b54c4a72131371cb0cbdd4f\"\n}"
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/persons/5b54c4a72131371cb0cbdd45/hard_skills",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"persons",
-										"5b54c4a72131371cb0cbdd45",
-										"hard_skills"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Length",
-									"value": "45",
-									"name": "Content-Length",
-									"description": "The length of the response body in octets (8-bit bytes)"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
-								},
-								{
-									"key": "Date",
-									"value": "Mon, 23 Jul 2018 18:01:27 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Server",
-									"value": "Werkzeug/0.14.1 Python/3.6.5",
-									"name": "Server",
-									"description": "A name for the server"
-								}
-							],
-							"cookie": [],
-							"body": "{\"id\":\"5b5617f7213137138060e251\",\"result\":0}\n"
-						}
-					]
-				},
-				{
-					"name": "delete_person_hard_skill",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "dae912bc-fe25-4c6b-843c-3eaafa90e985",
-								"type": "text/javascript",
-								"exec": [
-									"pm.environment.set(\"person_hs_id\", \"5b4e38d02131371ce8dd8246\");"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "http://127.0.0.1:5000/persons/hard_skills/{{person_hs_id}}",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "5000",
-							"path": [
-								"persons",
-								"hard_skills",
-								"{{person_hs_id}}"
-							]
-						},
-						"description": "Удаляет профессиональный навык пользователя"
-					},
-					"response": [
-						{
-							"name": "delete_person_hard_skill",
-							"originalRequest": {
-								"method": "DELETE",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/persons/hard_skills/5b5617f7213137138060e251",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"persons",
-										"hard_skills",
-										"5b5617f7213137138060e251"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Length",
-									"value": "13",
-									"name": "Content-Length",
-									"description": "The length of the response body in octets (8-bit bytes)"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
-								},
-								{
-									"key": "Date",
-									"value": "Mon, 23 Jul 2018 18:03:25 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Server",
-									"value": "Werkzeug/0.14.1 Python/3.6.5",
-									"name": "Server",
-									"description": "A name for the server"
-								}
-							],
-							"cookie": [],
-							"body": "{\"result\":0}\n"
-						}
-					]
-				},
-				{
 					"name": "find_person_hard_skills",
 					"event": [
 						{
@@ -5631,15 +5757,10 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/hard_skills?person_id={{person_id}}&hs_id={{hs_id}}",
-							"protocol": "http",
+							"raw": "{{server_url}}/persons/hard_skills?person_id={{person_id}}&hs_id={{hs_id}}",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{server_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"persons",
 								"hard_skills"
@@ -5733,10 +5854,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "88310c8f-fe7d-44fb-a545-78b0d7d80130",
+								"id": "7121b713-ae15-415c-ab23-c0a1d0effa54",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"person_hs_id\", \"5b4e38d02131371ce8dd8246\");"
+									"pm.environment.set(\"person_hs_id\", \"5b75a4852131370ffc236e4a\");"
 								]
 							}
 						}
@@ -5749,15 +5870,10 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/persons/hard_skills/{{person_hs_id}}",
-							"protocol": "http",
+							"raw": "{{server_url}}/persons/hard_skills/{{person_hs_id}}",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{server_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"persons",
 								"hard_skills",
@@ -7258,11 +7374,21 @@
 		}
 	],
 	"auth": {
-		"type": "bearer",
-		"bearer": [
+		"type": "oauth2",
+		"oauth2": [
 			{
-				"key": "token",
-				"value": "55555",
+				"key": "accessToken",
+				"value": "08227aef966c89eaf8ee68ebd7b013b8",
+				"type": "string"
+			},
+			{
+				"key": "tokenType",
+				"value": "bearer",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
 				"type": "string"
 			}
 		]
@@ -7287,6 +7413,14 @@
 					""
 				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"id": "8efe28ed-17a8-4722-b5a0-9185ddbb7010",
+			"key": "server_url",
+			"value": "https://127.0.0.1:5000",
+			"type": "string"
 		}
 	]
 }
