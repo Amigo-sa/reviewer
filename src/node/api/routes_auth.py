@@ -142,6 +142,7 @@ def finish_phone_confirmation():
     max_attempts = constants.confirmation_max_attempts
     confirm_timeout = timedelta(minutes=constants.confirmation_timeout_minutes)
     req = request.get_json()
+    err = ERR.AUTH
     try:
         auth_code = req["auth_code"]
         session_id = str(req["session_id"])
@@ -152,6 +153,7 @@ def finish_phone_confirmation():
             if auth_info.is_approved:
                 result = {"result": ERR.OK}
             elif sent_time < datetime.now(timezone.utc) - confirm_timeout:
+                err = ERR.AUTH_SESSION_EXPIRED
                 raise AuthError("session expired")
             elif auth_info.auth_code == auth_code:
                 result = {"result": ERR.OK}
@@ -180,7 +182,7 @@ def finish_phone_confirmation():
         result = {"result": ERR.INPUT}
         print(repr(e))
     except AuthError as e:
-        result = {"result": ERR.AUTH,
+        result = {"result": err,
                   "error_message": str(e)}
         print(repr(e))
     except Exception as e:
