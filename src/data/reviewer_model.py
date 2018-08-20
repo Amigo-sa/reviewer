@@ -36,6 +36,7 @@ db_name = constants.db_name
 if len(sys.argv) > 1:
     if '--test' in str(sys.argv):
         db_name = constants.db_name_test
+print("Working with DB '%s' \n"%db_name)
 connect(constants.mongo_db + "/" + db_name, alias="reviewer")
 
 
@@ -45,7 +46,6 @@ class ValidatedReferenceField(fields.ReferenceField):
         old_clean = getattr(cls, "clean", None)
 
         def new_clean(instance):
-            print("Running RefField new_clean in " + str(cls))
             ref_field = getattr(instance, name, None)
             ref_class = getattr(cls, name, None)
             if ref_field is None:
@@ -64,7 +64,6 @@ class ValidatedReferenceList(fields.ListField):
         old_clean = getattr(cls, "clean", None)
 
         def new_clean(instance):
-            print("Running RefList new_clean in " + str(cls))
             ref_list = getattr(instance, name, None)
             for item in ref_list:
                 if item is None:
@@ -246,7 +245,6 @@ class GroupMember(MongoModel):
     # TODO лучше реализовать это в виде validator
     # TODO реализовать в виде списка, иначе несовместимо с питоном <3.6
     def clean(self):
-        print("running def clean in GroupMember")
         if self.role_id:
             target_group = Group.objects.get({"_id": self.group_id.pk})
             if self.role_id not in target_group.role_list:

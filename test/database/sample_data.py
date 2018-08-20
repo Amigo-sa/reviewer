@@ -804,6 +804,7 @@ if __name__ == "__main__":
             exit()
         if '--test' in str(sys.argv):
             db_name = constants.db_name_test
+    print("Filling DB '%s' \n" % db_name)
     connect(constants.mongo_db + "/" + db_name, alias="reviewer")
     clear_db()
     fill_db()
