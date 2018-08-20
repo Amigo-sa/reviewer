@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from random import randint
+
 from bson import ObjectId
 import node.settings.errors as ERR
 import node.settings.constants as constants
@@ -64,13 +66,13 @@ if __debug__:
     @bp.route("/logged_in_person", methods=['POST'])
     def prepare_logged_in_person():
         try:
-            phone_no = "79037577575"
+            phone_no = str(randint(1000000000,9999999999))
             person = Person(
                 "Иван",
                 "Иванович",
                 "Кац",
                 date(1980, 1, 1),
-                "78398889991")
+                str(randint(1000000000, 9999999999)))
             person.save()
             auth_info = AuthInfo()
             auth_info.is_approved = True

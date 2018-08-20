@@ -65,6 +65,12 @@ class TestApi(unittest.TestCase):
                                     "Bearer " + reviewer_req["session_id"]}
         self.reviewer_id = reviewer_req["person_id"]
 
+    def setup_reviewer2(self):
+        reviewer_req = requests.post(self.api_URL + "/logged_in_person").json()
+        self.assertEqual(ERR.OK, reviewer_req["result"])
+        self.reviewer_header2 = {"Authorization":
+                                    "Bearer " + reviewer_req["session_id"]}
+        self.reviewer_id2 = reviewer_req["person_id"]
 
     def t_simple_normal(self, url_get, url_post, url_delete, *args, **kwargs):
         # read from empty DB
@@ -488,7 +494,7 @@ class TestApi(unittest.TestCase):
         resp_json = requests.get(self.api_URL+"/group_members/" + gm_id, headers = self.admin_header).json()
         self.assertEqual(ERR.NO_DATA, resp_json["result"])
 
-    # TODO сделать
+    
     def test_reviews_normal(self):
         person_id = self.prepare_persons(1)[0]
         facility_ids = self.prepare_group()
@@ -515,23 +521,36 @@ class TestApi(unittest.TestCase):
         gm_id = self.post_item("/groups/%s/group_members" % group_id, {"person_id": person_id})
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name" : "sample_test_name",
                                                                     "info" : "sample_test_info"})
-        subjects = { "StudentRole": "/general_roles/%s/reviews" %(student_role["id"]),
+        subject_urls = { "StudentRole": "/general_roles/%s/reviews" %(student_role["id"]),
                      "TutorRole": "/general_roles/%s/reviews"%(tutor_role["id"]),
                      "PersonHS": "/persons/%s/hard_skills/%s/reviews" %(person_id, hs_id),
                      "PersonSS": "/persons/%s/soft_skills/%s/reviews" % (person_id, ss_id),
                      "Group" : "/groups/%s/reviews"%group_id,
                      "GroupTest" : "/tests/%s/reviews"%g_test_id,
                      "GroupMember": "/group_members/%s/reviews"%gm_id}
+        subj_ids = { "StudentRole": student_role["id"],
+                     "TutorRole": tutor_role["id"],
+                     "PersonHS": None,
+                     "PersonSS": None,
+                     "Group" : group_id,
+                     "GroupTest" : g_test_id,
+                     "GroupMember": gm_id}
+
         rev_ids = {}
         # add reviews
         self.setup_reviewer()
+        self.setup_reviewer2()
         
-        for subj_type, subj_url in subjects.items():
+        for subj_type, subj_url in subject_urls.items():
             review_data = {"reviewer_id" : self.reviewer_id,
                            "value" : "60.0",
                            "description" : "sample_descr"}
             cur_id = self.post_item(subj_url, review_data, auth="reviewer")
             rev_ids.update({subj_type : cur_id})
+        p_ss_id = self.get_item_list("/persons/soft_skills")[0]["id"]
+        p_hs_id = self.get_item_list("/persons/hard_skills")[0]["id"]
+        subj_ids["PersonSS"] = p_ss_id
+        subj_ids["PersonHS"] = p_hs_id
 
         # verify reviews
         review_list = self.get_item_list("/reviews")
@@ -543,41 +562,42 @@ class TestApi(unittest.TestCase):
         self.assertDictListEqual(ref_review_list, review_list)
         review_list = self.get_item_list("/reviews?reviewer_id=" + person2_id)
         self.assertDictListEqual([], review_list)
-        # TODO доделать тест
-        # # verify with subject_id
-        # for subj_id, rev_id in rev_ids.items():
-        #     review_list = self.get_item_list("/reviews?subject_id=" + subj_id)
-        #     self.assertEqual([{"id" : rev_id}], review_list)
-        # # get review info
-        # for subj_id, rev_id in rev_ids.items():
-        #     review_data = self.get_item_data("/reviews/" + rev_id)
-        #     ref_data = {"reviewer_id": person_id,
-        #                 "subject_id": subj_id,
-        #                 "value": 60.0,
-        #                 "description": "sample_descr"}
-        #     self.assertDictEqual(ref_data, review_data)
-        # # verify with review from person2
-        # review_data = {"type": "StudentRole",
-        #                "reviewer_id": person2_id,
-        #                "subject_id": student_role["id"],
-        #                "value": "80.0",
-        #                "description": "sample_descr2"}
-        # rev2_id = self.post_item("/reviews", review_data)
-        # review_list = self.get_item_list("/reviews?subject_id=" + student_role["id"])
-        # self.assertEqual([{"id": rev_ids[student_role["id"]]}, {"id": rev2_id}], review_list)
-        # # delete review
-        # self.delete_item("/reviews/" + rev_ids[student_role["id"]])
-        # rev_ids.pop(student_role["id"])
-        # # verify
-        # review_list = self.get_item_list("/reviews?subject_id=" + student_role["id"])
-        # self.assertEqual([{"id": rev2_id}], review_list)
-        # # delete all reviews
-        # self.delete_item("/reviews/" + rev2_id)
-        # for subj_id, rev_id in rev_ids.items():
-        #     self.delete_item("/reviews/" + rev_id)
-        # # verify for one subject
-        # review_list = self.get_item_list("/reviews?subject_id=" + gm_id)
-        # self.assertEqual([], review_list)
+        # verify with subject_id
+        for subj_type, rev_id in rev_ids.items():
+            review_list = self.get_item_list("/reviews?subject_id=" + subj_ids[subj_type])
+            self.assertEqual([{"id" : rev_id}], review_list)
+        # get review info
+        for subj_type, rev_id in rev_ids.items():
+            review_data = self.get_item_data("/reviews/" + rev_id)
+            ref_data = {"reviewer_id": self.reviewer_id,
+                        "subject_id": subj_ids[subj_type],
+                        "value": 60.0,
+                        "description": "sample_descr"}
+            self.assertDictEqual(ref_data, review_data)
+        # verify with review from person2
+        review_data = {"type": "StudentRole",
+                       "reviewer_id": self.reviewer_id2,
+                       "subject_id": student_role["id"],
+                       "value": "80.0",
+                       "description": "sample_descr2"}
+        rev2_id = self.post_item("/general_roles/%s/reviews" %(student_role["id"]),
+                                 review_data,
+                                 auth="reviewer2")
+        review_list = self.get_item_list("/reviews?subject_id=" + student_role["id"])
+        self.assertEqual([{"id": rev_ids["StudentRole"]}, {"id": rev2_id}], review_list)
+        # delete review
+        self.delete_item("/reviews/" + rev_ids["StudentRole"], auth="reviewer")
+        rev_ids.pop("StudentRole")
+        # verify
+        review_list = self.get_item_list("/reviews?subject_id=" + student_role["id"])
+        self.assertEqual([{"id": rev2_id}], review_list)
+        # delete all reviews
+        self.delete_item("/reviews/" + rev2_id, auth="reviewer2")
+        for subj_id, rev_id in rev_ids.items():
+            self.delete_item("/reviews/" + rev_id, auth="reviewer")
+        # verify for one subject
+        review_list = self.get_item_list("/reviews?subject_id=" + gm_id)
+        self.assertEqual([], review_list)
 
     def test_organization_duplicate(self):
         self.post_duplicate_item("/organizations",
@@ -924,6 +944,8 @@ class TestApi(unittest.TestCase):
     def post_item(self, url, data, auth = "admin"):
         if auth == "reviewer":
             auth_header = self.reviewer_header
+        elif auth == "reviewer2":
+            auth_header = self.reviewer_header2
         else:
             auth_header = self.admin_header
         resp = requests.post(url=self.api_URL + url, json=data, headers = auth_header)
@@ -941,8 +963,14 @@ class TestApi(unittest.TestCase):
         self.assertEqual(ERR.OK, resp_json["result"],"post result must be ERR.OK")
         if "error_message" in resp_json: print(resp_json["error_message"])
 
-    def delete_item(self, url):
-        resp = requests.delete(url=self.api_URL + url, headers = self.admin_header)
+    def delete_item(self, url, auth = "admin"):
+        if auth == "reviewer":
+            auth_header = self.reviewer_header
+        elif auth == "reviewer2":
+            auth_header = self.reviewer_header2
+        else:
+            auth_header = self.admin_header
+        resp = requests.delete(url=self.api_URL + url, headers = auth_header)
         self.assertEqual(200, resp.status_code, "delete response status code must be 200")
         resp_json = resp.json()
         if "error_message" in resp_json: print(resp_json["error_message"])

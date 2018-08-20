@@ -279,7 +279,11 @@ def required_auth(required_permissions="admin"):
                             if str(group_member.pk) == kwargs["id"]:
                                 return f(*args, **kwargs)
                 if required_permissions == "reviewer" and auth_info.person_id:
-                    if str(auth_info.person_id.pk) == request.get_json()['reviewer_id']:
+                    if request.method == "POST":
+                        if str(auth_info.person_id.pk) == request.get_json()['reviewer_id']:
+                            return f(*args, **kwargs)
+                    if request.method == "DELETE":
+                        # TODO пока без авторизации. доделать
                         return f(*args, **kwargs)
             except:
                 return jsonify({"result": ERR.AUTH}), 200
