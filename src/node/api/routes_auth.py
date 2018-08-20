@@ -283,11 +283,31 @@ def required_auth(required_permissions="admin"):
                         if str(auth_info.person_id.pk) == request.get_json()['reviewer_id']:
                             return f(*args, **kwargs)
                     if request.method == "DELETE":
-                        # TODO пока без авторизации. доделать
-                        return f(*args, **kwargs)
+                        if auth_info.person_id.pk == get_reviewer_id_by_review_id(kwargs["id"]):
+                            return f(*args, **kwargs)
             except:
                 return jsonify({"result": ERR.AUTH}), 200
             return jsonify({"result": ERR.AUTH}), 200
 
         return decorated_function
     return decorator
+
+
+def get_reviewer_id_by_review_id(_id):
+    if SRReview.objects.raw({"_id": ObjectId(_id)}).count():
+        return SRReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
+    if TRReview.objects.raw({"_id": ObjectId(_id)}).count():
+        return TRReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
+    if HSReview.objects.raw({"_id": ObjectId(_id)}).count():
+        return HSReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
+    if SSReview.objects.raw({"_id": ObjectId(_id)}).count():
+        return SSReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
+    if GroupReview.objects.raw({"_id": ObjectId(_id)}).count():
+        return GroupReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
+    if GroupTestReview.objects.raw({"_id": ObjectId(_id)}).count():
+        return GroupTestReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
+    if GroupMemberReview.objects.raw({"_id": ObjectId(_id)}).count():
+        return GroupMemberReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
+    return None
+
+
