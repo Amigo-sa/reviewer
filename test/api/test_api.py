@@ -822,7 +822,9 @@ class TestApi(unittest.TestCase):
                              person_id = p_id)
         self.pass_invalid_ref("/groups/%s/group_members" % group_id,
                               person_id=soft_skill_id)
-        # TODO пропущен тест с неверным group_member_id, т.к. возвращает NO_DATA
+
+        self.pass_invalid_ref("/group_members/%s/group_roles" % p_id,
+                              group_role_id=g_role_id)
         self.pass_invalid_ref("/group_members/%s/group_roles" % gm_id,
                               group_role_id=p_id)
 
