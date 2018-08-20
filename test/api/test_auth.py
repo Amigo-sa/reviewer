@@ -242,25 +242,25 @@ class TestAuth(unittest.TestCase):
             "phone_no": phone_no,
         })
         self.assertEqual(200, resp.status_code)
-        self.assertEqual(ERR.INPUT, resp.json()["result"])
+        self.assertEqual(ERR.AUTH_INVALID_PHONE, resp.json()["result"])
         phone_no = "99703322212"
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
             "phone_no": phone_no,
         })
         self.assertEqual(200, resp.status_code)
-        self.assertEqual(ERR.INPUT, resp.json()["result"])
+        self.assertEqual(ERR.AUTH_INVALID_PHONE, resp.json()["result"])
         phone_no = "797033x2212"
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
             "phone_no": phone_no,
         })
         self.assertEqual(200, resp.status_code)
-        self.assertEqual(ERR.INPUT, resp.json()["result"])
+        self.assertEqual(ERR.AUTH_INVALID_PHONE, resp.json()["result"])
         phone_no = "7970332"
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
             "phone_no": phone_no,
         })
         self.assertEqual(200, resp.status_code)
-        self.assertEqual(ERR.INPUT, resp.json()["result"])
+        self.assertEqual(ERR.AUTH_INVALID_PHONE, resp.json()["result"])
 
 
     def test_wrong_sms_code(self):
@@ -279,7 +279,7 @@ class TestAuth(unittest.TestCase):
                                  json={"auth_code": "some_wrong_code",
                                        "session_id": cur_session.id})
             self.assertEqual(200, resp.status_code)
-            self.assertEqual(ERR.AUTH, resp.json()["result"])
+            self.assertEqual(ERR.AUTH_CODE_INCORRECT, resp.json()["result"])
             self.assertEqual("wrong code, %s attempts remain"%(max_attempts - i - 1),
                              resp.json()["error_message"])
         resp = requests.post(self.api_URL + "/finish_phone_confirmation",
@@ -315,7 +315,7 @@ class TestAuth(unittest.TestCase):
                              json={"auth_code": cur_session.received_code,
                                    "session_id": cur_session.id})
         self.assertEqual(200, resp.status_code)
-        self.assertEqual(ERR.AUTH, resp.json()["result"])
+        self.assertEqual(ERR.AUTH_SESSION_EXPIRED, resp.json()["result"])
 
 
     def test_multiple_sms(self):
@@ -323,21 +323,21 @@ class TestAuth(unittest.TestCase):
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
         self.assertEqual(ERR.OK, resp.json()["result"])
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
-        self.assertEqual(ERR.AUTH, resp.json()["result"])
+        self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
-        self.assertEqual(ERR.AUTH, resp.json()["result"])
+        self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
         resp = requests.post(self.api_URL + "/session_aging", json={
             "phone_no": phone_no,
             "minutes": "1"})
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
-        self.assertEqual(ERR.AUTH, resp.json()["result"])
+        self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
         resp = requests.post(self.api_URL + "/session_aging", json={
             "phone_no": phone_no,
             "minutes": "1"})
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
         self.assertEqual(ERR.OK, resp.json()["result"])
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
-        self.assertEqual(ERR.AUTH, resp.json()["result"])
+        self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
 
     def test_login_normal(self):
         phone_no, password = self.prepare_confirmed_user()
