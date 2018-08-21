@@ -630,6 +630,18 @@ def find_persons():
                       "foreignField": "person_id",
                       "as": "student_role"}})
     err = ERR.OK
+    if "role" in request.args:
+        if request.args["role"] == "tutor":
+            pipeline += ({"$match":
+                              {"tutor_role._id": {"$exists": True}}},
+                         )
+        elif request.args["role"] == "student":
+            pipeline += ({"$match":
+                              {"student_role._id": {"$exists": True}}},
+                         )
+        else:
+            return jsonify({"result": ERR.INPUT}), 200
+
     if 'group_id' in request.args:
         group_id = request.args['group_id']
         if Group.objects.raw({"_id": ObjectId(group_id)}).count():
@@ -670,6 +682,18 @@ def find_persons():
                             {"$or": [{"tutor_role.department_id": {"$exists": True}},
                                     {"student_role.department_id": {"$exists": True}}]}},
                     )"""
+    if "surname" in request.args:
+        pipeline += ({"$match":
+                             {"surname": {"$regex": request.args['surname'], "$options": "i"}}},
+                     )
+    if "first_name" in request.args:
+        pipeline += ({"$match":
+                          {"first_name": {"$regex": request.args['first_name'], "$options": "i"}}},
+                     )
+    if "middle_name" in request.args:
+        pipeline += ({"$match":
+                          {"middle_name": {"$regex": request.args['middle_name'], "$options": "i"}}},
+                     )
     pipeline += ({"$skip": skip},
                  {"$limit": limit})
     if err == ERR.NO_DATA:

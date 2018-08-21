@@ -4947,12 +4947,12 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "7c2c85c8-cf19-4c91-8120-4f463adbaec7",
+								"id": "8a218e5a-2b3d-40d8-a2b1-37ccc693670b",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"group_id\", \"5b54c4a72131371cb0cbdda0\");",
+									"pm.environment.set(\"group_id\", \"5b7c5e9f2131371aa8e1c6a9\");",
 									"pm.environment.set(\"department_id\", \"5b547bee21313717b8ddd06f\");",
-									"pm.environment.set(\"organization_id\", \"5b547bee21313717b8ddd06e\");"
+									"pm.environment.set(\"organization_id\", \"5b7c5e9e2131371aa8e1c654\");"
 								]
 							}
 						}
@@ -4965,7 +4965,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{server_url}}/persons?group_id={{group_id}}&department_id={{department_id}}&organization_id={{organization_id}}&query_limit=10&query_start=0",
+							"raw": "{{server_url}}/persons?surname=Шат&first_name=ле&middle_name=МИ&role=student&group_id={{group_id}}&department_id={{department_id}}&organization_id={{organization_id}}&query_limit=10&query_start=0",
 							"host": [
 								"{{server_url}}"
 							],
@@ -4973,6 +4973,22 @@
 								"persons"
 							],
 							"query": [
+								{
+									"key": "surname",
+									"value": "Шат"
+								},
+								{
+									"key": "first_name",
+									"value": "ле"
+								},
+								{
+									"key": "middle_name",
+									"value": "МИ"
+								},
+								{
+									"key": "role",
+									"value": "student"
+								},
 								{
 									"key": "group_id",
 									"value": "{{group_id}}"
@@ -7298,7 +7314,7 @@
 	],
 	"variable": [
 		{
-			"id": "88952aec-792e-4c24-b102-fc4268d67572",
+			"id": "2daf770d-1e7d-4966-a6e5-3fafd7d7e0d1",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"
