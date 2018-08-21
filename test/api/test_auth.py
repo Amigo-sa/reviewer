@@ -186,6 +186,14 @@ class TestAuth(unittest.TestCase):
             "/persons/%s/hard_skills/%s/reviews" % (self.other_person_id, self.hard_skill_id),
             "/persons/%s/soft_skills/%s/reviews" % (self.other_person_id, self.soft_skill_id)
         ]
+        # отзывы на свои качества и роли
+        self.review_invalid_post = [
+            "/general_roles/%s/reviews" % self.tutor_role_id,
+            "/general_roles/%s/reviews" % self.student_role_id,
+            "/group_members/%s/reviews" % self.group_member_id,
+            "/persons/%s/hard_skills/%s/reviews" % (self.user_person_id, self.hard_skill_id),
+            "/persons/%s/soft_skills/%s/reviews" % (self.user_person_id, self.soft_skill_id)
+        ]
 
 
     def prepare_docs(self):
@@ -297,7 +305,7 @@ class TestAuth(unittest.TestCase):
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                              "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
-    def test_review_allowed_access(self):
+    def test_review_post_normal(self):
         self.prepare_docs()
         self.prepare_lists()
         review_data = {"reviewer_id" : self.user_person_id,
@@ -309,7 +317,7 @@ class TestAuth(unittest.TestCase):
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                             "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
-    def test_review_restricted_access(self):
+    def test_review_wrong_reviewer_id(self):
         self.prepare_docs()
         self.prepare_lists()
         review_data = {"reviewer_id": self.other_person_id,
@@ -319,7 +327,42 @@ class TestAuth(unittest.TestCase):
             resp_json = hm.try_post_item(self, self.api_URL + url,
                                          review_data, self.user_header)
             self.assertEqual(ERR.AUTH, resp_json["result"],
+                                "%s must return ERR.AUTH for user %s" % (url, self.user_person_id))
+
+    def test_review_delete_normal(self):
+        self.prepare_docs()
+        self.prepare_lists()
+        review_data = {"reviewer_id": self.user_person_id,
+                       "value": "50.0",
+                       "description": "string"}
+        rev_ids = []
+        for url in self.review_valid_post:
+            resp_json = hm.try_post_item(self, self.api_URL + url,
+                                         review_data, self.user_header)
+            rev_ids.append(resp_json["id"])
+            self.assertNotEqual(ERR.AUTH, resp_json["result"],
                                 "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
+        for rev_id in rev_ids:
+            resp_json = hm.try_delete_item(self, self.api_URL + "/reviews/" + rev_id,
+                                         self.user_header)
+            self.assertNotEqual(ERR.AUTH, resp_json["result"],
+                                "DELETE %s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
+
+    def test_review_delete_unauth(self):
+        pass
+
+    @unittest.skip("not implemented in API")
+    def test_review_post_on_self(self):
+        self.prepare_docs()
+        self.prepare_lists()
+        review_data = {"reviewer_id": self.user_person_id,
+                       "value": "50.0",
+                       "description": "string"}
+        for url in self.review_invalid_post:
+            resp_json = hm.try_post_item(self, self.api_URL + url,
+                                         review_data, self.user_header)
+            self.assertEqual(ERR.AUTH, resp_json["result"],
+                             "%s must return ERR.AUTH for user %s" % (url, self.user_person_id))
 
     def test_registration_normal(self):
         phone_no = "79803322212"

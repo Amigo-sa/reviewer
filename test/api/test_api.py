@@ -731,10 +731,6 @@ class TestApi(unittest.TestCase):
             resp_json = resp.json()
             self.assertEqual(ERR.DB, resp_json["result"], "duplicate post result must be ERR.OK")
 
-    @unittest.skip("Написать функцию api и тест")
-    def test_modify_review(self):
-        pass
-
     def test_invalid_post(self):
         self.setup_reviewer()
         p_id = self.prepare_persons(1)[0]
