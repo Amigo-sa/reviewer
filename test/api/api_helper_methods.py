@@ -6,10 +6,14 @@ import datetime
 import random
 
 
-def post_item(instance, url, data):
+def post_item(instance, url, data, auth_header="admin"):
     if not isinstance(instance, unittest.TestCase):
         raise TypeError
-    resp = requests.post(url=url, json=data, headers = instance.admin_header)
+    if auth_header=="admin":
+        header = instance.admin_header
+    else:
+        header = auth_header
+    resp = requests.post(url=url, json=data, headers = header)
     instance.assertEqual(200, resp.status_code, "post response status code must be 200")
     resp_json = resp.json()
     instance.assertEqual(ERR.OK, resp_json["result"],  "post result must be ERR.OK")
@@ -17,7 +21,7 @@ def post_item(instance, url, data):
     instance.assertTrue(resp_json["id"], "returned id must be not None")
     return resp_json["id"]
 
-def post_item_as(instance, url, data, headers):
+def try_post_item(instance, url, data, headers):
     if not isinstance(instance, unittest.TestCase):
         raise TypeError
     resp = requests.post(url=url,
@@ -26,7 +30,7 @@ def post_item_as(instance, url, data, headers):
     instance.assertEqual(200, resp.status_code, "post response status code must be 200")
     return resp.json()
 
-def delete_item_as(instance, url, headers):
+def try_delete_item(instance, url, headers):
     if not isinstance(instance, unittest.TestCase):
         raise TypeError
     resp = requests.delete(url=url,

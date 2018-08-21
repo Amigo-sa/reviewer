@@ -125,67 +125,71 @@ class TestAuth(unittest.TestCase):
         self.admin_header = {"Authorization":
                                  "blah " + admin_req["session_id"]}
 
-    def test_user_restricted_access(self):
+    def prepare_docs(self):
         # prepare user
         resp_json = requests.post(self.api_URL + "/logged_in_person").json()
         print(resp_json)
-        user_person_id = resp_json["person_id"]
-        user_session_id = resp_json["session_id"]
-        user_header = {"Authorization":
-                                 "blah " + user_session_id}
-        # prepare stuff for modification attempts
-        other_person_id = hm.post_item(self, self.api_URL + "/persons",
+        self.user_person_id = resp_json["person_id"]
+        self.user_session_id = resp_json["session_id"]
+        self.user_header = {"Authorization":
+                           "Bearer " + self.user_session_id}
+        # prepare data
+        self.other_person_id = hm.post_item(self, self.api_URL + "/persons",
                                        dict(first_name="Владимир",
                                             middle_name="Ильич",
                                             surname="Ленин",
                                             birth_date=datetime.date(1870, 4, 22).isoformat(),
                                             phone_no="+78007773737"))
-        org_id = hm.post_item(self, self.api_URL + "/organizations", {"name" : "sample_org"})
-        dep_id = hm.post_item(self, self.api_URL + "/organizations/%s/departments" % org_id,
-                              {"name" : "sample_dep"})
-        group_id = hm.post_item(self, self.api_URL + "/departments/%s/groups" % dep_id,
-                              {"name": "sample_group"})
-        group_role_id = hm.post_item(self, self.api_URL + "/group_roles",
-                                {"name": "sample_group_role"})
-        group_perm_id = hm.post_item(self, self.api_URL + "/group_permissions",
+        self.org_id = hm.post_item(self, self.api_URL + "/organizations", {"name": "sample_org"})
+        self.dep_id = hm.post_item(self, self.api_URL + "/organizations/%s/departments" % self.org_id,
+                              {"name": "sample_dep"})
+        self.group_id = hm.post_item(self, self.api_URL + "/departments/%s/groups" % self.dep_id,
+                                {"name": "sample_group"})
+        self.group_role_id = hm.post_item(self, self.api_URL + "/group_roles",
+                                     {"name": "sample_group_role"})
+        self.group_perm_id = hm.post_item(self, self.api_URL + "/group_permissions",
                                      {"name": "sample_group_permission"})
-        resp_json = requests.post(self.api_URL + "/groups/%s/role_list"%group_id,
-                      json={"role_list" : [group_role_id]}, headers=self.admin_header).json()
+        resp_json = requests.post(self.api_URL + "/groups/%s/role_list" % self.group_id,
+                                  json={"role_list": [self.group_role_id]}, headers=self.admin_header).json()
         print(resp_json)
-        group_member_id = hm.post_item(self, self.api_URL + "/groups/%s/group_members"%group_id,
-                                     {"person_id": user_person_id,
-                                      "role_id" : group_role_id})
+        self.group_member_id = hm.post_item(self, self.api_URL + "/groups/%s/group_members" % self.group_id,
+                                       {"person_id": self.user_person_id,
+                                        "role_id": self.group_role_id})
+
+    def test_user_restricted_access(self):
+
+        self.prepare_docs()
         # lists
         restricted_post_list = [
             "/organizations",
             "/persons",
-            "/organizations/%s/departments"%org_id,
-            "/departments/%s/groups"%dep_id,
-            "/groups/%s/role_list"%group_id,
+            "/organizations/%s/departments"%self.org_id,
+            "/departments/%s/groups"%self.dep_id,
+            "/groups/%s/role_list"%self.group_id,
             "/group_roles",
             "/group_permissions",
-            "/groups/%s/group_members"%group_id,
-            "/group_members/%s/permissions"%group_member_id,
+            "/groups/%s/group_members"%self.group_id,
+            "/group_members/%s/permissions"%self.group_member_id,
 
         ]
         restricted_delete_list = [
-            "/organizations/%s" % org_id,
-            "/departments/%s" % dep_id,
-            "/groups/%s" % group_id,
-            "/group_roles/%s" % group_role_id,
-            "/group_permissions/%s" %group_perm_id,
-            "/persons/%s" %other_person_id,
-            "/group_members/%s" %group_member_id
+            "/organizations/%s" % self.org_id,
+            "/departments/%s" % self.dep_id,
+            "/groups/%s" % self.group_id,
+            "/group_roles/%s" % self.group_role_id,
+            "/group_permissions/%s" %self.group_perm_id,
+            "/persons/%s" %self.other_person_id,
+            "/group_members/%s" %self.group_member_id
         ]
         # trying posts and deletes
         post_data = {"sample" : "data"}
         for url in restricted_post_list:
-            resp_json = hm.post_item_as(self, self.api_URL + url,
-                                        post_data, user_header)
+            resp_json = hm.try_post_item(self, self.api_URL + url,
+                                        post_data, self.user_header)
             self.assertEqual(ERR.AUTH, resp_json["result"],
                              "%s is restricted to post for simple user"%url)
         for url in restricted_delete_list:
-            resp_json = hm.delete_item_as(self, self.api_URL + url, user_header)
+            resp_json = hm.try_delete_item(self, self.api_URL + url, self.user_header)
             self.assertEqual(ERR.AUTH, resp_json["result"],
                              "%s is restricted to delete for simple user" % url)
 
@@ -197,7 +201,7 @@ class TestAuth(unittest.TestCase):
             "password": password})
         user_session_id = resp.json()["session_id"]
         user_header = {"Authorization":
-                           "blah " + user_session_id}
+                           "Bearer " + user_session_id}
         allowed_post_list = [
             #"/organizations",
             #"/persons",
@@ -209,7 +213,28 @@ class TestAuth(unittest.TestCase):
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                              "%s must not return ERR.AUTH for simple user" % url)
 
+    @unittest.skip("TODO")
     def test_no_auth_restricted_access(self):
+        pass
+
+    @unittest.skip("TODO")
+    def test_no_auth_allowed_access(self):
+        pass
+
+    @unittest.skip("TODO")
+    def test_group_member_restricted_access(self):
+        pass
+
+    @unittest.skip("TODO")
+    def test_group_member_allowed_access(self):
+        pass
+
+    @unittest.skip("TODO")
+    def test_reviewer_restricted_access(self):
+        pass
+
+    @unittest.skip("TODO")
+    def test_reviewer_allowed_access(self):
         pass
 
 
