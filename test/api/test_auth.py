@@ -177,6 +177,15 @@ class TestAuth(unittest.TestCase):
         self.gm_allowed_get = [
             "/group_members/%s" % self.group_member_id
         ]
+        self.review_valid_post = [
+            "/general_roles/%s/reviews" % self.other_tutor_role_id,
+            "/general_roles/%s/reviews" % self.other_student_role_id,
+            "/groups/%s/reviews" % self.group_id,
+            # TODO group_test_reviews
+            "/group_members/%s/reviews" % self.other_group_member_id,
+            "/persons/%s/hard_skills/%s/reviews" % (self.other_person_id, self.hard_skill_id),
+            "/persons/%s/soft_skills/%s/reviews" % (self.other_person_id, self.soft_skill_id)
+        ]
 
 
     def prepare_docs(self):
@@ -290,26 +299,27 @@ class TestAuth(unittest.TestCase):
 
     def test_review_allowed_access(self):
         self.prepare_docs()
-        # tutor role
-        url = "/general_roles/%s/reviews"%self.other_tutor_role_id
-        resp_json = hm.try_post_item(self, self.api_URL + url,
-                         {"reviewer_id" : self.user_person_id,
+        self.prepare_lists()
+        review_data = {"reviewer_id" : self.user_person_id,
                           "value" : "50.0",
-                          "description" : "string"}, self.user_header)
-        self.assertNotEqual(ERR.AUTH, resp_json["result"],
+                          "description" : "string"}
+        for url in self.review_valid_post:
+            resp_json = hm.try_post_item(self, self.api_URL + url,
+                             review_data, self.user_header)
+            self.assertNotEqual(ERR.AUTH, resp_json["result"],
                             "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
     def test_review_restricted_access(self):
         self.prepare_docs()
-        # tutor role
-        url = "/general_roles/%s/reviews" % self.tutor_role_id
-        resp_json = hm.try_post_item(self, self.api_URL + url,
-                                     {"reviewer_id": self.other_person_id,
-                                      "value": "50.0",
-                                      "description": "string"}, self.user_header)
-        self.assertEqual(ERR.AUTH, resp_json["result"],
-                            "%s must return ERR.AUTH for user %s" % (url, self.user_person_id))
-
+        self.prepare_lists()
+        review_data = {"reviewer_id": self.other_person_id,
+                       "value": "50.0",
+                       "description": "string"}
+        for url in self.review_valid_post:
+            resp_json = hm.try_post_item(self, self.api_URL + url,
+                                         review_data, self.user_header)
+            self.assertEqual(ERR.AUTH, resp_json["result"],
+                                "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
     def test_registration_normal(self):
         phone_no = "79803322212"
