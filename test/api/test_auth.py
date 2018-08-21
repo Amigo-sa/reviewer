@@ -125,6 +125,39 @@ class TestAuth(unittest.TestCase):
         self.admin_header = {"Authorization":
                                  "blah " + admin_req["session_id"]}
 
+    def prepare_lists(self):
+        self.admin_only_post = [
+            "/organizations",
+            "/persons",
+            "/organizations/%s/departments" % self.org_id,
+            "/departments/%s/groups" % self.dep_id,
+            "/groups/%s/role_list" % self.group_id,
+            "/group_roles",
+            "/group_permissions",
+            "/groups/%s/group_members"%self.group_id,
+            "/group_members/%s/permissions" % self.group_member_id,
+            "/group_members/%s/group_roles" % self.group_member_id,
+            "/general_roles",
+            "/soft_skills",
+            "/hard_skills",
+            # TODO group_tests не охвачены
+        ]
+        self.admin_only_delete = [
+            "/organizations/%s" % self.org_id,
+            "/departments/%s" % self.dep_id,
+            "/groups/%s" % self.group_id,
+            "/group_roles/%s" % self.group_role_id,
+            "/group_permissions/%s" % self.group_perm_id,
+            "/persons/%s" % self.other_person_id,
+            "/group_members/%s" % self.group_member_id,
+            "/group_members/%s/permissions/%s" % (self.group_member_id, self.group_perm_id),
+            "/general_roles/%s" % self.tutor_role_id,
+            "/general_roles/%s" % self.student_role_id,
+            "/soft_skills/%s" % self.soft_skill_id,
+            "/hard_skills/%s" % self.hard_skill_id,
+            # TODO group_tests не охвачены
+        ]
+
     def prepare_docs(self):
         # prepare user
         resp_json = requests.post(self.api_URL + "/logged_in_person").json()
@@ -155,40 +188,34 @@ class TestAuth(unittest.TestCase):
         self.group_member_id = hm.post_item(self, self.api_URL + "/groups/%s/group_members" % self.group_id,
                                        {"person_id": self.user_person_id,
                                         "role_id": self.group_role_id})
+        self.tutor_role_id = hm.post_item(self, self.api_URL + "/general_roles",
+                                          {"person_id": self.user_person_id,
+                                           "department_id": self.dep_id,
+                                           "role_type" : "Tutor",
+                                           "description" : "string"})
+        self.student_role_id = hm.post_item(self, self.api_URL + "/general_roles",
+                                          {"person_id": self.user_person_id,
+                                           "department_id": self.dep_id,
+                                           "role_type": "Student",
+                                           "description": "string"})
+        self.soft_skill_id = hm.post_item(self, self.api_URL + "/soft_skills",
+                                          {"name" : "string"})
+        self.hard_skill_id = hm.post_item(self, self.api_URL + "/hard_skills",
+                                          {"name": "string"})
+
 
     def test_user_restricted_access(self):
 
         self.prepare_docs()
-        # lists
-        restricted_post_list = [
-            "/organizations",
-            "/persons",
-            "/organizations/%s/departments"%self.org_id,
-            "/departments/%s/groups"%self.dep_id,
-            "/groups/%s/role_list"%self.group_id,
-            "/group_roles",
-            "/group_permissions",
-            "/groups/%s/group_members"%self.group_id,
-            "/group_members/%s/permissions"%self.group_member_id,
-
-        ]
-        restricted_delete_list = [
-            "/organizations/%s" % self.org_id,
-            "/departments/%s" % self.dep_id,
-            "/groups/%s" % self.group_id,
-            "/group_roles/%s" % self.group_role_id,
-            "/group_permissions/%s" %self.group_perm_id,
-            "/persons/%s" %self.other_person_id,
-            "/group_members/%s" %self.group_member_id
-        ]
+        self.prepare_lists()
         # trying posts and deletes
         post_data = {"sample" : "data"}
-        for url in restricted_post_list:
+        for url in self.admin_only_post:
             resp_json = hm.try_post_item(self, self.api_URL + url,
                                         post_data, self.user_header)
             self.assertEqual(ERR.AUTH, resp_json["result"],
                              "%s is restricted to post for simple user"%url)
-        for url in restricted_delete_list:
+        for url in self.admin_only_delete:
             resp_json = hm.try_delete_item(self, self.api_URL + url, self.user_header)
             self.assertEqual(ERR.AUTH, resp_json["result"],
                              "%s is restricted to delete for simple user" % url)
