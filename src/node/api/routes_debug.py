@@ -68,11 +68,11 @@ if __debug__:
         try:
             phone_no = str(randint(1000000000,9999999999))
             person = Person(
-                "Иван",
-                "Иванович",
-                "Кац",
+                "Клон",
+                "Один Из",
+                "Миллионов",
                 date(1980, 1, 1),
-                str(randint(1000000000, 9999999999)))
+                phone_no)
             person.save()
             auth_info = AuthInfo()
             auth_info.is_approved = True

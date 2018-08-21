@@ -123,7 +123,7 @@ class TestAuth(unittest.TestCase):
         admin_req = requests.post(self.api_URL + "/first_admin").json()
         self.assertEqual(ERR.OK, admin_req["result"])
         self.admin_header = {"Authorization":
-                                 "blah " + admin_req["session_id"]}
+                                 "Bearer " + admin_req["session_id"]}
 
     def prepare_lists(self):
         # admin only routes
@@ -240,12 +240,13 @@ class TestAuth(unittest.TestCase):
                                           {"name": "string"})
 
         # prepare second person
-        self.other_person_id = hm.post_item(self, self.api_URL + "/persons",
-                                            dict(first_name="Владимир",
-                                                 middle_name="Ильич",
-                                                 surname="Ленин",
-                                                 birth_date=datetime.date(1870, 4, 22).isoformat(),
-                                                 phone_no="+78007773737"))
+        resp_json = requests.post(self.api_URL + "/logged_in_person").json()
+        print(resp_json)
+        self.other_person_id = resp_json["person_id"]
+        self.other_user_session_id = resp_json["session_id"]
+        self.other_user_header = {"Authorization":
+                                "Bearer " + self.other_user_session_id}
+
         self.other_group_member_id = hm.post_item(self, self.api_URL + "/groups/%s/group_members" % self.group_id,
                                                   {"person_id": self.other_person_id,
                                                    "role_id": self.group_role_id})
@@ -259,6 +260,12 @@ class TestAuth(unittest.TestCase):
                                            "department_id": self.dep_id,
                                            "role_type": "Student",
                                            "description": "string"})
+        self.third_person_id = hm.post_item(self, self.api_URL + "/persons",
+                                            dict(first_name="Гендальф",
+                                                 middle_name="Батькович",
+                                                 surname="Серый",
+                                                 birth_date=datetime.date(1170, 6, 12).isoformat(),
+                                                 phone_no="+79007745737"))
 
 
     def test_user_restricted_access(self):
@@ -349,7 +356,24 @@ class TestAuth(unittest.TestCase):
                                 "DELETE %s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
     def test_review_delete_unauth(self):
-        pass
+        self.prepare_docs()
+        self.prepare_lists()
+        review_data = {"reviewer_id": self.user_person_id,
+                       "value": "50.0",
+                       "description": "string"}
+        rev_ids = []
+        for url in self.review_valid_post:
+            resp_json = hm.try_post_item(self, self.api_URL + url,
+                                         review_data, self.user_header)
+            rev_ids.append(resp_json["id"])
+            self.assertNotEqual(ERR.AUTH, resp_json["result"],
+                                "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
+        for rev_id in rev_ids:
+            resp_json = hm.try_delete_item(self, self.api_URL + "/reviews/" + rev_id,
+                                         self.other_user_header)
+            self.assertEqual(ERR.AUTH, resp_json["result"],
+                                "DELETE %s must return ERR.AUTH for user %s" % (url, self.user_person_id))
+
 
     @unittest.skip("not implemented in API")
     def test_review_post_on_self(self):
