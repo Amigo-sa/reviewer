@@ -419,7 +419,7 @@ class TestAuth(unittest.TestCase):
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                                 "get %s must not return ERR.AUTH without session" % url)
 
-    @unittest.skip("not implemented in API")
+
     def test_review_post_on_self(self):
         self.prepare_docs()
         self.prepare_lists()

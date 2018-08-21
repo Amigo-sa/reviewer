@@ -797,9 +797,15 @@ def post_review(review_type, subject_id):
         else:
             if subj_class[review_type].objects.raw({"_id":ObjectId(subject_id)}).count() \
                     and Person.objects.raw({"_id":ObjectId(reviewer_id)}).count():
-                obj[review_type].save()
-                result = {"result":ERR.OK,
-                          "id": str(obj[review_type].pk)}
+                subj = subj_class[review_type].objects.get({"_id":ObjectId(subject_id)})
+                # проверка не является оставляет ли человек отзыв на себя
+                if review_type != "GroupTest" and review_type != "Group"\
+                    and subj.person_id.pk == reviewer_id:
+                    result = {"result": ERR.AUTH}
+                else:
+                    obj[review_type].save()
+                    result = {"result":ERR.OK,
+                              "id": str(obj[review_type].pk)}
             else:
                 result = {"result": ERR.NO_DATA}
     except KeyError:
@@ -852,6 +858,8 @@ def post_person_skill_review(skill_review_cls, p_id, s_id):
         reviewer_id = ObjectId(req['reviewer_id'])
         value = req['value']
         description = req['description']
+        if req["reviewer_id"] == p_id:
+            return jsonify({"result": ERR.AUTH}), 200
         person_skill_cls = None
         query = {}
         query.update({"person_id": ObjectId(p_id)})
