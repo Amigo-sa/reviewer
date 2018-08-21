@@ -157,6 +157,24 @@ class TestAuth(unittest.TestCase):
             "/hard_skills/%s" % self.hard_skill_id,
             # TODO group_tests не охвачены
         ]
+        self.admin_only_patch = [
+            "/group_members/%s" % self.group_member_id
+        ]
+        self.admin_only_get = [
+            "/persons/%s" % self.other_person_id
+        ]
+        self.user_only_post = [
+
+        ]
+        self.user_only_delete = [
+            "/persons/%s" % self.user_person_id,
+        ]
+        self.user_only_patch = [
+
+        ]
+        self.user_only_get = [
+            "/persons/%s" % self.user_person_id
+        ]
 
     def prepare_docs(self):
         # prepare user
@@ -214,31 +232,42 @@ class TestAuth(unittest.TestCase):
             resp_json = hm.try_post_item(self, self.api_URL + url,
                                         post_data, self.user_header)
             self.assertEqual(ERR.AUTH, resp_json["result"],
-                             "%s is restricted to post for simple user"%url)
+                             "%s is restricted to post for user %s" % (url, self.user_person_id))
         for url in self.admin_only_delete:
             resp_json = hm.try_delete_item(self, self.api_URL + url, self.user_header)
             self.assertEqual(ERR.AUTH, resp_json["result"],
-                             "%s is restricted to delete for simple user" % url)
+                             "%s is restricted to delete for user %s" % (url, self.user_person_id))
+        for url in self.admin_only_patch:
+            resp_json = hm.try_patch_item(self, self.api_URL + url,
+                                           post_data, self.user_header)
+            self.assertEqual(ERR.AUTH, resp_json["result"],
+                             "%s is restricted to patch for user %s" % (url, self.user_person_id))
+        for url in self.admin_only_get:
+            resp_json = hm.try_get_item(self, self.api_URL + url,
+                                           self.user_header)
+            self.assertEqual(ERR.AUTH, resp_json["result"],
+                             "%s is restricted to get for user %s" % (url, self.user_person_id))
 
 
     def test_user_allowed_access(self):
-        phone_no, password = self.prepare_confirmed_user()
-        resp = requests.post(self.api_URL + "/user_login", json={
-            "phone_no": phone_no,
-            "password": password})
-        user_session_id = resp.json()["session_id"]
-        user_header = {"Authorization":
-                           "Bearer " + user_session_id}
-        allowed_post_list = [
-            #"/organizations",
-            #"/persons",
-        ]
+        self.prepare_docs()
+        self.prepare_lists()
         post_data = {"sample": "data"}
-        for url in allowed_post_list:
+        for url in self.user_only_post:
             resp_json = hm.post_item_as(self, self.api_URL + url,
-                                        post_data, user_header)
+                                        post_data, self.user_header)
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
-                             "%s must not return ERR.AUTH for simple user" % url)
+                             "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
+
+        for url in self.user_only_get:
+            resp_json = hm.try_get_item(self, self.api_URL + url, self.user_header)
+            self.assertNotEqual(ERR.AUTH, resp_json["result"],
+                             "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
+
+        for url in self.user_only_delete:
+            resp_json = hm.try_delete_item(self, self.api_URL + url, self.user_header)
+            self.assertNotEqual(ERR.AUTH, resp_json["result"],
+                             "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
     @unittest.skip("TODO")
     def test_no_auth_restricted_access(self):

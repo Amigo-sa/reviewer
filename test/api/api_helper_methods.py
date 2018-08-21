@@ -38,6 +38,23 @@ def try_delete_item(instance, url, headers):
     instance.assertEqual(200, resp.status_code, "delete response status code must be 200")
     return resp.json()
 
+def try_get_item(instance, url, headers):
+    if not isinstance(instance, unittest.TestCase):
+        raise TypeError
+    resp = requests.get(url=url,
+                         headers=headers)
+    instance.assertEqual(200, resp.status_code, "get response status code must be 200")
+    return resp.json()
+
+def try_patch_item(instance, url, data, headers):
+    if not isinstance(instance, unittest.TestCase):
+        raise TypeError
+    resp = requests.patch(url=url,
+                          json=data,
+                         headers=headers)
+    instance.assertEqual(200, resp.status_code, "patch response status code must be 200")
+    return resp.json()
+
 
 def prepare_two_persons(instance, api_url):
     person_data = dict(
