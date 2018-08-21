@@ -126,6 +126,7 @@ class TestAuth(unittest.TestCase):
                                  "blah " + admin_req["session_id"]}
 
     def prepare_lists(self):
+        # admin only routes
         self.admin_only_post = [
             "/organizations",
             "/persons",
@@ -161,20 +162,22 @@ class TestAuth(unittest.TestCase):
             "/group_members/%s" % self.group_member_id
         ]
         self.admin_only_get = [
-            "/persons/%s" % self.other_person_id
+            "/persons/%s" % self.other_person_id,
+            "/group_members/%s" % self.other_group_member_id
         ]
-        self.user_only_post = [
 
-        ]
-        self.user_only_delete = [
+        # non-admin permissions
+        self.user_allowed_delete = [
             "/persons/%s" % self.user_person_id,
         ]
-        self.user_only_patch = [
-
-        ]
-        self.user_only_get = [
+        self.user_allowed_get = [
             "/persons/%s" % self.user_person_id
         ]
+
+        self.gm_allowed_get = [
+            "/group_members/%s" % self.group_member_id
+        ]
+
 
     def prepare_docs(self):
         # prepare user
@@ -185,12 +188,7 @@ class TestAuth(unittest.TestCase):
         self.user_header = {"Authorization":
                            "Bearer " + self.user_session_id}
         # prepare data
-        self.other_person_id = hm.post_item(self, self.api_URL + "/persons",
-                                       dict(first_name="Владимир",
-                                            middle_name="Ильич",
-                                            surname="Ленин",
-                                            birth_date=datetime.date(1870, 4, 22).isoformat(),
-                                            phone_no="+78007773737"))
+
         self.org_id = hm.post_item(self, self.api_URL + "/organizations", {"name": "sample_org"})
         self.dep_id = hm.post_item(self, self.api_URL + "/organizations/%s/departments" % self.org_id,
                               {"name": "sample_dep"})
@@ -206,20 +204,44 @@ class TestAuth(unittest.TestCase):
         self.group_member_id = hm.post_item(self, self.api_URL + "/groups/%s/group_members" % self.group_id,
                                        {"person_id": self.user_person_id,
                                         "role_id": self.group_role_id})
+
         self.tutor_role_id = hm.post_item(self, self.api_URL + "/general_roles",
                                           {"person_id": self.user_person_id,
                                            "department_id": self.dep_id,
                                            "role_type" : "Tutor",
                                            "description" : "string"})
         self.student_role_id = hm.post_item(self, self.api_URL + "/general_roles",
-                                          {"person_id": self.user_person_id,
-                                           "department_id": self.dep_id,
-                                           "role_type": "Student",
-                                           "description": "string"})
+                                                  {"person_id": self.user_person_id,
+                                                   "department_id": self.dep_id,
+                                                   "role_type": "Student",
+                                                   "description": "string"})
+
+
         self.soft_skill_id = hm.post_item(self, self.api_URL + "/soft_skills",
                                           {"name" : "string"})
         self.hard_skill_id = hm.post_item(self, self.api_URL + "/hard_skills",
                                           {"name": "string"})
+
+        # prepare second person
+        self.other_person_id = hm.post_item(self, self.api_URL + "/persons",
+                                            dict(first_name="Владимир",
+                                                 middle_name="Ильич",
+                                                 surname="Ленин",
+                                                 birth_date=datetime.date(1870, 4, 22).isoformat(),
+                                                 phone_no="+78007773737"))
+        self.other_group_member_id = hm.post_item(self, self.api_URL + "/groups/%s/group_members" % self.group_id,
+                                                  {"person_id": self.other_person_id,
+                                                   "role_id": self.group_role_id})
+        self.other_tutor_role_id = hm.post_item(self, self.api_URL + "/general_roles",
+                                                {"person_id": self.other_person_id,
+                                                 "department_id": self.dep_id,
+                                                 "role_type": "Tutor",
+                                                 "description": "string"})
+        self.other_student_role_id = hm.post_item(self, self.api_URL + "/general_roles",
+                                          {"person_id": self.other_person_id,
+                                           "department_id": self.dep_id,
+                                           "role_type": "Student",
+                                           "description": "string"})
 
 
     def test_user_restricted_access(self):
@@ -253,45 +275,40 @@ class TestAuth(unittest.TestCase):
         self.prepare_docs()
         self.prepare_lists()
         post_data = {"sample": "data"}
-        for url in self.user_only_post:
-            resp_json = hm.post_item_as(self, self.api_URL + url,
-                                        post_data, self.user_header)
-            self.assertNotEqual(ERR.AUTH, resp_json["result"],
-                             "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
-
-        for url in self.user_only_get:
+        user_allowed_get_urls = []
+        user_allowed_get_urls += self.user_allowed_get
+        user_allowed_get_urls += self.gm_allowed_get
+        for url in user_allowed_get_urls:
             resp_json = hm.try_get_item(self, self.api_URL + url, self.user_header)
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                              "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
-        for url in self.user_only_delete:
+        for url in self.user_allowed_delete:
             resp_json = hm.try_delete_item(self, self.api_URL + url, self.user_header)
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                              "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
-    @unittest.skip("TODO")
-    def test_no_auth_restricted_access(self):
-        pass
+    def test_review_allowed_access(self):
+        self.prepare_docs()
+        # tutor role
+        url = "/general_roles/%s/reviews"%self.other_tutor_role_id
+        resp_json = hm.try_post_item(self, self.api_URL + url,
+                         {"reviewer_id" : self.user_person_id,
+                          "value" : "50.0",
+                          "description" : "string"}, self.user_header)
+        self.assertNotEqual(ERR.AUTH, resp_json["result"],
+                            "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
-    @unittest.skip("TODO")
-    def test_no_auth_allowed_access(self):
-        pass
-
-    @unittest.skip("TODO")
-    def test_group_member_restricted_access(self):
-        pass
-
-    @unittest.skip("TODO")
-    def test_group_member_allowed_access(self):
-        pass
-
-    @unittest.skip("TODO")
-    def test_reviewer_restricted_access(self):
-        pass
-
-    @unittest.skip("TODO")
-    def test_reviewer_allowed_access(self):
-        pass
+    def test_review_restricted_access(self):
+        self.prepare_docs()
+        # tutor role
+        url = "/general_roles/%s/reviews" % self.tutor_role_id
+        resp_json = hm.try_post_item(self, self.api_URL + url,
+                                     {"reviewer_id": self.other_person_id,
+                                      "value": "50.0",
+                                      "description": "string"}, self.user_header)
+        self.assertEqual(ERR.AUTH, resp_json["result"],
+                            "%s must return ERR.AUTH for user %s" % (url, self.user_person_id))
 
 
     def test_registration_normal(self):
