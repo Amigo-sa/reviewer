@@ -10,6 +10,7 @@ import random
 import datetime
 from time import sleep
 import re
+import sys
 #from src.data.reviewer_model import *
 
 node_port = 5002
@@ -685,43 +686,54 @@ class TestApi(unittest.TestCase):
                                  result_data = "string")
 
     #TODO сделать
-    @unittest.skip("сделать")
     def test_reviews_duplicate(self):
-        p_id = self.prepare_persons(1)[0]
-        fac_ids = self.prepare_group()
-        dep_id = fac_ids["dep_id"]
-        group_id = fac_ids["group_id"]
-        sr_id = self.post_item("/general_roles",
-                               {"person_id" : p_id,
-                                "department_id" : dep_id,
-                                "role_type" : "Student",
-                                "description" : "student_role_description"})
-        tr_id = self.post_item("/general_roles",
-                               {"person_id": p_id,
-                                "department_id": dep_id,
-                                "role_type": "Tutor",
-                                "description": "Tutor_role_description"})
+        person_id = self.prepare_persons(1)[0]
+        facility_ids = self.prepare_group()
+        org_id = facility_ids["org_id"]
+        dep_id = facility_ids["dep_id"]
+        group_id = facility_ids["group_id"]
         hs_id = self.prepare_hs()[0]
         ss_id = self.prepare_ss()[0]
+        print(person_id, org_id, dep_id, group_id, hs_id, ss_id)
+        student_role = {
+            "person_id": person_id,
+            "department_id": dep_id,
+            "role_type": "Student",
+            "description": "sample_description"
+        }
+        student_role.update({"id": self.post_item("/general_roles", student_role)})
+        tutor_role = {
+            "person_id": person_id,
+            "department_id": dep_id,
+            "role_type": "Tutor",
+            "description": "sample_description"
+        }
+        tutor_role.update({"id": self.post_item("/general_roles", tutor_role)})
+        gm_id = self.post_item("/groups/%s/group_members" % group_id, {"person_id": person_id})
+        g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name": "sample_test_name",
+                                                                   "info": "sample_test_info"})
+        subject_urls = {"StudentRole": "/general_roles/%s/reviews" % (student_role["id"]),
+                        "TutorRole": "/general_roles/%s/reviews" % (tutor_role["id"]),
+                        "PersonHS": "/persons/%s/hard_skills/%s/reviews" % (person_id, hs_id),
+                        "PersonSS": "/persons/%s/soft_skills/%s/reviews" % (person_id, ss_id),
+                        "Group": "/groups/%s/reviews" % group_id,
+                        "GroupTest": "/tests/%s/reviews" % g_test_id,
+                        "GroupMember": "/group_members/%s/reviews" % gm_id}
+        self.setup_reviewer()
+        for subj_type, subj_url in subject_urls.items():
+            review_data = {"reviewer_id" : self.reviewer_id,
+                           "value" : "60.0",
+                           "description" : "sample_descr"}
+            cur_id = self.post_item(subj_url, review_data, auth="reviewer")
+            resp = requests.post(url=self.api_URL + subj_url, json=review_data,
+                                 headers=self.reviewer_header)
+            self.assertEqual(200, resp.status_code, "post response status code must be 200")
+            resp_json = resp.json()
+            self.assertEqual(ERR.DB, resp_json["result"], "duplicate post result must be ERR.OK")
 
-
-        g_test_id = self.post_item("/groups/%s/tests"%group_id, {"name" : "test_name",
-                                                        "info" : "test_info"})
-        gm_id = self.post_item("/groups/%s/group_members"%group_id,
-                               {"person_id" : p_id})
-        subjects = {"StudentRole": sr_id,
-                    "TutorRole": tr_id,
-                    "Group": group_id,
-                    "GroupTest": g_test_id,
-                    "GroupMember": gm_id}
-        for subj_type, subj_id in subjects.items():
-            self.post_duplicate_item("/reviews",
-                                     "/reviews?subject_id=" + subj_id,
-                                     type= subj_type,
-                                     reviewer_id= p_id,
-                                     subject_id = subj_id,
-                                     value = "skill_level",
-                                     description = "string")
+    @unittest.skip("Написать функцию api и тест")
+    def test_modify_review(self):
+        pass
 
     def test_invalid_post(self):
         self.setup_reviewer()
@@ -984,4 +996,7 @@ class TestApi(unittest.TestCase):
         self.assertEqual(ERR.OK, resp_json["result"], "result must be ERR.OK")
 
 if __name__ == "__main__":
+    print("test_api argv: " + str(sys.argv))
+    if "--test" in sys.argv:
+        sys.argv.remove("--test")
     unittest.main(verbosity=1)

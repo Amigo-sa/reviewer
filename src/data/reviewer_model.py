@@ -33,6 +33,7 @@ def init_model():
         GroupMember, "permissions", fields.ReferenceField.PULL)
 
 db_name = constants.db_name
+print("DB initialized with argv: " + str(sys.argv))
 if len(sys.argv) > 1:
     if '--test' in str(sys.argv):
         db_name = constants.db_name_test

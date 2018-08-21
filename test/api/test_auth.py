@@ -9,6 +9,7 @@ import api_helper_methods as hm
 import requests
 from flask import Flask, Blueprint
 import datetime
+import sys
 
 from node.node_server import start_server
 from node.settings import constants
@@ -386,4 +387,7 @@ class TestAuth(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    print("test_auth argv: " + str(sys.argv))
+    if "--test" in sys.argv:
+        sys.argv.remove("--test")
     unittest.main(verbosity = 1)
