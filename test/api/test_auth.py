@@ -195,6 +195,29 @@ class TestAuth(unittest.TestCase):
             "/persons/%s/soft_skills/%s/reviews" % (self.user_person_id, self.soft_skill_id)
         ]
 
+        self.no_auth_get = [
+            "/organizations",
+            "/organizations/%s/departments" % self.org_id,
+            "/groups/%s/role_list" % self.group_id,
+            "/departments/%s/groups" % self.dep_id,
+            "/group_roles",
+            "/group_permissions",
+            "/groups/%s/group_members" % self.group_id,
+            "/persons/%s/group_members" % self.user_person_id,
+            "/general_roles/%s" % self.tutor_role_id,
+            "/general_roles/%s" % self.student_role_id,
+            "/persons/%s/general_roles" % self.user_person_id,
+            "/persons",
+            "/reviews",
+            "/soft_skills",
+            "/hard_skills",
+            "/persons/soft_skills",
+            "/persons/hard_skills",
+            "/persons/soft_skills/%s" % self.soft_skill_id,
+            "/persons/hard_skills/%s" % self.hard_skill_id,
+            # TODO group_tests
+        ]
+
 
     def prepare_docs(self):
         # prepare user
@@ -374,6 +397,27 @@ class TestAuth(unittest.TestCase):
             self.assertEqual(ERR.AUTH, resp_json["result"],
                                 "DELETE %s must return ERR.AUTH for user %s" % (url, self.user_person_id))
 
+    def test_get_unauth(self):
+        self.prepare_docs()
+        self.prepare_lists()
+        review_data = {"reviewer_id": self.user_person_id,
+                       "value": "50.0",
+                       "description": "string"}
+        rev_ids = []
+        for url in self.review_valid_post:
+            resp_json = hm.try_post_item(self, self.api_URL + url,
+                                         review_data, self.user_header)
+            rev_ids.append(resp_json["id"])
+            self.assertNotEqual(ERR.AUTH, resp_json["result"],
+                                "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
+        for url in self.no_auth_get:
+            resp_json = hm.try_get_item(self, self.api_URL + url, None)
+            self.assertNotEqual(ERR.AUTH, resp_json["result"],
+                                "get %s must not return ERR.AUTH without session" % url)
+        for rev_id in rev_ids:
+            resp_json = hm.try_get_item(self, self.api_URL + "/reviews/" + rev_id, None)
+            self.assertNotEqual(ERR.AUTH, resp_json["result"],
+                                "get %s must not return ERR.AUTH without session" % url)
 
     @unittest.skip("not implemented in API")
     def test_review_post_on_self(self):
