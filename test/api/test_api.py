@@ -316,6 +316,57 @@ class TestApi(unittest.TestCase):
         for index, item in enumerate(list_8_9):
             self.assertEqual(item["id"], person_ids[index + 8])
 
+    def test_person_filters(self):
+        persons = [
+            {"surname": "Иванов",
+             "first_name": "Петр",
+             "middle_name": "Андреевич",
+             "birth_date": datetime.date(2000,1,1).isoformat(),
+             "phone_no": "79002222201",
+             },
+            {"surname": "Петров",
+             "first_name": "Николай",
+             "middle_name": "Владимирович",
+             "birth_date": datetime.date(2000, 1, 1).isoformat(),
+             "phone_no": "79002222202",
+             },
+            {"surname": "Сидоров",
+             "first_name": "Петр",
+             "middle_name": "Владимирович",
+             "birth_date": datetime.date(2000, 1, 1).isoformat(),
+             "phone_no": "79002222203",
+             },
+            {"surname": "Иванов",
+             "first_name": "Александр",
+             "middle_name": "Николаевич",
+             "birth_date": datetime.date(2000, 1, 1).isoformat(),
+             "phone_no": "79002222204",
+             },
+        ]
+        person_ids = []
+        for person in persons:
+            person_ids.append(self.post_item("/persons", person))
+
+        # filter by surname
+        person_list = self.get_item_list("/persons?surname=Иванов")
+        for person in person_list:
+            self.assertIn(person["id"], [person_ids[0], person_ids[3]])
+            self.assertNotIn(person["id"], [person_ids[1], person_ids[2]])
+
+        # filter by first_name
+        person_list = self.get_item_list("/persons?first_name=Петр")
+        for person in person_list:
+            self.assertIn(person["id"], [person_ids[0], person_ids[2]])
+            self.assertNotIn(person["id"], [person_ids[1], person_ids[3]])
+
+        # filter by middle_name
+        person_list = self.get_item_list("/persons?middle_name=Николаевич")
+        for person in person_list:
+            self.assertIn(person["id"], [person_ids[3]])
+            self.assertNotIn(person["id"], [person_ids[0], person_ids[1], person_ids[2]])
+
+        pass
+
     @staticmethod
     def assertDictListEqual(list1, list2):
         list1_c = list(list1)
@@ -419,6 +470,15 @@ class TestApi(unittest.TestCase):
         for person in person_list:
             self.assertNotIn(person["id"], [person_ids[2], person_ids[3]])
             self.assertIn(person["id"], [person_ids[0], person_ids[1]])
+        # testing find_persons with role param
+        person_list = self.get_item_list("/persons?role=tutor")
+        for person in person_list:
+            self.assertNotIn(person["id"], [person_ids[0], person_ids[3]])
+            self.assertIn(person["id"], [person_ids[1], person_ids[2]])
+        person_list = self.get_item_list("/persons?role=student")
+        for person in person_list:
+            self.assertNotIn(person["id"], [person_ids[2], person_ids[3]])
+            self.assertIn(person["id"], [person_ids[0], person_ids[1]])
         # clearing collections
         for key, role in roles.items():
             self.delete_item("/general_roles/" + role["id"])
@@ -426,8 +486,6 @@ class TestApi(unittest.TestCase):
             role_list = self.get_item_list("/persons/%s/general_roles" % person_id)
             self.assertEqual([], role_list, "all roles must be deleted")
 
-
-    # TODO возможно, следует верификацию включить сюда, а не в отдельный тест
     def test_group_member_normal(self):
         person_id = self.prepare_persons(1)[0]
         facility_ids = self.prepare_group()
@@ -685,7 +743,6 @@ class TestApi(unittest.TestCase):
                                  person_id = p_id,
                                  result_data = "string")
 
-    #TODO сделать
     def test_reviews_duplicate(self):
         person_id = self.prepare_persons(1)[0]
         facility_ids = self.prepare_group()
