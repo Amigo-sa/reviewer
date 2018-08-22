@@ -27,11 +27,11 @@ from data.reviewer_model import (Department,
                                  SSReview,
                                  Service,
                                  SoftSkill,
-                                 StudentRole,
+                                 Student,
                                  Survey,
                                  TRReview,
                                  TestResult,
-                                 TutorRole,
+                                 Tutor,
                                  AuthInfo,
                                  get_dependent_list,
                                  init_model)
@@ -203,25 +203,25 @@ def fill_db():
 
     tutor_roles = {
         "Shatokhin_MCU":
-            TutorRole(
+            Tutor(
                 persons["Shatokhin"],
                 departments["IIT"],
                 "Отжигание на микроконтроллерах семейства 8051"
             ),
         "Anisimov_TOE":
-            TutorRole(
+            Tutor(
                 persons["Anisimov"],
                 departments["EFIS"],
                 "ТОЭ"
             ),
         "Anisimov_rel":
-            TutorRole(
+            Tutor(
                 persons["Anisimov"],
                 departments["EFIS"],
                 "Религиоведенье"
             ),
         "Shatokhin_debug":
-            TutorRole(
+            Tutor(
                 persons["Shatokhin"],
                 departments["IIT"],
                 "Отладка кода, написанного за 20 лет до вашего рождения"
@@ -230,31 +230,31 @@ def fill_db():
 
     student_roles = {
         "Leni4":
-            StudentRole(
+            Student(
                 persons["Leni4"],
                 departments["IIT"],
                 "Студент очной формы обучения"
             ),
         "Pashka":
-            StudentRole(
+            Student(
                 persons["Pashka"],
                 departments["IIT"],
                 "Студент очной формы обучения"
             ),
         "Vovka":
-            StudentRole(
+            Student(
                 persons["Vovka"],
                 departments["IIT"],
                 "Студент очной формы обучения"
             ),
         "Bogi":
-            StudentRole(
+            Student(
                 persons["Bogi"],
                 departments["IIT"],
                 "Студент очной формы обучения"
             ),
         "Maniac":
-            StudentRole(
+            Student(
                 persons["Maniac"],
                 departments["IIT"],
                 "Отчислен"
@@ -677,13 +677,13 @@ def display_data():
               str(ss.level))
 
     print("----Tutor Roles:")
-    for item in TutorRole.objects.all():
+    for item in Tutor.objects.all():
         print("{0} из {2} ведет {1}".format(item.person_id.surname,
                                             item.discipline,
                                             item.department_id.name))
 
     print("----Student Roles:")
-    for item in StudentRole.objects.all():
+    for item in Student.objects.all():
         print("{0} - {1}, {2}".format(item.person_id.surname,
                                       item.description,
                                       item.department_id.name))
