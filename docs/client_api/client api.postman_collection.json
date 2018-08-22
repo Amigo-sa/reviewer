@@ -3656,7 +3656,7 @@
 			"description": "Функции для работы с группами"
 		},
 		{
-			"name": "general roles",
+			"name": "specializations",
 			"item": [
 				{
 					"name": "add_specialization",
@@ -3958,7 +3958,29 @@
 					]
 				}
 			],
-			"description": "Функции для работы с ролями пользователей"
+			"description": "Функции для работы со специализациями пользователей",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1a4db107-4b61-4b89-8656-4c9db84d03a1",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "594a051f-fbb1-44d8-8f22-4b8ffc06d9c1",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
 		},
 		{
 			"name": "reviews",
@@ -7314,7 +7336,7 @@
 	],
 	"variable": [
 		{
-			"id": "8263e057-f46f-4d56-bf6a-da75fbcf621d",
+			"id": "51b5adb7-026b-4225-8db5-7590cbf987f1",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"
