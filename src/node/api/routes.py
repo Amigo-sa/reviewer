@@ -597,10 +597,10 @@ def list_specializations_by_person_id(id):
     list = []
     try:
         if Person.objects.raw({"_id": ObjectId(id)}).count():
-            for role in Student.objects.raw({"person_id": ObjectId(id)}):
-                list.append({"id": str(role.pk)})
-            for role in Tutor.objects.raw({"person_id": ObjectId(id)}):
-                list.append({"id": str(role.pk)})
+            for spec in Student.objects.raw({"person_id": ObjectId(id)}):
+                list.append({"id": str(spec.pk)})
+            for spec in Tutor.objects.raw({"person_id": ObjectId(id)}):
+                list.append({"id": str(spec.pk)})
             result = {"result": ERR.OK, "list":list}
         else:
             result = {"result": ERR.NO_DATA}
