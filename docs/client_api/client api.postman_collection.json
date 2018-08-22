@@ -3659,17 +3659,17 @@
 			"name": "general roles",
 			"item": [
 				{
-					"name": "add_general_role",
+					"name": "add_specialization",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "6ea67462-f97a-4fe4-b29f-9557ceb88417",
+								"id": "5b448253-3796-4014-9de9-280e2dede940",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"person_id\", \"5b547bee21313717b8ddd06c\");",
-									"pm.environment.set(\"department_id\", \"5b4f89322131372234ca2001\");",
-									"pm.environment.set(\"role_type\", \"Tutor\");"
+									"pm.environment.set(\"person_id\", \"5b7da3632131371418c12c62\");",
+									"pm.environment.set(\"department_id\", \"5b7da3632131371418c12c65\");",
+									"pm.environment.set(\"type\", \"Tutor\");"
 								]
 							}
 						}
@@ -3688,18 +3688,18 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"person_id\": \"{{person_id}}\",\n\t\"department_id\":\"{{department_id}}\",\n\t\"role_type\":\"{{role_type}}\",\n\t\"description\":\"Бездельник\"\n}"
+							"raw": "{\n\t\"person_id\": \"{{person_id}}\",\n\t\"department_id\":\"{{department_id}}\",\n\t\"type\":\"{{type}}\",\n\t\"description\":\"Бездельник\"\n}"
 						},
 						"url": {
-							"raw": "{{server_url}}/general_roles",
+							"raw": "{{server_url}}/specializations",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
-								"general_roles"
+								"specializations"
 							]
 						},
-						"description": "Добавляет пользователю роль\nrole_type - тип роли: Student - Студент, Tutor - Преподаватель"
+						"description": "Добавляет специализацию пользователю\ntype - тип: Student - Студент, Tutor - Преподаватель"
 					},
 					"response": [
 						{
@@ -3715,10 +3715,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"person_id\": \"5b54c4a72131371cb0cbdd45\",\n\t\"department_id\":\"5b54c4a72131371cb0cbdd4d\",\n\t\"role_type\":\"Tutor\",\n\t\"description\":\"Бездельник\"\n}"
+									"raw": "{\n\t\"person_id\": \"5b54c4a72131371cb0cbdd45\",\n\t\"department_id\":\"5b54c4a72131371cb0cbdd4d\",\n\t\"type\":\"Tutor\",\n\t\"description\":\"Бездельник\"\n}"
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/general_roles",
+									"raw": "http://127.0.0.1:5000/specializations",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -3728,7 +3728,7 @@
 									],
 									"port": "5000",
 									"path": [
-										"general_roles"
+										"specializations"
 									]
 								}
 							},
@@ -3767,15 +3767,15 @@
 					]
 				},
 				{
-					"name": "delete_general_role",
+					"name": "delete_specialization",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "78575c80-4a52-484f-ae2d-09b14a7f841d",
+								"id": "ef535325-be85-430f-842c-f4d941bf97a1",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"role_id\", \"5b4f89322131372234ca2054\");"
+									"pm.environment.set(\"role_id\", \"5b7da4062131370f444b74ce\");"
 								]
 							}
 						}
@@ -3793,16 +3793,16 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{server_url}}/general_roles/{{role_id}}",
+							"raw": "{{server_url}}/specializations/{{role_id}}",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
-								"general_roles",
+								"specializations",
 								"{{role_id}}"
 							]
 						},
-						"description": "Удаляет роль пользователя"
+						"description": "Удаляет специализацию пользователя"
 					},
 					"response": [
 						{
@@ -3815,7 +3815,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/general_roles/5b54daa82131371308dded19",
+									"raw": "http://127.0.0.1:5000/specializations/5b54daa82131371308dded19",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -3825,7 +3825,7 @@
 									],
 									"port": "5000",
 									"path": [
-										"general_roles",
+										"specializations",
 										"5b54daa82131371308dded19"
 									]
 								}
@@ -3865,15 +3865,15 @@
 					]
 				},
 				{
-					"name": "get_general_roles_data",
+					"name": "get_specializations_data",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "3e91bfff-7041-451e-8dbd-3879697846de",
+								"id": "a4bae22b-8cb9-4b0c-a2cf-99517489db05",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"role_id\", \"5b54b0fa2131371ee8d3278b\");"
+									"pm.environment.set(\"role_id\", \"5b7da3632131371418c12ca3\");"
 								]
 							}
 						}
@@ -3886,16 +3886,16 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{server_url}}/general_roles/{{role_id}}",
+							"raw": "{{server_url}}/specializations/{{role_id}}",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
-								"general_roles",
+								"specializations",
 								"{{role_id}}"
 							]
 						},
-						"description": "Получает информацию о роли:\nпользователя, кому принадлежит роль\nдепартамент, в котором она зарегистрирована\nтип роли (Преподаватель или Студент)\nописание для студента и предмет для преподавателя"
+						"description": "Получает информацию о специализации пользователя:\nid пользователя\nдепартамент, в котором она зарегистрирована\nтип (Преподаватель или Студент)\nописание для студента и предмет для преподавателя"
 					},
 					"response": [
 						{
@@ -3908,7 +3908,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/general_roles/5b54c4a72131371cb0cbdd91",
+									"raw": "http://127.0.0.1:5000/specializations/5b54c4a72131371cb0cbdd91",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -3918,7 +3918,7 @@
 									],
 									"port": "5000",
 									"path": [
-										"general_roles",
+										"specializations",
 										"5b54c4a72131371cb0cbdd91"
 									]
 								}
@@ -3953,7 +3953,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\"data\":{\"department_id\":\"5b54c4a72131371cb0cbdd4d\",\"description\":\"\\u0421\\u0442\\u0443\\u0434\\u0435\\u043d\\u0442 \\u043e\\u0447\\u043d\\u043e\\u0439 \\u0444\\u043e\\u0440\\u043c\\u044b \\u043e\\u0431\\u0443\\u0447\\u0435\\u043d\\u0438\\u044f\",\"person_id\":\"5b54c4a72131371cb0cbdd48\",\"role_type\":\"Student\"},\"result\":0}\n"
+							"body": "{\n    \"data\": {\n        \"department_id\": \"5b54c4a72131371cb0cbdd4d\",\n        \"description\": \"Студент очной формы обучения\",\n        \"person_id\": \"5b54c4a72131371cb0cbdd48\",\n        \"type\": \"Student\"\n    },\n    \"result\": 0\n}"
 						}
 					]
 				}
@@ -3964,16 +3964,16 @@
 			"name": "reviews",
 			"item": [
 				{
-					"name": "post_general_role_review",
+					"name": "post_specialization_review",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "8751ea46-03d5-4938-ae08-5034526cbb8c",
+								"id": "ffbc810c-49dd-456c-a044-a1f7004ba458",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"role_id\", \"5b6f0e582131370e788865b3\");",
-									"pm.environment.set(\"reviewer_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"specialization_id\", \"5b7da3632131371418c12ca3\");",
+									"pm.environment.set(\"reviewer_id\", \"5b7da3632131371418c12c5d\");",
 									"pm.environment.set(\"value\",90.0);",
 									"pm.environment.set(\"description\", \"Классный чел\");"
 								]
@@ -3997,17 +3997,17 @@
 							"raw": "{\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
 						},
 						"url": {
-							"raw": "{{server_url}}/general_roles/{{role_id}}/reviews",
+							"raw": "{{server_url}}/specializations/{{specialization_id}}/reviews",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
-								"general_roles",
-								"{{role_id}}",
+								"specializations",
+								"{{specialization_id}}",
 								"reviews"
 							]
 						},
-						"description": "Оставить отзыв о роли (Студент или Преподаватель)"
+						"description": "Оставить отзыв о специализации пользователя (Студент или Преподаватель)"
 					},
 					"response": [
 						{
@@ -4026,7 +4026,7 @@
 									"raw": "{\n\t\"reviewer_id\":\"5b6ecc78213137200c6e77d8\",\n\t\"value\": 90.0,\n\t\"description\":\"Классный чел\"\n}"
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/general_roles/5b6ecc78213137200c6e781e/reviews",
+									"raw": "http://127.0.0.1:5000/specializations/5b6ecc78213137200c6e781e/reviews",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -4036,7 +4036,7 @@
 									],
 									"port": "5000",
 									"path": [
-										"general_roles",
+										"specializations",
 										"5b6ecc78213137200c6e781e",
 										"reviews"
 									]
@@ -4965,7 +4965,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{server_url}}/persons?surname=Шат&first_name=ле&middle_name=МИ&role=student&group_id={{group_id}}&department_id={{department_id}}&organization_id={{organization_id}}&query_limit=10&query_start=0",
+							"raw": "{{server_url}}/persons?surname=Шат&first_name=ле&middle_name=МИ&specialization=student&group_id={{group_id}}&department_id={{department_id}}&organization_id={{organization_id}}&query_limit=10&query_start=0",
 							"host": [
 								"{{server_url}}"
 							],
@@ -4986,7 +4986,7 @@
 									"value": "МИ"
 								},
 								{
-									"key": "role",
+									"key": "specialization",
 									"value": "student"
 								},
 								{
@@ -5092,7 +5092,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\"list\":[{\"first_name\":\"\\u041b\\u0435\\u043e\\u043d\\u0438\\u0434\",\"id\":\"5b54c4a72131371cb0cbdd45\",\"middle_name\":\"\\u0410\\u043b\\u0435\\u043a\\u0441\\u0430\\u043d\\u0434\\u0440\\u043e\\u0432\\u0438\\u0447\",\"organization_name\":\"\\u041c\\u042d\\u0418\",\"role\":\"Student\",\"surname\":\"\\u0414\\u0443\\u043d\\u0430\\u0435\\u0432\"},{\"first_name\":\"\\u0412\\u043b\\u0430\\u0434\\u0438\\u043c\\u0438\\u0440\",\"id\":\"5b54c4a72131371cb0cbdd49\",\"middle_name\":\"\\u0410\\u043d\\u0434\\u0440\\u0435\\u0435\\u0432\\u0438\\u0447\",\"organization_name\":\"\\u041c\\u042d\\u0418\",\"role\":\"Student\",\"surname\":\"\\u0411\\u043e\\u0433\\u043e\\u0441\\u043b\\u043e\\u0432\\u0441\\u043a\\u0438\\u0445\"},{\"first_name\":\"\\u0410\\u043b\\u0435\\u043a\\u0441\\u0430\\u043d\\u0434\\u0440\",\"id\":\"5b54c4a72131371cb0cbdd4a\",\"middle_name\":\"\\u0410\\u043b\\u0435\\u043a\\u0441\\u0435\\u0435\\u0432\\u0438\\u0447\",\"organization_name\":\"\\u041c\\u042d\\u0418\",\"role\":\"Tutor\",\"surname\":\"\\u0428\\u0430\\u0442\\u043e\\u0445\\u0438\\u043d\"}],\"result\":0}\n"
+							"body": "{\n    \"list\": [\n        {\n            \"first_name\": \"Леонид\",\n            \"id\": \"5b54c4a72131371cb0cbdd45\",\n            \"middle_name\": \"Александрович\",\n            \"organization_name\": \"МЭИ\",\n            \"specialization\": \"Student\",\n            \"surname\": \"Дунаев\"\n        },\n        {\n            \"first_name\": \"Владимир\",\n            \"id\": \"5b54c4a72131371cb0cbdd49\",\n            \"middle_name\": \"Андреевич\",\n            \"organization_name\": \"МЭИ\",\n            \"specialization\": \"Student\",\n            \"surname\": \"Богословских\"\n        },\n        {\n            \"first_name\": \"Александр\",\n            \"id\": \"5b54c4a72131371cb0cbdd4a\",\n            \"middle_name\": \"Алексеевич\",\n            \"organization_name\": \"МЭИ\",\n            \"specialization\": \"Tutor\",\n            \"surname\": \"Шатохин\"\n        }\n    ],\n    \"result\": 0\n}"
 						}
 					]
 				},
@@ -5382,15 +5382,15 @@
 					]
 				},
 				{
-					"name": "list_roles_by_person_id",
+					"name": "list_specializations_by_person_id",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d47dbbaa-78e3-4335-964b-a0b074b484d9",
+								"id": "7cd41153-6144-479a-96ca-fe4f54a52ec5",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"person_id\", \"5b4e38d02131371ce8dd8246\");"
+									"pm.environment.set(\"person_id\", \"5b7da3632131371418c12c5d\");"
 								]
 							}
 						}
@@ -5403,17 +5403,17 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{server_url}}/persons/{{person_id}}/general_roles",
+							"raw": "{{server_url}}/persons/{{person_id}}/specializations",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
 								"persons",
 								"{{person_id}}",
-								"general_roles"
+								"specializations"
 							]
 						},
-						"description": "Получает список ролей пользователя"
+						"description": "Получает список специализаций пользователя"
 					},
 					"response": [
 						{
@@ -5426,7 +5426,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/persons/5b54c4a72131371cb0cbdd45/general_roles",
+									"raw": "http://127.0.0.1:5000/persons/5b54c4a72131371cb0cbdd45/specializations",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -5438,7 +5438,7 @@
 									"path": [
 										"persons",
 										"5b54c4a72131371cb0cbdd45",
-										"general_roles"
+										"specializations"
 									]
 								}
 							},
@@ -7314,7 +7314,7 @@
 	],
 	"variable": [
 		{
-			"id": "2daf770d-1e7d-4966-a6e5-3fafd7d7e0d1",
+			"id": "8263e057-f46f-4d56-bf6a-da75fbcf621d",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"
