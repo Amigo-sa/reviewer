@@ -513,32 +513,32 @@ def change_group_member_status(id):
     return jsonify(result), 200
 
 
-@bp.route("/general_roles", methods=['POST'])
+@bp.route("/specializations", methods=['POST'])
 @required_auth("admin")
-def add_general_role():
+def add_specialization():
     req = request.get_json()
     try:
         person_id = req['person_id']
         department_id = req['department_id']
-        role_type = req['role_type']
+        type = req['type']
         description = req['description']
         if not Person.objects.raw({"_id": ObjectId(person_id)}).count()\
                 or not Department.objects.raw({"_id": ObjectId(department_id)}).count():
             result = {"result": ERR.NO_DATA}
-        elif role_type == "Tutor":
-            tutor_role = TutorRole(Person(_id=person_id),
-                                   Department(_id=department_id),
-                                   description)
-            tutor_role.save()
+        elif type == "Tutor":
+            tutor = Tutor(Person(_id=person_id),
+                          Department(_id=department_id),
+                          description)
+            tutor.save()
             result = {"result": ERR.OK,
-                      "id": str(tutor_role.pk)}
-        elif role_type == "Student":
-            student_role = StudentRole(Person(_id=person_id),
-                                       Department(_id=department_id),
-                                       description)
-            student_role.save()
+                      "id": str(tutor.pk)}
+        elif type == "Student":
+            student = Student(Person(_id=person_id),
+                              Department(_id=department_id),
+                              description)
+            student.save()
             result = {"result": ERR.OK,
-                      "id": str(student_role.pk)}
+                      "id": str(student.pk)}
         else:
             return jsonify({"result": ERR.INPUT}), 200
     except KeyError:
@@ -549,15 +549,15 @@ def add_general_role():
     return jsonify(result), 200
 
 
-@bp.route("/general_roles/<string:id>", methods=['DELETE'])
+@bp.route("/specializations/<string:id>", methods=['DELETE'])
 @required_auth("admin")
-def delete_general_role(id):
+def delete_specialization(id):
     try:
-        if TutorRole(_id=id) in TutorRole.objects.raw({"_id":ObjectId(id)}):
-            TutorRole(_id=id).delete()
+        if Tutor(_id=id) in Tutor.objects.raw({"_id":ObjectId(id)}):
+            Tutor(_id=id).delete()
             result = {"result": ERR.OK}
-        elif StudentRole(_id=id) in StudentRole.objects.raw({"_id":ObjectId(id)}):
-            StudentRole(_id=id).delete()
+        elif Student(_id=id) in Student.objects.raw({"_id":ObjectId(id)}):
+            Student(_id=id).delete()
             result = {"result": ERR.OK}
         else:
             result = {"result": ERR.NO_DATA}
@@ -566,24 +566,24 @@ def delete_general_role(id):
     return jsonify(result), 200
 
 
-@bp.route("/general_roles/<string:id>", methods=['GET'])
-def get_general_roles_data(id):
+@bp.route("/specializations/<string:id>", methods=['GET'])
+def get_specializations_data(id):
     try:
-        if StudentRole(_id=id) in StudentRole.objects.raw({"_id": ObjectId(id)}):
-            student_role = StudentRole(_id=id)
-            student_role.refresh_from_db()
-            data = {"person_id": str(student_role.person_id.pk),
-                    "department_id": str(student_role.department_id.pk),
-                    "role_type": "Student",
-                    "description": student_role.description}
+        if Student(_id=id) in Student.objects.raw({"_id": ObjectId(id)}):
+            student = Student(_id=id)
+            student.refresh_from_db()
+            data = {"person_id": str(student.person_id.pk),
+                    "department_id": str(student.department_id.pk),
+                    "type": "Student",
+                    "description": student.description}
             result = {"result": ERR.OK, "data": data}
-        elif TutorRole(_id=id) in TutorRole.objects.raw({"_id": ObjectId(id)}):
-            tutor_role = TutorRole(_id=id)
-            tutor_role.refresh_from_db()
-            data = {"person_id": str(tutor_role.person_id.pk),
-                    "department_id": str(tutor_role.department_id.pk),
-                    "role_type": "Tutor",
-                    "description": tutor_role.discipline}
+        elif Tutor(_id=id) in Tutor.objects.raw({"_id": ObjectId(id)}):
+            tutor = Tutor(_id=id)
+            tutor.refresh_from_db()
+            data = {"person_id": str(tutor.person_id.pk),
+                    "department_id": str(tutor.department_id.pk),
+                    "type": "Tutor",
+                    "description": tutor.discipline}
             result = {"result": ERR.OK, "data": data}
         else:
             result = {"result": ERR.NO_DATA}
@@ -592,14 +592,14 @@ def get_general_roles_data(id):
     return jsonify(result), 200
 
 
-@bp.route("/persons/<string:id>/general_roles", methods=['GET'])
-def list_roles_by_person_id(id):
+@bp.route("/persons/<string:id>/specializations", methods=['GET'])
+def list_specializations_by_person_id(id):
     list = []
     try:
         if Person.objects.raw({"_id": ObjectId(id)}).count():
-            for role in StudentRole.objects.raw({"person_id": ObjectId(id)}):
+            for role in Student.objects.raw({"person_id": ObjectId(id)}):
                 list.append({"id": str(role.pk)})
-            for role in TutorRole.objects.raw({"person_id": ObjectId(id)}):
+            for role in Tutor.objects.raw({"person_id": ObjectId(id)}):
                 list.append({"id": str(role.pk)})
             result = {"result": ERR.OK, "list":list}
         else:
@@ -620,24 +620,24 @@ def find_persons():
     else:
         skip = 0
     pipeline = ({"$lookup":
-                     {"from": "tutor_role",
+                     {"from": "tutor",
                       "localField": "_id",
                       "foreignField": "person_id",
-                      "as": "tutor_role"}},
+                      "as": "tutor"}},
                 {"$lookup":
-                     {"from": "student_role",
+                     {"from": "student",
                       "localField": "_id",
                       "foreignField": "person_id",
-                      "as": "student_role"}})
+                      "as": "student"}})
     err = ERR.OK
-    if "role" in request.args:
-        if request.args["role"] == "tutor":
+    if "specialization" in request.args:
+        if request.args["specialization"] == "tutor":
             pipeline += ({"$match":
-                              {"tutor_role._id": {"$exists": True}}},
+                              {"tutor._id": {"$exists": True}}},
                          )
-        elif request.args["role"] == "student":
+        elif request.args["specialization"] == "student":
             pipeline += ({"$match":
-                              {"student_role._id": {"$exists": True}}},
+                              {"student._id": {"$exists": True}}},
                          )
         else:
             return jsonify({"result": ERR.INPUT}), 200
@@ -659,8 +659,8 @@ def find_persons():
         department_id = request.args['department_id']
         if Department.objects.raw({"_id": ObjectId(department_id)}).count():
             pipeline += ({"$match":
-                                {"$or": [{"tutor_role.department_id": ObjectId(department_id)},
-                                        {"student_role.department_id": ObjectId(department_id)}]}},
+                                {"$or": [{"tutor.department_id": ObjectId(department_id)},
+                                        {"student.department_id": ObjectId(department_id)}]}},
             )
         else:
             err = ERR.NO_DATA
@@ -671,16 +671,16 @@ def find_persons():
             for department in Department.objects.raw({"organization_id": ObjectId(organization_id)}):
                 departments.append(department.pk)
             pipeline += ({"$match":
-                                {"$or": [{"tutor_role.department_id": {"$in" : departments}},
-                                        {"student_role.department_id": {"$in" : departments}}]}},
+                                {"$or": [{"tutor.department_id": {"$in" : departments}},
+                                        {"student.department_id": {"$in" : departments}}]}},
                         )
         else:
             err = ERR.NO_DATA
-    """ #оставим этот код на случай если понадобится отфильтровать безрольных пользователей
+    """ #оставим этот код на случай если понадобится отфильтровать пользователей без специализации
     else:
         pipeline += ({"$match":
-                            {"$or": [{"tutor_role.department_id": {"$exists": True}},
-                                    {"student_role.department_id": {"$exists": True}}]}},
+                            {"$or": [{"tutor.department_id": {"$exists": True}},
+                                    {"student.department_id": {"$exists": True}}]}},
                     )"""
     if "surname" in request.args:
         pipeline += ({"$match":
@@ -701,17 +701,17 @@ def find_persons():
     try:
         list = []
         for person in Person.objects.aggregate(*pipeline):
-            if person["tutor_role"]:
-                department_id = person["tutor_role"][0]["department_id"]
-                role = "Tutor"
+            if person["tutor"]:
+                department_id = person["tutor"][0]["department_id"]
+                specialization = "Tutor"
             else:
-                if person["student_role"]:
-                    department_id = person["student_role"][0]["department_id"]
-                    role = "Student"
+                if person["student"]:
+                    department_id = person["student"][0]["department_id"]
+                    specialization = "Student"
                 else:
-                    role = "None"
+                    specialization = "None"
                     department_id = None
-            if (department_id):
+            if department_id:
                 department = Department(_id=department_id)
                 department.refresh_from_db()
                 organization = Organization(_id=department.organization_id.pk)
@@ -723,7 +723,7 @@ def find_persons():
                          "first_name": person["first_name"],
                          "middle_name": person["middle_name"],
                          "surname": person["surname"],
-                         "role": role,
+                         "specialization": specialization,
                          "organization_name": org_name})
         result = {"result": ERR.OK, "list": list}
     except Exception as ex:
@@ -793,9 +793,9 @@ def post_review(review_type, subject_id):
         value = req['value']
         description = req['description']
         obj = {
-            "StudentRole":
+            "Student":
                 SRReview(reviewer_id, subject_id, value, description),
-            "TutorRole":
+            "Tutor":
                 TRReview(reviewer_id, subject_id, value, description),
             "Group":
                 GroupReview(reviewer_id, subject_id, value, description),
@@ -805,10 +805,10 @@ def post_review(review_type, subject_id):
                 GroupMemberReview(reviewer_id, subject_id, value, description)
         }
         subj_class = {
-            "StudentRole":
-                StudentRole,
-            "TutorRole":
-                TutorRole,
+            "Student":
+                Student,
+            "Tutor":
+                Tutor,
             "Group":
                 Group,
             "GroupTest":
@@ -840,14 +840,14 @@ def post_review(review_type, subject_id):
     return jsonify(result), 200
 
 
-@bp.route("/general_roles/<string:id>/reviews", methods = ['POST'])
+@bp.route("/specializations/<string:id>/reviews", methods = ['POST'])
 @required_auth("reviewer")
-def post_general_role_review(id):
+def post_specialization_review(id):
     try:
-        if StudentRole.objects.raw({"_id":ObjectId(id)}).count():
-            review_type = "StudentRole"
-        elif TutorRole.objects.raw({"_id":ObjectId(id)}).count():
-            review_type = "TutorRole"
+        if Student.objects.raw({"_id":ObjectId(id)}).count():
+            review_type = "Student"
+        elif Tutor.objects.raw({"_id":ObjectId(id)}).count():
+            review_type = "Tutor"
         else:
             return jsonify({"result": ERR.NO_DATA}), 200
     except KeyError:

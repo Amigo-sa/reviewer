@@ -379,7 +379,7 @@ class TestApi(unittest.TestCase):
             raise AssertionError("dict lists must be equal")
         if list1_c: raise AssertionError("dict lists must be equal")
 
-    def test_general_role_person(self):
+    def test_specialization_person(self):
         person_count = 4
         person_ids = self.prepare_persons(person_count)
         self.prepare_department()
@@ -391,56 +391,56 @@ class TestApi(unittest.TestCase):
         person_ref_data = []
         for person_id in person_ids:
             person_ref_data.append(self.get_item_data("/persons/" + person_id))
-        roles = {}
+        specializations = {}
         # person 0 is student
-        temp_role = {
+        temp_spec = {
                 "person_id": person_ids[0],
                 "department_id": dep_1["id"],
-                "role_type": "Student",
+                "type": "Student",
                 "description": "sample_description"
             }
-        temp_role.update({"id": self.post_item("/general_roles", temp_role)})
-        roles["person0_Student"] = temp_role
+        temp_spec.update({"id": self.post_item("/specializations", temp_spec)})
+        specializations["person0_Student"] = temp_spec
         # person 1 is tutor and student
-        temp_role = {
+        temp_spec = {
             "person_id": person_ids[1],
             "department_id":  dep_1["id"],
-            "role_type": "Tutor",
+            "type": "Tutor",
             "description": "sample_description"
         }
-        temp_role.update({"id": self.post_item("/general_roles", temp_role)})
-        roles["person1_Tutor"] = temp_role
-        temp_role = {
+        temp_spec.update({"id": self.post_item("/specializations", temp_spec)})
+        specializations["person1_Tutor"] = temp_spec
+        temp_spec = {
             "person_id": person_ids[1],
             "department_id":  dep_1["id"],
-            "role_type": "Student",
+            "type": "Student",
             "description": "sample_description"
         }
-        temp_role.update({"id": self.post_item("/general_roles", temp_role)})
-        roles["person1_Student"] = temp_role
+        temp_spec.update({"id": self.post_item("/specializations", temp_spec)})
+        specializations["person1_Student"] = temp_spec
         # person 2 is tutor at 2-nd department of 2-nd organization
-        temp_role = {
+        temp_spec = {
             "person_id": person_ids[2],
             "department_id": dep_2["id"],
-            "role_type": "Tutor",
+            "type": "Tutor",
             "description": "sample_description"
         }
-        temp_role.update({"id": self.post_item("/general_roles", temp_role)})
-        roles["person2_Tutor"] = temp_role
-        # person 3 has no general role
-        # testing that roles were added properly
-        for key, value in roles.items():
-            role_wo_id = value.copy()
-            del role_wo_id["id"]
-            role_data = self.get_item_data("/general_roles/" + value["id"])
-            self.assertEqual(role_wo_id, role_data, "returned general role data must match inserted data")
-        person0_rolelist = self.get_item_list("/persons/%s/general_roles" % person_ids[0])
-        person1_rolelist = self.get_item_list("/persons/%s/general_roles" % person_ids[1])
-        self.assertEqual(person0_rolelist,
-                         [{"id": roles["person0_Student"]["id"]}])
-        self.assertDictListEqual(person1_rolelist,
-                         [{"id": roles["person1_Tutor"]["id"]},
-                          {"id": roles["person1_Student"]["id"]}])
+        temp_spec.update({"id": self.post_item("/specializations", temp_spec)})
+        specializations["person2_Tutor"] = temp_spec
+        # person 3 has no specialization
+        # testing that specializations were added properly
+        for key, value in specializations.items():
+            spec_wo_id = value.copy()
+            del spec_wo_id["id"]
+            spec_data = self.get_item_data("/specializations/" + value["id"])
+            self.assertEqual(spec_wo_id, spec_data, "returned specialization data must match inserted data")
+        person0_spec_list = self.get_item_list("/persons/%s/specializations" % person_ids[0])
+        person1_spec_list = self.get_item_list("/persons/%s/specializations" % person_ids[1])
+        self.assertEqual(person0_spec_list,
+                         [{"id": specializations["person0_Student"]["id"]}])
+        self.assertDictListEqual(person1_spec_list,
+                         [{"id": specializations["person1_Tutor"]["id"]},
+                          {"id": specializations["person1_Student"]["id"]}])
         # testing find_persons without request params
         person_list = self.get_item_list("/persons")
         for person in person_list:
@@ -449,16 +449,16 @@ class TestApi(unittest.TestCase):
             self.assertEqual(ref_data["middle_name"], person["middle_name"])
             self.assertEqual(ref_data["surname"], person["surname"])
             if person["id"] == person_ids[0]:
-                self.assertEqual(person["role"], "Student")
+                self.assertEqual(person["specialization"], "Student")
                 self.assertEqual(person["organization_name"], org_1["name"])
             if person["id"] == person_ids[1]:
-                self.assertEqual(person["role"], "Tutor")
+                self.assertEqual(person["specialization"], "Tutor")
                 self.assertEqual(person["organization_name"], org_1["name"])
             if person["id"] == person_ids[2]:
-                self.assertEqual(person["role"], "Tutor")
+                self.assertEqual(person["specialization"], "Tutor")
                 self.assertEqual(person["organization_name"], org_2["name"])
             if person["id"] == person_ids[3]:
-                self.assertEqual(person["role"], "None")
+                self.assertEqual(person["specialization"], "None")
                 self.assertEqual(person["organization_name"], "None")
         # testing find_persons with department_id param
         person_list = self.get_item_list("/persons?department_id=" + dep_1["id"])
@@ -470,21 +470,21 @@ class TestApi(unittest.TestCase):
         for person in person_list:
             self.assertNotIn(person["id"], [person_ids[2], person_ids[3]])
             self.assertIn(person["id"], [person_ids[0], person_ids[1]])
-        # testing find_persons with role param
-        person_list = self.get_item_list("/persons?role=tutor")
+        # testing find_persons with specialization param
+        person_list = self.get_item_list("/persons?specialization=tutor")
         for person in person_list:
             self.assertNotIn(person["id"], [person_ids[0], person_ids[3]])
             self.assertIn(person["id"], [person_ids[1], person_ids[2]])
-        person_list = self.get_item_list("/persons?role=student")
+        person_list = self.get_item_list("/persons?specialization=student")
         for person in person_list:
             self.assertNotIn(person["id"], [person_ids[2], person_ids[3]])
             self.assertIn(person["id"], [person_ids[0], person_ids[1]])
         # clearing collections
-        for key, role in roles.items():
-            self.delete_item("/general_roles/" + role["id"])
+        for key, specialization in specializations.items():
+            self.delete_item("/specializations/" + specialization["id"])
         for person_id in person_ids:
-            role_list = self.get_item_list("/persons/%s/general_roles" % person_id)
-            self.assertEqual([], role_list, "all roles must be deleted")
+            spec_list = self.get_item_list("/persons/%s/specializations" % person_id)
+            self.assertEqual([], spec_list, "all specializations must be deleted")
 
     def test_group_member_normal(self):
         person_id = self.prepare_persons(1)[0]
@@ -563,32 +563,32 @@ class TestApi(unittest.TestCase):
         hs_id = self.prepare_hs()[0]
         ss_id = self.prepare_ss()[0]
         print(person_id, org_id, dep_id, group_id, hs_id, ss_id)
-        student_role = {
+        student = {
             "person_id": person_id,
             "department_id": dep_id,
-            "role_type": "Student",
+            "type": "Student",
             "description": "sample_description"
         }
-        student_role.update({"id": self.post_item("/general_roles", student_role)})
-        tutor_role = {
+        student.update({"id": self.post_item("/specializations", student)})
+        tutor_spec = {
             "person_id": person_id,
             "department_id": dep_id,
-            "role_type": "Tutor",
+            "type": "Tutor",
             "description": "sample_description"
         }
-        tutor_role.update({"id": self.post_item("/general_roles", tutor_role)})
+        tutor_spec.update({"id": self.post_item("/specializations", tutor_spec)})
         gm_id = self.post_item("/groups/%s/group_members" % group_id, {"person_id": person_id})
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name" : "sample_test_name",
                                                                     "info" : "sample_test_info"})
-        subject_urls = { "StudentRole": "/general_roles/%s/reviews" %(student_role["id"]),
-                     "TutorRole": "/general_roles/%s/reviews"%(tutor_role["id"]),
+        subject_urls = { "Student": "/specializations/%s/reviews" %(student["id"]),
+                     "Tutor": "/specializations/%s/reviews"%(tutor_spec["id"]),
                      "PersonHS": "/persons/%s/hard_skills/%s/reviews" %(person_id, hs_id),
                      "PersonSS": "/persons/%s/soft_skills/%s/reviews" % (person_id, ss_id),
                      "Group" : "/groups/%s/reviews"%group_id,
                      "GroupTest" : "/tests/%s/reviews"%g_test_id,
                      "GroupMember": "/group_members/%s/reviews"%gm_id}
-        subj_ids = { "StudentRole": student_role["id"],
-                     "TutorRole": tutor_role["id"],
+        subj_ids = { "Student": student["id"],
+                     "Tutor": tutor_spec["id"],
                      "PersonHS": None,
                      "PersonSS": None,
                      "Group" : group_id,
@@ -634,21 +634,21 @@ class TestApi(unittest.TestCase):
                         "description": "sample_descr"}
             self.assertDictEqual(ref_data, review_data)
         # verify with review from person2
-        review_data = {"type": "StudentRole",
+        review_data = {"type": "Student",
                        "reviewer_id": self.reviewer_id2,
-                       "subject_id": student_role["id"],
+                       "subject_id": student["id"],
                        "value": "80.0",
                        "description": "sample_descr2"}
-        rev2_id = self.post_item("/general_roles/%s/reviews" %(student_role["id"]),
+        rev2_id = self.post_item("/specializations/%s/reviews" %(student["id"]),
                                  review_data,
                                  auth="reviewer2")
-        review_list = self.get_item_list("/reviews?subject_id=" + student_role["id"])
-        self.assertEqual([{"id": rev_ids["StudentRole"]}, {"id": rev2_id}], review_list)
+        review_list = self.get_item_list("/reviews?subject_id=" + student["id"])
+        self.assertEqual([{"id": rev_ids["Student"]}, {"id": rev2_id}], review_list)
         # delete review
-        self.delete_item("/reviews/" + rev_ids["StudentRole"], auth="reviewer")
-        rev_ids.pop("StudentRole")
+        self.delete_item("/reviews/" + rev_ids["Student"], auth="reviewer")
+        rev_ids.pop("Student")
         # verify
-        review_list = self.get_item_list("/reviews?subject_id=" + student_role["id"])
+        review_list = self.get_item_list("/reviews?subject_id=" + student["id"])
         self.assertEqual([{"id": rev2_id}], review_list)
         # delete all reviews
         self.delete_item("/reviews/" + rev2_id, auth="reviewer2")
@@ -707,24 +707,24 @@ class TestApi(unittest.TestCase):
                              name="string")
 
 
-    def test_tutor_role_duplicate(self):
+    def test_tutor_duplicate(self):
         p_id = self.prepare_persons(1)[0]
         d_id = self.prepare_department()["dep_id"]
-        self.post_duplicate_item("/general_roles",
-                                 "/persons/%s/general_roles"%p_id,
+        self.post_duplicate_item("/specializations",
+                                 "/persons/%s/specializations"%p_id,
                                  person_id = p_id,
                                  department_id = d_id,
-                                 role_type = "Tutor",
+                                 type = "Tutor",
                                  description = "string")
 
-    def test_student_role_duplicate(self):
+    def test_student_duplicate(self):
         p_id = self.prepare_persons(1)[0]
         d_id = self.prepare_department()["dep_id"]
-        self.post_duplicate_item("/general_roles",
-                                 "/persons/%s/general_roles"%p_id,
+        self.post_duplicate_item("/specializations",
+                                 "/persons/%s/specializations"%p_id,
                                  person_id = p_id,
                                  department_id = d_id,
-                                 role_type = "Student",
+                                 type = "Student",
                                  description = "string")
 
     def test_group_member_duplicate(self):
@@ -752,25 +752,25 @@ class TestApi(unittest.TestCase):
         hs_id = self.prepare_hs()[0]
         ss_id = self.prepare_ss()[0]
         print(person_id, org_id, dep_id, group_id, hs_id, ss_id)
-        student_role = {
+        student = {
             "person_id": person_id,
             "department_id": dep_id,
-            "role_type": "Student",
+            "type": "Student",
             "description": "sample_description"
         }
-        student_role.update({"id": self.post_item("/general_roles", student_role)})
-        tutor_role = {
+        student.update({"id": self.post_item("/specializations", student)})
+        tutor = {
             "person_id": person_id,
             "department_id": dep_id,
-            "role_type": "Tutor",
+            "type": "Tutor",
             "description": "sample_description"
         }
-        tutor_role.update({"id": self.post_item("/general_roles", tutor_role)})
+        tutor.update({"id": self.post_item("/specializations", tutor)})
         gm_id = self.post_item("/groups/%s/group_members" % group_id, {"person_id": person_id})
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name": "sample_test_name",
                                                                    "info": "sample_test_info"})
-        subject_urls = {"StudentRole": "/general_roles/%s/reviews" % (student_role["id"]),
-                        "TutorRole": "/general_roles/%s/reviews" % (tutor_role["id"]),
+        subject_urls = {"Student": "/specializations/%s/reviews" % (student["id"]),
+                        "Tutor": "/specializations/%s/reviews" % (tutor["id"]),
                         "PersonHS": "/persons/%s/hard_skills/%s/reviews" % (person_id, hs_id),
                         "PersonSS": "/persons/%s/soft_skills/%s/reviews" % (person_id, ss_id),
                         "Group": "/groups/%s/reviews" % group_id,
@@ -799,11 +799,11 @@ class TestApi(unittest.TestCase):
                                                                    "info": "test_info"})
         gm_id = self.post_item("/groups/%s/group_members" % group_id,
                                {"person_id": p_id})
-        sr_id = self.post_item("/general_roles",
+        sr_id = self.post_item("/specializations",
                                {"person_id": p_id,
                                 "department_id": dep_id,
-                                "role_type": "Student",
-                                "description": "student_role_description"})
+                                "type": "Student",
+                                "description": "specialization_description"})
         hs_id = self.post_item("/hard_skills",
                                {"name": "hard_skill_name"})
         ss_id = self.post_item("/soft_skills",
@@ -817,8 +817,8 @@ class TestApi(unittest.TestCase):
             "/groups/%s/group_members"%group_id,
             "/group_members/%s/permissions"%gm_id,
             "/group_members/%s/group_roles"%gm_id,
-            "/general_roles",
-            "/general_roles/%s/reviews"%sr_id,
+            "/specializations",
+            "/specializations/%s/reviews"%sr_id,
             "/groups/%s/reviews"%group_id,
             "/tests/%s/reviews" % g_test_id,
             "/group_members/%s/reviews" % gm_id,
@@ -850,16 +850,16 @@ class TestApi(unittest.TestCase):
         org_id = fac_ids["org_id"]
         dep_id = fac_ids["dep_id"]
         group_id = fac_ids["group_id"]
-        sr_id = self.post_item("/general_roles",
+        sr_id = self.post_item("/specializations",
                                {"person_id": p_id,
                                 "department_id": dep_id,
-                                "role_type": "Student",
-                                "description": "student_role_description"})
-        tr_id = self.post_item("/general_roles",
+                                "type": "Student",
+                                "description": "specialization_description"})
+        tr_id = self.post_item("/specializations",
                                {"person_id": p_id,
                                 "department_id": dep_id,
-                                "role_type": "Tutor",
-                                "description": "Tutor_role_description"})
+                                "type": "Tutor",
+                                "description": "Tutor_description"})
         hard_skill_id = self.prepare_hs()[0]
         soft_skill_id = self.prepare_ss()[0]
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name": "test_name",
@@ -878,28 +878,28 @@ class TestApi(unittest.TestCase):
         self.pass_invalid_ref("/groups/" + group_id + "/role_list",
                               role_list=[dep_id])
 
-        # tutor_role
-        self.pass_invalid_ref("/general_roles",
+        # tutor_specialization
+        self.pass_invalid_ref("/specializations",
                               person_id= p_id,
                               department_id = org_id,
-                              role_type = "Tutor",
+                              type = "Tutor",
                               description = "string")
-        self.pass_invalid_ref("/general_roles",
+        self.pass_invalid_ref("/specializations",
                               person_id=hard_skill_id,
                               department_id=dep_id,
-                              role_type="Tutor",
+                              type="Tutor",
                               description="string")
 
-        # student_role
-        self.pass_invalid_ref("/general_roles",
+        # student_specialization
+        self.pass_invalid_ref("/specializations",
                               person_id=p_id,
                               department_id=org_id,
-                              role_type="Student",
+                              type="Student",
                               description="string")
-        self.pass_invalid_ref("/general_roles",
+        self.pass_invalid_ref("/specializations",
                               person_id=hard_skill_id,
                               department_id=dep_id,
-                              role_type="Student",
+                              type="Student",
                               description="string")
 
         # group_member
@@ -929,7 +929,7 @@ class TestApi(unittest.TestCase):
 
         # reviews
         self.setup_reviewer()
-        self.pass_invalid_ref("/general_roles/%s/reviews" %group_id,
+        self.pass_invalid_ref("/specializations/%s/reviews" %group_id,
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
                               value="skill_level",

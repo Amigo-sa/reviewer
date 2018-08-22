@@ -138,7 +138,7 @@ class TestAuth(unittest.TestCase):
             "/groups/%s/group_members"%self.group_id,
             "/group_members/%s/permissions" % self.group_member_id,
             "/group_members/%s/group_roles" % self.group_member_id,
-            "/general_roles",
+            "/specializations",
             "/soft_skills",
             "/hard_skills",
             # TODO group_tests не охвачены
@@ -152,8 +152,8 @@ class TestAuth(unittest.TestCase):
             "/persons/%s" % self.other_person_id,
             "/group_members/%s" % self.group_member_id,
             "/group_members/%s/permissions/%s" % (self.group_member_id, self.group_perm_id),
-            "/general_roles/%s" % self.tutor_role_id,
-            "/general_roles/%s" % self.student_role_id,
+            "/specializations/%s" % self.tutor_id,
+            "/specializations/%s" % self.student_id,
             "/soft_skills/%s" % self.soft_skill_id,
             "/hard_skills/%s" % self.hard_skill_id,
             # TODO group_tests не охвачены
@@ -178,8 +178,8 @@ class TestAuth(unittest.TestCase):
             "/group_members/%s" % self.group_member_id
         ]
         self.review_valid_post = [
-            "/general_roles/%s/reviews" % self.other_tutor_role_id,
-            "/general_roles/%s/reviews" % self.other_student_role_id,
+            "/specializations/%s/reviews" % self.other_tutor_id,
+            "/specializations/%s/reviews" % self.other_student_id,
             "/groups/%s/reviews" % self.group_id,
             # TODO group_test_reviews
             "/group_members/%s/reviews" % self.other_group_member_id,
@@ -188,8 +188,8 @@ class TestAuth(unittest.TestCase):
         ]
         # отзывы на свои качества и роли
         self.review_invalid_post = [
-            "/general_roles/%s/reviews" % self.tutor_role_id,
-            "/general_roles/%s/reviews" % self.student_role_id,
+            "/specializations/%s/reviews" % self.tutor_id,
+            "/specializations/%s/reviews" % self.student_id,
             "/group_members/%s/reviews" % self.group_member_id,
             "/persons/%s/hard_skills/%s/reviews" % (self.user_person_id, self.hard_skill_id),
             "/persons/%s/soft_skills/%s/reviews" % (self.user_person_id, self.soft_skill_id)
@@ -204,9 +204,9 @@ class TestAuth(unittest.TestCase):
             "/group_permissions",
             "/groups/%s/group_members" % self.group_id,
             "/persons/%s/group_members" % self.user_person_id,
-            "/general_roles/%s" % self.tutor_role_id,
-            "/general_roles/%s" % self.student_role_id,
-            "/persons/%s/general_roles" % self.user_person_id,
+            "/specializations/%s" % self.tutor_id,
+            "/specializations/%s" % self.student_id,
+            "/persons/%s/specializations" % self.user_person_id,
             "/persons",
             "/reviews",
             "/soft_skills",
@@ -245,15 +245,15 @@ class TestAuth(unittest.TestCase):
                                        {"person_id": self.user_person_id,
                                         "role_id": self.group_role_id})
 
-        self.tutor_role_id = hm.post_item(self, self.api_URL + "/general_roles",
+        self.tutor_id = hm.post_item(self, self.api_URL + "/specializations",
                                           {"person_id": self.user_person_id,
                                            "department_id": self.dep_id,
-                                           "role_type" : "Tutor",
+                                           "type" : "Tutor",
                                            "description" : "string"})
-        self.student_role_id = hm.post_item(self, self.api_URL + "/general_roles",
+        self.student_id = hm.post_item(self, self.api_URL + "/specializations",
                                                   {"person_id": self.user_person_id,
                                                    "department_id": self.dep_id,
-                                                   "role_type": "Student",
+                                                   "type": "Student",
                                                    "description": "string"})
 
 
@@ -273,15 +273,15 @@ class TestAuth(unittest.TestCase):
         self.other_group_member_id = hm.post_item(self, self.api_URL + "/groups/%s/group_members" % self.group_id,
                                                   {"person_id": self.other_person_id,
                                                    "role_id": self.group_role_id})
-        self.other_tutor_role_id = hm.post_item(self, self.api_URL + "/general_roles",
+        self.other_tutor_id = hm.post_item(self, self.api_URL + "/specializations",
                                                 {"person_id": self.other_person_id,
                                                  "department_id": self.dep_id,
-                                                 "role_type": "Tutor",
+                                                 "type": "Tutor",
                                                  "description": "string"})
-        self.other_student_role_id = hm.post_item(self, self.api_URL + "/general_roles",
+        self.other_student_id = hm.post_item(self, self.api_URL + "/specializations",
                                           {"person_id": self.other_person_id,
                                            "department_id": self.dep_id,
-                                           "role_type": "Student",
+                                           "type": "Student",
                                            "description": "string"})
         self.third_person_id = hm.post_item(self, self.api_URL + "/persons",
                                             dict(first_name="Гендальф",

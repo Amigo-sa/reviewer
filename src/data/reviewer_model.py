@@ -174,7 +174,7 @@ class PersonSS(MongoModel):
                               unique=True)]
 
 
-class TutorRole(MongoModel):
+class Tutor(MongoModel):
     person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     department_id = ValidatedReferenceField(Department, on_delete=ReferenceField.CASCADE)
     discipline = fields.CharField()
@@ -189,7 +189,7 @@ class TutorRole(MongoModel):
                               unique=True)]
 
 
-class StudentRole(MongoModel):
+class Student(MongoModel):
     person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     department_id = ValidatedReferenceField(Department, on_delete=ReferenceField.CASCADE)
     description = fields.CharField()
@@ -360,7 +360,7 @@ class HSReview(MongoModel):
 
 class SRReview(MongoModel):
     reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    subject_id = ValidatedReferenceField(StudentRole, on_delete=ReferenceField.CASCADE)
+    subject_id = ValidatedReferenceField(Student, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
     description = fields.CharField()
 
@@ -375,7 +375,7 @@ class SRReview(MongoModel):
 
 class TRReview(MongoModel):
     reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    subject_id = ValidatedReferenceField(TutorRole, on_delete=ReferenceField.CASCADE)
+    subject_id = ValidatedReferenceField(Tutor, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
     description = fields.CharField()
 
