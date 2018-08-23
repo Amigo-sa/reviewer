@@ -5115,6 +5115,104 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"list\": [\n        {\n            \"first_name\": \"Леонид\",\n            \"id\": \"5b54c4a72131371cb0cbdd45\",\n            \"middle_name\": \"Александрович\",\n            \"organization_name\": \"МЭИ\",\n            \"specialization\": \"Student\",\n            \"surname\": \"Дунаев\"\n        },\n        {\n            \"first_name\": \"Владимир\",\n            \"id\": \"5b54c4a72131371cb0cbdd49\",\n            \"middle_name\": \"Андреевич\",\n            \"organization_name\": \"МЭИ\",\n            \"specialization\": \"Student\",\n            \"surname\": \"Богословских\"\n        },\n        {\n            \"first_name\": \"Александр\",\n            \"id\": \"5b54c4a72131371cb0cbdd4a\",\n            \"middle_name\": \"Алексеевич\",\n            \"organization_name\": \"МЭИ\",\n            \"specialization\": \"Tutor\",\n            \"surname\": \"Шатохин\"\n        }\n    ],\n    \"result\": 0\n}"
+						},
+						{
+							"name": "find_persons_name",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/persons?first_name=ле&specialization=student&organization_id=5b54c4a72131371cb0cbdda0&query_limit=10&query_start=0",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"persons"
+									],
+									"query": [
+										{
+											"key": "surname",
+											"value": "Шат",
+											"disabled": true
+										},
+										{
+											"key": "first_name",
+											"value": "ле"
+										},
+										{
+											"key": "middle_name",
+											"value": "МИ",
+											"disabled": true
+										},
+										{
+											"key": "specialization",
+											"value": "student"
+										},
+										{
+											"key": "group_id",
+											"value": "{{group_id}}",
+											"disabled": true
+										},
+										{
+											"key": "department_id",
+											"value": "{{department_id}}",
+											"disabled": true
+										},
+										{
+											"key": "organization_id",
+											"value": "5b54c4a72131371cb0cbdda0"
+										},
+										{
+											"key": "query_limit",
+											"value": "10"
+										},
+										{
+											"key": "query_start",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "320",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 23 Aug 2018 18:11:12 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"list\":[{\"first_name\":\"\\u041b\\u0435\\u043e\\u043d\\u0438\\u0434\",\"id\":\"5b7ef2252131371600cd2ea7\",\"middle_name\":\"\\u0410\\u043b\\u0435\\u043a\\u0441\\u0430\\u043d\\u0434\\u0440\\u043e\\u0432\\u0438\\u0447\",\"organization_name\":\"\\u041c\\u042d\\u0418\",\"specialization\":\"Student\",\"surname\":\"\\u0414\\u0443\\u043d\\u0430\\u0435\\u0432\"}],\"result\":0}\n"
 						}
 					]
 				},
@@ -7336,7 +7434,7 @@
 	],
 	"variable": [
 		{
-			"id": "51b5adb7-026b-4225-8db5-7590cbf987f1",
+			"id": "1100da64-606a-4db5-b431-179d18075ef1",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"
