@@ -11,6 +11,18 @@ from datetime import datetime, timezone, timedelta, date
 from random import randint
 
 
+def age_session(phone_no, minutes):
+    try:
+        auth_info = model.AuthInfo.objects.get({"phone_no": phone_no})
+        ts = auth_info.last_send_time
+        dt = ts.as_datetime()
+        dt -= timedelta(minutes=int(minutes))
+        auth_info.last_send_time = dt
+        auth_info.save()
+    except Exception as e:
+        print("Failed to age session")
+        print(str(e))
+
 def prepare_logged_in_person(phone_no):
     try:
         person = model.Person(

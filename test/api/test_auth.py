@@ -525,10 +525,7 @@ class TestAuth(unittest.TestCase):
         cur_session.id = resp.json()["session_id"]
         print("Session ID is " + cur_session.id)
         print("Got SMS with code " + cur_session.received_code)
-        resp = requests.post(self.api_URL + "/session_aging", json={
-            "phone_no": phone_no,
-            "minutes": "20",
-        })
+        hm.age_session(phone_no, 20)
         self.assertEqual(ERR.OK, resp.json()["result"])
         resp = requests.post(self.api_URL + "/finish_phone_confirmation",
                              json={"auth_code": cur_session.received_code,
@@ -545,14 +542,10 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
         self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
-        resp = requests.post(self.api_URL + "/session_aging", json={
-            "phone_no": phone_no,
-            "minutes": "1"})
+        hm.age_session(phone_no, 1)
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
         self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
-        resp = requests.post(self.api_URL + "/session_aging", json={
-            "phone_no": phone_no,
-            "minutes": "1"})
+        hm.age_session(phone_no, 1)
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
         self.assertEqual(ERR.OK, resp.json()["result"])
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})

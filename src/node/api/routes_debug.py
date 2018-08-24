@@ -39,22 +39,3 @@ if __debug__:
         result = {"result": ERR.OK}
         return jsonify(result), 200
 
-
-    @bp.route("/session_aging", methods=['POST'])
-    def age_sessions():
-        req = request.get_json()
-        try:
-            phone_no = req["phone_no"]
-            minutes = req["minutes"]
-            auth_info = AuthInfo.objects.get({"phone_no" : phone_no})
-            ts = auth_info.last_send_time
-            dt = ts.as_datetime()
-            print("old dt %s" % (dt))
-            dt -= timedelta(minutes=int(minutes))
-            print("new dt %s" % (dt))
-            auth_info.last_send_time = dt
-            auth_info.save()
-            result = {"result": ERR.OK}
-        except:
-            result = {"result": ERR.DB}
-        return jsonify(result), 200
