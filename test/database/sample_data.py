@@ -694,7 +694,7 @@ def display_data():
               " " +
               ss.ss_id.name +
               ": " +
-              str(ss.level))
+              "%.1f"%ss.level)
 
     print("----Specializations")
     for item in Specialization.objects.all():

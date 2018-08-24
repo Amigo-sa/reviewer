@@ -30,34 +30,6 @@ if __debug__:
                   result_string += "document: {0}<br>".format(document)
         return result_string
 
-    @bp.route("/logged_in_person", methods=['POST'])
-    def prepare_logged_in_person():
-        try:
-            phone_no = str(randint(1000000000,9999999999))
-            person = Person(
-                "Клон",
-                "Один Из",
-                "Миллионов",
-                date(1980, 1, 1),
-                phone_no)
-            person.save()
-            auth_info = AuthInfo()
-            auth_info.is_approved = True
-            auth_info.phone_no = phone_no
-            auth_info.password = hash_password("user")
-            session_id = gen_session_id()
-            auth_info.session_id = session_id
-            auth_info.permissions = 0
-            auth_info.person_id = person.pk
-            auth_info.save()
-            result = {"result": ERR.OK,
-                      "session_id": session_id,
-                      "person_id" : str(person.pk)}
-        except Exception as e:
-            result = {"result": ERR.DB}
-            print(e)
-        return jsonify(result), 200
-
     @bp.route("/shutdown", methods = ['POST'])
     def shutdown():
         func = request.environ.get('werkzeug.server.shutdown')

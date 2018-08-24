@@ -7,7 +7,33 @@ import random
 from pymodm.connection import _get_db
 import src.data.reviewer_model as model
 from node.api.routes_auth import hash_password, gen_session_id
+from datetime import datetime, timezone, timedelta, date
+from random import randint
 
+
+def prepare_logged_in_person(phone_no):
+    try:
+        person = model.Person(
+            "Клон",
+            "Один Из",
+            "Миллионов",
+            date(1980, 1, 1),
+            phone_no)
+        person.save()
+        auth_info = model.AuthInfo()
+        auth_info.is_approved = True
+        auth_info.phone_no = phone_no
+        auth_info.password = hash_password("user")
+        session_id = gen_session_id()
+        auth_info.session_id = session_id
+        auth_info.permissions = 0
+        auth_info.person_id = person.pk
+        auth_info.save()
+        return {"session_id": session_id,
+                "person_id" : str(person.pk)}
+    except Exception as e:
+        print("Failed to prepare logged in person")
+        print(str(e))
 
 def prepare_first_admin():
     try:

@@ -222,10 +222,9 @@ class TestAuth(unittest.TestCase):
 
     def prepare_docs(self):
         # prepare user
-        resp_json = requests.post(self.api_URL + "/logged_in_person").json()
-        print(resp_json)
-        self.user_person_id = resp_json["person_id"]
-        self.user_session_id = resp_json["session_id"]
+        auth_user = hm.prepare_logged_in_person("78001112233")
+        self.user_person_id = auth_user["person_id"]
+        self.user_session_id = auth_user["session_id"]
         self.user_header = {"Authorization":
                            "Bearer " + self.user_session_id}
         # prepare data
@@ -264,10 +263,9 @@ class TestAuth(unittest.TestCase):
                                           {"name": "string"})
 
         # prepare second person
-        resp_json = requests.post(self.api_URL + "/logged_in_person").json()
-        print(resp_json)
-        self.other_person_id = resp_json["person_id"]
-        self.other_user_session_id = resp_json["session_id"]
+        auth_user = hm.prepare_logged_in_person("78001112234")
+        self.other_person_id = auth_user["person_id"]
+        self.other_user_session_id = auth_user["session_id"]
         self.other_user_header = {"Authorization":
                                 "Bearer " + self.other_user_session_id}
 

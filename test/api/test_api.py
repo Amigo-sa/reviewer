@@ -64,18 +64,16 @@ class TestApi(unittest.TestCase):
                                  "Bearer " + hm.prepare_first_admin()}
 
     def setup_reviewer(self):
-        reviewer_req = requests.post(self.api_URL + "/logged_in_person").json()
-        self.assertEqual(ERR.OK, reviewer_req["result"])
+        reviewer = hm.prepare_logged_in_person("78001112233")
         self.reviewer_header = {"Authorization":
-                                    "Bearer " + reviewer_req["session_id"]}
-        self.reviewer_id = reviewer_req["person_id"]
+                                    "Bearer " + reviewer["session_id"]}
+        self.reviewer_id = reviewer["person_id"]
 
     def setup_reviewer2(self):
-        reviewer_req = requests.post(self.api_URL + "/logged_in_person").json()
-        self.assertEqual(ERR.OK, reviewer_req["result"])
+        reviewer = hm.prepare_logged_in_person("78001112234")
         self.reviewer_header2 = {"Authorization":
-                                    "Bearer " + reviewer_req["session_id"]}
-        self.reviewer_id2 = reviewer_req["person_id"]
+                                    "Bearer " + reviewer["session_id"]}
+        self.reviewer_id2 = reviewer["person_id"]
 
     def t_simple_normal(self, url_get, url_post, url_delete, *args, **kwargs):
         # read from empty DB
