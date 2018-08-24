@@ -32,6 +32,8 @@ from data.reviewer_model import (Department,
                                  SpecializationReview,
                                  TestResult,
                                  AuthInfo,
+                                 SurveyResponse,
+                                 SurveyResult,
                                  get_dependent_list,
                                  init_model)
 
@@ -570,18 +572,57 @@ def fill_db():
             Survey(
                 groups["A403"],
                 "Опрос про любимую столовую",
-                {"в корпусе В": 55.0,
-                 "в корпусе М": 40.0,
-                 "в корпусе К": 5.0, }
+                {"1": "в корпусе В",
+                 "2": "в корпусе М",
+                 "3": "в корпусе К"}
             ),
         "A403_timetable":
             Survey(
                 groups["A403"],
                 "Опрос по смещению расписания занятий",
-                {"начинать в 8:40": 35.0,
-                 "начинать в 9:00": 40.0,
-                 "начинать в 9:20": 25.0, }
+                {"1": "начинать в 8:40",
+                 "2": "начинать в 9:00",
+                 "3": "начинать в 9:20"}
             )
+    }
+
+    survey_responses = {
+        "Leni4_food":
+            SurveyResponse(
+                surveys["A403_foodcourt"],
+                persons["Leni4"],
+                "2"
+            ),
+        "Pashka_food":
+            SurveyResponse(
+                surveys["A403_foodcourt"],
+                persons["Pashka"],
+                "2"
+            ),
+        "Shatokhin_food":
+            SurveyResponse(
+                surveys["A403_foodcourt"],
+                persons["Shatokhin"],
+                "2"
+            ),
+        "Bogi_food":
+            SurveyResponse(
+                surveys["A403_foodcourt"],
+                persons["Bogi"],
+                "1"
+            ),
+        "Vovka_food":
+            SurveyResponse(
+                surveys["A403_foodcourt"],
+                persons["Vovka"],
+                "3"
+            ),
+        "Anisimov_food":
+            SurveyResponse(
+                surveys["A403_foodcourt"],
+                persons["Anisimov"],
+                "3"
+            ),
     }
 
     auth_users = {
@@ -653,6 +694,22 @@ def fill_db():
         item.save()
     for key, item in surveys.items():
         item.save()
+    for key, item in survey_responses.items():
+        item.save()
+    # обработка опросов
+    for item in Survey.objects.all():
+        response_list = list(SurveyResponse.objects.raw({"survey_id": item.pk}))
+        survey_dict = {}
+        for response in response_list:
+            option = response.chosen_option
+            if option not in survey_dict:
+                survey_dict.update({option: 1})
+            else:
+                survey_dict.update({option: survey_dict[option] + 1})
+        if survey_dict:
+            survey_result = SurveyResult(item.pk, survey_dict)
+            survey_result.save()
+
     for key, item in auth_users.items():
         item.save()
     print("done")
@@ -806,10 +863,29 @@ def display_data():
 
     print("----Surveys:")
     for item in Survey.objects.all():
-        print("В группе {0} Проведен {1} с результатами: {2}".format(
+        print("В группе {0} Проведен {1} ".format(
             item.group_id.name,
-            item.description,
-            item.survey_data))
+            item.description))
+        print("Варианты ответов:")
+        for key, value in item.survey_options.items():
+            print("%s: %s"%(key,value))
+
+    print("----Survey Responses:")
+    for item in SurveyResponse.objects.all():
+        print("{0} выбрал вариант '{1}' в опросе {2}".format(
+            item.person_id.surname,
+            item.survey_id.survey_options[item.chosen_option],
+            item.survey_id.description
+        ))
+
+    print("----Survey Results:")
+    for item in SurveyResult.objects.all():
+        print("Результаты опроса " + item.survey_id.description)
+        for key, value in item.survey_data.items():
+            print("{0}: {1} ответов".format(
+                item.survey_id.survey_options[key],
+                value
+            ))
 
 if __name__ == "__main__":
     db_name = constants.db_name

@@ -415,16 +415,40 @@ class GroupTestReview(MongoModel):
                                ("subject_id", pymongo.DESCENDING)],
                               unique=True)]
 
-
 class Survey(MongoModel):
     group_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE)
     description = fields.CharField()
+    survey_options = fields.DictField(required=True)
+
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+
+# TODO Добавить валидацию: вариант ответа должен быть предусмотрен
+class SurveyResponse(MongoModel):
+    survey_id = ValidatedReferenceField(Survey, on_delete=ReferenceField.CASCADE)
+    person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    chosen_option = fields.CharField(required=True)
+
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+        indexes = [IndexModel([("survey_id", pymongo.DESCENDING),
+                               ("person_id", pymongo.DESCENDING)],
+                              unique=True)]
+
+class SurveyResult(MongoModel):
+    survey_id = ValidatedReferenceField(Survey, on_delete=ReferenceField.CASCADE)
     survey_data = fields.DictField()
 
     class Meta:
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
+        indexes = [IndexModel([("survey_id", pymongo.DESCENDING)],
+                              unique=True)]
 
 
 class AuthInfo(MongoModel):
