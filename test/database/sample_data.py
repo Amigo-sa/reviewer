@@ -6,7 +6,7 @@ import random
 from pymodm.connection import connect, _get_db
 from node.settings import constants
 
-fill_script_version = "0.3"
+fill_script_version = "0.4"
 
 from data.reviewer_model import (Department,
                                  Group,
@@ -23,15 +23,14 @@ from data.reviewer_model import (Department,
                                  PersonSS,
                                  GroupMember,
                                  GroupMemberReview,
-                                 SRReview,
+                                 Specialization,
                                  SSReview,
                                  Service,
                                  SoftSkill,
-                                 Student,
+                                 PersonSpecialization,
                                  Survey,
-                                 TRReview,
+                                 SpecializationReview,
                                  TestResult,
-                                 Tutor,
                                  AuthInfo,
                                  get_dependent_list,
                                  init_model)
@@ -201,63 +200,89 @@ def fill_db():
             )
             person_ss.update({person.surname + "_" + soft_skill.name: ss})
 
-    tutor_roles = {
-        "Shatokhin_MCU":
-            Tutor(
-                persons["Shatokhin"],
-                departments["IIT"],
-                "Отжигание на микроконтроллерах семейства 8051"
-            ),
-        "Anisimov_TOE":
-            Tutor(
-                persons["Anisimov"],
-                departments["EFIS"],
+    specializations = {
+        "TOE_Tutor":
+            Specialization(
+                "Tutor",
                 "ТОЭ"
             ),
-        "Anisimov_rel":
-            Tutor(
-                persons["Anisimov"],
-                departments["EFIS"],
-                "Религиоведенье"
+        "MCU_Tutor":
+            Specialization(
+                "Tutor",
+                "Микропросессорные системы"
             ),
-        "Shatokhin_debug":
-            Tutor(
-                persons["Shatokhin"],
-                departments["IIT"],
-                "Отладка кода, написанного за 20 лет до вашего рождения"
+        "Metr_Assistant":
+            Specialization(
+                "Lab assistant",
+                "Метрология"
+            ),
+        "Student":
+            Specialization(
+                "Student"
             ),
     }
 
-    student_roles = {
+
+    person_specializations = {
+        "Shatokhin_MCU":
+            PersonSpecialization(
+                persons["Shatokhin"],
+                departments["IIT"],
+                specializations["MCU_Tutor"]
+            ),
+        "Anisimov_TOE":
+            PersonSpecialization(
+                persons["Anisimov"],
+                departments["EFIS"],
+                specializations["TOE_Tutor"]
+            ),
+        "Shatokhin_TOE":
+            PersonSpecialization(
+                persons["Shatokhin"],
+                departments["IIT"],
+                specializations["TOE_Tutor"]
+            ),
         "Leni4":
-            Student(
+            PersonSpecialization(
                 persons["Leni4"],
                 departments["IIT"],
-                "Студент очной формы обучения"
+                specializations["Student"],
+                {"graduation": "окончил"},
+                False
+            ),
+        "Leni4_lab":
+            PersonSpecialization(
+                persons["Leni4"],
+                departments["IIT"],
+                specializations["Metr_Assistant"],
             ),
         "Pashka":
-            Student(
+            PersonSpecialization(
                 persons["Pashka"],
                 departments["IIT"],
-                "Студент очной формы обучения"
+                specializations["Student"],
+                {"graduation" : "окончил"},
+                False
             ),
         "Vovka":
-            Student(
+            PersonSpecialization(
                 persons["Vovka"],
                 departments["IIT"],
-                "Студент очной формы обучения"
+                specializations["Student"]
             ),
         "Bogi":
-            Student(
+            PersonSpecialization(
                 persons["Bogi"],
                 departments["IIT"],
-                "Студент очной формы обучения"
+                specializations["Student"]
             ),
         "Maniac":
-            Student(
+            PersonSpecialization(
                 persons["Maniac"],
                 departments["IIT"],
-                "Отчислен"
+                specializations["Student"],
+                {"graduation": "отчислен"},
+                False
             ),
     }
 
@@ -458,35 +483,32 @@ def fill_db():
             )
     }
 
-    sr_reviews = {
+    p_spec_reviews = {
         "Shatokhin_Pashka_sr":
-            SRReview(
+            SpecializationReview(
                 persons["Shatokhin"],
-                student_roles["Pashka"],
+                person_specializations["Pashka"],
                 50.0,
                 "Часто появляется с перегаром"
             ),
         "Anisimov_Bogi_sr":
-            SRReview(
+            SpecializationReview(
                 persons["Anisimov"],
-                student_roles["Bogi"],
-                0.0,
-                "Сам ты негативный, засранец!"
-            )
-    }
-
-    tr_reviews = {
+                person_specializations["Bogi"],
+                20.0,
+                "Боится ТОЭ"
+            ),
         "Pashka_Shatokhin_MCU":
-            TRReview(
+            SpecializationReview(
                 persons["Pashka"],
-                tutor_roles["Shatokhin_MCU"],
+                person_specializations["Shatokhin_MCU"],
                 50.0,
                 "Не знает современную элементную базу"
             ),
         "Leni4_Anisimov_rel":
-            TRReview(
+            SpecializationReview(
                 persons["Leni4"],
-                tutor_roles["Anisimov_rel"],
+                person_specializations["Anisimov_TOE"],
                 100.0,
                 "Это просто чудо какое-то!"
             )
@@ -601,9 +623,9 @@ def fill_db():
         item.save()
     for key, item in person_ss.items():
         item.save()
-    for key, item in tutor_roles.items():
+    for key, item in specializations.items():
         item.save()
-    for key, item in student_roles.items():
+    for key, item in person_specializations.items():
         item.save()
     for key, item in group_roles.items():
         item.save()
@@ -621,9 +643,7 @@ def fill_db():
         item.save()
     for key, item in hs_reviews.items():
         item.save()
-    for key, item in sr_reviews.items():
-        item.save()
-    for key, item in tr_reviews.items():
+    for key, item in p_spec_reviews.items():
         item.save()
     for key, item in group_reviews.items():
         item.save()
@@ -676,17 +696,20 @@ def display_data():
               ": " +
               str(ss.level))
 
-    print("----Tutor Roles:")
-    for item in Tutor.objects.all():
-        print("{0} из {2} ведет {1}".format(item.person_id.surname,
-                                            item.discipline,
-                                            item.department_id.name))
+    print("----Specializations")
+    for item in Specialization.objects.all():
+        print("{0} {1}".format(item.type,
+                               item.detail))
 
-    print("----Student Roles:")
-    for item in Student.objects.all():
-        print("{0} - {1}, {2}".format(item.person_id.surname,
-                                      item.description,
+    print("----Person Specializations Roles:")
+    for item in PersonSpecialization.objects.all():
+        print("{0} - {1} {2}, {3}".format(item.person_id.surname,
+                                      item.specialization_id.type,
+                                      item.specialization_id.detail,
                                       item.department_id.name))
+        if not item.is_active:
+            print("Неактивен")
+        print(item.details)
 
     print("----Roles for Groups:")
     for item in GroupRole.objects.all():
@@ -742,25 +765,17 @@ def display_data():
             item.subject_id.person_id.surname,
             item.description))
 
-    print("----Student Role Reviews:")
-    for item in SRReview.objects.all():
+    print("----Person Specialization Reviews:")
+    for item in SpecializationReview.objects.all():
         print(
-            "{0} оставил отзыв с оценкой {1} на пользователя {2} в качестве {3} подразделения {4} с комментарием: {5}".format(
+            "{0} оставил отзыв с оценкой {1} на пользователя {2} в качестве {3} {4} "
+            "подразделения {5} с комментарием: {6}".format(
                 item.reviewer_id.surname,
                 item.value,
                 item.subject_id.person_id.surname,
-                item.subject_id.description,
+                item.subject_id.specialization_id.type,
+                item.subject_id.specialization_id.detail,
                 item.subject_id.department_id.name,
-                item.description))
-
-    print("----Tutor Role Reviews:")
-    for item in TRReview.objects.all():
-        print(
-            "{0} оставил отзыв с оценкой {1} на пользователя {2} в качестве преподавателя {3} с комментарием: {4}".format(
-                item.reviewer_id.surname,
-                item.value,
-                item.subject_id.person_id.surname,
-                item.subject_id.discipline,
                 item.description))
 
     print("----Group Reviews:")

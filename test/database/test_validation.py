@@ -31,22 +31,21 @@ from data.reviewer_model import (Department,
                                  PersonSS,
                                  GroupMember,
                                  GroupMemberReview,
-                                 SRReview,
+                                 Specialization,
                                  SSReview,
                                  Service,
                                  SoftSkill,
-                                 StudentRole,
+                                 PersonSpecialization,
                                  Survey,
-                                 TRReview,
+                                 SpecializationReview,
                                  TestResult,
-                                 TutorRole,
                                  get_dependent_list,
                                  init_model)
 
 test_version = "0.3"
 
 def clear_db():
-    revDb = _get_db(constants.db_name_test)
+    revDb = _get_db(constants.db_name)
     colList = revDb.list_collection_names()
     for col in colList:
         revDb[col].delete_many({})
