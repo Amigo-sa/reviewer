@@ -556,35 +556,29 @@ def list_specializations():
     return jsonify(result), 200
 
 
-"""
-@bp.route("/specializations", methods=['POST'])
+@bp.route("/persons/<string:id>/specializations", methods=['POST'])
 @required_auth("admin")
-def add_specialization():
+def add_person_specialization(id):
     req = request.get_json()
     try:
-        person_id = req['person_id']
+        person_id = id
         department_id = req['department_id']
-        type = req['type']
-        description = req['description']
+        spec_id = req['specialization_id']
+        value = req['value'] if "value" in req else None
         if not Person.objects.raw({"_id": ObjectId(person_id)}).count()\
-                or not Department.objects.raw({"_id": ObjectId(department_id)}).count():
+                or not Department.objects.raw({"_id": ObjectId(department_id)}).count()\
+                or not Specialization.objects.raw({"_id": ObjectId(spec_id)}).count():
             result = {"result": ERR.NO_DATA}
-        elif type == "Tutor":
-            tutor = Tutor(Person(_id=person_id),
-                          Department(_id=department_id),
-                          description)
-            tutor.save()
-            result = {"result": ERR.OK,
-                      "id": str(tutor.pk)}
-        elif type == "Student":
-            student = Student(Person(_id=person_id),
-                              Department(_id=department_id),
-                              description)
-            student.save()
-            result = {"result": ERR.OK,
-                      "id": str(student.pk)}
         else:
-            return jsonify({"result": ERR.INPUT}), 200
+            person_spec = PersonSpecialization(
+                Person(_id=person_id),
+                Department(_id=department_id),
+                Specialization(_id=spec_id),
+                value
+            )
+            person_spec.save()
+            result = {"result": ERR.OK,
+                      "id": str(person_spec.pk)}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
     except:
@@ -593,65 +587,34 @@ def add_specialization():
     return jsonify(result), 200
 
 
-@bp.route("/specializations/<string:id>", methods=['DELETE'])
+@bp.route("/persons/specializations/<string:_id>", methods=['DELETE'])
 @required_auth("admin")
-def delete_specialization(id):
-    try:
-        if Tutor(_id=id) in Tutor.objects.raw({"_id":ObjectId(id)}):
-            Tutor(_id=id).delete()
-            result = {"result": ERR.OK}
-        elif Student(_id=id) in Student.objects.raw({"_id":ObjectId(id)}):
-            Student(_id=id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
-
-
-@bp.route("/specializations/<string:id>", methods=['GET'])
-def get_specializations_data(id):
-    try:
-        if Student(_id=id) in Student.objects.raw({"_id": ObjectId(id)}):
-            student = Student(_id=id)
-            student.refresh_from_db()
-            data = {"person_id": str(student.person_id.pk),
-                    "department_id": str(student.department_id.pk),
-                    "type": "Student",
-                    "description": student.description}
-            result = {"result": ERR.OK, "data": data}
-        elif Tutor(_id=id) in Tutor.objects.raw({"_id": ObjectId(id)}):
-            tutor = Tutor(_id=id)
-            tutor.refresh_from_db()
-            data = {"person_id": str(tutor.person_id.pk),
-                    "department_id": str(tutor.department_id.pk),
-                    "type": "Tutor",
-                    "description": tutor.discipline}
-            result = {"result": ERR.OK, "data": data}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+def delete_person_specialization(_id):
+    return delete_resource(PersonSpecialization, _id)
 
 
 @bp.route("/persons/<string:id>/specializations", methods=['GET'])
-def list_specializations_by_person_id(id):
-    list = []
+def get_person_specializations(id):
+    lst = []
     try:
         if Person.objects.raw({"_id": ObjectId(id)}).count():
-            for spec in Student.objects.raw({"person_id": ObjectId(id)}):
-                list.append({"id": str(spec.pk)})
-            for spec in Tutor.objects.raw({"person_id": ObjectId(id)}):
-                list.append({"id": str(spec.pk)})
-            result = {"result": ERR.OK, "list":list}
+            for p_spec in PersonSpecialization.objects.raw({"person_id": ObjectId(id)}):
+                d = {"id": str(p_spec.pk),
+                     "department_id": str(p_spec.department_id.pk),
+                     "level": p_spec.level,
+                     "type": p_spec.specialization_id.type
+                     }
+                if p_spec.specialization_id.detail: d.update({"detail": p_spec.specialization_id.detail})
+                lst.append(d)
+
+            result = {"result": ERR.OK, "list":lst}
         else:
             result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
     return jsonify(result), 200
-"""
+
 
 @bp.route("/persons", methods=['GET'])
 def find_persons():
