@@ -14,42 +14,68 @@ for name, desc in members:
         class_names.append(name)
 
 links = {}
-
+fields = {}
 for doc_class in doc_class_list:
     print("--------------------------------------------------")
     cur_class = str(doc_class.__name__)
     print(cur_class + " references:")
     links.update({cur_class : []})
+    fields.update({cur_class : []})
     member_list = inspect.getmembers(doc_class, None)
     for name,cls in member_list:
-        if "pymodm.fields.ReferenceField" in str(cls)\
-                or "reviewer_model.ValidatedReferenceField" in str(cls)\
-                and "__dict__" not in str(name):
-            #print(cls)
-            rel_model = cls.related_model.__name__
-            print(rel_model)
-            links[cur_class].append(rel_model)
-        if "reviewer_model.ValidatedReferenceList" in str(cls) \
-                and "__dict__" not in str(name):
-            member_list = inspect.getmembers(cls, None)
-            rel_model = cls._field.related_model.__name__
-            print(rel_model)
-            links[cur_class].append(rel_model)
+        if "__dict__" not in str(name):
+            if "pymodm.fields.ReferenceField" in str(cls)\
+                    or "reviewer_model.ValidatedReferenceField" in str(cls):
+                #print(cls)
+                rel_model = cls.related_model.__name__
+                print(rel_model)
+                links[cur_class].append(rel_model)
+            if "reviewer_model.ValidatedReferenceList" in str(cls):
+                member_list = inspect.getmembers(cls, None)
+                rel_model = cls._field.related_model.__name__
+                print(rel_model)
+                links[cur_class].append(rel_model)
+            if "fields.CharField" in str(cls):
+                field = name + ": char"
+                fields[cur_class].append(field)
+            if "fields.DateTimeField" in str(cls):
+                field = name + ": datetime"
+                fields[cur_class].append(field)
+            if "fields.FloatField" in str(cls):
+                field = name + ": float"
+                fields[cur_class].append(field)
+            if "fields.DictField" in str(cls):
+                field = name + ": dict"
+                fields[cur_class].append(field)
+            if "fields.ListField" in str(cls):
+                field = name + ": list"
+                fields[cur_class].append(field)
+            if "fields.IntegerField" in str(cls):
+                field = name + ": int"
+                fields[cur_class].append(field)
 
 print(links)
-links.pop("Service")
-links.pop("ValidatedReferenceField")
-links.pop("ValidatedReferenceList")
-class_names.remove("Service")
-class_names.remove("ValidatedReferenceField")
-class_names.remove("ValidatedReferenceList")
+print(fields)
+
+ignore_list = [
+    "Service",
+    "ValidatedReferenceField",
+    "ValidatedReferenceList"
+]
+for item in ignore_list:
+    links.pop(item)
+    class_names.remove(item)
+    fields.pop(item)
 
 dot = Digraph(comment='Reviewer')
 
 dot.attr("node", shape="ellipse")
 dot.attr(overlap='false')
-for cls in class_names:
-    dot.node(cls,cls)
+for cls, field_list in fields.items():
+    label = cls + "\n"
+    for field in field_list:
+        label+= field + "\n"
+    dot.node(cls,label)
 
 for main, refs in links.items():
     for r in refs:

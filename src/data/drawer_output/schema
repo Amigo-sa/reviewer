@@ -2,31 +2,99 @@
 digraph {
 	node [shape=ellipse]
 	overlap=false
-	AuthInfo [label=AuthInfo]
-	Department [label=Department]
-	Group [label=Group]
-	GroupMember [label=GroupMember]
-	GroupMemberReview [label=GroupMemberReview]
-	GroupPermission [label=GroupPermission]
-	GroupReview [label=GroupReview]
-	GroupRole [label=GroupRole]
-	GroupTest [label=GroupTest]
-	GroupTestReview [label=GroupTestReview]
-	HSReview [label=HSReview]
-	HardSkill [label=HardSkill]
-	Organization [label=Organization]
-	Person [label=Person]
-	PersonHS [label=PersonHS]
-	PersonSS [label=PersonSS]
-	PersonSpecialization [label=PersonSpecialization]
-	SSReview [label=SSReview]
-	SoftSkill [label=SoftSkill]
-	Specialization [label=Specialization]
-	SpecializationReview [label=SpecializationReview]
-	Survey [label=Survey]
-	SurveyResponse [label=SurveyResponse]
-	SurveyResult [label=SurveyResult]
-	TestResult [label=TestResult]
+	AuthInfo [label="AuthInfo
+attempts: int
+auth_code: char
+password: char
+permissions: int
+phone_no: char
+session_id: char
+"]
+	Department [label="Department
+name: char
+"]
+	Group [label="Group
+name: char
+"]
+	GroupMember [label=GroupMember
+]
+	GroupMemberReview [label="GroupMemberReview
+description: char
+value: float
+"]
+	GroupPermission [label="GroupPermission
+name: char
+"]
+	GroupReview [label="GroupReview
+description: char
+value: float
+"]
+	GroupRole [label="GroupRole
+name: char
+"]
+	GroupTest [label="GroupTest
+info: char
+name: char
+"]
+	GroupTestReview [label="GroupTestReview
+description: char
+value: float
+"]
+	HSReview [label="HSReview
+description: char
+value: float
+"]
+	HardSkill [label="HardSkill
+name: char
+"]
+	Organization [label="Organization
+name: char
+"]
+	Person [label="Person
+birth_date: datetime
+first_name: char
+middle_name: char
+phone_no: char
+surname: char
+"]
+	PersonHS [label="PersonHS
+level: float
+"]
+	PersonSS [label="PersonSS
+level: float
+"]
+	PersonSpecialization [label="PersonSpecialization
+details: dict
+level: float
+"]
+	SSReview [label="SSReview
+description: char
+value: float
+"]
+	SoftSkill [label="SoftSkill
+name: char
+"]
+	Specialization [label="Specialization
+detail: char
+type: char
+"]
+	SpecializationReview [label="SpecializationReview
+description: char
+value: float
+"]
+	Survey [label="Survey
+description: char
+survey_options: dict
+"]
+	SurveyResponse [label="SurveyResponse
+chosen_option: char
+"]
+	SurveyResult [label="SurveyResult
+survey_data: dict
+"]
+	TestResult [label="TestResult
+result_data: list
+"]
 	AuthInfo -> Person
 	Department -> Organization
 	Group -> Department
