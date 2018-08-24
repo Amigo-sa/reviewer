@@ -30,22 +30,6 @@ if __debug__:
                   result_string += "document: {0}<br>".format(document)
         return result_string
 
-
-    from pymodm.connection import _get_db
-
-    @bp.route("/wipe", methods=['POST'])
-    def wipe():
-        try:
-            revDb = _get_db(constants.db_name)
-            colList = revDb.list_collection_names()
-            for col in colList:
-                revDb[col].delete_many({})
-            result = {"result": ERR.OK}
-        except:
-            result = {"result": ERR.DB}
-        return jsonify(result), 200
-
-
     @bp.route("/first_admin", methods=['POST'])
     def prepare_first_admin():
         try:

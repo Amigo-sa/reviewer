@@ -12,6 +12,8 @@ from time import sleep
 import re
 import sys
 #from src.data.reviewer_model import *
+import api_helper_methods as hm
+import src.data.reviewer_model as model
 
 node_port = 5002
 
@@ -45,6 +47,7 @@ class TestApi(unittest.TestCase):
                 if attempts > 20: raise ConnectionError("could not connect to server")
         print("Connected")
 
+
     @classmethod
     def tearDownClass(cls):
         requests.post(cls.api_URL + "/shutdown")
@@ -52,8 +55,11 @@ class TestApi(unittest.TestCase):
     def tearDown(self):
         pass
 
+
+
     def setUp(self):
-        requests.post(self.api_URL + "/wipe")
+        #requests.post(self.api_URL + "/wipe")
+        hm.wipe_db(constants.db_name)
         admin_req = requests.post(self.api_URL + "/first_admin").json()
         self.assertEqual(ERR.OK, admin_req["result"])
         self.admin_header = {"Authorization":

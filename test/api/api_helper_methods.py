@@ -4,7 +4,17 @@ import node.settings.errors as ERR
 import unittest
 import datetime
 import random
+from pymodm.connection import _get_db
 
+def wipe_db(db_name):
+    try:
+        revDb = _get_db(db_name)
+        colList = revDb.list_collection_names()
+        for col in colList:
+            revDb[col].delete_many({})
+    except Exception as e:
+        print("Failed to wipe DB")
+        print(str(e))
 
 def post_item(instance, url, data, auth_header="admin"):
     if not isinstance(instance, unittest.TestCase):

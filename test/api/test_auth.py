@@ -10,6 +10,7 @@ import requests
 from flask import Flask, Blueprint
 import datetime
 import sys
+import src.data.reviewer_model as model
 
 from node.node_server import start_server
 from node.settings import constants
@@ -74,6 +75,7 @@ class TestAuth(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+
         # Загрузка адреса сервера
         cls.api_URL = "http://127.0.0.1:"+str(node_port)
         cls.gen_doc_ctr = 0
@@ -117,7 +119,8 @@ class TestAuth(unittest.TestCase):
         pass
 
     def setUp(self):
-        requests.post(self.api_URL + "/wipe")
+        #requests.post(self.api_URL + "/wipe")
+        hm.wipe_db(constants.db_name)
         cur_session.id = None
         cur_session.received_code = None
         admin_req = requests.post(self.api_URL + "/first_admin").json()
