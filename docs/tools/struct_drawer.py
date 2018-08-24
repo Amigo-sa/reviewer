@@ -1,8 +1,14 @@
-import reviewer_model
+import os, sys
+
+parentPath = os.path.abspath("..//..//src")
+if parentPath not in sys.path:
+    sys.path.insert(0, parentPath)
+
+import data.reviewer_model
 import sys, inspect
 from graphviz import Digraph, ENGINES, FORMATS
 
-members = inspect.getmembers(reviewer_model, inspect.isclass)
+members = inspect.getmembers(data.reviewer_model, inspect.isclass)
 
 doc_class_list = []
 class_names = []
@@ -81,9 +87,9 @@ for main, refs in links.items():
 
 dot.engine="dot"
 dot.format="svg"
-dot.render('drawer_output/schema', view=False)
+dot.render('../db_model/drawer_output/schema', view=False)
 dot.format="png"
-dot.render('drawer_output/schema', view=False)
+dot.render('../db_model/drawer_output/schema', view=False)
 #for eng in ENGINES:
 #    dot.engine=eng
 #    dot.render('test-output/schema_'+eng, view=True)

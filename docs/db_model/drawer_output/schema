@@ -5,6 +5,7 @@ digraph {
 	AuthInfo [label="AuthInfo
 attempts: int
 auth_code: char
+is_approved: bool
 password: char
 permissions: int
 phone_no: char
@@ -16,8 +17,9 @@ name: char
 	Group [label="Group
 name: char
 "]
-	GroupMember [label=GroupMember
-]
+	GroupMember [label="GroupMember
+is_active: bool
+"]
 	GroupMemberReview [label="GroupMemberReview
 description: char
 value: float
@@ -65,6 +67,7 @@ level: float
 "]
 	PersonSpecialization [label="PersonSpecialization
 details: dict
+is_active: bool
 level: float
 "]
 	SSReview [label="SSReview
