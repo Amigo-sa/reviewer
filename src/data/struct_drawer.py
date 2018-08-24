@@ -1,7 +1,5 @@
 import reviewer_model
 import sys, inspect
-import networkx as nx
-import matplotlib.pyplot as plt
 from graphviz import Digraph, ENGINES, FORMATS
 
 members = inspect.getmembers(reviewer_model, inspect.isclass)
@@ -53,9 +51,9 @@ for doc_class in doc_class_list:
             if "fields.IntegerField" in str(cls):
                 field = name + ": int"
                 fields[cur_class].append(field)
-
-print(links)
-print(fields)
+            if "fields.BooleanField" in str(cls):
+                field = name + ": bool"
+                fields[cur_class].append(field)
 
 ignore_list = [
     "Service",
@@ -83,7 +81,9 @@ for main, refs in links.items():
 
 dot.engine="dot"
 dot.format="svg"
-dot.render('drawer_output/schema', view=True)
+dot.render('drawer_output/schema', view=False)
+dot.format="png"
+dot.render('drawer_output/schema', view=False)
 #for eng in ENGINES:
 #    dot.engine=eng
 #    dot.render('test-output/schema_'+eng, view=True)
