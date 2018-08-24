@@ -5,6 +5,24 @@ import unittest
 import datetime
 import random
 from pymodm.connection import _get_db
+import src.data.reviewer_model as model
+from node.api.routes_auth import hash_password, gen_session_id
+
+
+def prepare_first_admin():
+    try:
+        auth_info = model.AuthInfo()
+        auth_info.is_approved = True
+        auth_info.phone_no = "79032233223"
+        auth_info.password = hash_password("boov")
+        session_id = gen_session_id()
+        auth_info.session_id = session_id
+        auth_info.permissions = 1
+        auth_info.save()
+        return auth_info.session_id
+    except Exception as e:
+        print("Failed to prepare first admin")
+        print(str(e))
 
 def wipe_db(db_name):
     try:

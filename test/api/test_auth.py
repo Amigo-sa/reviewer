@@ -123,10 +123,8 @@ class TestAuth(unittest.TestCase):
         hm.wipe_db(constants.db_name)
         cur_session.id = None
         cur_session.received_code = None
-        admin_req = requests.post(self.api_URL + "/first_admin").json()
-        self.assertEqual(ERR.OK, admin_req["result"])
         self.admin_header = {"Authorization":
-                                 "Bearer " + admin_req["session_id"]}
+                                 "Bearer " + hm.prepare_first_admin()}
 
     def prepare_lists(self):
         # admin only routes

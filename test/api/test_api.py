@@ -60,10 +60,8 @@ class TestApi(unittest.TestCase):
     def setUp(self):
         #requests.post(self.api_URL + "/wipe")
         hm.wipe_db(constants.db_name)
-        admin_req = requests.post(self.api_URL + "/first_admin").json()
-        self.assertEqual(ERR.OK, admin_req["result"])
         self.admin_header = {"Authorization":
-                                 "Bearer " + admin_req["session_id"]}
+                                 "Bearer " + hm.prepare_first_admin()}
 
     def setup_reviewer(self):
         reviewer_req = requests.post(self.api_URL + "/logged_in_person").json()
