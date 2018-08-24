@@ -1,0 +1,64 @@
+// Reviewer
+digraph {
+	node [shape=ellipse]
+	overlap=false
+	AuthInfo [label=AuthInfo]
+	Department [label=Department]
+	Group [label=Group]
+	GroupMember [label=GroupMember]
+	GroupMemberReview [label=GroupMemberReview]
+	GroupPermission [label=GroupPermission]
+	GroupReview [label=GroupReview]
+	GroupRole [label=GroupRole]
+	GroupTest [label=GroupTest]
+	GroupTestReview [label=GroupTestReview]
+	HSReview [label=HSReview]
+	HardSkill [label=HardSkill]
+	Organization [label=Organization]
+	Person [label=Person]
+	PersonHS [label=PersonHS]
+	PersonSS [label=PersonSS]
+	PersonSpecialization [label=PersonSpecialization]
+	SSReview [label=SSReview]
+	SoftSkill [label=SoftSkill]
+	Specialization [label=Specialization]
+	SpecializationReview [label=SpecializationReview]
+	Survey [label=Survey]
+	SurveyResponse [label=SurveyResponse]
+	SurveyResult [label=SurveyResult]
+	TestResult [label=TestResult]
+	AuthInfo -> Person
+	Department -> Organization
+	Group -> Department
+	Group -> GroupRole
+	GroupMember -> Group
+	GroupMember -> GroupPermission
+	GroupMember -> Person
+	GroupMember -> GroupRole
+	GroupMemberReview -> Person
+	GroupMemberReview -> GroupMember
+	GroupReview -> Person
+	GroupReview -> Group
+	GroupTest -> Group
+	GroupTestReview -> Person
+	GroupTestReview -> GroupTest
+	HSReview -> Person
+	HSReview -> PersonHS
+	PersonHS -> HardSkill
+	PersonHS -> Person
+	PersonSS -> Person
+	PersonSS -> SoftSkill
+	PersonSpecialization -> Department
+	PersonSpecialization -> Person
+	PersonSpecialization -> Specialization
+	SSReview -> Person
+	SSReview -> PersonSS
+	SpecializationReview -> Person
+	SpecializationReview -> PersonSpecialization
+	Survey -> Group
+	SurveyResponse -> Person
+	SurveyResponse -> Survey
+	SurveyResult -> Survey
+	TestResult -> Person
+	TestResult -> GroupTest
+}
