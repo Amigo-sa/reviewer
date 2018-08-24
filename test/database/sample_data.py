@@ -230,25 +230,29 @@ def fill_db():
             PersonSpecialization(
                 persons["Shatokhin"],
                 departments["IIT"],
-                specializations["MCU_Tutor"]
+                specializations["MCU_Tutor"],
+                70.0
             ),
         "Anisimov_TOE":
             PersonSpecialization(
                 persons["Anisimov"],
                 departments["EFIS"],
-                specializations["TOE_Tutor"]
+                specializations["TOE_Tutor"],
+                90.0
             ),
         "Shatokhin_TOE":
             PersonSpecialization(
                 persons["Shatokhin"],
                 departments["IIT"],
-                specializations["TOE_Tutor"]
+                specializations["TOE_Tutor"],
+                45.0
             ),
         "Leni4":
             PersonSpecialization(
                 persons["Leni4"],
                 departments["IIT"],
                 specializations["Student"],
+                None,
                 {"graduation": "окончил"},
                 False
             ),
@@ -263,6 +267,7 @@ def fill_db():
                 persons["Pashka"],
                 departments["IIT"],
                 specializations["Student"],
+                None,
                 {"graduation" : "окончил"},
                 False
             ),
@@ -283,6 +288,7 @@ def fill_db():
                 persons["Maniac"],
                 departments["IIT"],
                 specializations["Student"],
+                20.0,
                 {"graduation": "отчислен"},
                 False
             ),
@@ -758,12 +764,13 @@ def display_data():
         print("{0} {1}".format(item.type,
                                item.detail))
 
-    print("----Person Specializations Roles:")
+    print("----Person Specializations:")
     for item in PersonSpecialization.objects.all():
-        print("{0} - {1} {2}, {3}".format(item.person_id.surname,
+        print("{0} - {1} {2}, {3}, рейтинг - {4}".format(item.person_id.surname,
                                       item.specialization_id.type,
                                       item.specialization_id.detail,
-                                      item.department_id.name))
+                                      item.department_id.name,
+                                      item.level))
         if not item.is_active:
             print("Неактивен")
         print(item.details)

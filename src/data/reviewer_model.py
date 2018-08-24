@@ -189,6 +189,7 @@ class PersonSpecialization(MongoModel):
     person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     department_id = ValidatedReferenceField(Department, on_delete=ReferenceField.CASCADE)
     specialization_id = ValidatedReferenceField(Specialization, on_delete=ReferenceField.CASCADE)
+    level = fields.FloatField(default=None, blank=True)
     details = fields.DictField()
 
     is_active = fields.BooleanField(required=True, default=True)

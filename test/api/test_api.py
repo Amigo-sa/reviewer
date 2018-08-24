@@ -23,7 +23,7 @@ class NodeServer(Thread):
 
 node_server_thread = NodeServer()
 
-
+#TODO с учётом прямого общения с базой тесты неплохо бы оптимизировать
 class TestApi(unittest.TestCase):
 
     @classmethod
