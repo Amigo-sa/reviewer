@@ -57,7 +57,7 @@ for main, refs in links.items():
 
 dot.engine="dot"
 dot.format="svg"
-dot.render('test-output/schema', view=True)
+dot.render('drawer_output/schema', view=True)
 #for eng in ENGINES:
 #    dot.engine=eng
 #    dot.render('test-output/schema_'+eng, view=True)
