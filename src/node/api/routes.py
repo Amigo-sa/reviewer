@@ -515,6 +515,50 @@ def change_group_member_status(id):
 
 @bp.route("/specializations", methods=['POST'])
 @required_auth("admin")
+def add_specializations():
+    req = request.get_json()
+    try:
+        type = req['type']
+        detail = req["detail"] if 'detail' in req else None
+        specialization = Specialization(type)
+        if detail: specialization.detail = detail
+        specialization.save()
+        result = {"result": ERR.OK,
+                  "id": str(specialization.pk)}
+    except KeyError:
+        return jsonify({"result": ERR.INPUT}), 200
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
+
+    return jsonify(result), 200
+
+
+@bp.route("/specializations/<string:_id>", methods=['DELETE'])
+@required_auth("admin")
+def delete_specialization(_id):
+    return delete_resource(Specialization, _id)
+
+
+@bp.route("/specializations", methods=['GET'])
+def list_specializations():
+    lst = []
+    try:
+        for specialization in Specialization.objects.all():
+            d = {"id": str(specialization.pk),
+                 "type": specialization.type}
+            if specialization.detail: d.update({"detail": specialization.detail})
+            lst.append(d)
+        result = {"result": ERR.OK, "list": lst}
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
+    return jsonify(result), 200
+
+
+"""
+@bp.route("/specializations", methods=['POST'])
+@required_auth("admin")
 def add_specialization():
     req = request.get_json()
     try:
@@ -607,7 +651,7 @@ def list_specializations_by_person_id(id):
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
-
+"""
 
 @bp.route("/persons", methods=['GET'])
 def find_persons():
