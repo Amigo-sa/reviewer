@@ -555,8 +555,7 @@ def list_specializations():
                   "error_message": str(e)}
     return jsonify(result), 200
 
-# TODO зацени, я value изменил на level, как в модели. Вообще думаю придерживаться следующего:
-# value - это для review, level - это для характеристики, которая в базе хранится.
+
 @bp.route("/persons/<string:id>/specializations", methods=['POST'])
 @required_auth("admin")
 def add_person_specialization(id):
@@ -577,7 +576,6 @@ def add_person_specialization(id):
                 Specialization(_id=spec_id),
                 level
             )
-            # TODO ещё ты, кажется, забыл details
             person_spec.save()
             result = {"result": ERR.OK,
                       "id": str(person_spec.pk)}
@@ -604,9 +602,11 @@ def get_person_specializations(id):
                 d = {"id": str(p_spec.pk),
                      "department_id": str(p_spec.department_id.pk),
                      "level": p_spec.level,
-                     "type": p_spec.specialization_id.type
+                     "specialization_type": p_spec.specialization_id.type,
+                     "is_active": str(p_spec.is_active)
                      }
-                if p_spec.specialization_id.detail: d.update({"detail": p_spec.specialization_id.detail})
+                if p_spec.specialization_id.detail: d.update({"specialization_detail": p_spec.specialization_id.detail})
+                if p_spec.details: d.update({"additional_details": p_spec.details})
                 lst.append(d)
 
             result = {"result": ERR.OK, "list":lst}
@@ -615,6 +615,41 @@ def get_person_specializations(id):
     except Exception as e:
         result = {"result": ERR.DB,
                   "error_message": str(e)}
+    return jsonify(result), 200
+
+
+@bp.route("/persons/specializations/<string:_id>", methods=['PATCH'])
+@required_auth("admin")
+def set_person_specialization_additions(_id):
+    content_header = request.headers.get('Content-Type')
+    is_active = None
+    details = None
+    if 'is_active' in request.args:
+        string = request.args['is_active']
+        if string == "true":
+            is_active = True
+        elif string == "false":
+            is_active = False
+        else:
+            return jsonify({"result": ERR.INPUT}), 200
+    elif content_header:
+        details = request.get_json()
+    else:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        if PersonSpecialization(_id=_id) in PersonSpecialization.objects.raw({"_id": ObjectId(_id)}):
+            p_spec = PersonSpecialization(_id=_id)
+            p_spec.refresh_from_db()
+            if is_active: p_spec.is_active = is_active
+            if details: p_spec.details = details
+            p_spec.save()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except Exception as ex:
+        print(ex)
+        result = {"result": ERR.DB, "error_message": str(ex)}
+
     return jsonify(result), 200
 
 
