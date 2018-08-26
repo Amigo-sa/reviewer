@@ -555,7 +555,8 @@ def list_specializations():
                   "error_message": str(e)}
     return jsonify(result), 200
 
-
+# TODO зацени, я value изменил на level, как в модели. Вообще думаю придерживаться следующего:
+# value - это для review, level - это для характеристики, которая в базе хранится.
 @bp.route("/persons/<string:id>/specializations", methods=['POST'])
 @required_auth("admin")
 def add_person_specialization(id):
@@ -564,7 +565,7 @@ def add_person_specialization(id):
         person_id = id
         department_id = req['department_id']
         spec_id = req['specialization_id']
-        value = req['value'] if "value" in req else None
+        level = req['level'] if "level" in req else None
         if not Person.objects.raw({"_id": ObjectId(person_id)}).count()\
                 or not Department.objects.raw({"_id": ObjectId(department_id)}).count()\
                 or not Specialization.objects.raw({"_id": ObjectId(spec_id)}).count():
@@ -574,8 +575,9 @@ def add_person_specialization(id):
                 Person(_id=person_id),
                 Department(_id=department_id),
                 Specialization(_id=spec_id),
-                value
+                level
             )
+            # TODO ещё ты, кажется, забыл details
             person_spec.save()
             result = {"result": ERR.OK,
                       "id": str(person_spec.pk)}

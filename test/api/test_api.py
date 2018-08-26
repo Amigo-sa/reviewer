@@ -390,59 +390,85 @@ class TestApi(unittest.TestCase):
         org_2 = self.get_item_list("/organizations")[1]
         dep_1 = self.get_item_list("/organizations/%s/departments"%org_1["id"])[0]
         dep_2 = self.get_item_list("/organizations/%s/departments"%org_2["id"])[0]
+        spec_stud = {"type": "Student"}
+        spec_stud.update({"id" : self.post_item("/specializations", spec_stud)})
+        spec_tut_toe =  {"type": "Tutor", "detail": "TOE"}
+        spec_tut_toe.update({"id": self.post_item("/specializations", spec_tut_toe)})
+        # verify added specializations
+        global_spec_list = self.get_item_list("/specializations")
+        self.assertDictListEqual([spec_tut_toe, spec_stud], global_spec_list)
+
         person_ref_data = []
+        p_spec_ref_data = []
         for person_id in person_ids:
             person_ref_data.append(self.get_item_data("/persons/" + person_id))
         specializations = {}
         # person 0 is student
+
         temp_spec = {
-                "person_id": person_ids[0],
                 "department_id": dep_1["id"],
-                "type": "Student",
-                "description": "sample_description"
+                "specialization_id": spec_stud["id"],
             }
-        temp_spec.update({"id": self.post_item("/specializations", temp_spec)})
-        specializations["person0_Student"] = temp_spec
+        p_spec_id = self.post_item("/persons/%s/specializations"%person_ids[0], temp_spec)
+        cur_spec_ref_data = {
+            "id" : p_spec_id,
+            "department_id" : temp_spec["department_id"],
+            "level" : None,
+            "type": spec_stud["type"]
+        }
+        p_spec_ref_data.append([cur_spec_ref_data])
+
         # person 1 is tutor and student
         temp_spec = {
-            "person_id": person_ids[1],
+            #"person_id": person_ids[1],
             "department_id":  dep_1["id"],
-            "type": "Tutor",
-            "description": "sample_description"
+            "specialization_id": spec_stud["id"],
         }
-        temp_spec.update({"id": self.post_item("/specializations", temp_spec)})
-        specializations["person1_Tutor"] = temp_spec
+        p_spec_id = self.post_item("/persons/%s/specializations"%person_ids[1], temp_spec)
+        cur_spec_ref_data = {
+            "id": p_spec_id,
+            "department_id": temp_spec["department_id"],
+            "level": None,
+            "type": spec_stud["type"]
+        }
+        p_spec_ref_data.append([cur_spec_ref_data])
+
         temp_spec = {
-            "person_id": person_ids[1],
             "department_id":  dep_1["id"],
-            "type": "Student",
-            "description": "sample_description"
+            "specialization_id": spec_tut_toe["id"],
+            "level": "60.0"
         }
-        temp_spec.update({"id": self.post_item("/specializations", temp_spec)})
-        specializations["person1_Student"] = temp_spec
+        p_spec_id = self.post_item("/persons/%s/specializations" % person_ids[1], temp_spec)
+        cur_spec_ref_data = {
+            "id": p_spec_id,
+            "department_id": temp_spec["department_id"],
+            "level": 60.0,
+            "type": spec_tut_toe["type"],
+            "detail" : spec_tut_toe["detail"]
+        }
+        p_spec_ref_data[1].append(cur_spec_ref_data)
         # person 2 is tutor at 2-nd department of 2-nd organization
         temp_spec = {
-            "person_id": person_ids[2],
             "department_id": dep_2["id"],
-            "type": "Tutor",
-            "description": "sample_description"
+            "specialization_id": spec_tut_toe["id"],
         }
-        temp_spec.update({"id": self.post_item("/specializations", temp_spec)})
-        specializations["person2_Tutor"] = temp_spec
+        p_spec_id = self.post_item("/persons/%s/specializations" % person_ids[2], temp_spec)
+        cur_spec_ref_data = {
+            "id": p_spec_id,
+            "department_id": temp_spec["department_id"],
+            "level": None,
+            "type": spec_tut_toe["type"],
+            "detail": spec_tut_toe["detail"]
+        }
+        p_spec_ref_data.append([cur_spec_ref_data])
         # person 3 has no specialization
+        p_spec_ref_data.append([])
         # testing that specializations were added properly
-        for key, value in specializations.items():
-            spec_wo_id = value.copy()
-            del spec_wo_id["id"]
-            spec_data = self.get_item_data("/specializations/" + value["id"])
-            self.assertEqual(spec_wo_id, spec_data, "returned specialization data must match inserted data")
-        person0_spec_list = self.get_item_list("/persons/%s/specializations" % person_ids[0])
-        person1_spec_list = self.get_item_list("/persons/%s/specializations" % person_ids[1])
-        self.assertEqual(person0_spec_list,
-                         [{"id": specializations["person0_Student"]["id"]}])
-        self.assertDictListEqual(person1_spec_list,
-                         [{"id": specializations["person1_Tutor"]["id"]},
-                          {"id": specializations["person1_Student"]["id"]}])
+        for i,p_id in enumerate(person_ids):
+            p_spec_data = self.get_item_list("/persons/%s/specializations" % p_id)
+            self.assertDictListEqual(p_spec_ref_data[i], p_spec_data)
+        """
+        print("---")
         # testing find_persons without request params
         person_list = self.get_item_list("/persons")
         for person in person_list:
@@ -487,7 +513,7 @@ class TestApi(unittest.TestCase):
         for person_id in person_ids:
             spec_list = self.get_item_list("/persons/%s/specializations" % person_id)
             self.assertEqual([], spec_list, "all specializations must be deleted")
-
+        """
     def test_group_member_normal(self):
         person_id = self.prepare_persons(1)[0]
         facility_ids = self.prepare_group()
