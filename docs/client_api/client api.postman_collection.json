@@ -4584,11 +4584,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "ffbc810c-49dd-456c-a044-a1f7004ba458",
+								"id": "dfb8bd2e-741f-4842-9f0d-a906da6d01d2",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"specialization_id\", \"5b7da3632131371418c12ca3\");",
-									"pm.environment.set(\"reviewer_id\", \"5b7da3632131371418c12c5d\");",
+									"pm.environment.set(\"person_specialization_id\", \"5b82943b21313712e8ee61f1\");",
+									"pm.environment.set(\"reviewer_id\", \"5b82943a21313712e8ee61a7\");",
 									"pm.environment.set(\"value\",90.0);",
 									"pm.environment.set(\"description\", \"Классный чел\");"
 								]
@@ -4612,13 +4612,13 @@
 							"raw": "{\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
 						},
 						"url": {
-							"raw": "{{server_url}}/specializations/{{specialization_id}}/reviews",
+							"raw": "{{server_url}}/specializations/{{person_specialization_id}}/reviews",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
 								"specializations",
-								"{{specialization_id}}",
+								"{{person_specialization_id}}",
 								"reviews"
 							]
 						},
@@ -4626,7 +4626,7 @@
 					},
 					"response": [
 						{
-							"name": "post_general_role_review",
+							"name": "post_specialization_review",
 							"originalRequest": {
 								"method": "POST",
 								"header": [
@@ -5159,10 +5159,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "be7c3d84-6ca2-4783-8932-8e82c5bdbf54",
+								"id": "caa7d4a8-1657-48e6-a366-c455f7faa298",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"review_id\", \"5b522dce2131371a30a5b10c\");"
+									"pm.environment.set(\"review_id\", \"5b82b76821313718b817264f\");"
 								]
 							}
 						}
@@ -5257,10 +5257,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "5ce08ca5-faf5-4ca1-a364-ad5a460d0d99",
+								"id": "b4e47a58-0384-4e4b-881b-45b8a2674139",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"review_id\", \"5b69ad7c2131371db8473673\");"
+									"pm.environment.set(\"review_id\", \"5b82b77321313718b8172650\");"
 								]
 							}
 						}
@@ -7932,7 +7932,7 @@
 	],
 	"variable": [
 		{
-			"id": "f691e23b-8e27-4a6b-abc6-59934a314ff2",
+			"id": "bebde7a0-25c4-484b-9d6b-8e91a27f76f4",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"

@@ -788,10 +788,8 @@ def get_person_info(id):
 @bp.route("/reviews/<string:id>", methods=['GET'])
 def get_review_info(id):
     try:
-        if SRReview(_id=id) in SRReview.objects.raw({"_id":ObjectId(id)}):
-            subject = SRReview(_id=id)
-        elif TRReview(_id=id) in TRReview.objects.raw({"_id": ObjectId(id)}):
-            subject = TRReview(_id=id)
+        if SpecializationReview(_id=id) in SpecializationReview.objects.raw({"_id":ObjectId(id)}):
+            subject = SpecializationReview(_id=id)
         elif HSReview(_id=id) in HSReview.objects.raw({"_id": ObjectId(id)}):
             subject = HSReview(_id=id)
         elif SSReview(_id=id) in SSReview.objects.raw({"_id": ObjectId(id)}):
@@ -824,10 +822,8 @@ def post_review(review_type, subject_id):
         value = req['value']
         description = req['description']
         obj = {
-            "Student":
-                SRReview(reviewer_id, subject_id, value, description),
-            "Tutor":
-                TRReview(reviewer_id, subject_id, value, description),
+            "SpecializationReview":
+                SpecializationReview(reviewer_id, subject_id, value, description),
             "Group":
                 GroupReview(reviewer_id, subject_id, value, description),
             "GroupTest":
@@ -836,10 +832,8 @@ def post_review(review_type, subject_id):
                 GroupMemberReview(reviewer_id, subject_id, value, description)
         }
         subj_class = {
-            "Student":
-                Student,
-            "Tutor":
-                Tutor,
+            "SpecializationReview":
+                PersonSpecialization,
             "Group":
                 Group,
             "GroupTest":
@@ -874,19 +868,7 @@ def post_review(review_type, subject_id):
 @bp.route("/specializations/<string:id>/reviews", methods = ['POST'])
 @required_auth("reviewer")
 def post_specialization_review(id):
-    try:
-        if Student.objects.raw({"_id":ObjectId(id)}).count():
-            review_type = "Student"
-        elif Tutor.objects.raw({"_id":ObjectId(id)}).count():
-            review_type = "Tutor"
-        else:
-            return jsonify({"result": ERR.NO_DATA}), 200
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        return jsonify({"result": ERR.DB}), 200
-
-    return post_review(review_type, id)
+    return post_review("SpecializationReview", id)
 
 
 @bp.route("/groups/<string:id>/reviews", methods = ['POST'])
@@ -975,11 +957,8 @@ def post_person_soft_skill_review(p_id, ss_id):
 def delete_review(id):
     try:
         result = {"result": ERR.NO_DATA}
-        if SRReview(_id=id) in SRReview.objects.raw({"_id":ObjectId(id)}):
-            SRReview(_id=id).delete()
-            result = {"result": ERR.OK}
-        if TRReview(_id=id) in TRReview.objects.raw({"_id":ObjectId(id)}):
-            TRReview(_id=id).delete()
+        if SpecializationReview(_id=id) in SpecializationReview.objects.raw({"_id":ObjectId(id)}):
+            SpecializationReview(_id=id).delete()
             result = {"result": ERR.OK}
         if HSReview(_id=id) in HSReview.objects.raw({"_id":ObjectId(id)}):
             HSReview(_id=id).delete()

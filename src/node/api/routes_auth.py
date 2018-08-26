@@ -294,10 +294,8 @@ def required_auth(required_permissions="admin"):
 
 
 def get_reviewer_id_by_review_id(_id):
-    if SRReview.objects.raw({"_id": ObjectId(_id)}).count():
-        return SRReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
-    if TRReview.objects.raw({"_id": ObjectId(_id)}).count():
-        return TRReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
+    if SpecializationReview.objects.raw({"_id": ObjectId(_id)}).count():
+        return SpecializationReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
     if HSReview.objects.raw({"_id": ObjectId(_id)}).count():
         return HSReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
     if SSReview.objects.raw({"_id": ObjectId(_id)}).count():
