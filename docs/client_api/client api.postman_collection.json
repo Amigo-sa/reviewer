@@ -5350,11 +5350,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "dec3249f-7fbc-4cd9-8f81-bda327a3ba1e",
+								"id": "0b17b63d-3462-4083-93e9-ae62ad2e9332",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"reviewer_id\", \"5b4ebab42131371208ceb0c9\");",
-									"pm.environment.set(\"subject_id\", \"5b4ebab62131371208ceb122\");"
+									"pm.environment.set(\"reviewer_id\", \"5b82c44a2131372220cbd694\");",
+									"pm.environment.set(\"subject_id\", \"5b82c44a2131372220cbd6de\");"
 								]
 							}
 						}
@@ -7906,6 +7906,449 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "surveys",
+			"item": [
+				{
+					"name": "add_survey",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "76d2a594-beb1-40d7-bec7-37b1d2e6a45b",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_id\", \"5b82cf50213137206cc1a485\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"description\": \"Лучшая раса в Старкрафт\",\n\t\"options\":{\n\t\t\"1\": \"Protoss\",\n\t\t\"2\": \"Zerg\",\n\t\t\"3\": \"Terran\"\n\t\t}\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/groups/{{group_id}}/surveys",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"groups",
+								"{{group_id}}",
+								"surveys"
+							]
+						},
+						"description": "Добавляет опрос"
+					},
+					"response": [
+						{
+							"name": "add_survey",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"description\": \"Лучшая раса в Старкрафт\",\n\t\"options\":{\n\t\t\"1\": \"Protoss\",\n\t\t\"2\": \"Zerg\",\n\t\t\"3\": \"Terran\"\n\t\t}\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/groups/5b82def02131371ae05baf36/surveys",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"groups",
+										"5b82def02131371ae05baf36",
+										"surveys"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 26 Aug 2018 17:10:08 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"id\":\"5b82def02131371ae05baf36\",\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "delete_survey",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "702f56ca-79fc-44a8-9074-34eef93342fc",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"survey_id\", \"5b82de162131371dfc720aed\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/surveys/{{survey_id}}",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"surveys",
+								"{{survey_id}}"
+							]
+						},
+						"description": "Удаляет опрос"
+					},
+					"response": [
+						{
+							"name": "delete_survey",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/surveys/5b82cf50213137206cc1a4a3",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"surveys",
+										"5b82cf50213137206cc1a4a3"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "13",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 26 Aug 2018 17:12:19 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "find_surveys",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "51ae57e3-b8ee-415e-aba9-1bed0bd5e9b1",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_id\", \"5b82cf50213137206cc1a485\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/surveys?group_id={{group_id}}",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"surveys"
+							],
+							"query": [
+								{
+									"key": "group_id",
+									"value": "{{group_id}}"
+								}
+							]
+						},
+						"description": "Выводит список опросов для заданной группы или для всех групп"
+					},
+					"response": [
+						{
+							"name": "find_surveys",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/surveys?",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"surveys"
+									],
+									"query": [
+										{
+											"key": "group_id",
+											"value": "{{group_id}}",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "914",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 26 Aug 2018 17:33:51 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"list\": [\n        {\n            \"group_id\": \"5b82cf50213137206cc1a486\",\n            \"id\": \"5b82cf50213137206cc1a4a3\",\n            \"options\": {\n                \"1\": \"в корпусе В\",\n                \"2\": \"в корпусе М\",\n                \"3\": \"в корпусе К\"\n            },\n            \"results\": {\n                \"1\": 1,\n                \"2\": 3,\n                \"3\": 2\n            }\n        },\n        {\n            \"group_id\": \"5b82cf50213137206cc1a485\",\n            \"id\": \"5b82def02131371ae05baf36\",\n            \"options\": {\n                \"1\": \"Protoss\",\n                \"2\": \"Zerg\",\n                \"3\": \"Terran\"\n            },\n            \"results\": {\n                \"1\": 0,\n                \"2\": 0,\n                \"3\": 0\n            }\n        }\n    ],\n    \"result\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "participate_survey",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "4431df41-225e-469f-94a0-6eb9844bd4ce",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"survey_id\", \"5b82def02131371ae05baf36\");",
+									"pm.environment.set(\"person_id\", \"5b82cf50213137206cc1a426\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"person_id\": \"{{person_id}}\",\n\t\"chosen_option\": \"3\"\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/surveys/{{survey_id}}",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"surveys",
+								"{{survey_id}}"
+							]
+						},
+						"description": "Передать результат опроса для конкретного пользователя"
+					},
+					"response": [
+						{
+							"name": "participate_survey",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"person_id\": \"5b82cf50213137206cc1a486\",\n\t\"chosen_option\": \"3\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/surveys/5b82cf50213137206cc1a486",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"surveys",
+										"5b82cf50213137206cc1a486"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "220",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 26 Aug 2018 18:25:02 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"result\": 0\n}"
+						}
+					]
+				}
+			],
+			"description": "Функции для работы с опросами"
 		}
 	],
 	"event": [
@@ -7932,7 +8375,7 @@
 	],
 	"variable": [
 		{
-			"id": "bebde7a0-25c4-484b-9d6b-8e91a27f76f4",
+			"id": "6a2a4072-5ed0-4e91-a902-0e2e46c887ba",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"

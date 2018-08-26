@@ -270,7 +270,10 @@ def required_auth(required_permissions="admin"):
                 if required_permissions == "admin":
                     return jsonify({"result": ERR.AUTH}), 200
                 if required_permissions == "user" and auth_info.person_id:
-                    person_id = kwargs["id"]
+                    if "person_id" in kwargs:
+                        person_id = kwargs["person_id"]
+                    else:
+                        person_id = request.get_json()["person_id"]
                     if person_id == str(auth_info.person_id.pk):
                         return f(*args, **kwargs)
                 if required_permissions == "group_member" and auth_info.person_id:
