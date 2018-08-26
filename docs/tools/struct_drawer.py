@@ -60,6 +60,9 @@ for doc_class in doc_class_list:
             if "fields.BooleanField" in str(cls):
                 field = name + ": bool"
                 fields[cur_class].append(field)
+            if "fields.TimestampField" in str(cls):
+                field = name + ": timestamp"
+                fields[cur_class].append(field)
 
 ignore_list = [
     "Service",
@@ -89,7 +92,7 @@ dot.engine="dot"
 dot.format="svg"
 dot.render('../db_model/drawer_output/schema', view=False)
 dot.format="png"
-dot.render('../db_model/drawer_output/schema', view=False)
+#dot.render('../db_model/drawer_output/schema', view=False)
 #for eng in ENGINES:
 #    dot.engine=eng
 #    dot.render('test-output/schema_'+eng, view=True)

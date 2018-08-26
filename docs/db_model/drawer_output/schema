@@ -6,6 +6,7 @@ digraph {
 attempts: int
 auth_code: char
 is_approved: bool
+last_send_time: timestamp
 password: char
 permissions: int
 phone_no: char
