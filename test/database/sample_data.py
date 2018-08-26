@@ -33,7 +33,6 @@ from data.reviewer_model import (Department,
                                  TestResult,
                                  AuthInfo,
                                  SurveyResponse,
-                                 SurveyResult,
                                  get_dependent_list,
                                  init_model)
 
@@ -713,8 +712,8 @@ def fill_db():
             else:
                 survey_dict.update({option: survey_dict[option] + 1})
         if survey_dict:
-            survey_result = SurveyResult(item.pk, survey_dict)
-            survey_result.save()
+            item.survey_result = survey_dict
+            item.save()
 
     for key, item in auth_users.items():
         item.save()
@@ -886,13 +885,16 @@ def display_data():
         ))
 
     print("----Survey Results:")
-    for item in SurveyResult.objects.all():
-        print("Результаты опроса " + item.survey_id.description)
-        for key, value in item.survey_data.items():
-            print("{0}: {1} ответов".format(
-                item.survey_id.survey_options[key],
-                value
-            ))
+    for item in Survey.objects.all():
+        print("Результаты опроса " + item.description)
+        if item.survey_result:
+            for key, value in item.survey_result.items():
+                print("{0}: {1} ответов".format(
+                    item.survey_options[key],
+                    value
+                ))
+        else:
+            print("Опрос не завершён")
 
 if __name__ == "__main__":
     db_name = constants.db_name

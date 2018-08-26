@@ -420,6 +420,7 @@ class Survey(MongoModel):
     group_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE)
     description = fields.CharField()
     survey_options = fields.DictField(required=True)
+    survey_result = fields.DictField(default=None)
 
     class Meta:
         write_concern = WriteConcern(j=True)
@@ -440,21 +441,10 @@ class SurveyResponse(MongoModel):
                                ("person_id", pymongo.DESCENDING)],
                               unique=True)]
 
-class SurveyResult(MongoModel):
-    survey_id = ValidatedReferenceField(Survey, on_delete=ReferenceField.CASCADE)
-    survey_data = fields.DictField()
-
-    class Meta:
-        write_concern = WriteConcern(j=True)
-        connection_alias = "reviewer"
-        final = True
-        indexes = [IndexModel([("survey_id", pymongo.DESCENDING)],
-                              unique=True)]
-
-
 class AuthInfo(MongoModel):
     phone_no = fields.CharField()
     auth_code = fields.CharField(blank=True)
+    #TODO заменить на DateField
     last_send_time = fields.TimestampField()
     attempts = fields.IntegerField(default=0)
     is_approved = fields.BooleanField(default=False)

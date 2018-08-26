@@ -89,12 +89,10 @@ value: float
 	Survey [label="Survey
 description: char
 survey_options: dict
+survey_result: dict
 "]
 	SurveyResponse [label="SurveyResponse
 chosen_option: char
-"]
-	SurveyResult [label="SurveyResult
-survey_data: dict
 "]
 	TestResult [label="TestResult
 result_data: list
@@ -130,7 +128,6 @@ result_data: list
 	Survey -> Group
 	SurveyResponse -> Person
 	SurveyResponse -> Survey
-	SurveyResult -> Survey
 	TestResult -> Person
 	TestResult -> GroupTest
 }
