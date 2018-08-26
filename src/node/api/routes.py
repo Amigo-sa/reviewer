@@ -996,9 +996,7 @@ def find_reviews():
             subject_id = request.args['subject_id']
             query.update({"subject_id": ObjectId(subject_id)})
         if err == ERR.OK:
-            for review in SRReview.objects.raw(query):
-                lst.append({"id": str(review.pk)})
-            for review in TRReview.objects.raw(query):
+            for review in SpecializationReview.objects.raw(query):
                 lst.append({"id": str(review.pk)})
             for review in HSReview.objects.raw(query):
                 lst.append({"id": str(review.pk)})
@@ -1016,8 +1014,8 @@ def find_reviews():
     except KeyError:
         result = {"result": ERR.INPUT}
     except Exception as ex:
-        print(ex)
-        result = {"result": ERR.DB}
+        result = {"result": ERR.DB,
+                  "error_message": str(ex)}
     return jsonify(result), 200
 
 
