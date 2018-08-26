@@ -664,26 +664,15 @@ def find_persons():
     else:
         skip = 0
     pipeline = ({"$lookup":
-                     {"from": "tutor",
+                     {"from": "person_specialization",
                       "localField": "_id",
                       "foreignField": "person_id",
-                      "as": "tutor"}},
-                {"$lookup":
-                     {"from": "student",
-                      "localField": "_id",
-                      "foreignField": "person_id",
-                      "as": "student"}})
+                      "as": "person_specialization"}},)
     err = ERR.OK
+    filt_spec_type = None
     if "specialization" in request.args:
-        if request.args["specialization"] == "tutor":
-            pipeline += ({"$match":
-                              {"tutor._id": {"$exists": True}}},
-                         )
-        elif request.args["specialization"] == "student":
-            pipeline += ({"$match":
-                              {"student._id": {"$exists": True}}},
-                         )
-        else:
+        filt_spec_type = request.args["specialization"]
+        if not Specialization.objects.raw({"type": filt_spec_type}).count():
             return jsonify({"result": ERR.INPUT}), 200
 
     if 'group_id' in request.args:
@@ -703,9 +692,8 @@ def find_persons():
         department_id = request.args['department_id']
         if Department.objects.raw({"_id": ObjectId(department_id)}).count():
             pipeline += ({"$match":
-                                {"$or": [{"tutor.department_id": ObjectId(department_id)},
-                                        {"student.department_id": ObjectId(department_id)}]}},
-            )
+                              {"person_specialization.department_id": ObjectId(department_id)}},
+                        )
         else:
             err = ERR.NO_DATA
     elif 'organization_id' in request.args:
@@ -715,8 +703,7 @@ def find_persons():
             for department in Department.objects.raw({"organization_id": ObjectId(organization_id)}):
                 departments.append(department.pk)
             pipeline += ({"$match":
-                                {"$or": [{"tutor.department_id": {"$in" : departments}},
-                                        {"student.department_id": {"$in" : departments}}]}},
+                              {"person_specialization.department_id": {"$in": departments}}},
                         )
         else:
             err = ERR.NO_DATA
@@ -745,16 +732,15 @@ def find_persons():
     try:
         list = []
         for person in Person.objects.aggregate(*pipeline):
-            if person["tutor"]:
-                department_id = person["tutor"][0]["department_id"]
-                specialization = "Tutor"
+            if person["person_specialization"]:
+                department_id = person["person_specialization"][0]["department_id"]
+                spec_id = person["person_specialization"][0]["specialization_id"]
+                specialization = Specialization(_id=spec_id)
+                specialization.refresh_from_db()
+                specialization = specialization.type
             else:
-                if person["student"]:
-                    department_id = person["student"][0]["department_id"]
-                    specialization = "Student"
-                else:
-                    specialization = "None"
-                    department_id = None
+                department_id = None
+                specialization = None
             if department_id:
                 department = Department(_id=department_id)
                 department.refresh_from_db()
@@ -763,12 +749,13 @@ def find_persons():
                 org_name = organization.name
             else:
                 org_name = "None"
-            list.append({"id": str(person["_id"]),
-                         "first_name": person["first_name"],
-                         "middle_name": person["middle_name"],
-                         "surname": person["surname"],
-                         "specialization": specialization,
-                         "organization_name": org_name})
+            if not filt_spec_type or filt_spec_type == specialization:
+                list.append({"id": str(person["_id"]),
+                             "first_name": person["first_name"],
+                             "middle_name": person["middle_name"],
+                             "surname": person["surname"],
+                             "specialization": specialization,
+                             "organization_name": org_name})
         result = {"result": ERR.OK, "list": list}
     except Exception as ex:
         print(ex)

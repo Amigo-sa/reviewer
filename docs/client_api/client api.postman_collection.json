@@ -5562,12 +5562,12 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "8a218e5a-2b3d-40d8-a2b1-37ccc693670b",
+								"id": "a4761cbf-841a-4727-80c2-f7bd99733d56",
 								"type": "text/javascript",
 								"exec": [
 									"pm.environment.set(\"group_id\", \"5b7c5e9f2131371aa8e1c6a9\");",
-									"pm.environment.set(\"department_id\", \"5b547bee21313717b8ddd06f\");",
-									"pm.environment.set(\"organization_id\", \"5b7c5e9e2131371aa8e1c654\");"
+									"pm.environment.set(\"department_id\", \"5b82943a21313712e8ee61af\");",
+									"pm.environment.set(\"organization_id\", \"5b82943a21313712e8ee61ae\");"
 								]
 							}
 						}
@@ -5580,7 +5580,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{server_url}}/persons?surname=Шат&first_name=ле&middle_name=МИ&specialization=student&group_id={{group_id}}&department_id={{department_id}}&organization_id={{organization_id}}&query_limit=10&query_start=0",
+							"raw": "{{server_url}}/persons?surname=Шат&first_name=ле&middle_name=МИ&specialization=Student&group_id={{group_id}}&department_id={{department_id}}&organization_id={{organization_id}}&query_limit=10&query_start=0",
 							"host": [
 								"{{server_url}}"
 							],
@@ -5602,7 +5602,7 @@
 								},
 								{
 									"key": "specialization",
-									"value": "student"
+									"value": "Student"
 								},
 								{
 									"key": "group_id",
@@ -5719,7 +5719,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/persons?first_name=ле&specialization=student&organization_id=5b54c4a72131371cb0cbdda0&query_limit=10&query_start=0",
+									"raw": "http://127.0.0.1:5000/persons?first_name=ле&specialization=Student&organization_id=5b54c4a72131371cb0cbdda0&query_limit=10&query_start=0",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -5748,7 +5748,7 @@
 										},
 										{
 											"key": "specialization",
-											"value": "student"
+											"value": "Student"
 										},
 										{
 											"key": "group_id",
@@ -7932,7 +7932,7 @@
 	],
 	"variable": [
 		{
-			"id": "5fedaa52-c1dd-4ec5-890a-00cc63797ffd",
+			"id": "f691e23b-8e27-4a6b-abc6-59934a314ff2",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"
