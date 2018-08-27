@@ -843,7 +843,6 @@ class TestApi(unittest.TestCase):
                                  person_id = p_id,
                                  result_data = "string")
 
-    @unittest.skip("Not implemented yet")
     def test_reviews_duplicate(self):
         person_id = self.prepare_persons(1)[0]
         facility_ids = self.prepare_group()
@@ -853,25 +852,16 @@ class TestApi(unittest.TestCase):
         hs_id = self.prepare_hs()[0]
         ss_id = self.prepare_ss()[0]
         print(person_id, org_id, dep_id, group_id, hs_id, ss_id)
-        student = {
-            "person_id": person_id,
-            "department_id": dep_id,
-            "type": "Student",
-            "description": "sample_description"
-        }
-        student.update({"id": self.post_item("/specializations", student)})
-        tutor = {
-            "person_id": person_id,
-            "department_id": dep_id,
-            "type": "Tutor",
-            "description": "sample_description"
-        }
-        tutor.update({"id": self.post_item("/specializations", tutor)})
+        spec_id = self.post_item("/specializations",
+                                 {"type": "Tutor",
+                                  "detail": "TOE"})
+        p_spec_id = self.post_item("/persons/%s/specializations" % person_id,
+                                   {"department_id": dep_id,
+                                    "specialization_id": spec_id})
         gm_id = self.post_item("/groups/%s/group_members" % group_id, {"person_id": person_id})
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name": "sample_test_name",
                                                                    "info": "sample_test_info"})
-        subject_urls = {"Student": "/specializations/%s/reviews" % (student["id"]),
-                        "Tutor": "/specializations/%s/reviews" % (tutor["id"]),
+        subject_urls = {"Specialization": "/specializations/%s/reviews" % (p_spec_id),
                         "PersonHS": "/persons/%s/hard_skills/%s/reviews" % (person_id, hs_id),
                         "PersonSS": "/persons/%s/soft_skills/%s/reviews" % (person_id, ss_id),
                         "Group": "/groups/%s/reviews" % group_id,
