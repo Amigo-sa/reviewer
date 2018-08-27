@@ -669,10 +669,28 @@ def find_persons():
                       "foreignField": "person_id",
                       "as": "person_specialization"}},)
     err = ERR.OK
-    filt_spec_type = None
     if "specialization" in request.args:
-        filt_spec_type = request.args["specialization"]
-        if not Specialization.objects.raw({"type": filt_spec_type}).count():
+        spec_type = request.args["specialization"]
+        if Specialization.objects.raw({"type": spec_type}).count():
+            specializations = []
+            for specialization in Specialization.objects.raw({"type": spec_type}):
+                specializations.append(specialization.pk)
+            pipeline += ({"$match":
+                              {"person_specialization.specialization_id": {"$in": specializations}}},
+                         {"$project":
+                              {"first_name": 1,
+                               "middle_name": 1,
+                               "surname": 1,
+                                  "person_specialization":
+                                   {"$filter": {"input": "$person_specialization",
+                                                "as": "spec",
+                                                "cond": {"$in": ["$$spec.specialization_id",specializations]}
+                                                }
+                                    }
+                               }
+                          }
+                         )
+        else:
             return jsonify({"result": ERR.INPUT}), 200
 
     if 'group_id' in request.args:
@@ -749,13 +767,13 @@ def find_persons():
                 org_name = organization.name
             else:
                 org_name = "None"
-            if not filt_spec_type or filt_spec_type == specialization:
-                list.append({"id": str(person["_id"]),
-                             "first_name": person["first_name"],
-                             "middle_name": person["middle_name"],
-                             "surname": person["surname"],
-                             "specialization": specialization,
-                             "organization_name": org_name})
+            list.append({"id": str(person["_id"]),
+                         "first_name": person["first_name"],
+                         "middle_name": person["middle_name"],
+                         "surname": person["surname"],
+                         "specialization": specialization,
+                         "organization_name": org_name})
+
         result = {"result": ERR.OK, "list": list}
     except Exception as ex:
         print(ex)
