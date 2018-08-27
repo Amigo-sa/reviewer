@@ -153,14 +153,15 @@ class TestAuth(unittest.TestCase):
             "/persons/%s" % self.other_person_id,
             "/group_members/%s" % self.group_member_id,
             "/group_members/%s/permissions/%s" % (self.group_member_id, self.group_perm_id),
-            "/specializations/%s" % self.tutor_id,
-            "/specializations/%s" % self.student_id,
+            "/specializations/%s" % self.spec_id,
+            "/persons/specializations/%s" % self.user_spec_id,
             "/soft_skills/%s" % self.soft_skill_id,
             "/hard_skills/%s" % self.hard_skill_id,
             # TODO group_tests не охвачены
         ]
         self.admin_only_patch = [
-            "/group_members/%s" % self.group_member_id
+            "/group_members/%s" % self.group_member_id,
+            "/persons/specializations/%s" % self.user_spec_id
         ]
         self.admin_only_get = [
             "/persons/%s" % self.other_person_id,
@@ -179,8 +180,7 @@ class TestAuth(unittest.TestCase):
             "/group_members/%s" % self.group_member_id
         ]
         self.review_valid_post = [
-            "/specializations/%s/reviews" % self.other_tutor_id,
-            "/specializations/%s/reviews" % self.other_student_id,
+            "/specializations/%s/reviews" % self.other_spec_id,
             "/groups/%s/reviews" % self.group_id,
             # TODO group_test_reviews
             "/group_members/%s/reviews" % self.other_group_member_id,
@@ -189,8 +189,7 @@ class TestAuth(unittest.TestCase):
         ]
         # отзывы на свои качества и роли
         self.review_invalid_post = [
-            "/specializations/%s/reviews" % self.tutor_id,
-            "/specializations/%s/reviews" % self.student_id,
+            "/specializations/%s/reviews" % self.user_spec_id,
             "/group_members/%s/reviews" % self.group_member_id,
             "/persons/%s/hard_skills/%s/reviews" % (self.user_person_id, self.hard_skill_id),
             "/persons/%s/soft_skills/%s/reviews" % (self.user_person_id, self.soft_skill_id)
@@ -205,8 +204,7 @@ class TestAuth(unittest.TestCase):
             "/group_permissions",
             "/groups/%s/group_members" % self.group_id,
             "/persons/%s/group_members" % self.user_person_id,
-            "/specializations/%s" % self.tutor_id,
-            "/specializations/%s" % self.student_id,
+            "/specializations",
             "/persons/%s/specializations" % self.user_person_id,
             "/persons",
             "/reviews",
@@ -245,17 +243,13 @@ class TestAuth(unittest.TestCase):
                                        {"person_id": self.user_person_id,
                                         "role_id": self.group_role_id})
 
-        self.tutor_id = hm.post_item(self, self.api_URL + "/specializations",
-                                          {"person_id": self.user_person_id,
-                                           "department_id": self.dep_id,
-                                           "type" : "Tutor",
-                                           "description" : "string"})
-        self.student_id = hm.post_item(self, self.api_URL + "/specializations",
-                                                  {"person_id": self.user_person_id,
-                                                   "department_id": self.dep_id,
-                                                   "type": "Student",
-                                                   "description": "string"})
-
+        self.spec_id = hm.post_item(self, self.api_URL + "/specializations",
+                                    {"type" : "Tutor",
+                                     "detail" : "TOE"})
+        self.user_spec_id = hm.post_item(self, self.api_URL + "/persons/%s/specializations" % self.user_person_id,
+                                          {"department_id": self.dep_id,
+                                            "specialization_id": self.spec_id
+                                           })
 
         self.soft_skill_id = hm.post_item(self, self.api_URL + "/soft_skills",
                                           {"name" : "string"})
@@ -268,20 +262,15 @@ class TestAuth(unittest.TestCase):
         self.other_user_session_id = auth_user["session_id"]
         self.other_user_header = {"Authorization":
                                 "Bearer " + self.other_user_session_id}
+        self.other_spec_id = hm.post_item(self, self.api_URL + "/persons/%s/specializations" % self.other_person_id,
+                                         {"department_id": self.dep_id,
+                                          "specialization_id": self.spec_id
+                                          })
 
         self.other_group_member_id = hm.post_item(self, self.api_URL + "/groups/%s/group_members" % self.group_id,
                                                   {"person_id": self.other_person_id,
                                                    "role_id": self.group_role_id})
-        self.other_tutor_id = hm.post_item(self, self.api_URL + "/specializations",
-                                                {"person_id": self.other_person_id,
-                                                 "department_id": self.dep_id,
-                                                 "type": "Tutor",
-                                                 "description": "string"})
-        self.other_student_id = hm.post_item(self, self.api_URL + "/specializations",
-                                          {"person_id": self.other_person_id,
-                                           "department_id": self.dep_id,
-                                           "type": "Student",
-                                           "description": "string"})
+
         self.third_person_id = hm.post_item(self, self.api_URL + "/persons",
                                             dict(first_name="Гендальф",
                                                  middle_name="Батькович",
@@ -358,7 +347,6 @@ class TestAuth(unittest.TestCase):
             self.assertEqual(ERR.AUTH, resp_json["result"],
                                 "%s must return ERR.AUTH for user %s" % (url, self.user_person_id))
 
-    @unittest.skip("Not implemented yet")
     def test_review_delete_normal(self):
         self.prepare_docs()
         self.prepare_lists()
@@ -378,7 +366,6 @@ class TestAuth(unittest.TestCase):
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                                 "DELETE %s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
-    @unittest.skip("Not implemented yet")
     def test_review_delete_unauth(self):
         self.prepare_docs()
         self.prepare_lists()
@@ -398,7 +385,6 @@ class TestAuth(unittest.TestCase):
             self.assertEqual(ERR.AUTH, resp_json["result"],
                                 "DELETE %s must return ERR.AUTH for user %s" % (url, self.user_person_id))
 
-    @unittest.skip("Not implemented yet")
     def test_get_unauth(self):
         self.prepare_docs()
         self.prepare_lists()
@@ -421,7 +407,6 @@ class TestAuth(unittest.TestCase):
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                                 "get %s must not return ERR.AUTH without session" % url)
 
-    @unittest.skip("Not implemented yet")
     def test_review_post_on_self(self):
         self.prepare_docs()
         self.prepare_lists()
