@@ -805,27 +805,16 @@ class TestApi(unittest.TestCase):
                              "/departments/" + aux_item_ids["dep_id"] + "/groups",
                              name="string")
 
-    @unittest.skip("Not implemented yet")
-    def test_tutor_duplicate(self):
+    def test_specialization_duplicate(self):
         p_id = self.prepare_persons(1)[0]
         d_id = self.prepare_department()["dep_id"]
-        self.post_duplicate_item("/specializations",
+        spec_id = self.post_item("/specializations",
+                                 {"type": "Tutor",
+                                  "detail": "TOE"})
+        self.post_duplicate_item("/persons/%s/specializations"%p_id,
                                  "/persons/%s/specializations"%p_id,
-                                 person_id = p_id,
-                                 department_id = d_id,
-                                 type = "Tutor",
-                                 description = "string")
-
-    @unittest.skip("Not implemented yet")
-    def test_student_duplicate(self):
-        p_id = self.prepare_persons(1)[0]
-        d_id = self.prepare_department()["dep_id"]
-        self.post_duplicate_item("/specializations",
-                                 "/persons/%s/specializations"%p_id,
-                                 person_id = p_id,
-                                 department_id = d_id,
-                                 type = "Student",
-                                 description = "string")
+                                 specialization_id = spec_id,
+                                 department_id = d_id)
 
     def test_group_member_duplicate(self):
         p_id = self.prepare_persons(1)[0]
