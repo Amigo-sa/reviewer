@@ -125,7 +125,7 @@ class TestAuth(unittest.TestCase):
         cur_session.received_code = None
         self.admin_header = {"Authorization":
                                  "Bearer " + hm.prepare_first_admin()}
-
+    # TODO Surveys!
     def prepare_lists(self):
         # admin only routes
         self.admin_only_post = [

@@ -1378,7 +1378,8 @@ def participate_survey(id):
                 survey.survey_result[chosen_option] += 1
                 survey_response.save()
                 survey.save()
-                result = {"result": ERR.OK}
+                result = {"result": ERR.OK,
+                          "id" : str(survey_response.pk)}
             else:
                 result = {"result": ERR.AUTH}
         else:

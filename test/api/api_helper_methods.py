@@ -38,10 +38,15 @@ def prepare_org_structure():
     spec_1.save()
     spec_2 = model.Specialization("Student")
     spec_2.save()
-    group_1 = model.Group(dep_1.pk, "A-4-03")
+    group_role_1 = model.GroupRole("role_1")
+    group_role_1.save()
+    group_role_2 = model.GroupRole("role_2")
+    group_role_2.save()
+    group_1 = model.Group(dep_1.pk, "A-4-03", [group_role_1])
     group_1.save()
-    group_2 = model.Group(dep_2.pk, "A-4-04")
+    group_2 = model.Group(dep_2.pk, "A-4-04" , [group_role_2])
     group_2.save()
+
     structure_dict = {
         "org_1" : {
             "name" : org_1.name,
@@ -92,6 +97,14 @@ def prepare_org_structure():
         "group_2": {
             "name": group_2.name,
             "id": str(group_2.pk),
+        },
+        "group_role_1": {
+            "name": group_role_1.name,
+            "id": str(group_role_1.pk),
+        },
+        "group_role_2": {
+            "name": group_role_2.name,
+            "id": str(group_role_2.pk),
         },
     }
     return structure_dict

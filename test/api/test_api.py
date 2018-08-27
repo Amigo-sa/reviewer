@@ -1052,6 +1052,97 @@ class TestApi(unittest.TestCase):
         with self.assertRaises(DoesNotExist):
             survey.refresh_from_db()
 
+    def test_get_survey(self):
+        struct = hm.prepare_org_structure()
+        survey = model.Survey()
+        survey.group_id = struct["group_1"]["id"]
+        survey.description = "some descr"
+        survey.survey_options = {"1": "opt1",
+                                 "2": "opt2"}
+        survey.survey_result = {"1": 6,
+                                "2": 4}
+        survey.save()
+        survey_2 = model.Survey()
+        survey_2.group_id = struct["group_2"]["id"]
+        survey_2.description = "some descr2"
+        survey_2.survey_options = {"3": "opt3",
+                                 "5": "opt5"}
+        survey_2.survey_result = {"3": 2,
+                                "5": 3}
+        survey_2.save()
+        survey_ref_data = {
+            "group_id" : struct["group_1"]["id"],
+            "id": str(survey.pk),
+            "options" : {"1": "opt1",
+                                 "2": "opt2"},
+            "results" : {"1" : 6, "2" : 4}}
+        survey_2_ref_data = {
+            "group_id": struct["group_2"]["id"],
+            "id": str(survey_2.pk),
+            "options": {"3": "opt3",
+                        "5": "opt5"},
+            "results": {"3": 2, "5": 3}}
+        survey_list = self.get_item_list("/surveys")
+        self.assertEqual(2, len(survey_list))
+        self.assertIn(survey_ref_data, survey_list, "must return correct survey data")
+        self.assertIn(survey_2_ref_data, survey_list, "must return correct survey data")
+        survey_list = self.get_item_list("/surveys?group_id=%s" % struct["group_2"]["id"])
+        self.assertEqual(1, len(survey_list))
+        self.assertIn(survey_2_ref_data, survey_list, "must return correct survey data")
+        self.assertNotIn(survey_ref_data, survey_list, "must return correct survey data")
+
+    def test_post_survey_responce(self):
+        struct = hm.prepare_org_structure()
+        survey = model.Survey()
+        survey.group_id = struct["group_1"]["id"]
+        survey.description = "some descr"
+        survey.survey_options = {"1": "opt1",
+                                 "2": "opt2"}
+        survey.survey_result = {"1": 6,
+                                "2": 4}
+        survey.save()
+        group_member = model.GroupMember()
+        group_member.group_id = struct["group_1"]["id"]
+        group_member.person_id = struct["person_1"]["id"]
+        group_member.role_id = struct["group_role_1"]["id"]
+        group_member.save()
+        post_data = {"person_id" : struct["person_1"]["id"],
+                     "chosen_option" : "1"}
+        response_id = self.post_item("/surveys/%s" % survey.pk, post_data)
+        response = model.SurveyResponse(_id = response_id)
+        response.refresh_from_db()
+        survey.refresh_from_db()
+        self.assertEqual(struct["person_1"]["id"], str(response.person_id.pk))
+        self.assertEqual("1", str(response.chosen_option))
+        self.assertEqual(7, survey.survey_result["1"], "must update survey result")
+
+    def test_post_survey_invalid_responce(self):
+        struct = hm.prepare_org_structure()
+        survey = model.Survey()
+        survey.group_id = struct["group_1"]["id"]
+        survey.description = "some descr"
+        survey.survey_options = {"1": "opt1",
+                                 "2": "opt2"}
+        survey.survey_result = {"1": 6,
+                                "2": 4}
+        survey.save()
+        group_member = model.GroupMember()
+        group_member.group_id = struct["group_1"]["id"]
+        group_member.person_id = struct["person_1"]["id"]
+        group_member.role_id = struct["group_role_1"]["id"]
+        group_member.save()
+        post_data = {"person_id" : struct["person_2"]["id"],
+                     "chosen_option" : "1"}
+        resp = hm.try_post_item(self, self.api_URL + "/surveys/%s" % survey.pk,
+                                post_data, self.admin_header)
+        self.assertEqual(ERR.AUTH, resp["result"])
+        post_data = {"person_id": struct["person_1"]["id"],
+                     "chosen_option": "9"}
+        resp = hm.try_post_item(self, self.api_URL + "/surveys/%s" % survey.pk,
+                                post_data, self.admin_header)
+        self.assertEqual(ERR.INPUT, resp["result"])
+
+
     def pass_invalid_ref(self, url_post, auth = "admin", **kwargs):
         data = self.generate_doc(kwargs.items())
         if auth == "reviewer":
