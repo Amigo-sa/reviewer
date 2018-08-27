@@ -663,7 +663,6 @@ class TestApi(unittest.TestCase):
         resp_json = requests.get(self.api_URL+"/group_members/" + gm_id, headers = self.admin_header).json()
         self.assertEqual(ERR.NO_DATA, resp_json["result"])
 
-    @unittest.skip("Not implemented yet")
     def test_reviews_normal(self):
         person_id = self.prepare_persons(1)[0]
         facility_ids = self.prepare_group()
@@ -672,33 +671,22 @@ class TestApi(unittest.TestCase):
         group_id = facility_ids["group_id"]
         hs_id = self.prepare_hs()[0]
         ss_id = self.prepare_ss()[0]
-        print(person_id, org_id, dep_id, group_id, hs_id, ss_id)
-        student = {
-            "person_id": person_id,
-            "department_id": dep_id,
-            "type": "Student",
-            "description": "sample_description"
-        }
-        student.update({"id": self.post_item("/specializations", student)})
-        tutor_spec = {
-            "person_id": person_id,
-            "department_id": dep_id,
-            "type": "Tutor",
-            "description": "sample_description"
-        }
-        tutor_spec.update({"id": self.post_item("/specializations", tutor_spec)})
+        spec_id = self.post_item("/specializations",
+                                 {"type": "Tutor",
+                                  "detail": "TOE"})
+        p_spec_id = self.post_item("/persons/%s/specializations" % person_id,
+                                   {"department_id": dep_id,
+                                    "specialization_id": spec_id})
         gm_id = self.post_item("/groups/%s/group_members" % group_id, {"person_id": person_id})
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name" : "sample_test_name",
                                                                     "info" : "sample_test_info"})
-        subject_urls = { "Student": "/specializations/%s/reviews" %(student["id"]),
-                     "Tutor": "/specializations/%s/reviews"%(tutor_spec["id"]),
+        subject_urls = { "Specialization": "/specializations/%s/reviews" %(p_spec_id),
                      "PersonHS": "/persons/%s/hard_skills/%s/reviews" %(person_id, hs_id),
                      "PersonSS": "/persons/%s/soft_skills/%s/reviews" % (person_id, ss_id),
                      "Group" : "/groups/%s/reviews"%group_id,
                      "GroupTest" : "/tests/%s/reviews"%g_test_id,
                      "GroupMember": "/group_members/%s/reviews"%gm_id}
-        subj_ids = { "Student": student["id"],
-                     "Tutor": tutor_spec["id"],
+        subj_ids = { "Specialization": p_spec_id,
                      "PersonHS": None,
                      "PersonSS": None,
                      "Group" : group_id,
@@ -733,6 +721,7 @@ class TestApi(unittest.TestCase):
         self.assertDictListEqual([], review_list)
         # verify with subject_id
         for subj_type, rev_id in rev_ids.items():
+            print(subj_ids[subj_type])
             review_list = self.get_item_list("/reviews?subject_id=" + subj_ids[subj_type])
             self.assertEqual([{"id" : rev_id}], review_list)
         # get review info
@@ -744,21 +733,21 @@ class TestApi(unittest.TestCase):
                         "description": "sample_descr"}
             self.assertDictEqual(ref_data, review_data)
         # verify with review from person2
-        review_data = {"type": "Student",
+        review_data = {
                        "reviewer_id": self.reviewer_id2,
-                       "subject_id": student["id"],
+                       "subject_id": p_spec_id,
                        "value": "80.0",
                        "description": "sample_descr2"}
-        rev2_id = self.post_item("/specializations/%s/reviews" %(student["id"]),
+        rev2_id = self.post_item("/specializations/%s/reviews" %(p_spec_id),
                                  review_data,
                                  auth="reviewer2")
-        review_list = self.get_item_list("/reviews?subject_id=" + student["id"])
-        self.assertEqual([{"id": rev_ids["Student"]}, {"id": rev2_id}], review_list)
+        review_list = self.get_item_list("/reviews?subject_id=" + p_spec_id)
+        self.assertEqual([{"id": rev_ids["Specialization"]}, {"id": rev2_id}], review_list)
         # delete review
-        self.delete_item("/reviews/" + rev_ids["Student"], auth="reviewer")
-        rev_ids.pop("Student")
+        self.delete_item("/reviews/" + rev_ids["Specialization"], auth="reviewer")
+        rev_ids.pop("Specialization")
         # verify
-        review_list = self.get_item_list("/reviews?subject_id=" + student["id"])
+        review_list = self.get_item_list("/reviews?subject_id=" + p_spec_id)
         self.assertEqual([{"id": rev2_id}], review_list)
         # delete all reviews
         self.delete_item("/reviews/" + rev2_id, auth="reviewer2")
