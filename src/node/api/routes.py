@@ -640,7 +640,7 @@ def set_person_specialization_additions(_id):
         if PersonSpecialization(_id=_id) in PersonSpecialization.objects.raw({"_id": ObjectId(_id)}):
             p_spec = PersonSpecialization(_id=_id)
             p_spec.refresh_from_db()
-            if is_active: p_spec.is_active = is_active
+            if is_active is not None: p_spec.is_active = is_active
             if details: p_spec.details = details
             p_spec.save()
             result = {"result": ERR.OK}

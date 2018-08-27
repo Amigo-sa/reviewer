@@ -510,6 +510,31 @@ class TestApi(unittest.TestCase):
                       person_1_spec_list,
                       "p_spec info must present")
 
+    def test_patch_person_specialization(self):
+        struct = hm.prepare_org_structure()
+        p_spec_1 = model.PersonSpecialization(
+            ObjectId(struct["person_1"]["id"]),
+            ObjectId(struct["dep_1"]["id"]),
+            ObjectId(struct["spec_1"]["id"]),
+            50.0,
+            {"detail": "text"},
+            True
+        )
+        p_spec_1.save()
+        # test status change
+        self.patch_item("/persons/specializations/%s?is_active=false" % p_spec_1.pk)
+        p_spec_1.refresh_from_db()
+        self.assertFalse(p_spec_1.is_active, "is_active must be set")
+        self.patch_item("/persons/specializations/%s?is_active=true" % p_spec_1.pk)
+        p_spec_1.refresh_from_db()
+        self.assertTrue(p_spec_1.is_active, "is_active must be set")
+        # test set details
+        patch_data = {"detail 2" : "text 2"}
+        self.patch_item("/persons/specializations/%s" % p_spec_1.pk, patch_data)
+        p_spec_1.refresh_from_db()
+        self.assertEqual(patch_data, p_spec_1.details, "details must be patched")
+
+
 
     @unittest.skip("test being rewritten")
     def test_specialization_person(self):
@@ -1202,8 +1227,8 @@ class TestApi(unittest.TestCase):
         if "error_message" in resp_json: print(resp_json["error_message"])
         self.assertEqual(ERR.OK, resp_json["result"], "result must be ERR.OK")
 
-    def patch_item(self, url):
-        resp = requests.patch(url=self.api_URL + url, headers = self.admin_header)
+    def patch_item(self, url, data=None):
+        resp = requests.patch(url=self.api_URL + url, json=data, headers = self.admin_header)
         self.assertEqual(200, resp.status_code, "patch response status code must be 200")
         resp_json = resp.json()
         if "error_message" in resp_json: print(resp_json["error_message"])
