@@ -11,6 +11,79 @@ from datetime import datetime, timezone, timedelta, date
 from random import randint
 
 
+def prepare_org_structure():
+    org_1 = model.Organization("МЭИ")
+    org_1.save()
+    org_2 = model.Organization("МТУ")
+    org_2.save()
+    dep_1 = model.Department("ИИТ", org_1.pk)
+    dep_1.save()
+    dep_2 = model.Department("АС", org_2.pk)
+    dep_2.save()
+    person_1 = model.Person(
+                "Павел",
+                "Борисович",
+                "Ерин",
+                date(1986, 12, 30),
+                "78392122221")
+    person_1.save()
+    person_2 = model.Person(
+                "Владимир",
+                "Владимирович",
+                "Панкин",
+                date(1987, 7, 6),
+                "78398889991")
+    person_2.save()
+    spec_1 = model.Specialization("Tutor", "ТОЭ")
+    spec_1.save()
+    spec_2 = model.Specialization("Student")
+    spec_2.save()
+    structure_dict = {
+        "org_1" : {
+            "name" : org_1.name,
+            "id": str(org_1.pk),
+        },
+        "org_2": {
+            "name": org_2.name,
+            "id": str(org_2.pk),
+        },
+        "dep_1": {
+            "name": dep_1.name,
+            "id": str(dep_1.pk),
+        },
+        "dep_2": {
+            "name": dep_2.name,
+            "id": str(dep_2.pk),
+        },
+        "person_1": {
+            "first_name": person_1.first_name,
+            "middle_name": person_1.middle_name,
+            "surname": person_1.surname,
+            "birth_date": person_1.birth_date,
+            "phone_no": person_1.phone_no,
+            "id": str(person_1.pk),
+        },
+        "person_2": {
+            "first_name": person_2.first_name,
+            "middle_name": person_2.middle_name,
+            "surname": person_2.surname,
+            "birth_date": person_2.birth_date,
+            "phone_no": person_2.phone_no,
+            "id": str(person_2.pk),
+        },
+        "spec_1":{
+            "type" : spec_1.type,
+            "detail": spec_1.detail,
+            "id": str(spec_1.pk),
+        },
+        "spec_2": {
+            "type": spec_2.type,
+            "detail": spec_2.detail,
+            "id": str(spec_2.pk),
+        },
+    }
+    return structure_dict
+
 def age_session(phone_no, minutes):
     try:
         auth_info = model.AuthInfo.objects.get({"phone_no": phone_no})

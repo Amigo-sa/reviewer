@@ -92,7 +92,7 @@ dot.engine="dot"
 dot.format="svg"
 dot.render('../db_model/drawer_output/schema', view=False)
 dot.format="png"
-#dot.render('../db_model/drawer_output/schema', view=False)
+dot.render('../db_model/drawer_output/schema', view=False)
 #for eng in ENGINES:
 #    dot.engine=eng
 #    dot.render('test-output/schema_'+eng, view=True)

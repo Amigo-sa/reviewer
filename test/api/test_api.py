@@ -10,10 +10,12 @@ import random
 import datetime
 from time import sleep
 import re
+from bson import ObjectId
 import sys
 #from src.data.reviewer_model import *
 import api_helper_methods as hm
 import src.data.reviewer_model as model
+from pymodm.errors import DoesNotExist
 
 node_port = 5002
 
@@ -381,6 +383,70 @@ class TestApi(unittest.TestCase):
             raise AssertionError("dict lists must be equal")
         if list1_c: raise AssertionError("dict lists must be equal")
 
+    def test_post_specialization(self):
+        # post without detail
+        #struct = hm.prepare_org_structure()
+        spec_data = {"type" : "Student"}
+        spec_id = self.post_item("/specializations", spec_data)
+        spec = model.Specialization.objects.get({"_id" : ObjectId(spec_id)})
+        spec.refresh_from_db()
+        self.assertEqual("Student", spec.type, "spec type must be saved")
+        self.assertIsNone(spec.detail, "no detail must present")
+        # post with detail
+        spec_data = {"type": "Tutor", "detail" : "ТОЭ"}
+        spec_id = self.post_item("/specializations", spec_data)
+        spec = model.Specialization.objects.get({"_id": ObjectId(spec_id)})
+        spec.refresh_from_db()
+        self.assertEqual("Tutor", spec.type, "spec type must be saved")
+        self.assertEqual("ТОЭ", spec.detail, "spec detail must be saved")
+
+    def test_delete_specialization(self):
+        spec = model.Specialization("student")
+        spec.save()
+        self.delete_item("/specializations/%s" % spec.pk)
+        with self.assertRaises(DoesNotExist):
+            spec.refresh_from_db()
+
+    def test_list_specializations(self):
+        spec_1 = model.Specialization("Tutor", "ТОЭ")
+        spec_1.save()
+        spec_2 = model.Specialization("Student")
+        spec_2.save()
+        spec_list = self.get_item_list("/specializations")
+        self.assertEqual(2, len(spec_list))
+        self.assertIn({"id" : str(spec_1.pk),
+                       "type" : spec_1.type,
+                       "detail" : spec_1.detail}, spec_list)
+        self.assertIn({"id": str(spec_2.pk),
+                       "type": spec_2.type}, spec_list)
+
+    def test_post_person_specialization(self):
+        struct = hm.prepare_org_structure()
+        p_spec_data = {"department_id" : struct["dep_1"]["id"],
+                       "specialization_id" : struct["spec_1"]["id"]}
+        p_spec_id = self.post_item("/persons/%s/specializations" % struct["person_1"]["id"],
+                                    p_spec_data)
+        p_spec = model.PersonSpecialization.objects.get({"_id" : ObjectId(p_spec_id)})
+        p_spec.refresh_from_db()
+        self.assertEqual(struct["dep_1"]["id"], str(p_spec.department_id.pk), "dep_id must be saved")
+        self.assertEqual(struct["spec_1"]["id"], str(p_spec.specialization_id.pk), "spec_id must be saved")
+        self.assertEqual(struct["person_1"]["id"], str(p_spec.person_id.pk), "person_id must be saved")
+        self.assertEqual(None, p_spec.level, "no level must be saved")
+
+        p_spec_data = {"department_id": struct["dep_2"]["id"],
+                       "specialization_id": struct["spec_2"]["id"],
+                       "level" : "60.0"}
+        p_spec_id = self.post_item("/persons/%s/specializations" % struct["person_2"]["id"],
+                                   p_spec_data)
+        p_spec = model.PersonSpecialization.objects.get({"_id": ObjectId(p_spec_id)})
+        p_spec.refresh_from_db()
+        self.assertEqual(struct["dep_2"]["id"], str(p_spec.department_id.pk), "dep_id must be saved")
+        self.assertEqual(struct["spec_2"]["id"], str(p_spec.specialization_id.pk), "spec_id must be saved")
+        self.assertEqual(struct["person_2"]["id"], str(p_spec.person_id.pk), "person_id must be saved")
+        self.assertEqual(60.0, p_spec.level, "level must be saved")
+
+
+    @unittest.skip("test being rewritten")
     def test_specialization_person(self):
         person_count = 4
         person_ids = self.prepare_persons(person_count)
@@ -467,8 +533,7 @@ class TestApi(unittest.TestCase):
         for i,p_id in enumerate(person_ids):
             p_spec_data = self.get_item_list("/persons/%s/specializations" % p_id)
             self.assertDictListEqual(p_spec_ref_data[i], p_spec_data)
-        """
-        print("---")
+
         # testing find_persons without request params
         person_list = self.get_item_list("/persons")
         for person in person_list:
@@ -513,7 +578,7 @@ class TestApi(unittest.TestCase):
         for person_id in person_ids:
             spec_list = self.get_item_list("/persons/%s/specializations" % person_id)
             self.assertEqual([], spec_list, "all specializations must be deleted")
-        """
+
     def test_group_member_normal(self):
         person_id = self.prepare_persons(1)[0]
         facility_ids = self.prepare_group()
@@ -581,7 +646,7 @@ class TestApi(unittest.TestCase):
         resp_json = requests.get(self.api_URL+"/group_members/" + gm_id, headers = self.admin_header).json()
         self.assertEqual(ERR.NO_DATA, resp_json["result"])
 
-    
+    @unittest.skip("Not implemented yet")
     def test_reviews_normal(self):
         person_id = self.prepare_persons(1)[0]
         facility_ids = self.prepare_group()
@@ -734,7 +799,7 @@ class TestApi(unittest.TestCase):
                              "/departments/" + aux_item_ids["dep_id"] + "/groups",
                              name="string")
 
-
+    @unittest.skip("Not implemented yet")
     def test_tutor_duplicate(self):
         p_id = self.prepare_persons(1)[0]
         d_id = self.prepare_department()["dep_id"]
@@ -745,6 +810,7 @@ class TestApi(unittest.TestCase):
                                  type = "Tutor",
                                  description = "string")
 
+    @unittest.skip("Not implemented yet")
     def test_student_duplicate(self):
         p_id = self.prepare_persons(1)[0]
         d_id = self.prepare_department()["dep_id"]
@@ -771,6 +837,7 @@ class TestApi(unittest.TestCase):
                                  person_id = p_id,
                                  result_data = "string")
 
+    @unittest.skip("Not implemented yet")
     def test_reviews_duplicate(self):
         person_id = self.prepare_persons(1)[0]
         facility_ids = self.prepare_group()
@@ -869,6 +936,7 @@ class TestApi(unittest.TestCase):
             self.assertEqual(200, resp.status_code, msg="url = "+route)
             self.assertEqual(ERR.INPUT, resp.json()["result"], msg="url = "+route)
 
+    @unittest.skip("Not implemented yet")
     def test_post_invalid_reference(self):
         # setup
         persons_ids = self.prepare_persons(2)
@@ -878,7 +946,7 @@ class TestApi(unittest.TestCase):
         org_id = fac_ids["org_id"]
         dep_id = fac_ids["dep_id"]
         group_id = fac_ids["group_id"]
-        sr_id = self.post_item("/specializations",
+        sr_id = self.post_item("/persons/specializations",
                                {"person_id": p_id,
                                 "department_id": dep_id,
                                 "type": "Student",
