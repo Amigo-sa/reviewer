@@ -429,10 +429,6 @@ class Survey(MongoModel):
 
 # TODO Добавить валидацию: вариант ответа должен быть предусмотрен
 class SurveyResponse(MongoModel):
-    def clean(self):
-        target_survey = Survey.objects.get({"_id" : self.survey_id})
-        if self.chosen_option not in target_survey.survey_options:
-            raise ValidationError
 
     survey_id = ValidatedReferenceField(Survey, on_delete=ReferenceField.CASCADE)
     person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)

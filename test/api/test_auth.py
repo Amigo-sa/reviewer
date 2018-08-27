@@ -273,7 +273,7 @@ class TestAuth(unittest.TestCase):
         survey.save()
         self.survey_id = str(survey.pk)
         s_response = model.SurveyResponse()
-        s_response.survey_id = survey
+        s_response.survey_id = survey.pk
         s_response.chosen_option = "1"
         s_response.person_id = self.user_person_id
         s_response.save()

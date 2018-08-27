@@ -161,21 +161,6 @@ class TestValidation(unittest.TestCase):
             group_member.permissions.append(read_permission)
             group_member.save()
 
-    def test_survey_response_validation(self):
-        struct = hm.prepare_org_structure()
-        survey = Survey()
-        survey.group_id = struct["group_1"]["id"]
-        survey.description = "some descr"
-        survey.survey_options = {"1": "opt1",
-                                 "2": "opt2"}
-        survey.survey_result = {"1": 6,
-                                "2": 4}
-        survey.save()
-        response = SurveyResponse()
-        response.person_id = struct["person_1"]["id"]
-        response.chosen_option = "7"
-        with self.assertRaises(ValidationError):
-            response.save()
 
 if __name__ == "__main__":
     unittest.main(verbosity = 1)
