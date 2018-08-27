@@ -2,7 +2,12 @@
 import context
 import unittest
 import requests
+import os, sys
 from pymodm.connection import _get_db
+parentPath = os.path.abspath("..//..//test")
+if parentPath not in sys.path:
+    sys.path.insert(0, parentPath)
+import api.api_helper_methods as hm
 
 from node.settings import constants
 import node.settings.errors as ERR
@@ -37,18 +42,14 @@ from data.reviewer_model import (Department,
                                  SoftSkill,
                                  PersonSpecialization,
                                  Survey,
+                                 SurveyResponse,
                                  SpecializationReview,
                                  TestResult,
                                  get_dependent_list,
                                  init_model)
 
-test_version = "0.3"
+test_version = "0.4"
 
-def clear_db():
-    revDb = _get_db(constants.db_name)
-    colList = revDb.list_collection_names()
-    for col in colList:
-        revDb[col].delete_many({})
 
 class TestValidation(unittest.TestCase):
 
@@ -57,7 +58,7 @@ class TestValidation(unittest.TestCase):
         pass
 
     def setUp(self):
-        clear_db()
+        hm.wipe_db(constants.db_name)
 
     @classmethod
     def clear_collection(cls, collection_class):
@@ -160,8 +161,21 @@ class TestValidation(unittest.TestCase):
             group_member.permissions.append(read_permission)
             group_member.save()
 
-
-
+    def test_survey_response_validation(self):
+        struct = hm.prepare_org_structure()
+        survey = Survey()
+        survey.group_id = struct["group_1"]["id"]
+        survey.description = "some descr"
+        survey.survey_options = {"1": "opt1",
+                                 "2": "opt2"}
+        survey.survey_result = {"1": 6,
+                                "2": 4}
+        survey.save()
+        response = SurveyResponse()
+        response.person_id = struct["person_1"]["id"]
+        response.chosen_option = "7"
+        with self.assertRaises(ValidationError):
+            response.save()
 
 if __name__ == "__main__":
     unittest.main(verbosity = 1)

@@ -52,7 +52,7 @@ class ValidatedReferenceField(fields.ReferenceField):
                     raise ValidationError("ссылка на _id несуществующего объекта")
             else:
                 if not self.related_model.objects.get({"_id": ref_field.pk}):
-                    raise ValidationError("ссылка на _id несуществующего объекта")
+                    raise ValidationError("ссылка на _id несуществующего объекта %s" %self.related_model.__name__)
             old_clean(instance)
 
         setattr(cls, "clean", new_clean)
@@ -429,6 +429,11 @@ class Survey(MongoModel):
 
 # TODO Добавить валидацию: вариант ответа должен быть предусмотрен
 class SurveyResponse(MongoModel):
+    def clean(self):
+        target_survey = Survey.objects.get({"_id" : self.survey_id})
+        if self.chosen_option not in target_survey.survey_options:
+            raise ValidationError
+
     survey_id = ValidatedReferenceField(Survey, on_delete=ReferenceField.CASCADE)
     person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     chosen_option = fields.CharField(required=True)

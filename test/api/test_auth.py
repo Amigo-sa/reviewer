@@ -142,6 +142,7 @@ class TestAuth(unittest.TestCase):
             "/specializations",
             "/soft_skills",
             "/hard_skills",
+            "/groups/%s/surveys" % self.group_id
             # TODO group_tests не охвачены
         ]
         self.admin_only_delete = [
@@ -157,6 +158,7 @@ class TestAuth(unittest.TestCase):
             "/persons/specializations/%s" % self.user_spec_id,
             "/soft_skills/%s" % self.soft_skill_id,
             "/hard_skills/%s" % self.hard_skill_id,
+            "/surveys/%s" % self.survey_id,
             # TODO group_tests не охвачены
         ]
         self.admin_only_patch = [
@@ -175,6 +177,10 @@ class TestAuth(unittest.TestCase):
         self.user_allowed_get = [
             "/persons/%s" % self.user_person_id
         ]
+        self.user_allowed_post = {
+            "/surveys/%s" % self.group_id : {"person_id" : self.user_person_id,
+                                             "chosen_option" : "1"}
+        }
 
         self.gm_allowed_get = [
             "/group_members/%s" % self.group_member_id
@@ -214,6 +220,7 @@ class TestAuth(unittest.TestCase):
             "/persons/hard_skills",
             "/persons/soft_skills/%s" % self.soft_skill_id,
             "/persons/hard_skills/%s" % self.hard_skill_id,
+            "/surveys"
             # TODO group_tests
         ]
 
@@ -255,6 +262,22 @@ class TestAuth(unittest.TestCase):
                                           {"name" : "string"})
         self.hard_skill_id = hm.post_item(self, self.api_URL + "/hard_skills",
                                           {"name": "string"})
+
+        survey = model.Survey()
+        survey.group_id = self.group_id
+        survey.description = "some descr"
+        survey.survey_options = {"1": "opt1",
+                                 "2": "opt2"}
+        survey.survey_result = {"1": 6,
+                                "2": 4}
+        survey.save()
+        self.survey_id = str(survey.pk)
+        s_response = model.SurveyResponse()
+        s_response.survey_id = survey
+        s_response.chosen_option = "1"
+        s_response.person_id = self.user_person_id
+        s_response.save()
+        self.s_resp_id = str(s_response.pk)
 
         # prepare second person
         auth_user = hm.prepare_logged_in_person("78001112234")
@@ -313,6 +336,11 @@ class TestAuth(unittest.TestCase):
         user_allowed_get_urls = []
         user_allowed_get_urls += self.user_allowed_get
         user_allowed_get_urls += self.gm_allowed_get
+
+        for url,data in self.user_allowed_post.items():
+            resp_json = hm.try_post_item(self, self.api_URL + url, data, self.user_header)
+            self.assertNotEqual(ERR.AUTH, resp_json["result"],
+                                "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
         for url in user_allowed_get_urls:
             resp_json = hm.try_get_item(self, self.api_URL + url, self.user_header)
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
