@@ -1029,6 +1029,28 @@ class TestApi(unittest.TestCase):
                               description="string"
                               )
 
+    def test_post_survey(self):
+        struct = hm.prepare_org_structure()
+        post_data = {"description" : "some_desc",
+                     "options" : {"1": "opt1", "2": "opt2"}}
+        survey_id = self.post_item("/groups/%s/surveys" % struct["group_1"]["id"], post_data)
+        survey = model.Survey(_id= survey_id)
+        survey.refresh_from_db()
+        self.assertEqual("some_desc", survey.description, "must save correct description")
+        self.assertEqual({"1": "opt1", "2": "opt2"}, survey.survey_options, "must save correct options")
+        self.assertEqual({"1": 0, "2": 0}, survey.survey_result, "must save correct initial result")
+
+    def test_delete_survey(self):
+        struct = hm.prepare_org_structure()
+        survey = model.Survey()
+        survey.group_id = struct["group_1"]["id"]
+        survey.description = "some descr"
+        survey.survey_options = {"1" : "opt1"}
+        survey.save()
+        survey.refresh_from_db()
+        self.delete_item("/surveys/%s" % survey.pk)
+        with self.assertRaises(DoesNotExist):
+            survey.refresh_from_db()
 
     def pass_invalid_ref(self, url_post, auth = "admin", **kwargs):
         data = self.generate_doc(kwargs.items())

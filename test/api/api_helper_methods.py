@@ -38,6 +38,10 @@ def prepare_org_structure():
     spec_1.save()
     spec_2 = model.Specialization("Student")
     spec_2.save()
+    group_1 = model.Group(dep_1.pk, "A-4-03")
+    group_1.save()
+    group_2 = model.Group(dep_2.pk, "A-4-04")
+    group_2.save()
     structure_dict = {
         "org_1" : {
             "name" : org_1.name,
@@ -80,6 +84,14 @@ def prepare_org_structure():
             "type": spec_2.type,
             "detail": None,
             "id": str(spec_2.pk),
+        },
+        "group_1": {
+            "name": group_1.name,
+            "id": str(group_1.pk),
+        },
+        "group_2": {
+            "name": group_2.name,
+            "id": str(group_2.pk),
         },
     }
     return structure_dict
