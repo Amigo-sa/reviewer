@@ -78,7 +78,7 @@ def prepare_org_structure():
         },
         "spec_2": {
             "type": spec_2.type,
-            "detail": spec_2.detail,
+            "detail": None,
             "id": str(spec_2.pk),
         },
     }

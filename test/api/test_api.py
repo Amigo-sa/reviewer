@@ -421,6 +421,7 @@ class TestApi(unittest.TestCase):
                        "type": spec_2.type}, spec_list)
 
     def test_post_person_specialization(self):
+        # without level
         struct = hm.prepare_org_structure()
         p_spec_data = {"department_id" : struct["dep_1"]["id"],
                        "specialization_id" : struct["spec_1"]["id"]}
@@ -432,7 +433,7 @@ class TestApi(unittest.TestCase):
         self.assertEqual(struct["spec_1"]["id"], str(p_spec.specialization_id.pk), "spec_id must be saved")
         self.assertEqual(struct["person_1"]["id"], str(p_spec.person_id.pk), "person_id must be saved")
         self.assertEqual(None, p_spec.level, "no level must be saved")
-
+        # with level
         p_spec_data = {"department_id": struct["dep_2"]["id"],
                        "specialization_id": struct["spec_2"]["id"],
                        "level" : "60.0"}
@@ -444,6 +445,70 @@ class TestApi(unittest.TestCase):
         self.assertEqual(struct["spec_2"]["id"], str(p_spec.specialization_id.pk), "spec_id must be saved")
         self.assertEqual(struct["person_2"]["id"], str(p_spec.person_id.pk), "person_id must be saved")
         self.assertEqual(60.0, p_spec.level, "level must be saved")
+
+    def test_delete_person_specialization(self):
+        struct = hm.prepare_org_structure()
+        p_spec = model.PersonSpecialization(
+            ObjectId(struct["person_1"]["id"]),
+            ObjectId(struct["dep_1"]["id"]),
+            ObjectId(struct["spec_1"]["id"]),
+            50.0,
+            {"detail" : "text"},
+            True
+        )
+        p_spec.save()
+        self.delete_item("/persons/specializations/%s" % p_spec.pk)
+        with self.assertRaises(DoesNotExist):
+            p_spec.refresh_from_db()
+
+    def test_get_person_specializations(self):
+        struct = hm.prepare_org_structure()
+        p_spec_1 = model.PersonSpecialization(
+            ObjectId(struct["person_1"]["id"]),
+            ObjectId(struct["dep_1"]["id"]),
+            ObjectId(struct["spec_1"]["id"]),
+            50.0,
+            {"detail": "text"},
+            True
+        )
+        p_spec_1.save()
+        p_spec_2 = model.PersonSpecialization(
+            ObjectId(struct["person_1"]["id"]),
+            ObjectId(struct["dep_2"]["id"]),
+            ObjectId(struct["spec_2"]["id"]),
+            40.0,
+        )
+        p_spec_2.is_active = False
+        p_spec_2.save()
+        p_spec_3 = model.PersonSpecialization(
+            ObjectId(struct["person_2"]["id"]),
+            ObjectId(struct["dep_2"]["id"]),
+            ObjectId(struct["spec_2"]["id"]),
+            30.0,
+            {"detail": "text3"},
+            True
+        )
+        p_spec_3.save()
+        person_1_spec_list = self.get_item_list("/persons/%s/specializations"
+                                                % struct["person_1"]["id"])
+        self.assertEqual(2, len(person_1_spec_list))
+        self.assertIn({"id" : str(p_spec_1.pk),
+                       "department_id" : struct["dep_1"]["id"],
+                       "level" : 50.0,
+                       "specialization_type" : struct["spec_1"]["type"],
+                       "is_active": "True",
+                       "specialization_detail" : struct["spec_1"]["detail"],
+                       "additional_details" : {"detail": "text"}},
+                      person_1_spec_list,
+                      "p_spec info must present")
+        self.assertIn({"id": str(p_spec_2.pk),
+                       "department_id": struct["dep_2"]["id"],
+                       "level": 40.0,
+                       "specialization_type": struct["spec_2"]["type"],
+                       "is_active": "False",
+                       },
+                      person_1_spec_list,
+                      "p_spec info must present")
 
 
     @unittest.skip("test being rewritten")
