@@ -305,7 +305,7 @@ class TestApi(unittest.TestCase):
         item_list = self.get_item_list("/tests/results")
         self.assertDictListEqual([], item_list)
 
-    def test_find_person_limits(self):
+    def test_find_persons_limits(self):
         person_ids = self.prepare_persons(10)
         list_0_3 = self.get_item_list("/persons?query_limit=4")
         self.assertEqual(len(list_0_3), 4, "must return requested number of items")
@@ -320,7 +320,7 @@ class TestApi(unittest.TestCase):
         for index, item in enumerate(list_8_9):
             self.assertEqual(item["id"], person_ids[index + 8])
 
-    def test_person_filters(self):
+    def test_find_persons_filters(self):
         persons = [
             {"surname": "Иванов",
              "first_name": "Петр",
@@ -534,140 +534,67 @@ class TestApi(unittest.TestCase):
         p_spec_1.refresh_from_db()
         self.assertEqual(patch_data, p_spec_1.details, "details must be patched")
 
+    @unittest.skip("Need to update API")
+    def test_find_persons_spec_filters(self):
+        struct = hm.prepare_org_structure()
+        p_spec_1 = model.PersonSpecialization(
+            ObjectId(struct["person_1"]["id"]),
+            ObjectId(struct["dep_1"]["id"]),
+            ObjectId(struct["spec_1"]["id"]),
+            50.0,
+            {"detail": "text"},
+            True
+        )
+        p_spec_1.save()
 
+        # test if person_1 is in return list
+        p_list = self.get_item_list("/persons")
+        p_1_ref_dict = struct["person_1"]
+        p_1_ref_dict.pop("phone_no")
+        p_1_ref_dict.pop("birth_date")
+        p_1_ref_dict.update({"specialization" : struct["spec_1"]["type"]})
+        p_1_ref_dict.update({"organization_name": struct["org_1"]["name"]})
+        self.assertIn(p_1_ref_dict, p_list, "must return correct person info")
+        # test if org and spec are not returned when absent
+        p_2_ref_dict = struct["person_2"]
+        p_2_ref_dict.pop("phone_no")
+        p_2_ref_dict.pop("birth_date")
+        # TODO внести единство в эти None и "None"
+        p_2_ref_dict.update({"specialization": None})
+        p_2_ref_dict.update({"organization_name": "None"})
+        self.assertIn(p_2_ref_dict, p_list, "must return correct person info")
 
-    @unittest.skip("test being rewritten")
-    def test_specialization_person(self):
-        person_count = 4
-        person_ids = self.prepare_persons(person_count)
-        self.prepare_department()
-        self.prepare_department()
-        org_1 = self.get_item_list("/organizations")[0]
-        org_2 = self.get_item_list("/organizations")[1]
-        dep_1 = self.get_item_list("/organizations/%s/departments"%org_1["id"])[0]
-        dep_2 = self.get_item_list("/organizations/%s/departments"%org_2["id"])[0]
-        spec_stud = {"type": "Student"}
-        spec_stud.update({"id" : self.post_item("/specializations", spec_stud)})
-        spec_tut_toe =  {"type": "Tutor", "detail": "TOE"}
-        spec_tut_toe.update({"id": self.post_item("/specializations", spec_tut_toe)})
-        # verify added specializations
-        global_spec_list = self.get_item_list("/specializations")
-        self.assertDictListEqual([spec_tut_toe, spec_stud], global_spec_list)
+        p_list = self.get_item_list("/persons?specialization=Tutor")
+        self.assertIn(p_1_ref_dict, p_list, "must return correct person info")
+        self.assertNotIn(p_2_ref_dict, p_list, "must not return non-matching persons info")
 
-        person_ref_data = []
-        p_spec_ref_data = []
-        for person_id in person_ids:
-            person_ref_data.append(self.get_item_data("/persons/" + person_id))
-        specializations = {}
-        # person 0 is student
+        p_spec_2 = model.PersonSpecialization(
+            ObjectId(struct["person_1"]["id"]),
+            ObjectId(struct["dep_2"]["id"]),
+            ObjectId(struct["spec_2"]["id"]),
+            40.0,
+        )
+        p_spec_2.is_active = False
+        p_spec_2.save()
+        p_spec_3 = model.PersonSpecialization(
+            ObjectId(struct["person_2"]["id"]),
+            ObjectId(struct["dep_2"]["id"]),
+            ObjectId(struct["spec_2"]["id"]),
+            30.0,
+            {"detail": "text3"},
+            True
+        )
+        p_spec_3.save()
+        p_2_ref_dict.update({"organization_name": struct["org_2"]["name"]})
+        p_2_ref_dict.update({"specialization": struct["spec_2"]["type"]})
+        p_list = self.get_item_list("/persons?specialization=Tutor")
+        self.assertIn(p_1_ref_dict, p_list, "must not return non-matching persons info")
+        self.assertNotIn(p_2_ref_dict, p_list, "must n correct person info")
+        p_list = self.get_item_list("/persons?specialization=Student")
 
-        temp_spec = {
-                "department_id": dep_1["id"],
-                "specialization_id": spec_stud["id"],
-            }
-        p_spec_id = self.post_item("/persons/%s/specializations"%person_ids[0], temp_spec)
-        cur_spec_ref_data = {
-            "id" : p_spec_id,
-            "department_id" : temp_spec["department_id"],
-            "level" : None,
-            "type": spec_stud["type"]
-        }
-        p_spec_ref_data.append([cur_spec_ref_data])
+        self.assertIn(p_1_ref_dict, p_list, "must return correct person info")
+        self.assertIn(p_2_ref_dict, p_list, "must return correct person info")
 
-        # person 1 is tutor and student
-        temp_spec = {
-            #"person_id": person_ids[1],
-            "department_id":  dep_1["id"],
-            "specialization_id": spec_stud["id"],
-        }
-        p_spec_id = self.post_item("/persons/%s/specializations"%person_ids[1], temp_spec)
-        cur_spec_ref_data = {
-            "id": p_spec_id,
-            "department_id": temp_spec["department_id"],
-            "level": None,
-            "type": spec_stud["type"]
-        }
-        p_spec_ref_data.append([cur_spec_ref_data])
-
-        temp_spec = {
-            "department_id":  dep_1["id"],
-            "specialization_id": spec_tut_toe["id"],
-            "level": "60.0"
-        }
-        p_spec_id = self.post_item("/persons/%s/specializations" % person_ids[1], temp_spec)
-        cur_spec_ref_data = {
-            "id": p_spec_id,
-            "department_id": temp_spec["department_id"],
-            "level": 60.0,
-            "type": spec_tut_toe["type"],
-            "detail" : spec_tut_toe["detail"]
-        }
-        p_spec_ref_data[1].append(cur_spec_ref_data)
-        # person 2 is tutor at 2-nd department of 2-nd organization
-        temp_spec = {
-            "department_id": dep_2["id"],
-            "specialization_id": spec_tut_toe["id"],
-        }
-        p_spec_id = self.post_item("/persons/%s/specializations" % person_ids[2], temp_spec)
-        cur_spec_ref_data = {
-            "id": p_spec_id,
-            "department_id": temp_spec["department_id"],
-            "level": None,
-            "type": spec_tut_toe["type"],
-            "detail": spec_tut_toe["detail"]
-        }
-        p_spec_ref_data.append([cur_spec_ref_data])
-        # person 3 has no specialization
-        p_spec_ref_data.append([])
-        # testing that specializations were added properly
-        for i,p_id in enumerate(person_ids):
-            p_spec_data = self.get_item_list("/persons/%s/specializations" % p_id)
-            self.assertDictListEqual(p_spec_ref_data[i], p_spec_data)
-
-        # testing find_persons without request params
-        person_list = self.get_item_list("/persons")
-        for person in person_list:
-            ref_data = next((p for p in person_ref_data if p["id"] == person["id"]), None)
-            self.assertEqual(ref_data["first_name"], person["first_name"])
-            self.assertEqual(ref_data["middle_name"], person["middle_name"])
-            self.assertEqual(ref_data["surname"], person["surname"])
-            if person["id"] == person_ids[0]:
-                self.assertEqual(person["specialization"], "Student")
-                self.assertEqual(person["organization_name"], org_1["name"])
-            if person["id"] == person_ids[1]:
-                self.assertEqual(person["specialization"], "Tutor")
-                self.assertEqual(person["organization_name"], org_1["name"])
-            if person["id"] == person_ids[2]:
-                self.assertEqual(person["specialization"], "Tutor")
-                self.assertEqual(person["organization_name"], org_2["name"])
-            if person["id"] == person_ids[3]:
-                self.assertEqual(person["specialization"], "None")
-                self.assertEqual(person["organization_name"], "None")
-        # testing find_persons with department_id param
-        person_list = self.get_item_list("/persons?department_id=" + dep_1["id"])
-        for person in person_list:
-            self.assertNotIn(person["id"], [person_ids[2], person_ids[3]])
-            self.assertIn(person["id"], [person_ids[0], person_ids[1]])
-        # testing find_persons with organization_id param
-        person_list = self.get_item_list("/persons?organization_id=" + org_1["id"])
-        for person in person_list:
-            self.assertNotIn(person["id"], [person_ids[2], person_ids[3]])
-            self.assertIn(person["id"], [person_ids[0], person_ids[1]])
-        # testing find_persons with specialization param
-        person_list = self.get_item_list("/persons?specialization=tutor")
-        for person in person_list:
-            self.assertNotIn(person["id"], [person_ids[0], person_ids[3]])
-            self.assertIn(person["id"], [person_ids[1], person_ids[2]])
-        person_list = self.get_item_list("/persons?specialization=student")
-        for person in person_list:
-            self.assertNotIn(person["id"], [person_ids[2], person_ids[3]])
-            self.assertIn(person["id"], [person_ids[0], person_ids[1]])
-        # clearing collections
-        for key, specialization in specializations.items():
-            self.delete_item("/specializations/" + specialization["id"])
-        for person_id in person_ids:
-            spec_list = self.get_item_list("/persons/%s/specializations" % person_id)
-            self.assertEqual([], spec_list, "all specializations must be deleted")
 
     def test_group_member_normal(self):
         person_id = self.prepare_persons(1)[0]
@@ -1026,7 +953,6 @@ class TestApi(unittest.TestCase):
             self.assertEqual(200, resp.status_code, msg="url = "+route)
             self.assertEqual(ERR.INPUT, resp.json()["result"], msg="url = "+route)
 
-    @unittest.skip("Not implemented yet")
     def test_post_invalid_reference(self):
         # setup
         persons_ids = self.prepare_persons(2)
@@ -1036,16 +962,12 @@ class TestApi(unittest.TestCase):
         org_id = fac_ids["org_id"]
         dep_id = fac_ids["dep_id"]
         group_id = fac_ids["group_id"]
-        sr_id = self.post_item("/persons/specializations",
-                               {"person_id": p_id,
-                                "department_id": dep_id,
-                                "type": "Student",
-                                "description": "specialization_description"})
-        tr_id = self.post_item("/specializations",
-                               {"person_id": p_id,
-                                "department_id": dep_id,
-                                "type": "Tutor",
-                                "description": "Tutor_description"})
+        spec_id = self.post_item("/specializations",
+                               {"type": "Tutor",
+                                "detail": "TOE"})
+        p_spec_id = self.post_item("/persons/%s/specializations" % p_id,
+                               {"department_id": dep_id,
+                                "specialization_id": spec_id})
         hard_skill_id = self.prepare_hs()[0]
         soft_skill_id = self.prepare_ss()[0]
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name": "test_name",
@@ -1065,28 +987,15 @@ class TestApi(unittest.TestCase):
                               role_list=[dep_id])
 
         # tutor_specialization
-        self.pass_invalid_ref("/specializations",
-                              person_id= p_id,
-                              department_id = org_id,
-                              type = "Tutor",
-                              description = "string")
-        self.pass_invalid_ref("/specializations",
-                              person_id=hard_skill_id,
-                              department_id=dep_id,
-                              type="Tutor",
-                              description="string")
-
-        # student_specialization
-        self.pass_invalid_ref("/specializations",
-                              person_id=p_id,
-                              department_id=org_id,
-                              type="Student",
-                              description="string")
-        self.pass_invalid_ref("/specializations",
-                              person_id=hard_skill_id,
-                              department_id=dep_id,
-                              type="Student",
-                              description="string")
+        self.pass_invalid_ref("/persons/%s/specializations" % p_id,
+                              specialization_id= spec_id,
+                              department_id = org_id)
+        self.pass_invalid_ref("/persons/%s/specializations" % p_id,
+                              specialization_id=org_id,
+                              department_id=dep_id)
+        self.pass_invalid_ref("/persons/%s/specializations" % hard_skill_id,
+                              specialization_id=spec_id,
+                              department_id=dep_id)
 
         # group_member
         self.pass_invalid_ref("/groups/%s/group_members"%hard_skill_id,
