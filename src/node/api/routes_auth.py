@@ -32,6 +32,7 @@ def user_login():
         if auth_info.password == pass_hash:
             session_id = gen_session_id()
             auth_info.session_id = session_id
+            auth_info.attempts = 0
             auth_info.save()
             result = {"result": ERR.OK,
                       "session_id": session_id}
