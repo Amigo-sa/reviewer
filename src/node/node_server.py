@@ -7,14 +7,18 @@ from node.settings import constants
 import pymongo
 from flask import Flask
 from node.api.routes import bp as routes
-from node.api.routes_debug import bp as routes_debug
-from node.api.routes_auth import bp as routes_auth
+from node.api.debug import bp as debug
+from node.api.auth import bp as auth
+from node.api.organizations import bp as organizations
+from node.api.departments import bp as departments
 from pymodm.connection import connect
 
 app = Flask(__name__)
-app.register_blueprint(routes_debug)
-app.register_blueprint(routes_auth)
+app.register_blueprint(debug)
+app.register_blueprint(auth)
 app.register_blueprint(routes)
+app.register_blueprint(organizations)
+app.register_blueprint(departments)
 
 
 def start_server(port, protocol="http"):
@@ -39,28 +43,6 @@ def is_db_exists():
     except Exception as ex:
         print(ex)
         return False
-
-
-if __debug__:
-    def print_something_from_db():
-
-        rev_client = pymongo.MongoClient(constants.mongo_db)
-        rev_db = rev_client[constants.db_name_test]
-        col_person = rev_db["Person"]
-        cursor = col_person.find({})
-
-        try:
-            for person in cursor:
-                print(person["Name"])
-        except Exception as ex:
-            print(ex)
-
-        return
-
-
-    if (is_db_exists()):
-        print_something_from_db()
-
 
 
 class UpdateNetwork(Thread):

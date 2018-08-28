@@ -4,139 +4,10 @@ import node.settings.errors as ERR
 import node.settings.constants as constants
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
-from node.api.routes_auth import required_auth
+from node.api.auth import required_auth
+from node.api.base_functions import delete_resource, list_resources
 
 bp = Blueprint('routes', __name__)
-
-
-def delete_resource(cls, _id):
-    try:
-        if cls(_id=_id) in cls.objects.raw({"_id":ObjectId(_id)}):
-            cls(_id=_id).delete()
-            result = {"result": ERR.OK}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
-
-
-def list_resources(cls, res_fields, parent_cls=None, parent_id=None, parent_name=None):
-    list = []
-    try:
-        if not parent_cls or parent_cls.objects.raw({"_id": ObjectId(parent_id)}).count():
-            q = {} if not parent_cls else {parent_name:ObjectId(parent_id)}
-            for obj in cls.objects.raw(q).values():
-                d = dict((key, str(obj[value])) for key, value in res_fields.items()
-                         if value in obj.keys())
-                list.append(d)
-            result = {"result": ERR.OK, "list":list}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except Exception as e:
-        result = {"result": ERR.DB,
-                  "error_message": str(e)}
-    return jsonify(result), 200
-
-
-@bp.route("/organizations", methods = ['POST'])
-@required_auth("admin")
-def add_organization():
-    req = request.get_json()
-    try:
-        name = req['name']
-    except:
-        return jsonify({"result": ERR.INPUT}), 200
-    try:
-        organization = Organization(name)
-        organization.save()
-        result = {"result":ERR.OK,
-                  "id": str(organization.pk)}
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
-
-
-@bp.route("/persons", methods = ['POST'])
-@required_auth("admin")
-def add_person():
-    req = request.get_json()
-    try:
-        first_name = req['first_name']
-        middle_name = req['middle_name']
-        surname = req['surname']
-        birth_date = req['birth_date']
-        phone_no = req['phone_no']
-    except:
-        return jsonify({"result": ERR.INPUT}), 200
-    try:
-        person = Person(first_name,
-                        middle_name,
-                        surname,
-                        birth_date,
-                        phone_no)
-        person.save()
-        result = {"result":ERR.OK,
-                  "id": str(person.pk)}
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
-
-
-@bp.route("/organizations/<string:id>", methods = ['DELETE'])
-@required_auth("admin")
-def delete_organization(id):
-    return delete_resource(Organization, id)
-
-
-@bp.route("/persons/<string:person_id>", methods = ['DELETE'])
-@required_auth("user")
-def delete_person(person_id):
-    return delete_resource(Person, person_id)
-
-
-@bp.route("/organizations", methods = ['GET'])
-def list_organizations():
-    return list_resources(Organization,
-                          {"id": "_id", "name": "name"})
-
-
-@bp.route("/organizations/<string:id>/departments", methods = ['POST'])
-@required_auth("admin")
-def add_department(id):
-    req = request.get_json()
-    try:
-        name = req['name']
-        if Organization(_id=id) in Organization.objects.raw({"_id": ObjectId(id)}):
-            department = Department(name, Organization(_id=id))
-            department.save()
-            result = {"result":ERR.OK,
-                      "id": str(department.pk)}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
-
-
-@bp.route("/departments/<string:id>", methods = ['DELETE'])
-@required_auth("admin")
-def delete_department(id):
-    return delete_resource(Department, id)
-
-
-@bp.route("/organizations/<string:id>/departments", methods = ['GET'])
-def list_departments(id):
-    return list_resources(Department,
-                          {"id": "_id", "name": "name"},
-                          Organization,
-                          id,
-                          "organization_id")
 
 
 @bp.route("/departments/<string:id>/groups", methods = ['POST'])
@@ -612,6 +483,39 @@ def set_person_specialization_additions(_id):
         result = {"result": ERR.DB, "error_message": str(ex)}
 
     return jsonify(result), 200
+
+
+@bp.route("/persons", methods = ['POST'])
+@required_auth("admin")
+def add_person():
+    req = request.get_json()
+    try:
+        first_name = req['first_name']
+        middle_name = req['middle_name']
+        surname = req['surname']
+        birth_date = req['birth_date']
+        phone_no = req['phone_no']
+    except:
+        return jsonify({"result": ERR.INPUT}), 200
+    try:
+        person = Person(first_name,
+                        middle_name,
+                        surname,
+                        birth_date,
+                        phone_no)
+        person.save()
+        result = {"result":ERR.OK,
+                  "id": str(person.pk)}
+    except:
+        result = {"result":ERR.DB}
+
+    return jsonify(result), 200
+
+
+@bp.route("/persons/<string:person_id>", methods = ['DELETE'])
+@required_auth("user")
+def delete_person(person_id):
+    return delete_resource(Person, person_id)
 
 
 @bp.route("/persons", methods=['GET'])
