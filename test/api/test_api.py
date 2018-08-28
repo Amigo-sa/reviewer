@@ -534,7 +534,6 @@ class TestApi(unittest.TestCase):
         p_spec_1.refresh_from_db()
         self.assertEqual(patch_data, p_spec_1.details, "details must be patched")
 
-    @unittest.skip("Need to update API")
     def test_find_persons_spec_filters(self):
         struct = hm.prepare_org_structure()
         p_spec_1 = model.PersonSpecialization(
@@ -585,15 +584,36 @@ class TestApi(unittest.TestCase):
             True
         )
         p_spec_3.save()
-        p_2_ref_dict.update({"organization_name": struct["org_2"]["name"]})
-        p_2_ref_dict.update({"specialization": struct["spec_2"]["type"]})
         p_list = self.get_item_list("/persons?specialization=Tutor")
-        self.assertIn(p_1_ref_dict, p_list, "must not return non-matching persons info")
-        self.assertNotIn(p_2_ref_dict, p_list, "must n correct person info")
+        p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
+        self.assertTrue(p1_id)
+        p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
+        self.assertFalse(p2_id)
         p_list = self.get_item_list("/persons?specialization=Student")
-
-        self.assertIn(p_1_ref_dict, p_list, "must return correct person info")
-        self.assertIn(p_2_ref_dict, p_list, "must return correct person info")
+        p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
+        self.assertTrue(p1_id)
+        p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
+        self.assertTrue(p2_id)
+        p_list = self.get_item_list("/persons?department_id=%s" % struct["dep_1"]["id"])
+        p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
+        self.assertTrue(p1_id)
+        p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
+        self.assertFalse(p2_id)
+        p_list = self.get_item_list("/persons?department_id=%s" % struct["dep_2"]["id"])
+        p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
+        self.assertTrue(p1_id)
+        p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
+        self.assertTrue(p2_id)
+        p_list = self.get_item_list("/persons?organization_id=%s" % struct["org_1"]["id"])
+        p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
+        self.assertTrue(p1_id)
+        p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
+        self.assertFalse(p2_id)
+        p_list = self.get_item_list("/persons?organization_id=%s" % struct["org_2"]["id"])
+        p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
+        self.assertTrue(p1_id)
+        p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
+        self.assertTrue(p2_id)
 
 
     def test_group_member_normal(self):
