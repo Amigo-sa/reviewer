@@ -32,6 +32,7 @@ def user_login():
         if auth_info.password == pass_hash:
             session_id = gen_session_id()
             auth_info.session_id = session_id
+            auth_info.attempts = 0
             auth_info.save()
             result = {"result": ERR.OK,
                       "session_id": session_id}
@@ -270,7 +271,10 @@ def required_auth(required_permissions="admin"):
                 if required_permissions == "admin":
                     return jsonify({"result": ERR.AUTH}), 200
                 if required_permissions == "user" and auth_info.person_id:
-                    person_id = kwargs["id"]
+                    if "person_id" in kwargs:
+                        person_id = kwargs["person_id"]
+                    else:
+                        person_id = request.get_json()["person_id"]
                     if person_id == str(auth_info.person_id.pk):
                         return f(*args, **kwargs)
                 if required_permissions == "group_member" and auth_info.person_id:
@@ -294,10 +298,8 @@ def required_auth(required_permissions="admin"):
 
 
 def get_reviewer_id_by_review_id(_id):
-    if SRReview.objects.raw({"_id": ObjectId(_id)}).count():
-        return SRReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
-    if TRReview.objects.raw({"_id": ObjectId(_id)}).count():
-        return TRReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
+    if SpecializationReview.objects.raw({"_id": ObjectId(_id)}).count():
+        return SpecializationReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
     if HSReview.objects.raw({"_id": ObjectId(_id)}).count():
         return HSReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
     if SSReview.objects.raw({"_id": ObjectId(_id)}).count():

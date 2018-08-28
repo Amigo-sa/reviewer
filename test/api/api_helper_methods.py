@@ -4,7 +4,171 @@ import node.settings.errors as ERR
 import unittest
 import datetime
 import random
+from pymodm.connection import _get_db
+import src.data.reviewer_model as model
+from node.api.routes_auth import hash_password, gen_session_id
+from datetime import datetime, timezone, timedelta, date
+from random import randint
 
+
+def prepare_org_structure():
+    org_1 = model.Organization("МЭИ")
+    org_1.save()
+    org_2 = model.Organization("МТУ")
+    org_2.save()
+    dep_1 = model.Department("ИИТ", org_1.pk)
+    dep_1.save()
+    dep_2 = model.Department("АС", org_2.pk)
+    dep_2.save()
+    person_1 = model.Person(
+                "Павел",
+                "Борисович",
+                "Ерин",
+                date(1986, 12, 30),
+                "78392122221")
+    person_1.save()
+    person_2 = model.Person(
+                "Владимир",
+                "Владимирович",
+                "Панкин",
+                date(1987, 7, 6),
+                "78398889991")
+    person_2.save()
+    spec_1 = model.Specialization("Tutor", "ТОЭ")
+    spec_1.save()
+    spec_2 = model.Specialization("Student")
+    spec_2.save()
+    group_role_1 = model.GroupRole("role_1")
+    group_role_1.save()
+    group_role_2 = model.GroupRole("role_2")
+    group_role_2.save()
+    group_1 = model.Group(dep_1.pk, "A-4-03", [group_role_1])
+    group_1.save()
+    group_2 = model.Group(dep_2.pk, "A-4-04" , [group_role_2])
+    group_2.save()
+
+    structure_dict = {
+        "org_1" : {
+            "name" : org_1.name,
+            "id": str(org_1.pk),
+        },
+        "org_2": {
+            "name": org_2.name,
+            "id": str(org_2.pk),
+        },
+        "dep_1": {
+            "name": dep_1.name,
+            "id": str(dep_1.pk),
+        },
+        "dep_2": {
+            "name": dep_2.name,
+            "id": str(dep_2.pk),
+        },
+        "person_1": {
+            "first_name": person_1.first_name,
+            "middle_name": person_1.middle_name,
+            "surname": person_1.surname,
+            "birth_date": person_1.birth_date,
+            "phone_no": person_1.phone_no,
+            "id": str(person_1.pk),
+        },
+        "person_2": {
+            "first_name": person_2.first_name,
+            "middle_name": person_2.middle_name,
+            "surname": person_2.surname,
+            "birth_date": person_2.birth_date,
+            "phone_no": person_2.phone_no,
+            "id": str(person_2.pk),
+        },
+        "spec_1":{
+            "type" : spec_1.type,
+            "detail": spec_1.detail,
+            "id": str(spec_1.pk),
+        },
+        "spec_2": {
+            "type": spec_2.type,
+            "detail": None,
+            "id": str(spec_2.pk),
+        },
+        "group_1": {
+            "name": group_1.name,
+            "id": str(group_1.pk),
+        },
+        "group_2": {
+            "name": group_2.name,
+            "id": str(group_2.pk),
+        },
+        "group_role_1": {
+            "name": group_role_1.name,
+            "id": str(group_role_1.pk),
+        },
+        "group_role_2": {
+            "name": group_role_2.name,
+            "id": str(group_role_2.pk),
+        },
+    }
+    return structure_dict
+
+def age_session(phone_no, minutes):
+    try:
+        auth_info = model.AuthInfo.objects.get({"phone_no": phone_no})
+        ts = auth_info.last_send_time
+        dt = ts.as_datetime()
+        dt -= timedelta(minutes=int(minutes))
+        auth_info.last_send_time = dt
+        auth_info.save()
+    except Exception as e:
+        print("Failed to age session")
+        print(str(e))
+
+def prepare_logged_in_person(phone_no):
+    try:
+        person = model.Person(
+            "Клон",
+            "Один Из",
+            "Миллионов",
+            date(1980, 1, 1),
+            phone_no)
+        person.save()
+        auth_info = model.AuthInfo()
+        auth_info.is_approved = True
+        auth_info.phone_no = phone_no
+        auth_info.password = hash_password("user")
+        session_id = gen_session_id()
+        auth_info.session_id = session_id
+        auth_info.permissions = 0
+        auth_info.person_id = person.pk
+        auth_info.save()
+        return {"session_id": session_id,
+                "person_id" : str(person.pk)}
+    except Exception as e:
+        print("Failed to prepare logged in person")
+        print(str(e))
+
+def prepare_first_admin():
+    try:
+        auth_info = model.AuthInfo()
+        auth_info.is_approved = True
+        auth_info.phone_no = "79032233223"
+        auth_info.password = hash_password("boov")
+        session_id = gen_session_id()
+        auth_info.session_id = session_id
+        auth_info.permissions = 1
+        auth_info.save()
+        return auth_info.session_id
+    except Exception as e:
+        print("Failed to prepare first admin")
+        print(str(e))
+
+def wipe_db(db_name):
+    try:
+        revDb = _get_db(db_name)
+        colList = revDb.list_collection_names()
+        for col in colList:
+            revDb[col].delete_many({})
+    except Exception as e:
+        print("Failed to wipe DB")
+        print(str(e))
 
 def post_item(instance, url, data, auth_header="admin"):
     if not isinstance(instance, unittest.TestCase):

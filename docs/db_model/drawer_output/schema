@@ -1,0 +1,133 @@
+// Reviewer
+digraph {
+	node [shape=ellipse]
+	overlap=false
+	AuthInfo [label="AuthInfo
+attempts: int
+auth_code: char
+is_approved: bool
+last_send_time: timestamp
+password: char
+permissions: int
+phone_no: char
+session_id: char
+"]
+	Department [label="Department
+name: char
+"]
+	Group [label="Group
+name: char
+"]
+	GroupMember [label="GroupMember
+is_active: bool
+"]
+	GroupMemberReview [label="GroupMemberReview
+description: char
+value: float
+"]
+	GroupPermission [label="GroupPermission
+name: char
+"]
+	GroupReview [label="GroupReview
+description: char
+value: float
+"]
+	GroupRole [label="GroupRole
+name: char
+"]
+	GroupTest [label="GroupTest
+info: char
+name: char
+"]
+	GroupTestReview [label="GroupTestReview
+description: char
+value: float
+"]
+	HSReview [label="HSReview
+description: char
+value: float
+"]
+	HardSkill [label="HardSkill
+name: char
+"]
+	Organization [label="Organization
+name: char
+"]
+	Person [label="Person
+birth_date: datetime
+first_name: char
+middle_name: char
+phone_no: char
+surname: char
+"]
+	PersonHS [label="PersonHS
+level: float
+"]
+	PersonSS [label="PersonSS
+level: float
+"]
+	PersonSpecialization [label="PersonSpecialization
+details: dict
+is_active: bool
+level: float
+"]
+	SSReview [label="SSReview
+description: char
+value: float
+"]
+	SoftSkill [label="SoftSkill
+name: char
+"]
+	Specialization [label="Specialization
+detail: char
+type: char
+"]
+	SpecializationReview [label="SpecializationReview
+description: char
+value: float
+"]
+	Survey [label="Survey
+description: char
+survey_options: dict
+survey_result: dict
+"]
+	SurveyResponse [label="SurveyResponse
+chosen_option: char
+"]
+	TestResult [label="TestResult
+result_data: list
+"]
+	AuthInfo -> Person
+	Department -> Organization
+	Group -> Department
+	Group -> GroupRole
+	GroupMember -> Group
+	GroupMember -> GroupPermission
+	GroupMember -> Person
+	GroupMember -> GroupRole
+	GroupMemberReview -> Person
+	GroupMemberReview -> GroupMember
+	GroupReview -> Person
+	GroupReview -> Group
+	GroupTest -> Group
+	GroupTestReview -> Person
+	GroupTestReview -> GroupTest
+	HSReview -> Person
+	HSReview -> PersonHS
+	PersonHS -> HardSkill
+	PersonHS -> Person
+	PersonSS -> Person
+	PersonSS -> SoftSkill
+	PersonSpecialization -> Department
+	PersonSpecialization -> Person
+	PersonSpecialization -> Specialization
+	SSReview -> Person
+	SSReview -> PersonSS
+	SpecializationReview -> Person
+	SpecializationReview -> PersonSpecialization
+	Survey -> Group
+	SurveyResponse -> Person
+	SurveyResponse -> Survey
+	TestResult -> Person
+	TestResult -> GroupTest
+}

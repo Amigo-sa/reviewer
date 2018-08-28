@@ -10,8 +10,12 @@ import random
 import datetime
 from time import sleep
 import re
+from bson import ObjectId
 import sys
 #from src.data.reviewer_model import *
+import api_helper_methods as hm
+import src.data.reviewer_model as model
+from pymodm.errors import DoesNotExist
 
 node_port = 5002
 
@@ -21,7 +25,7 @@ class NodeServer(Thread):
 
 node_server_thread = NodeServer()
 
-
+#TODO с учётом прямого общения с базой тесты неплохо бы оптимизировать
 class TestApi(unittest.TestCase):
 
     @classmethod
@@ -45,6 +49,7 @@ class TestApi(unittest.TestCase):
                 if attempts > 20: raise ConnectionError("could not connect to server")
         print("Connected")
 
+
     @classmethod
     def tearDownClass(cls):
         requests.post(cls.api_URL + "/shutdown")
@@ -52,26 +57,25 @@ class TestApi(unittest.TestCase):
     def tearDown(self):
         pass
 
+
+
     def setUp(self):
-        requests.post(self.api_URL + "/wipe")
-        admin_req = requests.post(self.api_URL + "/first_admin").json()
-        self.assertEqual(ERR.OK, admin_req["result"])
+        #requests.post(self.api_URL + "/wipe")
+        hm.wipe_db(constants.db_name)
         self.admin_header = {"Authorization":
-                                 "Bearer " + admin_req["session_id"]}
+                                 "Bearer " + hm.prepare_first_admin()}
 
     def setup_reviewer(self):
-        reviewer_req = requests.post(self.api_URL + "/logged_in_person").json()
-        self.assertEqual(ERR.OK, reviewer_req["result"])
+        reviewer = hm.prepare_logged_in_person("78001112233")
         self.reviewer_header = {"Authorization":
-                                    "Bearer " + reviewer_req["session_id"]}
-        self.reviewer_id = reviewer_req["person_id"]
+                                    "Bearer " + reviewer["session_id"]}
+        self.reviewer_id = reviewer["person_id"]
 
     def setup_reviewer2(self):
-        reviewer_req = requests.post(self.api_URL + "/logged_in_person").json()
-        self.assertEqual(ERR.OK, reviewer_req["result"])
+        reviewer = hm.prepare_logged_in_person("78001112234")
         self.reviewer_header2 = {"Authorization":
-                                    "Bearer " + reviewer_req["session_id"]}
-        self.reviewer_id2 = reviewer_req["person_id"]
+                                    "Bearer " + reviewer["session_id"]}
+        self.reviewer_id2 = reviewer["person_id"]
 
     def t_simple_normal(self, url_get, url_post, url_delete, *args, **kwargs):
         # read from empty DB
@@ -301,7 +305,7 @@ class TestApi(unittest.TestCase):
         item_list = self.get_item_list("/tests/results")
         self.assertDictListEqual([], item_list)
 
-    def test_find_person_limits(self):
+    def test_find_persons_limits(self):
         person_ids = self.prepare_persons(10)
         list_0_3 = self.get_item_list("/persons?query_limit=4")
         self.assertEqual(len(list_0_3), 4, "must return requested number of items")
@@ -316,7 +320,7 @@ class TestApi(unittest.TestCase):
         for index, item in enumerate(list_8_9):
             self.assertEqual(item["id"], person_ids[index + 8])
 
-    def test_person_filters(self):
+    def test_find_persons_filters(self):
         persons = [
             {"surname": "Иванов",
              "first_name": "Петр",
@@ -379,112 +383,238 @@ class TestApi(unittest.TestCase):
             raise AssertionError("dict lists must be equal")
         if list1_c: raise AssertionError("dict lists must be equal")
 
-    def test_specialization_person(self):
-        person_count = 4
-        person_ids = self.prepare_persons(person_count)
-        self.prepare_department()
-        self.prepare_department()
-        org_1 = self.get_item_list("/organizations")[0]
-        org_2 = self.get_item_list("/organizations")[1]
-        dep_1 = self.get_item_list("/organizations/%s/departments"%org_1["id"])[0]
-        dep_2 = self.get_item_list("/organizations/%s/departments"%org_2["id"])[0]
-        person_ref_data = []
-        for person_id in person_ids:
-            person_ref_data.append(self.get_item_data("/persons/" + person_id))
-        specializations = {}
-        # person 0 is student
-        temp_spec = {
-                "person_id": person_ids[0],
-                "department_id": dep_1["id"],
-                "type": "Student",
-                "description": "sample_description"
-            }
-        temp_spec.update({"id": self.post_item("/specializations", temp_spec)})
-        specializations["person0_Student"] = temp_spec
-        # person 1 is tutor and student
-        temp_spec = {
-            "person_id": person_ids[1],
-            "department_id":  dep_1["id"],
-            "type": "Tutor",
-            "description": "sample_description"
-        }
-        temp_spec.update({"id": self.post_item("/specializations", temp_spec)})
-        specializations["person1_Tutor"] = temp_spec
-        temp_spec = {
-            "person_id": person_ids[1],
-            "department_id":  dep_1["id"],
-            "type": "Student",
-            "description": "sample_description"
-        }
-        temp_spec.update({"id": self.post_item("/specializations", temp_spec)})
-        specializations["person1_Student"] = temp_spec
-        # person 2 is tutor at 2-nd department of 2-nd organization
-        temp_spec = {
-            "person_id": person_ids[2],
-            "department_id": dep_2["id"],
-            "type": "Tutor",
-            "description": "sample_description"
-        }
-        temp_spec.update({"id": self.post_item("/specializations", temp_spec)})
-        specializations["person2_Tutor"] = temp_spec
-        # person 3 has no specialization
-        # testing that specializations were added properly
-        for key, value in specializations.items():
-            spec_wo_id = value.copy()
-            del spec_wo_id["id"]
-            spec_data = self.get_item_data("/specializations/" + value["id"])
-            self.assertEqual(spec_wo_id, spec_data, "returned specialization data must match inserted data")
-        person0_spec_list = self.get_item_list("/persons/%s/specializations" % person_ids[0])
-        person1_spec_list = self.get_item_list("/persons/%s/specializations" % person_ids[1])
-        self.assertEqual(person0_spec_list,
-                         [{"id": specializations["person0_Student"]["id"]}])
-        self.assertDictListEqual(person1_spec_list,
-                         [{"id": specializations["person1_Tutor"]["id"]},
-                          {"id": specializations["person1_Student"]["id"]}])
-        # testing find_persons without request params
-        person_list = self.get_item_list("/persons")
-        for person in person_list:
-            ref_data = next((p for p in person_ref_data if p["id"] == person["id"]), None)
-            self.assertEqual(ref_data["first_name"], person["first_name"])
-            self.assertEqual(ref_data["middle_name"], person["middle_name"])
-            self.assertEqual(ref_data["surname"], person["surname"])
-            if person["id"] == person_ids[0]:
-                self.assertEqual(person["specialization"], "Student")
-                self.assertEqual(person["organization_name"], org_1["name"])
-            if person["id"] == person_ids[1]:
-                self.assertEqual(person["specialization"], "Tutor")
-                self.assertEqual(person["organization_name"], org_1["name"])
-            if person["id"] == person_ids[2]:
-                self.assertEqual(person["specialization"], "Tutor")
-                self.assertEqual(person["organization_name"], org_2["name"])
-            if person["id"] == person_ids[3]:
-                self.assertEqual(person["specialization"], "None")
-                self.assertEqual(person["organization_name"], "None")
-        # testing find_persons with department_id param
-        person_list = self.get_item_list("/persons?department_id=" + dep_1["id"])
-        for person in person_list:
-            self.assertNotIn(person["id"], [person_ids[2], person_ids[3]])
-            self.assertIn(person["id"], [person_ids[0], person_ids[1]])
-        # testing find_persons with organization_id param
-        person_list = self.get_item_list("/persons?organization_id=" + org_1["id"])
-        for person in person_list:
-            self.assertNotIn(person["id"], [person_ids[2], person_ids[3]])
-            self.assertIn(person["id"], [person_ids[0], person_ids[1]])
-        # testing find_persons with specialization param
-        person_list = self.get_item_list("/persons?specialization=tutor")
-        for person in person_list:
-            self.assertNotIn(person["id"], [person_ids[0], person_ids[3]])
-            self.assertIn(person["id"], [person_ids[1], person_ids[2]])
-        person_list = self.get_item_list("/persons?specialization=student")
-        for person in person_list:
-            self.assertNotIn(person["id"], [person_ids[2], person_ids[3]])
-            self.assertIn(person["id"], [person_ids[0], person_ids[1]])
-        # clearing collections
-        for key, specialization in specializations.items():
-            self.delete_item("/specializations/" + specialization["id"])
-        for person_id in person_ids:
-            spec_list = self.get_item_list("/persons/%s/specializations" % person_id)
-            self.assertEqual([], spec_list, "all specializations must be deleted")
+    def test_post_specialization(self):
+        # post without detail
+        #struct = hm.prepare_org_structure()
+        spec_data = {"type" : "Student"}
+        spec_id = self.post_item("/specializations", spec_data)
+        spec = model.Specialization.objects.get({"_id" : ObjectId(spec_id)})
+        spec.refresh_from_db()
+        self.assertEqual("Student", spec.type, "spec type must be saved")
+        self.assertIsNone(spec.detail, "no detail must present")
+        # post with detail
+        spec_data = {"type": "Tutor", "detail" : "ТОЭ"}
+        spec_id = self.post_item("/specializations", spec_data)
+        spec = model.Specialization.objects.get({"_id": ObjectId(spec_id)})
+        spec.refresh_from_db()
+        self.assertEqual("Tutor", spec.type, "spec type must be saved")
+        self.assertEqual("ТОЭ", spec.detail, "spec detail must be saved")
+
+    def test_delete_specialization(self):
+        spec = model.Specialization("student")
+        spec.save()
+        self.delete_item("/specializations/%s" % spec.pk)
+        with self.assertRaises(DoesNotExist):
+            spec.refresh_from_db()
+
+    def test_list_specializations(self):
+        spec_1 = model.Specialization("Tutor", "ТОЭ")
+        spec_1.save()
+        spec_2 = model.Specialization("Student")
+        spec_2.save()
+        spec_list = self.get_item_list("/specializations")
+        self.assertEqual(2, len(spec_list))
+        self.assertIn({"id" : str(spec_1.pk),
+                       "type" : spec_1.type,
+                       "detail" : spec_1.detail}, spec_list)
+        self.assertIn({"id": str(spec_2.pk),
+                       "type": spec_2.type}, spec_list)
+
+    def test_post_person_specialization(self):
+        # without level
+        struct = hm.prepare_org_structure()
+        p_spec_data = {"department_id" : struct["dep_1"]["id"],
+                       "specialization_id" : struct["spec_1"]["id"]}
+        p_spec_id = self.post_item("/persons/%s/specializations" % struct["person_1"]["id"],
+                                    p_spec_data)
+        p_spec = model.PersonSpecialization.objects.get({"_id" : ObjectId(p_spec_id)})
+        p_spec.refresh_from_db()
+        self.assertEqual(struct["dep_1"]["id"], str(p_spec.department_id.pk), "dep_id must be saved")
+        self.assertEqual(struct["spec_1"]["id"], str(p_spec.specialization_id.pk), "spec_id must be saved")
+        self.assertEqual(struct["person_1"]["id"], str(p_spec.person_id.pk), "person_id must be saved")
+        self.assertEqual(None, p_spec.level, "no level must be saved")
+        # with level
+        p_spec_data = {"department_id": struct["dep_2"]["id"],
+                       "specialization_id": struct["spec_2"]["id"],
+                       "level" : "60.0"}
+        p_spec_id = self.post_item("/persons/%s/specializations" % struct["person_2"]["id"],
+                                   p_spec_data)
+        p_spec = model.PersonSpecialization.objects.get({"_id": ObjectId(p_spec_id)})
+        p_spec.refresh_from_db()
+        self.assertEqual(struct["dep_2"]["id"], str(p_spec.department_id.pk), "dep_id must be saved")
+        self.assertEqual(struct["spec_2"]["id"], str(p_spec.specialization_id.pk), "spec_id must be saved")
+        self.assertEqual(struct["person_2"]["id"], str(p_spec.person_id.pk), "person_id must be saved")
+        self.assertEqual(60.0, p_spec.level, "level must be saved")
+
+    def test_delete_person_specialization(self):
+        struct = hm.prepare_org_structure()
+        p_spec = model.PersonSpecialization(
+            ObjectId(struct["person_1"]["id"]),
+            ObjectId(struct["dep_1"]["id"]),
+            ObjectId(struct["spec_1"]["id"]),
+            50.0,
+            {"detail" : "text"},
+            True
+        )
+        p_spec.save()
+        self.delete_item("/persons/specializations/%s" % p_spec.pk)
+        with self.assertRaises(DoesNotExist):
+            p_spec.refresh_from_db()
+
+    def test_get_person_specializations(self):
+        struct = hm.prepare_org_structure()
+        p_spec_1 = model.PersonSpecialization(
+            ObjectId(struct["person_1"]["id"]),
+            ObjectId(struct["dep_1"]["id"]),
+            ObjectId(struct["spec_1"]["id"]),
+            50.0,
+            {"detail": "text"},
+            True
+        )
+        p_spec_1.save()
+        p_spec_2 = model.PersonSpecialization(
+            ObjectId(struct["person_1"]["id"]),
+            ObjectId(struct["dep_2"]["id"]),
+            ObjectId(struct["spec_2"]["id"]),
+            40.0,
+        )
+        p_spec_2.is_active = False
+        p_spec_2.save()
+        p_spec_3 = model.PersonSpecialization(
+            ObjectId(struct["person_2"]["id"]),
+            ObjectId(struct["dep_2"]["id"]),
+            ObjectId(struct["spec_2"]["id"]),
+            30.0,
+            {"detail": "text3"},
+            True
+        )
+        p_spec_3.save()
+        person_1_spec_list = self.get_item_list("/persons/%s/specializations"
+                                                % struct["person_1"]["id"])
+        self.assertEqual(2, len(person_1_spec_list))
+        self.assertIn({"id" : str(p_spec_1.pk),
+                       "department_id" : struct["dep_1"]["id"],
+                       "level" : 50.0,
+                       "specialization_type" : struct["spec_1"]["type"],
+                       "is_active": "True",
+                       "specialization_detail" : struct["spec_1"]["detail"],
+                       "additional_details" : {"detail": "text"}},
+                      person_1_spec_list,
+                      "p_spec info must present")
+        self.assertIn({"id": str(p_spec_2.pk),
+                       "department_id": struct["dep_2"]["id"],
+                       "level": 40.0,
+                       "specialization_type": struct["spec_2"]["type"],
+                       "is_active": "False",
+                       },
+                      person_1_spec_list,
+                      "p_spec info must present")
+
+    def test_patch_person_specialization(self):
+        struct = hm.prepare_org_structure()
+        p_spec_1 = model.PersonSpecialization(
+            ObjectId(struct["person_1"]["id"]),
+            ObjectId(struct["dep_1"]["id"]),
+            ObjectId(struct["spec_1"]["id"]),
+            50.0,
+            {"detail": "text"},
+            True
+        )
+        p_spec_1.save()
+        # test status change
+        self.patch_item("/persons/specializations/%s?is_active=false" % p_spec_1.pk)
+        p_spec_1.refresh_from_db()
+        self.assertFalse(p_spec_1.is_active, "is_active must be set")
+        self.patch_item("/persons/specializations/%s?is_active=true" % p_spec_1.pk)
+        p_spec_1.refresh_from_db()
+        self.assertTrue(p_spec_1.is_active, "is_active must be set")
+        # test set details
+        patch_data = {"detail 2" : "text 2"}
+        self.patch_item("/persons/specializations/%s" % p_spec_1.pk, patch_data)
+        p_spec_1.refresh_from_db()
+        self.assertEqual(patch_data, p_spec_1.details, "details must be patched")
+
+    def test_find_persons_spec_filters(self):
+        struct = hm.prepare_org_structure()
+        p_spec_1 = model.PersonSpecialization(
+            ObjectId(struct["person_1"]["id"]),
+            ObjectId(struct["dep_1"]["id"]),
+            ObjectId(struct["spec_1"]["id"]),
+            50.0,
+            {"detail": "text"},
+            True
+        )
+        p_spec_1.save()
+
+        # test if person_1 is in return list
+        p_list = self.get_item_list("/persons")
+        p_1_ref_dict = struct["person_1"]
+        p_1_ref_dict.pop("phone_no")
+        p_1_ref_dict.pop("birth_date")
+        p_1_ref_dict.update({"specialization" : struct["spec_1"]["type"]})
+        p_1_ref_dict.update({"organization_name": struct["org_1"]["name"]})
+        self.assertIn(p_1_ref_dict, p_list, "must return correct person info")
+        # test if org and spec are not returned when absent
+        p_2_ref_dict = struct["person_2"]
+        p_2_ref_dict.pop("phone_no")
+        p_2_ref_dict.pop("birth_date")
+        # TODO внести единство в эти None и "None"
+        p_2_ref_dict.update({"specialization": None})
+        p_2_ref_dict.update({"organization_name": "None"})
+        self.assertIn(p_2_ref_dict, p_list, "must return correct person info")
+
+        p_list = self.get_item_list("/persons?specialization=Tutor")
+        self.assertIn(p_1_ref_dict, p_list, "must return correct person info")
+        self.assertNotIn(p_2_ref_dict, p_list, "must not return non-matching persons info")
+
+        p_spec_2 = model.PersonSpecialization(
+            ObjectId(struct["person_1"]["id"]),
+            ObjectId(struct["dep_2"]["id"]),
+            ObjectId(struct["spec_2"]["id"]),
+            40.0,
+        )
+        p_spec_2.is_active = False
+        p_spec_2.save()
+        p_spec_3 = model.PersonSpecialization(
+            ObjectId(struct["person_2"]["id"]),
+            ObjectId(struct["dep_2"]["id"]),
+            ObjectId(struct["spec_2"]["id"]),
+            30.0,
+            {"detail": "text3"},
+            True
+        )
+        p_spec_3.save()
+        p_list = self.get_item_list("/persons?specialization=Tutor")
+        p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
+        self.assertTrue(p1_id)
+        p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
+        self.assertFalse(p2_id)
+        p_list = self.get_item_list("/persons?specialization=Student")
+        p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
+        self.assertTrue(p1_id)
+        p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
+        self.assertTrue(p2_id)
+        p_list = self.get_item_list("/persons?department_id=%s" % struct["dep_1"]["id"])
+        p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
+        self.assertTrue(p1_id)
+        p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
+        self.assertFalse(p2_id)
+        p_list = self.get_item_list("/persons?department_id=%s" % struct["dep_2"]["id"])
+        p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
+        self.assertTrue(p1_id)
+        p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
+        self.assertTrue(p2_id)
+        p_list = self.get_item_list("/persons?organization_id=%s" % struct["org_1"]["id"])
+        p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
+        self.assertTrue(p1_id)
+        p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
+        self.assertFalse(p2_id)
+        p_list = self.get_item_list("/persons?organization_id=%s" % struct["org_2"]["id"])
+        p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
+        self.assertTrue(p1_id)
+        p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
+        self.assertTrue(p2_id)
+
 
     def test_group_member_normal(self):
         person_id = self.prepare_persons(1)[0]
@@ -553,7 +683,6 @@ class TestApi(unittest.TestCase):
         resp_json = requests.get(self.api_URL+"/group_members/" + gm_id, headers = self.admin_header).json()
         self.assertEqual(ERR.NO_DATA, resp_json["result"])
 
-    
     def test_reviews_normal(self):
         person_id = self.prepare_persons(1)[0]
         facility_ids = self.prepare_group()
@@ -562,33 +691,22 @@ class TestApi(unittest.TestCase):
         group_id = facility_ids["group_id"]
         hs_id = self.prepare_hs()[0]
         ss_id = self.prepare_ss()[0]
-        print(person_id, org_id, dep_id, group_id, hs_id, ss_id)
-        student = {
-            "person_id": person_id,
-            "department_id": dep_id,
-            "type": "Student",
-            "description": "sample_description"
-        }
-        student.update({"id": self.post_item("/specializations", student)})
-        tutor_spec = {
-            "person_id": person_id,
-            "department_id": dep_id,
-            "type": "Tutor",
-            "description": "sample_description"
-        }
-        tutor_spec.update({"id": self.post_item("/specializations", tutor_spec)})
+        spec_id = self.post_item("/specializations",
+                                 {"type": "Tutor",
+                                  "detail": "TOE"})
+        p_spec_id = self.post_item("/persons/%s/specializations" % person_id,
+                                   {"department_id": dep_id,
+                                    "specialization_id": spec_id})
         gm_id = self.post_item("/groups/%s/group_members" % group_id, {"person_id": person_id})
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name" : "sample_test_name",
                                                                     "info" : "sample_test_info"})
-        subject_urls = { "Student": "/specializations/%s/reviews" %(student["id"]),
-                     "Tutor": "/specializations/%s/reviews"%(tutor_spec["id"]),
+        subject_urls = { "Specialization": "/specializations/%s/reviews" %(p_spec_id),
                      "PersonHS": "/persons/%s/hard_skills/%s/reviews" %(person_id, hs_id),
                      "PersonSS": "/persons/%s/soft_skills/%s/reviews" % (person_id, ss_id),
                      "Group" : "/groups/%s/reviews"%group_id,
                      "GroupTest" : "/tests/%s/reviews"%g_test_id,
                      "GroupMember": "/group_members/%s/reviews"%gm_id}
-        subj_ids = { "Student": student["id"],
-                     "Tutor": tutor_spec["id"],
+        subj_ids = { "Specialization": p_spec_id,
                      "PersonHS": None,
                      "PersonSS": None,
                      "Group" : group_id,
@@ -623,6 +741,7 @@ class TestApi(unittest.TestCase):
         self.assertDictListEqual([], review_list)
         # verify with subject_id
         for subj_type, rev_id in rev_ids.items():
+            print(subj_ids[subj_type])
             review_list = self.get_item_list("/reviews?subject_id=" + subj_ids[subj_type])
             self.assertEqual([{"id" : rev_id}], review_list)
         # get review info
@@ -634,21 +753,21 @@ class TestApi(unittest.TestCase):
                         "description": "sample_descr"}
             self.assertDictEqual(ref_data, review_data)
         # verify with review from person2
-        review_data = {"type": "Student",
+        review_data = {
                        "reviewer_id": self.reviewer_id2,
-                       "subject_id": student["id"],
+                       "subject_id": p_spec_id,
                        "value": "80.0",
                        "description": "sample_descr2"}
-        rev2_id = self.post_item("/specializations/%s/reviews" %(student["id"]),
+        rev2_id = self.post_item("/specializations/%s/reviews" %(p_spec_id),
                                  review_data,
                                  auth="reviewer2")
-        review_list = self.get_item_list("/reviews?subject_id=" + student["id"])
-        self.assertEqual([{"id": rev_ids["Student"]}, {"id": rev2_id}], review_list)
+        review_list = self.get_item_list("/reviews?subject_id=" + p_spec_id)
+        self.assertEqual([{"id": rev_ids["Specialization"]}, {"id": rev2_id}], review_list)
         # delete review
-        self.delete_item("/reviews/" + rev_ids["Student"], auth="reviewer")
-        rev_ids.pop("Student")
+        self.delete_item("/reviews/" + rev_ids["Specialization"], auth="reviewer")
+        rev_ids.pop("Specialization")
         # verify
-        review_list = self.get_item_list("/reviews?subject_id=" + student["id"])
+        review_list = self.get_item_list("/reviews?subject_id=" + p_spec_id)
         self.assertEqual([{"id": rev2_id}], review_list)
         # delete all reviews
         self.delete_item("/reviews/" + rev2_id, auth="reviewer2")
@@ -706,26 +825,16 @@ class TestApi(unittest.TestCase):
                              "/departments/" + aux_item_ids["dep_id"] + "/groups",
                              name="string")
 
-
-    def test_tutor_duplicate(self):
+    def test_specialization_duplicate(self):
         p_id = self.prepare_persons(1)[0]
         d_id = self.prepare_department()["dep_id"]
-        self.post_duplicate_item("/specializations",
+        spec_id = self.post_item("/specializations",
+                                 {"type": "Tutor",
+                                  "detail": "TOE"})
+        self.post_duplicate_item("/persons/%s/specializations"%p_id,
                                  "/persons/%s/specializations"%p_id,
-                                 person_id = p_id,
-                                 department_id = d_id,
-                                 type = "Tutor",
-                                 description = "string")
-
-    def test_student_duplicate(self):
-        p_id = self.prepare_persons(1)[0]
-        d_id = self.prepare_department()["dep_id"]
-        self.post_duplicate_item("/specializations",
-                                 "/persons/%s/specializations"%p_id,
-                                 person_id = p_id,
-                                 department_id = d_id,
-                                 type = "Student",
-                                 description = "string")
+                                 specialization_id = spec_id,
+                                 department_id = d_id)
 
     def test_group_member_duplicate(self):
         p_id = self.prepare_persons(1)[0]
@@ -752,25 +861,16 @@ class TestApi(unittest.TestCase):
         hs_id = self.prepare_hs()[0]
         ss_id = self.prepare_ss()[0]
         print(person_id, org_id, dep_id, group_id, hs_id, ss_id)
-        student = {
-            "person_id": person_id,
-            "department_id": dep_id,
-            "type": "Student",
-            "description": "sample_description"
-        }
-        student.update({"id": self.post_item("/specializations", student)})
-        tutor = {
-            "person_id": person_id,
-            "department_id": dep_id,
-            "type": "Tutor",
-            "description": "sample_description"
-        }
-        tutor.update({"id": self.post_item("/specializations", tutor)})
+        spec_id = self.post_item("/specializations",
+                                 {"type": "Tutor",
+                                  "detail": "TOE"})
+        p_spec_id = self.post_item("/persons/%s/specializations" % person_id,
+                                   {"department_id": dep_id,
+                                    "specialization_id": spec_id})
         gm_id = self.post_item("/groups/%s/group_members" % group_id, {"person_id": person_id})
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name": "sample_test_name",
                                                                    "info": "sample_test_info"})
-        subject_urls = {"Student": "/specializations/%s/reviews" % (student["id"]),
-                        "Tutor": "/specializations/%s/reviews" % (tutor["id"]),
+        subject_urls = {"Specialization": "/specializations/%s/reviews" % (p_spec_id),
                         "PersonHS": "/persons/%s/hard_skills/%s/reviews" % (person_id, hs_id),
                         "PersonSS": "/persons/%s/soft_skills/%s/reviews" % (person_id, ss_id),
                         "Group": "/groups/%s/reviews" % group_id,
@@ -850,16 +950,12 @@ class TestApi(unittest.TestCase):
         org_id = fac_ids["org_id"]
         dep_id = fac_ids["dep_id"]
         group_id = fac_ids["group_id"]
-        sr_id = self.post_item("/specializations",
-                               {"person_id": p_id,
-                                "department_id": dep_id,
-                                "type": "Student",
-                                "description": "specialization_description"})
-        tr_id = self.post_item("/specializations",
-                               {"person_id": p_id,
-                                "department_id": dep_id,
-                                "type": "Tutor",
-                                "description": "Tutor_description"})
+        spec_id = self.post_item("/specializations",
+                               {"type": "Tutor",
+                                "detail": "TOE"})
+        p_spec_id = self.post_item("/persons/%s/specializations" % p_id,
+                               {"department_id": dep_id,
+                                "specialization_id": spec_id})
         hard_skill_id = self.prepare_hs()[0]
         soft_skill_id = self.prepare_ss()[0]
         g_test_id = self.post_item("/groups/%s/tests" % group_id, {"name": "test_name",
@@ -879,28 +975,15 @@ class TestApi(unittest.TestCase):
                               role_list=[dep_id])
 
         # tutor_specialization
-        self.pass_invalid_ref("/specializations",
-                              person_id= p_id,
-                              department_id = org_id,
-                              type = "Tutor",
-                              description = "string")
-        self.pass_invalid_ref("/specializations",
-                              person_id=hard_skill_id,
-                              department_id=dep_id,
-                              type="Tutor",
-                              description="string")
-
-        # student_specialization
-        self.pass_invalid_ref("/specializations",
-                              person_id=p_id,
-                              department_id=org_id,
-                              type="Student",
-                              description="string")
-        self.pass_invalid_ref("/specializations",
-                              person_id=hard_skill_id,
-                              department_id=dep_id,
-                              type="Student",
-                              description="string")
+        self.pass_invalid_ref("/persons/%s/specializations" % p_id,
+                              specialization_id= spec_id,
+                              department_id = org_id)
+        self.pass_invalid_ref("/persons/%s/specializations" % p_id,
+                              specialization_id=org_id,
+                              department_id=dep_id)
+        self.pass_invalid_ref("/persons/%s/specializations" % hard_skill_id,
+                              specialization_id=spec_id,
+                              department_id=dep_id)
 
         # group_member
         self.pass_invalid_ref("/groups/%s/group_members"%hard_skill_id,
@@ -965,6 +1048,119 @@ class TestApi(unittest.TestCase):
                               value="skill_level",
                               description="string"
                               )
+
+    def test_post_survey(self):
+        struct = hm.prepare_org_structure()
+        post_data = {"description" : "some_desc",
+                     "options" : {"1": "opt1", "2": "opt2"}}
+        survey_id = self.post_item("/groups/%s/surveys" % struct["group_1"]["id"], post_data)
+        survey = model.Survey(_id= survey_id)
+        survey.refresh_from_db()
+        self.assertEqual("some_desc", survey.description, "must save correct description")
+        self.assertEqual({"1": "opt1", "2": "opt2"}, survey.survey_options, "must save correct options")
+        self.assertEqual({"1": 0, "2": 0}, survey.survey_result, "must save correct initial result")
+
+    def test_delete_survey(self):
+        struct = hm.prepare_org_structure()
+        survey = model.Survey()
+        survey.group_id = struct["group_1"]["id"]
+        survey.description = "some descr"
+        survey.survey_options = {"1" : "opt1"}
+        survey.save()
+        survey.refresh_from_db()
+        self.delete_item("/surveys/%s" % survey.pk)
+        with self.assertRaises(DoesNotExist):
+            survey.refresh_from_db()
+
+    def test_get_survey(self):
+        struct = hm.prepare_org_structure()
+        survey = model.Survey()
+        survey.group_id = struct["group_1"]["id"]
+        survey.description = "some descr"
+        survey.survey_options = {"1": "opt1",
+                                 "2": "opt2"}
+        survey.survey_result = {"1": 6,
+                                "2": 4}
+        survey.save()
+        survey_2 = model.Survey()
+        survey_2.group_id = struct["group_2"]["id"]
+        survey_2.description = "some descr2"
+        survey_2.survey_options = {"3": "opt3",
+                                 "5": "opt5"}
+        survey_2.survey_result = {"3": 2,
+                                "5": 3}
+        survey_2.save()
+        survey_ref_data = {
+            "group_id" : struct["group_1"]["id"],
+            "id": str(survey.pk),
+            "options" : {"1": "opt1",
+                                 "2": "opt2"},
+            "results" : {"1" : 6, "2" : 4}}
+        survey_2_ref_data = {
+            "group_id": struct["group_2"]["id"],
+            "id": str(survey_2.pk),
+            "options": {"3": "opt3",
+                        "5": "opt5"},
+            "results": {"3": 2, "5": 3}}
+        survey_list = self.get_item_list("/surveys")
+        self.assertEqual(2, len(survey_list))
+        self.assertIn(survey_ref_data, survey_list, "must return correct survey data")
+        self.assertIn(survey_2_ref_data, survey_list, "must return correct survey data")
+        survey_list = self.get_item_list("/surveys?group_id=%s" % struct["group_2"]["id"])
+        self.assertEqual(1, len(survey_list))
+        self.assertIn(survey_2_ref_data, survey_list, "must return correct survey data")
+        self.assertNotIn(survey_ref_data, survey_list, "must return correct survey data")
+
+    def test_post_survey_responce(self):
+        struct = hm.prepare_org_structure()
+        survey = model.Survey()
+        survey.group_id = struct["group_1"]["id"]
+        survey.description = "some descr"
+        survey.survey_options = {"1": "opt1",
+                                 "2": "opt2"}
+        survey.survey_result = {"1": 6,
+                                "2": 4}
+        survey.save()
+        group_member = model.GroupMember()
+        group_member.group_id = struct["group_1"]["id"]
+        group_member.person_id = struct["person_1"]["id"]
+        group_member.role_id = struct["group_role_1"]["id"]
+        group_member.save()
+        post_data = {"person_id" : struct["person_1"]["id"],
+                     "chosen_option" : "1"}
+        response_id = self.post_item("/surveys/%s" % survey.pk, post_data)
+        response = model.SurveyResponse(_id = response_id)
+        response.refresh_from_db()
+        survey.refresh_from_db()
+        self.assertEqual(struct["person_1"]["id"], str(response.person_id.pk))
+        self.assertEqual("1", str(response.chosen_option))
+        self.assertEqual(7, survey.survey_result["1"], "must update survey result")
+
+    def test_post_survey_invalid_responce(self):
+        struct = hm.prepare_org_structure()
+        survey = model.Survey()
+        survey.group_id = struct["group_1"]["id"]
+        survey.description = "some descr"
+        survey.survey_options = {"1": "opt1",
+                                 "2": "opt2"}
+        survey.survey_result = {"1": 6,
+                                "2": 4}
+        survey.save()
+        group_member = model.GroupMember()
+        group_member.group_id = struct["group_1"]["id"]
+        group_member.person_id = struct["person_1"]["id"]
+        group_member.role_id = struct["group_role_1"]["id"]
+        group_member.save()
+        post_data = {"person_id" : struct["person_2"]["id"],
+                     "chosen_option" : "1"}
+        resp = hm.try_post_item(self, self.api_URL + "/surveys/%s" % survey.pk,
+                                post_data, self.admin_header)
+        self.assertEqual(ERR.AUTH, resp["result"])
+        post_data = {"person_id": struct["person_1"]["id"],
+                     "chosen_option": "9"}
+        resp = hm.try_post_item(self, self.api_URL + "/surveys/%s" % survey.pk,
+                                post_data, self.admin_header)
+        self.assertEqual(ERR.INPUT, resp["result"])
 
 
     def pass_invalid_ref(self, url_post, auth = "admin", **kwargs):
@@ -1041,8 +1237,8 @@ class TestApi(unittest.TestCase):
         if "error_message" in resp_json: print(resp_json["error_message"])
         self.assertEqual(ERR.OK, resp_json["result"], "result must be ERR.OK")
 
-    def patch_item(self, url):
-        resp = requests.patch(url=self.api_URL + url, headers = self.admin_header)
+    def patch_item(self, url, data=None):
+        resp = requests.patch(url=self.api_URL + url, json=data, headers = self.admin_header)
         self.assertEqual(200, resp.status_code, "patch response status code must be 200")
         resp_json = resp.json()
         if "error_message" in resp_json: print(resp_json["error_message"])

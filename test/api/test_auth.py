@@ -10,6 +10,7 @@ import requests
 from flask import Flask, Blueprint
 import datetime
 import sys
+import src.data.reviewer_model as model
 
 from node.node_server import start_server
 from node.settings import constants
@@ -74,6 +75,7 @@ class TestAuth(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+
         # Загрузка адреса сервера
         cls.api_URL = "http://127.0.0.1:"+str(node_port)
         cls.gen_doc_ctr = 0
@@ -117,14 +119,13 @@ class TestAuth(unittest.TestCase):
         pass
 
     def setUp(self):
-        requests.post(self.api_URL + "/wipe")
+        #requests.post(self.api_URL + "/wipe")
+        hm.wipe_db(constants.db_name)
         cur_session.id = None
         cur_session.received_code = None
-        admin_req = requests.post(self.api_URL + "/first_admin").json()
-        self.assertEqual(ERR.OK, admin_req["result"])
         self.admin_header = {"Authorization":
-                                 "Bearer " + admin_req["session_id"]}
-
+                                 "Bearer " + hm.prepare_first_admin()}
+    # TODO Surveys!
     def prepare_lists(self):
         # admin only routes
         self.admin_only_post = [
@@ -141,6 +142,7 @@ class TestAuth(unittest.TestCase):
             "/specializations",
             "/soft_skills",
             "/hard_skills",
+            "/groups/%s/surveys" % self.group_id
             # TODO group_tests не охвачены
         ]
         self.admin_only_delete = [
@@ -152,14 +154,16 @@ class TestAuth(unittest.TestCase):
             "/persons/%s" % self.other_person_id,
             "/group_members/%s" % self.group_member_id,
             "/group_members/%s/permissions/%s" % (self.group_member_id, self.group_perm_id),
-            "/specializations/%s" % self.tutor_id,
-            "/specializations/%s" % self.student_id,
+            "/specializations/%s" % self.spec_id,
+            "/persons/specializations/%s" % self.user_spec_id,
             "/soft_skills/%s" % self.soft_skill_id,
             "/hard_skills/%s" % self.hard_skill_id,
+            "/surveys/%s" % self.survey_id,
             # TODO group_tests не охвачены
         ]
         self.admin_only_patch = [
-            "/group_members/%s" % self.group_member_id
+            "/group_members/%s" % self.group_member_id,
+            "/persons/specializations/%s" % self.user_spec_id
         ]
         self.admin_only_get = [
             "/persons/%s" % self.other_person_id,
@@ -173,13 +177,16 @@ class TestAuth(unittest.TestCase):
         self.user_allowed_get = [
             "/persons/%s" % self.user_person_id
         ]
+        self.user_allowed_post = {
+            "/surveys/%s" % self.group_id : {"person_id" : self.user_person_id,
+                                             "chosen_option" : "1"}
+        }
 
         self.gm_allowed_get = [
             "/group_members/%s" % self.group_member_id
         ]
         self.review_valid_post = [
-            "/specializations/%s/reviews" % self.other_tutor_id,
-            "/specializations/%s/reviews" % self.other_student_id,
+            "/specializations/%s/reviews" % self.other_spec_id,
             "/groups/%s/reviews" % self.group_id,
             # TODO group_test_reviews
             "/group_members/%s/reviews" % self.other_group_member_id,
@@ -188,8 +195,7 @@ class TestAuth(unittest.TestCase):
         ]
         # отзывы на свои качества и роли
         self.review_invalid_post = [
-            "/specializations/%s/reviews" % self.tutor_id,
-            "/specializations/%s/reviews" % self.student_id,
+            "/specializations/%s/reviews" % self.user_spec_id,
             "/group_members/%s/reviews" % self.group_member_id,
             "/persons/%s/hard_skills/%s/reviews" % (self.user_person_id, self.hard_skill_id),
             "/persons/%s/soft_skills/%s/reviews" % (self.user_person_id, self.soft_skill_id)
@@ -204,8 +210,7 @@ class TestAuth(unittest.TestCase):
             "/group_permissions",
             "/groups/%s/group_members" % self.group_id,
             "/persons/%s/group_members" % self.user_person_id,
-            "/specializations/%s" % self.tutor_id,
-            "/specializations/%s" % self.student_id,
+            "/specializations",
             "/persons/%s/specializations" % self.user_person_id,
             "/persons",
             "/reviews",
@@ -215,16 +220,16 @@ class TestAuth(unittest.TestCase):
             "/persons/hard_skills",
             "/persons/soft_skills/%s" % self.soft_skill_id,
             "/persons/hard_skills/%s" % self.hard_skill_id,
+            "/surveys"
             # TODO group_tests
         ]
 
 
     def prepare_docs(self):
         # prepare user
-        resp_json = requests.post(self.api_URL + "/logged_in_person").json()
-        print(resp_json)
-        self.user_person_id = resp_json["person_id"]
-        self.user_session_id = resp_json["session_id"]
+        auth_user = hm.prepare_logged_in_person("78001112233")
+        self.user_person_id = auth_user["person_id"]
+        self.user_session_id = auth_user["session_id"]
         self.user_header = {"Authorization":
                            "Bearer " + self.user_session_id}
         # prepare data
@@ -245,44 +250,50 @@ class TestAuth(unittest.TestCase):
                                        {"person_id": self.user_person_id,
                                         "role_id": self.group_role_id})
 
-        self.tutor_id = hm.post_item(self, self.api_URL + "/specializations",
-                                          {"person_id": self.user_person_id,
-                                           "department_id": self.dep_id,
-                                           "type" : "Tutor",
-                                           "description" : "string"})
-        self.student_id = hm.post_item(self, self.api_URL + "/specializations",
-                                                  {"person_id": self.user_person_id,
-                                                   "department_id": self.dep_id,
-                                                   "type": "Student",
-                                                   "description": "string"})
-
+        self.spec_id = hm.post_item(self, self.api_URL + "/specializations",
+                                    {"type" : "Tutor",
+                                     "detail" : "TOE"})
+        self.user_spec_id = hm.post_item(self, self.api_URL + "/persons/%s/specializations" % self.user_person_id,
+                                          {"department_id": self.dep_id,
+                                            "specialization_id": self.spec_id
+                                           })
 
         self.soft_skill_id = hm.post_item(self, self.api_URL + "/soft_skills",
                                           {"name" : "string"})
         self.hard_skill_id = hm.post_item(self, self.api_URL + "/hard_skills",
                                           {"name": "string"})
 
+        survey = model.Survey()
+        survey.group_id = self.group_id
+        survey.description = "some descr"
+        survey.survey_options = {"1": "opt1",
+                                 "2": "opt2"}
+        survey.survey_result = {"1": 6,
+                                "2": 4}
+        survey.save()
+        self.survey_id = str(survey.pk)
+        s_response = model.SurveyResponse()
+        s_response.survey_id = survey.pk
+        s_response.chosen_option = "1"
+        s_response.person_id = self.user_person_id
+        s_response.save()
+        self.s_resp_id = str(s_response.pk)
+
         # prepare second person
-        resp_json = requests.post(self.api_URL + "/logged_in_person").json()
-        print(resp_json)
-        self.other_person_id = resp_json["person_id"]
-        self.other_user_session_id = resp_json["session_id"]
+        auth_user = hm.prepare_logged_in_person("78001112234")
+        self.other_person_id = auth_user["person_id"]
+        self.other_user_session_id = auth_user["session_id"]
         self.other_user_header = {"Authorization":
                                 "Bearer " + self.other_user_session_id}
+        self.other_spec_id = hm.post_item(self, self.api_URL + "/persons/%s/specializations" % self.other_person_id,
+                                         {"department_id": self.dep_id,
+                                          "specialization_id": self.spec_id
+                                          })
 
         self.other_group_member_id = hm.post_item(self, self.api_URL + "/groups/%s/group_members" % self.group_id,
                                                   {"person_id": self.other_person_id,
                                                    "role_id": self.group_role_id})
-        self.other_tutor_id = hm.post_item(self, self.api_URL + "/specializations",
-                                                {"person_id": self.other_person_id,
-                                                 "department_id": self.dep_id,
-                                                 "type": "Tutor",
-                                                 "description": "string"})
-        self.other_student_id = hm.post_item(self, self.api_URL + "/specializations",
-                                          {"person_id": self.other_person_id,
-                                           "department_id": self.dep_id,
-                                           "type": "Student",
-                                           "description": "string"})
+
         self.third_person_id = hm.post_item(self, self.api_URL + "/persons",
                                             dict(first_name="Гендальф",
                                                  middle_name="Батькович",
@@ -325,6 +336,11 @@ class TestAuth(unittest.TestCase):
         user_allowed_get_urls = []
         user_allowed_get_urls += self.user_allowed_get
         user_allowed_get_urls += self.gm_allowed_get
+
+        for url,data in self.user_allowed_post.items():
+            resp_json = hm.try_post_item(self, self.api_URL + url, data, self.user_header)
+            self.assertNotEqual(ERR.AUTH, resp_json["result"],
+                                "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
         for url in user_allowed_get_urls:
             resp_json = hm.try_get_item(self, self.api_URL + url, self.user_header)
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
@@ -418,7 +434,6 @@ class TestAuth(unittest.TestCase):
             resp_json = hm.try_get_item(self, self.api_URL + "/reviews/" + rev_id, None)
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                                 "get %s must not return ERR.AUTH without session" % url)
-
 
     def test_review_post_on_self(self):
         self.prepare_docs()
@@ -526,10 +541,7 @@ class TestAuth(unittest.TestCase):
         cur_session.id = resp.json()["session_id"]
         print("Session ID is " + cur_session.id)
         print("Got SMS with code " + cur_session.received_code)
-        resp = requests.post(self.api_URL + "/session_aging", json={
-            "phone_no": phone_no,
-            "minutes": "20",
-        })
+        hm.age_session(phone_no, 20)
         self.assertEqual(ERR.OK, resp.json()["result"])
         resp = requests.post(self.api_URL + "/finish_phone_confirmation",
                              json={"auth_code": cur_session.received_code,
@@ -546,14 +558,10 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
         self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
-        resp = requests.post(self.api_URL + "/session_aging", json={
-            "phone_no": phone_no,
-            "minutes": "1"})
+        hm.age_session(phone_no, 1)
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
         self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
-        resp = requests.post(self.api_URL + "/session_aging", json={
-            "phone_no": phone_no,
-            "minutes": "1"})
+        hm.age_session(phone_no, 1)
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
         self.assertEqual(ERR.OK, resp.json()["result"])
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})

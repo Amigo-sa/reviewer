@@ -30,67 +30,6 @@ if __debug__:
                   result_string += "document: {0}<br>".format(document)
         return result_string
 
-
-    from pymodm.connection import _get_db
-
-    @bp.route("/wipe", methods=['POST'])
-    def wipe():
-        try:
-            revDb = _get_db(constants.db_name)
-            colList = revDb.list_collection_names()
-            for col in colList:
-                revDb[col].delete_many({})
-            result = {"result": ERR.OK}
-        except:
-            result = {"result": ERR.DB}
-        return jsonify(result), 200
-
-
-    @bp.route("/first_admin", methods=['POST'])
-    def prepare_first_admin():
-        try:
-            auth_info = AuthInfo()
-            auth_info.is_approved = True
-            auth_info.phone_no = "79032233223"
-            auth_info.password = hash_password("boov")
-            session_id = gen_session_id()
-            auth_info.session_id = session_id
-            auth_info.permissions = 1
-            result = {"result": ERR.OK,
-                      "session_id" : session_id}
-            auth_info.save()
-        except:
-            result = {"result": ERR.DB}
-        return jsonify(result), 200
-
-    @bp.route("/logged_in_person", methods=['POST'])
-    def prepare_logged_in_person():
-        try:
-            phone_no = str(randint(1000000000,9999999999))
-            person = Person(
-                "Клон",
-                "Один Из",
-                "Миллионов",
-                date(1980, 1, 1),
-                phone_no)
-            person.save()
-            auth_info = AuthInfo()
-            auth_info.is_approved = True
-            auth_info.phone_no = phone_no
-            auth_info.password = hash_password("user")
-            session_id = gen_session_id()
-            auth_info.session_id = session_id
-            auth_info.permissions = 0
-            auth_info.person_id = person.pk
-            auth_info.save()
-            result = {"result": ERR.OK,
-                      "session_id": session_id,
-                      "person_id" : str(person.pk)}
-        except Exception as e:
-            result = {"result": ERR.DB}
-            print(e)
-        return jsonify(result), 200
-
     @bp.route("/shutdown", methods = ['POST'])
     def shutdown():
         func = request.environ.get('werkzeug.server.shutdown')
@@ -100,22 +39,3 @@ if __debug__:
         result = {"result": ERR.OK}
         return jsonify(result), 200
 
-
-    @bp.route("/session_aging", methods=['POST'])
-    def age_sessions():
-        req = request.get_json()
-        try:
-            phone_no = req["phone_no"]
-            minutes = req["minutes"]
-            auth_info = AuthInfo.objects.get({"phone_no" : phone_no})
-            ts = auth_info.last_send_time
-            dt = ts.as_datetime()
-            print("old dt %s" % (dt))
-            dt -= timedelta(minutes=int(minutes))
-            print("new dt %s" % (dt))
-            auth_info.last_send_time = dt
-            auth_info.save()
-            result = {"result": ERR.OK}
-        except:
-            result = {"result": ERR.DB}
-        return jsonify(result), 200

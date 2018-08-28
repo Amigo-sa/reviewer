@@ -11,9 +11,7 @@ from node.settings import constants
 
 from collections import Counter
 
-# TODO внедрить в базу номер версии модели и номер версии скрипта-заполнителя
-model_version = "0.3"
-
+model_version = "0.4"
 
 def get_dependent_list(doc, dep_id_list):
     current_del_rules = doc._mongometa.delete_rules
@@ -54,7 +52,7 @@ class ValidatedReferenceField(fields.ReferenceField):
                     raise ValidationError("ссылка на _id несуществующего объекта")
             else:
                 if not self.related_model.objects.get({"_id": ref_field.pk}):
-                    raise ValidationError("ссылка на _id несуществующего объекта")
+                    raise ValidationError("ссылка на _id несуществующего объекта %s" %self.related_model.__name__)
             old_clean(instance)
 
         setattr(cls, "clean", new_clean)
@@ -174,10 +172,27 @@ class PersonSS(MongoModel):
                               unique=True)]
 
 
-class Tutor(MongoModel):
+class Specialization(MongoModel):
+    # type подразумевает "преподаватель", "лаборант", "студент" и т.п.
+    # при этом поле detail можно сделать недоступным для заполнения если type=="студент"
+    type = fields.CharField(required=True)
+    detail = fields.CharField()
+
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+        indexes = [IndexModel([("detail", pymongo.DESCENDING)],
+                              unique=False)]
+
+class PersonSpecialization(MongoModel):
     person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     department_id = ValidatedReferenceField(Department, on_delete=ReferenceField.CASCADE)
-    discipline = fields.CharField()
+    specialization_id = ValidatedReferenceField(Specialization, on_delete=ReferenceField.CASCADE)
+    level = fields.FloatField(default=None, blank=True)
+    details = fields.DictField()
+
+    is_active = fields.BooleanField(required=True, default=True)
 
     class Meta:
         write_concern = WriteConcern(j=True)
@@ -185,21 +200,7 @@ class Tutor(MongoModel):
         final = True
         indexes = [IndexModel([("person_id", pymongo.DESCENDING),
                                ("department_id", pymongo.DESCENDING),
-                               ("discipline", pymongo.DESCENDING)],
-                              unique=True)]
-
-
-class Student(MongoModel):
-    person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    department_id = ValidatedReferenceField(Department, on_delete=ReferenceField.CASCADE)
-    description = fields.CharField()
-
-    class Meta:
-        write_concern = WriteConcern(j=True)
-        connection_alias = "reviewer"
-        final = True
-        indexes = [IndexModel([("person_id", pymongo.DESCENDING),
-                               ("department_id", pymongo.DESCENDING)],
+                               ("specialization_id", pymongo.DESCENDING)],
                               unique=True)]
 
 
@@ -243,8 +244,6 @@ class Group(MongoModel):
 
 class GroupMember(MongoModel):
 
-    # TODO лучше реализовать это в виде validator
-    # TODO реализовать в виде списка, иначе несовместимо с питоном <3.6
     def clean(self):
         if self.role_id:
             target_group = Group.objects.get({"_id": self.group_id.pk})
@@ -358,24 +357,9 @@ class HSReview(MongoModel):
                               unique=True)]
 
 
-class SRReview(MongoModel):
+class SpecializationReview(MongoModel):
     reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    subject_id = ValidatedReferenceField(Student, on_delete=ReferenceField.CASCADE)
-    value = fields.FloatField()
-    description = fields.CharField()
-
-    class Meta:
-        write_concern = WriteConcern(j=True)
-        connection_alias = "reviewer"
-        final = True
-        indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
-                               ("subject_id", pymongo.DESCENDING)],
-                              unique=True)]
-
-
-class TRReview(MongoModel):
-    reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
-    subject_id = ValidatedReferenceField(Tutor, on_delete=ReferenceField.CASCADE)
+    subject_id = ValidatedReferenceField(PersonSpecialization, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
     description = fields.CharField()
 
@@ -432,21 +416,36 @@ class GroupTestReview(MongoModel):
                                ("subject_id", pymongo.DESCENDING)],
                               unique=True)]
 
-
 class Survey(MongoModel):
     group_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE)
     description = fields.CharField()
-    survey_data = fields.DictField()
+    survey_options = fields.DictField(required=True)
+    survey_result = fields.DictField(default=None)
 
     class Meta:
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
 
+# TODO Добавить валидацию: вариант ответа должен быть предусмотрен
+class SurveyResponse(MongoModel):
+
+    survey_id = ValidatedReferenceField(Survey, on_delete=ReferenceField.CASCADE)
+    person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
+    chosen_option = fields.CharField(required=True)
+
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+        indexes = [IndexModel([("survey_id", pymongo.DESCENDING),
+                               ("person_id", pymongo.DESCENDING)],
+                              unique=True)]
 
 class AuthInfo(MongoModel):
     phone_no = fields.CharField()
     auth_code = fields.CharField(blank=True)
+    #TODO заменить на DateField
     last_send_time = fields.TimestampField()
     attempts = fields.IntegerField(default=0)
     is_approved = fields.BooleanField(default=False)

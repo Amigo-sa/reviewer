@@ -3045,21 +3045,21 @@
 							],
 							"request": {
 								"method": "PATCH",
-								"header": [],
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									}
+								],
 								"body": {
 									"mode": "raw",
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/group_members/{{group_member_id}}?is_active=false",
-									"protocol": "http",
+									"raw": "{{server_url}}/group_members/{{group_member_id}}?is_active=false",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{server_url}}"
 									],
-									"port": "5000",
 									"path": [
 										"group_members",
 										"{{group_member_id}}"
@@ -3688,7 +3688,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"person_id\": \"{{person_id}}\",\n\t\"department_id\":\"{{department_id}}\",\n\t\"type\":\"{{type}}\",\n\t\"description\":\"Бездельник\"\n}"
+							"raw": "{\n\t\"type\":\"{{type}}\",\n\t\"detail\": \"Микроконтроллеры\"\n}"
 						},
 						"url": {
 							"raw": "{{server_url}}/specializations",
@@ -3699,11 +3699,11 @@
 								"specializations"
 							]
 						},
-						"description": "Добавляет специализацию пользователю\ntype - тип: Student - Студент, Tutor - Преподаватель"
+						"description": "Добавляет специализацию в набор\ntype - тип специализации, например: Student, Tutor, Lab assistant и т.д\ndetail - описание специализации (например \"Микропроцессорные системы\")"
 					},
 					"response": [
 						{
-							"name": "add_general_role_tutor",
+							"name": "add_specialization",
 							"originalRequest": {
 								"method": "POST",
 								"header": [
@@ -3715,7 +3715,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"person_id\": \"5b54c4a72131371cb0cbdd45\",\n\t\"department_id\":\"5b54c4a72131371cb0cbdd4d\",\n\t\"type\":\"Tutor\",\n\t\"description\":\"Бездельник\"\n}"
+									"raw": "{\n\t\"type\":\"Tutor\",\n\t\"detail\":\"Микроконтроллеры\"\n}"
 								},
 								"url": {
 									"raw": "http://127.0.0.1:5000/specializations",
@@ -3772,10 +3772,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "ef535325-be85-430f-842c-f4d941bf97a1",
+								"id": "46a2e153-6004-434c-b441-7ff4d54c4ce7",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"role_id\", \"5b7da4062131370f444b74ce\");"
+									"pm.environment.set(\"specialization_id\", \"5b8295792131370144243aba\");"
 								]
 							}
 						}
@@ -3793,20 +3793,20 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{server_url}}/specializations/{{role_id}}",
+							"raw": "{{server_url}}/specializations/{{specialization_id}}",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
 								"specializations",
-								"{{role_id}}"
+								"{{specialization_id}}"
 							]
 						},
-						"description": "Удаляет специализацию пользователя"
+						"description": "Удаляет специализацию из набора возможных"
 					},
 					"response": [
 						{
-							"name": "delete_general_role",
+							"name": "delete_specialization",
 							"originalRequest": {
 								"method": "DELETE",
 								"header": [],
@@ -3865,15 +3865,310 @@
 					]
 				},
 				{
-					"name": "get_specializations_data",
+					"name": "list_specializations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/specializations",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"specializations"
+							]
+						},
+						"description": "Получает список возможных специализаций пользователей"
+					},
+					"response": [
+						{
+							"name": "list_specializations",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/specializations",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"specializations"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "487",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 24 Aug 2018 18:05:24 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"list\":[{\"detail\":\"\\u0422\\u041e\\u042d\",\"id\":\"5b803b932131370554f2f2fe\",\"type\":\"Tutor\"},{\"detail\":\"\\u041c\\u0438\\u043a\\u0440\\u043e\\u043f\\u0440\\u043e\\u0441\\u0435\\u0441\\u0441\\u043e\\u0440\\u043d\\u044b\\u0435 \\u0441\\u0438\\u0441\\u0442\\u0435\\u043c\\u044b\",\"id\":\"5b803b932131370554f2f2ff\",\"type\":\"Tutor\"},{\"detail\":\"\\u041c\\u0435\\u0442\\u0440\\u043e\\u043b\\u043e\\u0433\\u0438\\u044f\",\"id\":\"5b803b932131370554f2f300\",\"type\":\"Lab assistant\"},{\"id\":\"5b803b932131370554f2f301\",\"type\":\"Student\"}],\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "add_person_specialization",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "a4bae22b-8cb9-4b0c-a2cf-99517489db05",
+								"id": "70073ca0-d3fa-4517-a420-a2b55135a650",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"role_id\", \"5b7da3632131371418c12ca3\");"
+									"pm.environment.set(\"person_id\", \"5b803b932131370554f2f2bd\");",
+									"pm.environment.set(\"department_id\", \"5b803b932131370554f2f2c0\");",
+									"pm.environment.set(\"specialization_id\", \"5b804a7e2131371108efbd3e\");",
+									"pm.environment.set(\"level\", 93.11);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"specialization_id\": \"{{specialization_id}}\",\n\t\"department_id\":\"{{department_id}}\",\n\t\"level\": {{level}}\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/persons/{{person_id}}/specializations",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"persons",
+								"{{person_id}}",
+								"specializations"
+							]
+						},
+						"description": "Добавляет специализацию из набора конкретному пользователю\n"
+					},
+					"response": [
+						{
+							"name": "add_person_specialization",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"specialization_id\": \"5b803b932131370554f2f304\",\n\t\"department_id\":\"5b8295642131370144243ab9\",\n\t\"level\":93.1\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/persons5b803b932131370554f2f304/specializations",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"persons5b803b932131370554f2f304",
+										"specializations"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 24 Aug 2018 19:22:12 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"id\":\"5b805ae4213137065c05add9\",\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "delete_person_specialization",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7ee7259c-a1b4-4602-83ae-40177a789c4d",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_specialization_id\", \"5b804a9c2131371108efbd3f\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/persons/specializations/{{person_specialization_id}}",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"persons",
+								"specializations",
+								"{{person_specialization_id}}"
+							]
+						},
+						"description": "Удаляет специализацию пользователя"
+					},
+					"response": [
+						{
+							"name": "delete_person_specialization",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/specializations/5b54daa82131371308dded19",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"specializations",
+										"5b54daa82131371308dded19"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "13",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 22 Jul 2018 19:32:56 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "get_person_specializations",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "727bb3ac-408f-407f-babd-203668e26425",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_id\", \"5b82943a21313712e8ee61ac\");"
 								]
 							}
 						}
@@ -3886,20 +4181,21 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{server_url}}/specializations/{{role_id}}",
+							"raw": "{{server_url}}/persons/{{person_id}}/specializations",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
-								"specializations",
-								"{{role_id}}"
+								"persons",
+								"{{person_id}}",
+								"specializations"
 							]
 						},
-						"description": "Получает информацию о специализации пользователя:\nid пользователя\nдепартамент, в котором она зарегистрирована\nтип (Преподаватель или Студент)\nописание для студента и предмет для преподавателя"
+						"description": "Получает список специализаций конкретного пользователя и данные по ним"
 					},
 					"response": [
 						{
-							"name": "get_general_roles_data",
+							"name": "get_person_specializations_tutor",
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
@@ -3908,7 +4204,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/specializations/5b54c4a72131371cb0cbdd91",
+									"raw": "http://127.0.0.1:5000/persons/5b8295642131370144243ab9/specializations",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -3918,8 +4214,9 @@
 									],
 									"port": "5000",
 									"path": [
-										"specializations",
-										"5b54c4a72131371cb0cbdd91"
+										"persons",
+										"5b8295642131370144243ab9",
+										"specializations"
 									]
 								}
 							},
@@ -3929,7 +4226,7 @@
 							"header": [
 								{
 									"key": "Content-Length",
-									"value": "296",
+									"value": "780",
 									"name": "Content-Length",
 									"description": "The length of the response body in octets (8-bit bytes)"
 								},
@@ -3941,7 +4238,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Sun, 22 Jul 2018 19:32:15 GMT",
+									"value": "Sun, 26 Aug 2018 12:25:24 GMT",
 									"name": "Date",
 									"description": "The date and time that the message was sent"
 								},
@@ -3953,7 +4250,303 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"data\": {\n        \"department_id\": \"5b54c4a72131371cb0cbdd4d\",\n        \"description\": \"Студент очной формы обучения\",\n        \"person_id\": \"5b54c4a72131371cb0cbdd48\",\n        \"type\": \"Student\"\n    },\n    \"result\": 0\n}"
+							"body": "{\"list\":[{\"department_id\":\"5b82943a21313712e8ee61af\",\"id\":\"5b8297542131370144243abd\",\"is_active\":\"True\",\"level\":93.11,\"specialization_detail\":\"\\u041c\\u0438\\u043a\\u0440\\u043e\\u043a\\u043e\\u043d\\u0442\\u0440\\u043e\\u043b\\u043b\\u0435\\u0440\\u044b\",\"specialization_type\":\"Tutor\"},{\"department_id\":\"5b82943a21313712e8ee61af\",\"id\":\"5b82943b21313712e8ee61f1\",\"is_active\":\"True\",\"level\":70.0,\"specialization_detail\":\"\\u041c\\u0438\\u043a\\u0440\\u043e\\u043f\\u0440\\u043e\\u0441\\u0435\\u0441\\u0441\\u043e\\u0440\\u043d\\u044b\\u0435 \\u0441\\u0438\\u0441\\u0442\\u0435\\u043c\\u044b\",\"specialization_type\":\"Tutor\"},{\"department_id\":\"5b82943a21313712e8ee61af\",\"id\":\"5b82943b21313712e8ee61f3\",\"is_active\":\"True\",\"level\":45.0,\"specialization_detail\":\"\\u0422\\u041e\\u042d\",\"specialization_type\":\"Tutor\"}],\"result\":0}\n"
+						},
+						{
+							"name": "get_person_specializations_inactive_student",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/persons/5b8295642131370144243ab9/specializations",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"persons",
+										"5b8295642131370144243ab9",
+										"specializations"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "245",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 26 Aug 2018 12:24:21 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"list\":[{\"additional_details\":{\"graduation\":\"\\u043e\\u043a\\u043e\\u043d\\u0447\\u0438\\u043b\"},\"department_id\":\"5b82943a21313712e8ee61af\",\"id\":\"5b82943b21313712e8ee61f6\",\"is_active\":\"False\",\"level\":null,\"specialization_type\":\"Student\"}],\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "set_person_specialization_status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a04b2a04-e708-4063-8d58-c9174a8ecd1e",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_specialization_id\", \"5b8297542131370144243abd\");",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/persons/specializations/{{person_specialization_id}}?is_active=true",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"persons",
+								"specializations",
+								"{{person_specialization_id}}"
+							],
+							"query": [
+								{
+									"key": "is_active",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Устанавливает специализацию пользователя как активного или не активного"
+					},
+					"response": [
+						{
+							"name": "set_person_specialization_status",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"sessionValue": "Bearer acbd123123",
+										"type": "text",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/persons/specializations/5b8297542131370144243abd?is_active=false",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"persons",
+										"specializations",
+										"5b8297542131370144243abd"
+									],
+									"query": [
+										{
+											"key": "is_active",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "13",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 26 Aug 2018 12:43:25 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "set_person_specialization_details",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5f0d980e-d55a-4b0f-8939-fe7e753dfb86",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"person_specialization_id\", \"5b8297542131370144243abd\");",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"graduation\": \"отчислен\"\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/persons/specializations/{{person_specialization_id}}",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"persons",
+								"specializations",
+								"{{person_specialization_id}}"
+							]
+						},
+						"description": "Устанавливает дополнительную информацию для специализации пользователя"
+					},
+					"response": [
+						{
+							"name": "set_person_specialization_details",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"disabled": false
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"graduation\": \"отчислен\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/persons/specializations/5b8297542131370144243abd",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"persons",
+										"specializations",
+										"5b8297542131370144243abd"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "13",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 26 Aug 2018 12:57:54 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"result\":0}\n"
 						}
 					]
 				}
@@ -3991,11 +4584,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "ffbc810c-49dd-456c-a044-a1f7004ba458",
+								"id": "dfb8bd2e-741f-4842-9f0d-a906da6d01d2",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"specialization_id\", \"5b7da3632131371418c12ca3\");",
-									"pm.environment.set(\"reviewer_id\", \"5b7da3632131371418c12c5d\");",
+									"pm.environment.set(\"person_specialization_id\", \"5b82943b21313712e8ee61f1\");",
+									"pm.environment.set(\"reviewer_id\", \"5b82943a21313712e8ee61a7\");",
 									"pm.environment.set(\"value\",90.0);",
 									"pm.environment.set(\"description\", \"Классный чел\");"
 								]
@@ -4019,13 +4612,13 @@
 							"raw": "{\n\t\"reviewer_id\":\"{{reviewer_id}}\",\n\t\"value\": {{value}},\n\t\"description\":\"{{description}}\"\n}"
 						},
 						"url": {
-							"raw": "{{server_url}}/specializations/{{specialization_id}}/reviews",
+							"raw": "{{server_url}}/specializations/{{person_specialization_id}}/reviews",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
 								"specializations",
-								"{{specialization_id}}",
+								"{{person_specialization_id}}",
 								"reviews"
 							]
 						},
@@ -4033,7 +4626,7 @@
 					},
 					"response": [
 						{
-							"name": "post_general_role_review",
+							"name": "post_specialization_review",
 							"originalRequest": {
 								"method": "POST",
 								"header": [
@@ -4566,10 +5159,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "be7c3d84-6ca2-4783-8932-8e82c5bdbf54",
+								"id": "caa7d4a8-1657-48e6-a366-c455f7faa298",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"review_id\", \"5b522dce2131371a30a5b10c\");"
+									"pm.environment.set(\"review_id\", \"5b82b76821313718b817264f\");"
 								]
 							}
 						}
@@ -4664,10 +5257,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "5ce08ca5-faf5-4ca1-a364-ad5a460d0d99",
+								"id": "b4e47a58-0384-4e4b-881b-45b8a2674139",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"review_id\", \"5b69ad7c2131371db8473673\");"
+									"pm.environment.set(\"review_id\", \"5b82b77321313718b8172650\");"
 								]
 							}
 						}
@@ -4757,11 +5350,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "dec3249f-7fbc-4cd9-8f81-bda327a3ba1e",
+								"id": "0b17b63d-3462-4083-93e9-ae62ad2e9332",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"reviewer_id\", \"5b4ebab42131371208ceb0c9\");",
-									"pm.environment.set(\"subject_id\", \"5b4ebab62131371208ceb122\");"
+									"pm.environment.set(\"reviewer_id\", \"5b82c44a2131372220cbd694\");",
+									"pm.environment.set(\"subject_id\", \"5b82c44a2131372220cbd6de\");"
 								]
 							}
 						}
@@ -4969,12 +5562,12 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "8a218e5a-2b3d-40d8-a2b1-37ccc693670b",
+								"id": "a4761cbf-841a-4727-80c2-f7bd99733d56",
 								"type": "text/javascript",
 								"exec": [
 									"pm.environment.set(\"group_id\", \"5b7c5e9f2131371aa8e1c6a9\");",
-									"pm.environment.set(\"department_id\", \"5b547bee21313717b8ddd06f\");",
-									"pm.environment.set(\"organization_id\", \"5b7c5e9e2131371aa8e1c654\");"
+									"pm.environment.set(\"department_id\", \"5b82943a21313712e8ee61af\");",
+									"pm.environment.set(\"organization_id\", \"5b82943a21313712e8ee61ae\");"
 								]
 							}
 						}
@@ -4987,7 +5580,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{server_url}}/persons?surname=Шат&first_name=ле&middle_name=МИ&specialization=student&group_id={{group_id}}&department_id={{department_id}}&organization_id={{organization_id}}&query_limit=10&query_start=0",
+							"raw": "{{server_url}}/persons?surname=Шат&first_name=ле&middle_name=МИ&specialization=Student&group_id={{group_id}}&department_id={{department_id}}&organization_id={{organization_id}}&query_limit=10&query_start=0",
 							"host": [
 								"{{server_url}}"
 							],
@@ -5009,7 +5602,7 @@
 								},
 								{
 									"key": "specialization",
-									"value": "student"
+									"value": "Student"
 								},
 								{
 									"key": "group_id",
@@ -5126,7 +5719,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/persons?first_name=ле&specialization=student&organization_id=5b54c4a72131371cb0cbdda0&query_limit=10&query_start=0",
+									"raw": "http://127.0.0.1:5000/persons?first_name=ле&specialization=Student&organization_id=5b54c4a72131371cb0cbdda0&query_limit=10&query_start=0",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -5155,7 +5748,7 @@
 										},
 										{
 											"key": "specialization",
-											"value": "student"
+											"value": "Student"
 										},
 										{
 											"key": "group_id",
@@ -5498,101 +6091,6 @@
 							],
 							"cookie": [],
 							"body": "{\"list\":[{\"id\":\"5b54c4a72131371cb0cbdda5\"},{\"id\":\"5b54c4a72131371cb0cbdda3\"}],\"result\":0}\n"
-						}
-					]
-				},
-				{
-					"name": "list_specializations_by_person_id",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "7cd41153-6144-479a-96ca-fe4f54a52ec5",
-								"type": "text/javascript",
-								"exec": [
-									"pm.environment.set(\"person_id\", \"5b7da3632131371418c12c5d\");"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{server_url}}/persons/{{person_id}}/specializations",
-							"host": [
-								"{{server_url}}"
-							],
-							"path": [
-								"persons",
-								"{{person_id}}",
-								"specializations"
-							]
-						},
-						"description": "Получает список специализаций пользователя"
-					},
-					"response": [
-						{
-							"name": "list_roles_by_person_id",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/persons/5b54c4a72131371cb0cbdd45/specializations",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"persons",
-										"5b54c4a72131371cb0cbdd45",
-										"specializations"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Length",
-									"value": "56",
-									"name": "Content-Length",
-									"description": "The length of the response body in octets (8-bit bytes)"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
-								},
-								{
-									"key": "Date",
-									"value": "Mon, 23 Jul 2018 17:00:47 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Server",
-									"value": "Werkzeug/0.14.1 Python/3.6.5",
-									"name": "Server",
-									"description": "A name for the server"
-								}
-							],
-							"cookie": [],
-							"body": "{\"list\":[{\"id\":\"5b54c4a72131371cb0cbdd8f\"}],\"result\":0}\n"
 						}
 					]
 				},
@@ -7408,6 +7906,449 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "surveys",
+			"item": [
+				{
+					"name": "add_survey",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "76d2a594-beb1-40d7-bec7-37b1d2e6a45b",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_id\", \"5b82cf50213137206cc1a485\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"description\": \"Лучшая раса в Старкрафт\",\n\t\"options\":{\n\t\t\"1\": \"Protoss\",\n\t\t\"2\": \"Zerg\",\n\t\t\"3\": \"Terran\"\n\t\t}\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/groups/{{group_id}}/surveys",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"groups",
+								"{{group_id}}",
+								"surveys"
+							]
+						},
+						"description": "Добавляет опрос"
+					},
+					"response": [
+						{
+							"name": "add_survey",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"description\": \"Лучшая раса в Старкрафт\",\n\t\"options\":{\n\t\t\"1\": \"Protoss\",\n\t\t\"2\": \"Zerg\",\n\t\t\"3\": \"Terran\"\n\t\t}\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/groups/5b82def02131371ae05baf36/surveys",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"groups",
+										"5b82def02131371ae05baf36",
+										"surveys"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 26 Aug 2018 17:10:08 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"id\":\"5b82def02131371ae05baf36\",\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "delete_survey",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "702f56ca-79fc-44a8-9074-34eef93342fc",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"survey_id\", \"5b82de162131371dfc720aed\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/surveys/{{survey_id}}",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"surveys",
+								"{{survey_id}}"
+							]
+						},
+						"description": "Удаляет опрос"
+					},
+					"response": [
+						{
+							"name": "delete_survey",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/surveys/5b82cf50213137206cc1a4a3",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"surveys",
+										"5b82cf50213137206cc1a4a3"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "13",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 26 Aug 2018 17:12:19 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "find_surveys",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "51ae57e3-b8ee-415e-aba9-1bed0bd5e9b1",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"group_id\", \"5b82cf50213137206cc1a485\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/surveys?group_id={{group_id}}",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"surveys"
+							],
+							"query": [
+								{
+									"key": "group_id",
+									"value": "{{group_id}}"
+								}
+							]
+						},
+						"description": "Выводит список опросов для заданной группы или для всех групп"
+					},
+					"response": [
+						{
+							"name": "find_surveys",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/surveys?",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"surveys"
+									],
+									"query": [
+										{
+											"key": "group_id",
+											"value": "{{group_id}}",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "914",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 26 Aug 2018 17:33:51 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"list\": [\n        {\n            \"group_id\": \"5b82cf50213137206cc1a486\",\n            \"id\": \"5b82cf50213137206cc1a4a3\",\n            \"options\": {\n                \"1\": \"в корпусе В\",\n                \"2\": \"в корпусе М\",\n                \"3\": \"в корпусе К\"\n            },\n            \"results\": {\n                \"1\": 1,\n                \"2\": 3,\n                \"3\": 2\n            }\n        },\n        {\n            \"group_id\": \"5b82cf50213137206cc1a485\",\n            \"id\": \"5b82def02131371ae05baf36\",\n            \"options\": {\n                \"1\": \"Protoss\",\n                \"2\": \"Zerg\",\n                \"3\": \"Terran\"\n            },\n            \"results\": {\n                \"1\": 0,\n                \"2\": 0,\n                \"3\": 0\n            }\n        }\n    ],\n    \"result\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "participate_survey",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "4431df41-225e-469f-94a0-6eb9844bd4ce",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"survey_id\", \"5b82def02131371ae05baf36\");",
+									"pm.environment.set(\"person_id\", \"5b82cf50213137206cc1a426\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"person_id\": \"{{person_id}}\",\n\t\"chosen_option\": \"3\"\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/surveys/{{survey_id}}",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"surveys",
+								"{{survey_id}}"
+							]
+						},
+						"description": "Передать результат опроса для конкретного пользователя"
+					},
+					"response": [
+						{
+							"name": "participate_survey",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"person_id\": \"5b82cf50213137206cc1a486\",\n\t\"chosen_option\": \"3\"\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/surveys/5b82cf50213137206cc1a486",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"surveys",
+										"5b82cf50213137206cc1a486"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "220",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 26 Aug 2018 18:25:02 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"result\": 0\n}"
+						}
+					]
+				}
+			],
+			"description": "Функции для работы с опросами"
 		}
 	],
 	"event": [
@@ -7434,7 +8375,7 @@
 	],
 	"variable": [
 		{
-			"id": "1100da64-606a-4db5-b431-179d18075ef1",
+			"id": "6a2a4072-5ed0-4e91-a902-0e2e46c887ba",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"

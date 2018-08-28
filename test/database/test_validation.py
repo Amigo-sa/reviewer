@@ -2,7 +2,12 @@
 import context
 import unittest
 import requests
+import os, sys
 from pymodm.connection import _get_db
+parentPath = os.path.abspath("..//..//test")
+if parentPath not in sys.path:
+    sys.path.insert(0, parentPath)
+import api.api_helper_methods as hm
 
 from node.settings import constants
 import node.settings.errors as ERR
@@ -31,25 +36,20 @@ from data.reviewer_model import (Department,
                                  PersonSS,
                                  GroupMember,
                                  GroupMemberReview,
-                                 SRReview,
+                                 Specialization,
                                  SSReview,
                                  Service,
                                  SoftSkill,
-                                 StudentRole,
+                                 PersonSpecialization,
                                  Survey,
-                                 TRReview,
+                                 SurveyResponse,
+                                 SpecializationReview,
                                  TestResult,
-                                 TutorRole,
                                  get_dependent_list,
                                  init_model)
 
-test_version = "0.3"
+test_version = "0.4"
 
-def clear_db():
-    revDb = _get_db(constants.db_name_test)
-    colList = revDb.list_collection_names()
-    for col in colList:
-        revDb[col].delete_many({})
 
 class TestValidation(unittest.TestCase):
 
@@ -58,7 +58,7 @@ class TestValidation(unittest.TestCase):
         pass
 
     def setUp(self):
-        clear_db()
+        hm.wipe_db(constants.db_name)
 
     @classmethod
     def clear_collection(cls, collection_class):
@@ -160,8 +160,6 @@ class TestValidation(unittest.TestCase):
         with self.assertRaises(ValidationError):
             group_member.permissions.append(read_permission)
             group_member.save()
-
-
 
 
 if __name__ == "__main__":
