@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import context
 import requests
 import node.settings.errors as ERR

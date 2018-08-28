@@ -13,7 +13,15 @@ from collections import Counter
 
 model_version = "0.4"
 
+# Функция для определения перечня зависимых документов
 def get_dependent_list(doc, dep_id_list):
+    """
+    Recursive function to find all dependent documents.
+    :param doc: referred document
+    :param dep_id_list: list of all referencing documents
+    :return: list of all referencing documents.
+    Always includes the doc itself
+    """
     current_del_rules = doc._mongometa.delete_rules
     dep_id_list.append(doc)
     for item, rule in current_del_rules.items():
@@ -23,7 +31,7 @@ def get_dependent_list(doc, dep_id_list):
             if dep not in dep_id_list:
                 get_dependent_list(dep, dep_id_list)
 
-
+# Ручное добавление правил удаления для списков ссылок
 def init_model():
     GroupRole.register_delete_rule(
         Group, "role_list", fields.ReferenceField.PULL)
@@ -445,7 +453,7 @@ class SurveyResponse(MongoModel):
 class AuthInfo(MongoModel):
     phone_no = fields.CharField()
     auth_code = fields.CharField(blank=True)
-    #TODO заменить на DateField
+    #TODO заменить на DateTimeField
     last_send_time = fields.TimestampField()
     attempts = fields.IntegerField(default=0)
     is_approved = fields.BooleanField(default=False)
