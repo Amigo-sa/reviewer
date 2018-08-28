@@ -79,9 +79,9 @@ dot = Digraph(comment='Reviewer')
 dot.attr("node", shape="ellipse")
 dot.attr(overlap='false')
 for cls, field_list in fields.items():
-    label = cls + "\n"
-    for field in field_list:
-        label+= field + "\n"
+    label = cls
+    #for field in field_list:
+    #   label+= "\n" + field
     dot.node(cls,label)
 
 for main, refs in links.items():
