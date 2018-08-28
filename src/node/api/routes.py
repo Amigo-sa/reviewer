@@ -21,6 +21,24 @@ def delete_resource(cls, _id):
     return jsonify(result), 200
 
 
+def list_resources(cls, res_fields, parent_cls=None, parent_id=None, parent_name=None):
+    list = []
+    try:
+        if not parent_cls or parent_cls.objects.raw({"_id": ObjectId(parent_id)}).count():
+            q = {} if not parent_cls else {parent_name:ObjectId(parent_id)}
+            for obj in cls.objects.raw(q).values():
+                d = dict((key, str(obj[value])) for key, value in res_fields.items()
+                         if value in obj.keys())
+                list.append(d)
+            result = {"result": ERR.OK, "list":list}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
+    return jsonify(result), 200
+
+
 @bp.route("/organizations", methods = ['POST'])
 @required_auth("admin")
 def add_organization():
@@ -81,16 +99,8 @@ def delete_person(person_id):
 
 @bp.route("/organizations", methods = ['GET'])
 def list_organizations():
-    list = []
-    try:
-        for organization in  Organization.objects.all():
-            list.append({"id":str(organization.pk),
-                         "name":organization.name}
-                        )
-        result = {"result": ERR.OK, "list":list}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return list_resources(Organization,
+                          {"id": "_id", "name": "name"})
 
 
 @bp.route("/organizations/<string:id>/departments", methods = ['POST'])
@@ -122,19 +132,11 @@ def delete_department(id):
 
 @bp.route("/organizations/<string:id>/departments", methods = ['GET'])
 def list_departments(id):
-    list = []
-    try:
-        if Organization(_id=id) in Organization.objects.raw({"_id": ObjectId(id)}):
-            for department in  Department.objects.raw({"organization_id":ObjectId(id)}):
-                list.append({"id":str(department.pk),
-                             "name":department.name}
-                            )
-            result = {"result": ERR.OK, "list":list}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return list_resources(Department,
+                          {"id": "_id", "name": "name"},
+                          Organization,
+                          id,
+                          "organization_id")
 
 
 @bp.route("/departments/<string:id>/groups", methods = ['POST'])
@@ -209,19 +211,12 @@ def get_role_list_for_group(id):
 
 @bp.route("/departments/<string:id>/groups", methods = ['GET'])
 def list_groups(id):
-    list = []
-    try:
-        if Department(_id=id) in Department.objects.raw({"_id": ObjectId(id)}):
-            for group in  Group.objects.raw({"department_id":ObjectId(id)}):
-                list.append({"id":str(group.pk),
-                             "name":group.name}
-                            )
-            result = {"result": ERR.OK, "list":list}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return list_resources(Group,
+                          {"id": "_id",
+                           "name": "name"},
+                          Department,
+                          id,
+                          "department_id")
 
 
 @bp.route("/group_roles", methods = ['POST'])
@@ -251,16 +246,9 @@ def delete_group_role(id):
 
 @bp.route("/group_roles", methods = ['GET'])
 def list_group_roles():
-    list = []
-    try:
-        for group_role in  GroupRole.objects.all():
-            list.append({"id":str(group_role.pk),
-                         "name":group_role.name}
-                        )
-        result = {"result": ERR.OK, "list":list}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return list_resources(GroupRole,
+                          {"id": "_id",
+                           "name": "name"})
 
 
 @bp.route("/group_permissions", methods = ['POST'])
@@ -289,16 +277,9 @@ def delete_group_permission(id):
 
 @bp.route("/group_permissions", methods = ['GET'])
 def list_group_permissions():
-    list = []
-    try:
-        for group_permission in  GroupPermission.objects.all():
-            list.append({"id":str(group_permission.pk),
-                         "name":group_permission.name}
-                        )
-        result = {"result": ERR.OK, "list":list}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return list_resources(GroupPermission,
+                          {"id": "_id",
+                           "name": "name"})
 
 
 @bp.route("/groups/<string:id>/group_members", methods=['POST'])
@@ -355,32 +336,20 @@ def delete_group_member(id):
 
 @bp.route("/groups/<string:id>/group_members", methods=['GET'])
 def list_group_members_by_group_id(id):
-    list = []
-    try:
-        if Group(_id=id) in Group.objects.raw({"_id": ObjectId(id)}):
-            for group_member in  GroupMember.objects.raw({"group_id": ObjectId(id)}):
-                list.append({"id": str(group_member.pk)})
-            result = {"result": ERR.OK, "list":list}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return list_resources(GroupMember,
+                          {"id": "_id"},
+                          Group,
+                          id,
+                          "group_id")
 
 
 @bp.route("/persons/<string:id>/group_members", methods=['GET'])
 def list_group_members_by_person_id(id):
-    list = []
-    try:
-        if Person(_id=id) in Person.objects.raw({"_id": ObjectId(id)}):
-            for group_member in GroupMember.objects.raw({"person_id": ObjectId(id)}):
-                list.append({"id": str(group_member.pk)})
-            result = {"result": ERR.OK, "list":list}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return list_resources(GroupMember,
+                          {"id": "_id"},
+                          Person,
+                          id,
+                          "person_id")
 
 
 @bp.route("/group_members/<string:id>", methods=['GET'])
@@ -542,18 +511,10 @@ def delete_specialization(_id):
 
 @bp.route("/specializations", methods=['GET'])
 def list_specializations():
-    lst = []
-    try:
-        for specialization in Specialization.objects.all():
-            d = {"id": str(specialization.pk),
-                 "type": specialization.type}
-            if specialization.detail: d.update({"detail": specialization.detail})
-            lst.append(d)
-        result = {"result": ERR.OK, "list": lst}
-    except Exception as e:
-        result = {"result": ERR.DB,
-                  "error_message": str(e)}
-    return jsonify(result), 200
+    return list_resources(Specialization,
+                          {"id": "_id",
+                           "type": "type",
+                           "detail": "detail"})
 
 
 @bp.route("/persons/<string:id>/specializations", methods=['POST'])
@@ -1053,19 +1014,6 @@ def add_skill(skill_cls):
     return jsonify(result), 200
 
 
-def list_skills(skill_cls):
-    list = []
-    try:
-        for skill in  skill_cls.objects.all():
-            list.append({"id":str(skill.pk),
-                         "name":skill.name}
-                        )
-        result = {"result": ERR.OK, "list":list}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
-
-
 @bp.route("/soft_skills", methods = ['POST'])
 @required_auth("admin")
 def add_soft_skill():
@@ -1080,7 +1028,9 @@ def delete_soft_skill(id):
 
 @bp.route("/soft_skills", methods = ['GET'])
 def list_soft_skills():
-    return list_skills(SoftSkill)
+    return list_resources(SoftSkill,
+                          {"id": "_id",
+                           "name": "name"})
 
 
 @bp.route("/hard_skills", methods = ['POST'])
@@ -1097,7 +1047,9 @@ def delete_hard_skill(id):
 
 @bp.route("/hard_skills", methods = ['GET'])
 def list_hard_skills():
-    return list_skills(HardSkill)
+    return list_resources(HardSkill,
+                          {"id": "_id",
+                           "name": "name"})
 
 
 def find_person_skills(skill_cls):
@@ -1234,18 +1186,12 @@ def get_group_test_info(id):
 
 @bp.route("/groups/<string:id>/tests", methods=['GET'])
 def list_group_tests(id):
-    list = []
-    try:
-        if Group.objects.raw({"_id": ObjectId(id)}).count():
-            for group_test in GroupTest.objects.raw({"group_id": ObjectId(id)}):
-                list.append({"id": str(group_test.pk),
-                            "name": group_test.name})
-            result = {"result": ERR.OK, "list":list}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
+    return list_resources(GroupTest,
+                          {"id": "_id",
+                          "name": "name"},
+                          Group,
+                          id,
+                          "group_id")
 
 
 @bp.route("/tests/<string:id>/results", methods = ['POST'])
