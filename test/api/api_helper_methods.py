@@ -5,7 +5,7 @@ import unittest
 import datetime
 import random
 from pymodm.connection import _get_db
-import src.data.reviewer_model as model
+import data.reviewer_model as model
 from node.api.routes_auth import hash_password, gen_session_id
 from datetime import datetime, timezone, timedelta, date
 from random import randint

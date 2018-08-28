@@ -14,7 +14,7 @@ from bson import ObjectId
 import sys
 #from src.data.reviewer_model import *
 import api_helper_methods as hm
-import src.data.reviewer_model as model
+import data.reviewer_model as model
 from pymodm.errors import DoesNotExist
 
 node_port = 5002

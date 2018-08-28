@@ -10,7 +10,7 @@ import requests
 from flask import Flask, Blueprint
 import datetime
 import sys
-import src.data.reviewer_model as model
+import data.reviewer_model as model
 
 from node.node_server import start_server
 from node.settings import constants
