@@ -46,6 +46,16 @@ def clear_db():
         print("dropped collection " + col)
     print("done")
 
+def wipe_db(db_name):
+    try:
+        revDb = _get_db(db_name)
+        colList = revDb.list_collection_names()
+        for col in colList:
+            revDb[col].delete_many({})
+    except Exception as e:
+        print("Failed to wipe DB")
+        print(str(e))
+
 def fill_db():
     persons = {
         "Leni4":
@@ -906,6 +916,6 @@ if __name__ == "__main__":
             db_name = constants.db_name_test
     print("Filling DB '%s' \n" % db_name)
     connect(constants.mongo_db + "/" + db_name, alias="reviewer")
-    clear_db()
+    wipe_db("reviewer")
     fill_db()
     display_data()

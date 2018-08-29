@@ -142,8 +142,9 @@ class TestAuth(unittest.TestCase):
             "/specializations",
             "/soft_skills",
             "/hard_skills",
-            "/groups/%s/surveys" % self.group_id
-            # TODO group_tests не охвачены
+            "/groups/%s/surveys" % self.group_id,
+            "/groups/%s/tests" % self.group_id,
+            "/tests/%s/results" % self.test_id
         ]
         self.admin_only_delete = [
             "/organizations/%s" % self.org_id,
@@ -159,7 +160,8 @@ class TestAuth(unittest.TestCase):
             "/soft_skills/%s" % self.soft_skill_id,
             "/hard_skills/%s" % self.hard_skill_id,
             "/surveys/%s" % self.survey_id,
-            # TODO group_tests не охвачены
+            "/tests/%s" % self.test_id,
+            "/tests/results/%s" % self.test_result_id,
         ]
         self.admin_only_patch = [
             "/group_members/%s" % self.group_member_id,
@@ -188,7 +190,7 @@ class TestAuth(unittest.TestCase):
         self.review_valid_post = [
             "/specializations/%s/reviews" % self.other_spec_id,
             "/groups/%s/reviews" % self.group_id,
-            # TODO group_test_reviews
+            "/tests/%s/reviews" % self.test_id,
             "/group_members/%s/reviews" % self.other_group_member_id,
             "/persons/%s/hard_skills/%s/reviews" % (self.other_person_id, self.hard_skill_id),
             "/persons/%s/soft_skills/%s/reviews" % (self.other_person_id, self.soft_skill_id)
@@ -220,8 +222,10 @@ class TestAuth(unittest.TestCase):
             "/persons/hard_skills",
             "/persons/soft_skills/%s" % self.soft_skill_id,
             "/persons/hard_skills/%s" % self.hard_skill_id,
-            "/surveys"
-            # TODO group_tests
+            "/surveys",
+            "/tests/%s" % self.test_id,
+            "/tests/results/%s" % self.test_result_id,
+            "/tests/results",
         ]
 
 
@@ -278,6 +282,20 @@ class TestAuth(unittest.TestCase):
         s_response.person_id = self.user_person_id
         s_response.save()
         self.s_resp_id = str(s_response.pk)
+
+        g_test = model.GroupTest()
+        g_test.group_id = self.group_id
+        g_test.name = "test_name"
+        g_test.info = "test_info"
+        g_test.save()
+        self.test_id = str(g_test.pk)
+
+        test_result = model.TestResult()
+        test_result.test_id = self.test_id
+        test_result.person_id = self.user_person_id
+        test_result.result_data = ["result1"]
+        test_result.save()
+        self.test_result_id = str(test_result.pk)
 
         # prepare second person
         auth_user = hm.prepare_logged_in_person("78001112234")
