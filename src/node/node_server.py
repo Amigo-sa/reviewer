@@ -13,6 +13,7 @@ from node.api.organizations import bp as organizations
 from node.api.departments import bp as departments
 from node.api.groups import bp as groups
 from node.api.specializations import bp as specializations
+from node.api.reviews import bp as reviews
 from pymodm.connection import connect
 
 app = Flask(__name__)
@@ -23,6 +24,7 @@ app.register_blueprint(organizations)
 app.register_blueprint(departments)
 app.register_blueprint(groups)
 app.register_blueprint(specializations)
+app.register_blueprint(reviews)
 
 
 def start_server(port, protocol="http"):
