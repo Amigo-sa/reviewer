@@ -18,6 +18,7 @@ from node.api.skills import bp as skills
 from node.api.group_tests import bp as group_tests
 from node.api.surveys import bp as surveys
 from pymodm.connection import connect
+import logging
 
 app = Flask(__name__)
 app.register_blueprint(debug)
@@ -33,7 +34,9 @@ app.register_blueprint(group_tests)
 app.register_blueprint(surveys)
 
 
-def start_server(port, protocol="http"):
+def start_server(port, protocol="http", log=True):
+    if log:
+        logging.basicConfig(filename='node_server.log', level=logging.DEBUG)
     if protocol == "http":
         app.run(port=port)
     elif protocol == "https":

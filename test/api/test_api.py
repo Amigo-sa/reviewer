@@ -21,7 +21,7 @@ node_port = 5002
 
 class NodeServer(Thread):
     def run(self):
-        start_server(node_port)
+        start_server(node_port, log=False)
 
 node_server_thread = NodeServer()
 

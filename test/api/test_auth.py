@@ -62,7 +62,7 @@ def start_mock_server():
 
 class NodeServer(Thread):
     def run(self):
-        start_server(node_port)
+        start_server(node_port, log=False)
 
 class SmsMockServer(Thread):
     def run(self):
