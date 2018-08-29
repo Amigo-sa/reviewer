@@ -6,7 +6,6 @@ from threading import Thread
 from node.settings import constants
 import pymongo
 from flask import Flask
-from node.api.routes import bp as routes
 from node.api.debug import bp as debug
 from node.api.auth import bp as auth
 from node.api.organizations import bp as organizations
@@ -14,17 +13,24 @@ from node.api.departments import bp as departments
 from node.api.groups import bp as groups
 from node.api.specializations import bp as specializations
 from node.api.reviews import bp as reviews
+from node.api.persons import bp as persons
+from node.api.skills import bp as skills
+from node.api.group_tests import bp as group_tests
+from node.api.surveys import bp as surveys
 from pymodm.connection import connect
 
 app = Flask(__name__)
 app.register_blueprint(debug)
 app.register_blueprint(auth)
-app.register_blueprint(routes)
 app.register_blueprint(organizations)
 app.register_blueprint(departments)
 app.register_blueprint(groups)
 app.register_blueprint(specializations)
 app.register_blueprint(reviews)
+app.register_blueprint(persons)
+app.register_blueprint(skills)
+app.register_blueprint(group_tests)
+app.register_blueprint(surveys)
 
 
 def start_server(port, protocol="http"):

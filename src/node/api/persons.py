@@ -7,7 +7,7 @@ from data.reviewer_model import *
 from node.api.auth import required_auth
 from node.api.base_functions import delete_resource, list_resources
 
-bp = Blueprint('routes', __name__)
+bp = Blueprint('persons', __name__)
 
 
 @bp.route("/persons", methods = ['POST'])
@@ -35,12 +35,6 @@ def add_person():
         result = {"result":ERR.DB}
 
     return jsonify(result), 200
-
-
-@bp.route("/persons/<string:person_id>", methods = ['DELETE'])
-@required_auth("user")
-def delete_person(person_id):
-    return delete_resource(Person, person_id)
 
 
 @bp.route("/persons", methods=['GET'])
@@ -170,13 +164,11 @@ def find_persons():
         result = {"result": ERR.DB}
     return jsonify(result), 200
 
-@bp.route("/persons/<string:id>/group_members", methods=['GET'])
-def list_group_members_by_person_id(id):
-    return list_resources(GroupMember,
-                          {"id": "_id"},
-                          Person,
-                          id,
-                          "person_id")
+
+@bp.route("/persons/<string:person_id>", methods = ['DELETE'])
+@required_auth("user")
+def delete_person(person_id):
+    return delete_resource(Person, person_id)
 
 
 @bp.route("/persons/<string:person_id>", methods=['GET'])
@@ -201,58 +193,13 @@ def get_person_info(person_id):
     return jsonify(result), 200
 
 
-def add_skill(skill_cls):
-    req = request.get_json()
-    try:
-        name = req['name']
-        skill = skill_cls(name)
-        skill.save()
-        result = {"result":ERR.OK,
-                  "id": str(skill.pk)}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
-
-
-@bp.route("/soft_skills", methods = ['POST'])
-@required_auth("admin")
-def add_soft_skill():
-    return add_skill(SoftSkill)
-
-
-@bp.route("/soft_skills/<string:id>", methods = ['DELETE'])
-@required_auth("admin")
-def delete_soft_skill(id):
-    return delete_resource(SoftSkill, id)
-
-
-@bp.route("/soft_skills", methods = ['GET'])
-def list_soft_skills():
-    return list_resources(SoftSkill,
-                          {"id": "_id",
-                           "name": "name"})
-
-
-@bp.route("/hard_skills", methods = ['POST'])
-@required_auth("admin")
-def add_hard_skill():
-    return add_skill(HardSkill)
-
-
-@bp.route("/hard_skills/<string:id>", methods = ['DELETE'])
-@required_auth("admin")
-def delete_hard_skill(id):
-    return delete_resource(HardSkill, id)
-
-
-@bp.route("/hard_skills", methods = ['GET'])
-def list_hard_skills():
-    return list_resources(HardSkill,
-                          {"id": "_id",
-                           "name": "name"})
+@bp.route("/persons/<string:id>/group_members", methods=['GET'])
+def list_group_members_by_person_id(id):
+    return list_resources(GroupMember,
+                          {"id": "_id"},
+                          Person,
+                          id,
+                          "person_id")
 
 
 def find_person_skills(skill_cls):
@@ -341,219 +288,3 @@ def get_person_soft_skill_info(id):
 @bp.route("/persons/hard_skills/<string:id>", methods=['GET'])
 def get_person_hard_skill_info(id):
     return get_person_skill_info(HardSkill, id)
-
-
-@bp.route("/groups/<string:id>/tests", methods = ['POST'])
-@required_auth("admin")
-def add_group_test(id):
-    req = request.get_json()
-    try:
-        name = req['name']
-        info = req['info']
-        if Group.objects.raw({"_id": ObjectId(id)}).count():
-            group_test = GroupTest(Group(_id=id), name, info)
-            group_test.save()
-            result = {"result":ERR.OK,
-                      "id": str(group_test.pk)}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
-
-
-@bp.route("/tests/<string:id>", methods = ['DELETE'])
-@required_auth("admin")
-def delete_group_test(id):
-    return delete_resource(GroupTest, id)
-
-
-@bp.route("/tests/<string:id>", methods=['GET'])
-def get_group_test_info(id):
-    try:
-        if GroupTest(_id=id) in GroupTest.objects.raw({"_id": ObjectId(id)}):
-            group_test = GroupTest(_id=id)
-            group_test.refresh_from_db()
-            data = {"group_id": str(group_test.group_id.pk),
-                    "name": str(group_test.name),
-                    "info": str(group_test.info)}
-            result = {"result": ERR.OK, "data": data}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
-
-
-@bp.route("/groups/<string:id>/tests", methods=['GET'])
-def list_group_tests(id):
-    return list_resources(GroupTest,
-                          {"id": "_id",
-                          "name": "name"},
-                          Group,
-                          id,
-                          "group_id")
-
-
-@bp.route("/tests/<string:id>/results", methods = ['POST'])
-@required_auth("admin")
-def add_test_result(id):
-    req = request.get_json()
-    try:
-        person_id = req['person_id']
-        result_data = req['result_data']
-        if GroupTest.objects.raw({"_id": ObjectId(id)}).count() and \
-                Person.objects.raw({"_id": ObjectId(person_id)}).count():
-            test_result = TestResult(GroupTest(_id=id), Person(_id=person_id), result_data)
-            test_result.save()
-            result = {"result":ERR.OK,
-                      "id": str(test_result.pk)}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
-
-
-@bp.route("/tests/results/<string:id>", methods = ['DELETE'])
-@required_auth("admin")
-def delete_test_result(id):
-    return delete_resource(TestResult, id)
-
-
-@bp.route("/tests/results/<string:id>", methods=['GET'])
-def get_test_result_info(id):
-    try:
-        if TestResult(_id=id) in TestResult.objects.raw({"_id": ObjectId(id)}):
-            test_result = TestResult(_id=id)
-            test_result.refresh_from_db()
-            data = {"test_id": str(test_result.test_id.pk),
-                    "person_id": str(test_result.person_id.pk),
-                    "result_data": test_result.result_data}
-            result = {"result": ERR.OK, "data": data}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
-
-
-@bp.route("/tests/results", methods=['GET'])
-def find_test_results():
-    lst = []
-    query = {}
-    err = ERR.OK
-    if 'person_id' in request.args:
-        person_id = request.args['person_id']
-        if Person.objects.raw({"_id": ObjectId(person_id)}).count():
-            query.update({"person_id": ObjectId(person_id)})
-        else:
-            err = ERR.NO_DATA
-    if 'test_id' in request.args:
-        test_id = request.args['test_id']
-        if GroupTest.objects.raw({"_id": ObjectId(test_id)}).count():
-            query.update({"test_id": ObjectId(test_id)})
-        else:
-            err = ERR.NO_DATA
-    try:
-        if err == ERR.OK:
-            for test_result in TestResult.objects.raw(query):
-                lst.append({"id": str(test_result.pk)})
-            result = {"result": ERR.OK, "list": lst}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except Exception as ex:
-        print(ex)
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
-
-
-@bp.route("/groups/<string:id>/surveys", methods = ['POST'])
-@required_auth("admin")
-def add_survey(id):
-    req = request.get_json()
-    try:
-        description = req['description']
-        options = req['options']
-        results = dict((key, 0) for key in options.keys())
-        if Group.objects.raw({"_id": ObjectId(id)}).count():
-            survey = Survey(Group(_id=id), description, options, results)
-            survey.save()
-            result = {"result":ERR.OK,
-                      "id": str(survey.pk)}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
-
-
-@bp.route("/surveys/<string:id>", methods = ['DELETE'])
-@required_auth("admin")
-def delete_survey(id):
-    return delete_resource(Survey, id)
-
-
-@bp.route("/surveys", methods=['GET'])
-def find_surveys():
-    lst = []
-    query = {}
-    err = ERR.OK
-    if 'group_id' in request.args:
-        group_id = request.args['group_id']
-        if Group.objects.raw({"_id": ObjectId(group_id)}).count():
-            query.update({"group_id": ObjectId(group_id)})
-        else:
-            err = ERR.NO_DATA
-    try:
-        if err == ERR.OK:
-            for survey in Survey.objects.raw(query):
-                lst.append({"id": str(survey.pk),
-                            "group_id": str(survey.group_id.pk),
-                            "options": survey.survey_options,
-                            "results": survey.survey_result})
-            result = {"result": ERR.OK, "list": lst}
-    except Exception as ex:
-        print(ex)
-        result = {"result": ERR.DB}
-    return jsonify(result), 200
-
-
-@bp.route("/surveys/<string:id>", methods = ['POST'])
-@required_auth("user")
-def participate_survey(id):
-    req = request.get_json()
-    try:
-        person_id = req['person_id']
-        chosen_option = req['chosen_option']
-        if Survey.objects.raw({"_id": ObjectId(id)}).count():
-            survey = Survey(_id=id)
-            survey.refresh_from_db()
-            group_id = survey.group_id.pk
-            # проверка, что голосующий человек состоит в данной группе
-            if GroupMember.objects.raw({"person_id": ObjectId(person_id),
-                                        "group_id": ObjectId(group_id)}).count():
-                survey_response = SurveyResponse(survey,
-                                                 Person(_id=person_id),
-                                                 chosen_option)
-                survey.survey_result[chosen_option] += 1
-                survey_response.save()
-                survey.save()
-                result = {"result": ERR.OK,
-                          "id" : str(survey_response.pk)}
-            else:
-                result = {"result": ERR.AUTH}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except Exception as e:
-        result = {"result": ERR.DB,
-                  "error_message": str(e)}
-    return jsonify(result), 200
