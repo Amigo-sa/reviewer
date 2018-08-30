@@ -36,7 +36,7 @@ app.register_blueprint(surveys)
 
 def start_server(port, protocol="http", log=True):
     if log:
-        logging.basicConfig(filename='node_server.log', level=logging.DEBUG)
+        logging.basicConfig(filename='..//..//logs/node_server.log', level=logging.DEBUG)
     if protocol == "http":
         app.run(port=port)
     elif protocol == "https":
