@@ -107,7 +107,6 @@ class TestValidation(unittest.TestCase):
         # verify added permission
         group_member.refresh_from_db()
         gm_data = get_gm_dict(group_member)
-        print(gm_data)
         ref_gm_data.update({"permissions": [read_permission.pk]})
         self.assertDictEqual(ref_gm_data, gm_data)
         # setting None role must fail

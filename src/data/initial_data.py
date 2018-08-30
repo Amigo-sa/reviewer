@@ -1,10 +1,22 @@
 # -*- coding: utf-8 -*-
 from pymodm.connection import connect, _get_db
 import reviewer_model as model
-import re
+import re, os, sys
+parentPath = os.path.abspath("..//..//src")
+if parentPath not in sys.path:
+    sys.path.insert(0, parentPath)
+from node.api.auth import hash_password, gen_session_id
 
 skills = []
 
+group_permissions =[
+    "full_control",
+    "read_info",
+    "modify_info",
+    "add_members",
+    "remove_members",
+    "create_survey",
+]
 
 def wipe_db(db_name):
     try:
@@ -28,13 +40,28 @@ def prepare_hard_skills():
         hard_skill = model.HardSkill(skill)
         hard_skill.save()
 
-
+# TODO это не безопасно
 def prepare_initial_admin():
-    pass
+    try:
+        auth_info = model.AuthInfo()
+        auth_info.is_approved = True
+        auth_info.phone_no = "79032233223"
+        auth_info.password = hash_password("SomeVerySecurePass")
+        session_id = gen_session_id()
+        auth_info.session_id = session_id
+        auth_info.permissions = 1
+        auth_info.save()
+        return auth_info.session_id
+    except Exception as e:
+        print("Failed to prepare first admin")
+        print(str(e))
 
 
 def prepare_group_permissions():
-    pass
+    for permission in group_permissions:
+        g_perm = model.GroupPermission()
+        g_perm.name = permission
+        g_perm.save()
 
 
 def prepare_auth_permission():
@@ -45,25 +72,19 @@ def read_skill_list(filename):
     file = open(filename)
     header = file.readline()
     header = header.splitlines()[0]
-    print(header)
     skill_cats = header.split(";")
     for cat in skill_cats:
         skills.append([])
     cat_count = len(skill_cats)
-    print(skill_cats)
     lines = file.readlines()
-    print(lines)
     for line in lines:
         line = line.splitlines()[0]
-        print(line)
         skill_names = line.split(";")
         if len(skill_names) != cat_count:
             raise SyntaxError("Ошибка парсинга skills.csv")
         for index, name in enumerate(skill_names):
-            print("%d %s" % (index, name))
             if len(name) > 0:
                 skills[index].append(name)
-    print(skills)
 
 
 if __name__ == "__main__":
