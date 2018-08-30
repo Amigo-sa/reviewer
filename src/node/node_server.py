@@ -36,11 +36,10 @@ app.register_blueprint(group_tests)
 app.register_blueprint(surveys)
 
 
-# try:
-#     app_mode = os.environ["REVIEWER_APP_MODE"]
-# except:
-#     app_mode = "development"
-app_mode = os.environ["REVIEWER_APP_MODE"]
+try:
+    app_mode = os.environ["REVIEWER_APP_MODE"]
+except:
+    app_mode = "development"
 
 if app_mode == "production":
     log_path = os.path.abspath(constants.log_path)
