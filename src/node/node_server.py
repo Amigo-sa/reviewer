@@ -19,8 +19,6 @@ from node.api.group_tests import bp as group_tests
 from node.api.surveys import bp as surveys
 from pymodm.connection import connect
 import logging
-import logging.handlers
-import os
 
 app = Flask(__name__)
 app.register_blueprint(debug)
@@ -36,18 +34,9 @@ app.register_blueprint(group_tests)
 app.register_blueprint(surveys)
 
 
-log_dir = os.path.dirname(constants.log_path)
-
-if not os.path.exists(log_dir):
-    os.makedirs(log_dir)
-
-fh = logging.FileHandler(constants.log_path)
-logging.basicConfig(handlers=[fh], level=logging.DEBUG)
-
-
 def start_server(port, protocol="http", log=True):
-    if not log:
-        logging.root.removeHandler(fh)
+    if log:
+        logging.basicConfig(filename='..//..//logs/node_server.log', level=logging.DEBUG)
     if protocol == "http":
         app.run(port=port)
     elif protocol == "https":
@@ -56,7 +45,6 @@ def start_server(port, protocol="http", log=True):
 
 if __name__ == "__main__":
     start_server(constants.node_server_port, protocol="https")
-
 
 def is_db_exists():
     rev_client = pymongo.MongoClient(constants.mongo_db)
