@@ -4,6 +4,7 @@ import unittest
 import requests
 import os, sys
 from pymodm.connection import _get_db
+
 parentPath = os.path.abspath("..//..//test")
 if parentPath not in sys.path:
     sys.path.insert(0, parentPath)
@@ -19,7 +20,6 @@ from time import sleep
 import re
 from pymodm.errors import ValidationError
 from pymongo.errors import DuplicateKeyError
-
 
 from data.reviewer_model import (Department,
                                  Group,
@@ -67,11 +67,11 @@ class TestValidation(unittest.TestCase):
 
     def test_group_member_validation(self):
         person = Person(
-                        "Леонид",
-                        "Александрович",
-                        "Дунаев",
-                        datetime.date(1986, 5, 1),
-                        "88005553535")
+            "Леонид",
+            "Александрович",
+            "Дунаев",
+            datetime.date(1986, 5, 1),
+            "88005553535")
         person.save()
         organization = Organization("МЭИ")
         organization.save()
@@ -92,9 +92,9 @@ class TestValidation(unittest.TestCase):
         gm_id = group_member.save()
         # verify group member added
         group_member.refresh_from_db()
-        gm_data = group_member.__dict__["_data"]
+        gm_data = get_gm_dict(group_member)
         ref_gm_data = {
-            "_id": group_member.pk,
+            "_id": gm_id.pk,
             "person_id": person.pk,
             "group_id": group.pk,
             "role_id": None,
@@ -106,8 +106,9 @@ class TestValidation(unittest.TestCase):
         group_member.save()
         # verify added permission
         group_member.refresh_from_db()
-        gm_data = group_member.__dict__["_data"]
-        ref_gm_data.update({"permissions" : [read_permission.pk]})
+        gm_data = get_gm_dict(group_member)
+        print(gm_data)
+        ref_gm_data.update({"permissions": [read_permission.pk]})
         self.assertDictEqual(ref_gm_data, gm_data)
         # setting None role must fail
         with self.assertRaises(ValidationError):
@@ -116,7 +117,7 @@ class TestValidation(unittest.TestCase):
         group_member.set_role(member_role)
         # verify added role
         group_member.refresh_from_db()
-        gm_data = group_member.__dict__["_data"]
+        gm_data = get_gm_dict(group_member)
         ref_gm_data.update({"role_id": member_role.pk})
         self.assertDictEqual(ref_gm_data, gm_data)
         # setting role when already set must fail
@@ -127,7 +128,7 @@ class TestValidation(unittest.TestCase):
         group_member.save()
         # verify
         group_member.refresh_from_db()
-        gm_data = group_member.__dict__["_data"]
+        gm_data = get_gm_dict(group_member)
         ref_gm_data.update({"is_active": False})
         self.assertDictEqual(ref_gm_data, gm_data)
         # try add duplicate group member
@@ -145,8 +146,8 @@ class TestValidation(unittest.TestCase):
         group_member.save()
         # verify
         group_member.refresh_from_db()
-        gm_data = group_member.__dict__["_data"]
-        ref_gm_data.update({"permissions" : [read_permission.pk, write_permission.pk]})
+        gm_data = get_gm_dict(group_member)
+        ref_gm_data.update({"permissions": [read_permission.pk, write_permission.pk]})
         self.assertDictEqual(ref_gm_data, gm_data)
         # try add invalid role
 
@@ -162,5 +163,16 @@ class TestValidation(unittest.TestCase):
             group_member.save()
 
 
+def get_gm_dict(group_member):
+    gm_data = {
+        "_id": group_member.pk,
+        "person_id": group_member.person_id.pk,
+        "group_id": group_member.group_id.pk,
+        "role_id": group_member.role_id.pk if group_member.role_id else None,
+        "permissions": [perm.pk for perm in group_member.permissions],
+        "is_active": group_member.is_active
+    }
+    return gm_data
+
 if __name__ == "__main__":
-    unittest.main(verbosity = 1)
+    unittest.main(verbosity=1)
