@@ -16,3 +16,6 @@ sms_timeout_minutes = 2
 confirmation_timeout_minutes = 2
 confirmation_max_attempts = 3
 authorization_max_attempts = 5
+
+#logging
+log_path = "/var/log/node_server/node_server.log"
