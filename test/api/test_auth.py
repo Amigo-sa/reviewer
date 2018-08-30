@@ -26,9 +26,11 @@ class Session():
         self.id = None
         self.received_code = None
 
+
 cur_session = Session()
 
-@mock_bp.route("/send_sms", methods= ["POST"])
+
+@mock_bp.route("/send_sms", methods=["POST"])
 def mock_send_sms():
     req = request.get_json()
     try:
@@ -36,17 +38,19 @@ def mock_send_sms():
         phone_no = req["phone_no"]
         print("sending sms to " + phone_no)
         cur_session.received_code = auth_code
-        result = {"result" : ERR.OK}
+        result = {"result": ERR.OK}
     except KeyError:
-        result = {"result" : ERR.INPUT}
+        result = {"result": ERR.INPUT}
     return jsonify(result), 200
 
-@mock_bp.route("/status", methods= ["GET"])
+
+@mock_bp.route("/status", methods=["GET"])
 def mock_get_status():
     result = {"result": ERR.OK}
     return jsonify(result), 200
 
-@mock_bp.route("/shutdown", methods = ['POST'])
+
+@mock_bp.route("/shutdown", methods=['POST'])
 def shutdown():
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
@@ -55,21 +59,26 @@ def shutdown():
     result = {"result": ERR.OK}
     return jsonify(result), 200
 
+
 def start_mock_server():
     app = Flask(__name__)
     app.register_blueprint(mock_bp)
     app.run(port=mock_port)
 
+
 class NodeServer(Thread):
     def run(self):
         start_server(node_port, log=False)
+
 
 class SmsMockServer(Thread):
     def run(self):
         start_mock_server()
 
+
 node_server_thread = NodeServer()
 mock_server_thread = SmsMockServer()
+
 
 class TestAuth(unittest.TestCase):
 
@@ -77,7 +86,7 @@ class TestAuth(unittest.TestCase):
     def setUpClass(cls):
 
         # Загрузка адреса сервера
-        cls.api_URL = "http://127.0.0.1:"+str(node_port)
+        cls.api_URL = "http://127.0.0.1:" + str(node_port)
         cls.gen_doc_ctr = 0
         print("Servers starting...")
         node_server_thread.start()
@@ -92,7 +101,7 @@ class TestAuth(unittest.TestCase):
             except Exception as e:
                 attempts += 1
                 sleep(0.5)
-                print("Connection attempt %s failed" %str(attempts))
+                print("Connection attempt %s failed" % str(attempts))
                 if attempts > 20: raise ConnectionError("could not connect to node server")
         print("Connected to node server\r\n")
         attempts = 0
@@ -109,7 +118,6 @@ class TestAuth(unittest.TestCase):
                 if attempts > 20: raise ConnectionError("could not connect to mock server")
         print("Connected to mock server\r\n")
 
-
     @classmethod
     def tearDownClass(cls):
         requests.post(cls.api_URL + "/shutdown")
@@ -119,12 +127,13 @@ class TestAuth(unittest.TestCase):
         pass
 
     def setUp(self):
-        #requests.post(self.api_URL + "/wipe")
+        # requests.post(self.api_URL + "/wipe")
         hm.wipe_db(constants.db_name)
         cur_session.id = None
         cur_session.received_code = None
         self.admin_header = {"Authorization":
                                  "Bearer " + hm.prepare_first_admin()}
+
     # TODO Surveys!
     def prepare_lists(self):
         # admin only routes
@@ -136,7 +145,7 @@ class TestAuth(unittest.TestCase):
             "/groups/%s/role_list" % self.group_id,
             "/group_roles",
             "/group_permissions",
-            "/groups/%s/group_members"%self.group_id,
+            "/groups/%s/group_members" % self.group_id,
             "/group_members/%s/permissions" % self.group_member_id,
             "/group_members/%s/group_roles" % self.group_member_id,
             "/specializations",
@@ -180,8 +189,8 @@ class TestAuth(unittest.TestCase):
             "/persons/%s" % self.user_person_id
         ]
         self.user_allowed_post = {
-            "/surveys/%s" % self.group_id : {"person_id" : self.user_person_id,
-                                             "chosen_option" : "1"}
+            "/surveys/%s" % self.group_id: {"person_id": self.user_person_id,
+                                            "chosen_option": "1"}
         }
 
         self.gm_allowed_get = [
@@ -228,42 +237,41 @@ class TestAuth(unittest.TestCase):
             "/tests/results",
         ]
 
-
     def prepare_docs(self):
         # prepare user
         auth_user = hm.prepare_logged_in_person("78001112233")
         self.user_person_id = auth_user["person_id"]
         self.user_session_id = auth_user["session_id"]
         self.user_header = {"Authorization":
-                           "Bearer " + self.user_session_id}
+                                "Bearer " + self.user_session_id}
         # prepare data
 
         self.org_id = hm.post_item(self, self.api_URL + "/organizations", {"name": "sample_org"})
         self.dep_id = hm.post_item(self, self.api_URL + "/organizations/%s/departments" % self.org_id,
-                              {"name": "sample_dep"})
+                                   {"name": "sample_dep"})
         self.group_id = hm.post_item(self, self.api_URL + "/departments/%s/groups" % self.dep_id,
-                                {"name": "sample_group"})
+                                     {"name": "sample_group"})
         self.group_role_id = hm.post_item(self, self.api_URL + "/group_roles",
-                                     {"name": "sample_group_role"})
+                                          {"name": "sample_group_role"})
         self.group_perm_id = hm.post_item(self, self.api_URL + "/group_permissions",
-                                     {"name": "sample_group_permission"})
+                                          {"name": "sample_group_permission"})
         resp_json = requests.post(self.api_URL + "/groups/%s/role_list" % self.group_id,
                                   json={"role_list": [self.group_role_id]}, headers=self.admin_header).json()
         print(resp_json)
         self.group_member_id = hm.post_item(self, self.api_URL + "/groups/%s/group_members" % self.group_id,
-                                       {"person_id": self.user_person_id,
-                                        "role_id": self.group_role_id})
+                                            {"person_id": self.user_person_id,
+                                             "role_id": self.group_role_id})
 
         self.spec_id = hm.post_item(self, self.api_URL + "/specializations",
-                                    {"type" : "Tutor",
-                                     "detail" : "TOE"})
+                                    {"type": "Tutor",
+                                     "detail": "TOE"})
         self.user_spec_id = hm.post_item(self, self.api_URL + "/persons/%s/specializations" % self.user_person_id,
-                                          {"department_id": self.dep_id,
-                                            "specialization_id": self.spec_id
-                                           })
+                                         {"department_id": self.dep_id,
+                                          "specialization_id": self.spec_id
+                                          })
 
         self.soft_skill_id = hm.post_item(self, self.api_URL + "/soft_skills",
-                                          {"name" : "string"})
+                                          {"name": "string"})
         self.hard_skill_id = hm.post_item(self, self.api_URL + "/hard_skills",
                                           {"name": "string"})
 
@@ -302,11 +310,11 @@ class TestAuth(unittest.TestCase):
         self.other_person_id = auth_user["person_id"]
         self.other_user_session_id = auth_user["session_id"]
         self.other_user_header = {"Authorization":
-                                "Bearer " + self.other_user_session_id}
+                                      "Bearer " + self.other_user_session_id}
         self.other_spec_id = hm.post_item(self, self.api_URL + "/persons/%s/specializations" % self.other_person_id,
-                                         {"department_id": self.dep_id,
-                                          "specialization_id": self.spec_id
-                                          })
+                                          {"department_id": self.dep_id,
+                                           "specialization_id": self.spec_id
+                                           })
 
         self.other_group_member_id = hm.post_item(self, self.api_URL + "/groups/%s/group_members" % self.group_id,
                                                   {"person_id": self.other_person_id,
@@ -319,16 +327,15 @@ class TestAuth(unittest.TestCase):
                                                  birth_date=datetime.date(1170, 6, 12).isoformat(),
                                                  phone_no="+79007745737"))
 
-
     def test_user_restricted_access(self):
 
         self.prepare_docs()
         self.prepare_lists()
         # trying posts and deletes
-        post_data = {"sample" : "data"}
+        post_data = {"sample": "data"}
         for url in self.admin_only_post:
             resp_json = hm.try_post_item(self, self.api_URL + url,
-                                        post_data, self.user_header)
+                                         post_data, self.user_header)
             self.assertEqual(ERR.AUTH, resp_json["result"],
                              "%s is restricted to post for user %s" % (url, self.user_person_id))
         for url in self.admin_only_delete:
@@ -337,15 +344,14 @@ class TestAuth(unittest.TestCase):
                              "%s is restricted to delete for user %s" % (url, self.user_person_id))
         for url in self.admin_only_patch:
             resp_json = hm.try_patch_item(self, self.api_URL + url,
-                                           post_data, self.user_header)
+                                          post_data, self.user_header)
             self.assertEqual(ERR.AUTH, resp_json["result"],
                              "%s is restricted to patch for user %s" % (url, self.user_person_id))
         for url in self.admin_only_get:
             resp_json = hm.try_get_item(self, self.api_URL + url,
-                                           self.user_header)
+                                        self.user_header)
             self.assertEqual(ERR.AUTH, resp_json["result"],
                              "%s is restricted to get for user %s" % (url, self.user_person_id))
-
 
     def test_user_allowed_access(self):
         self.prepare_docs()
@@ -355,31 +361,31 @@ class TestAuth(unittest.TestCase):
         user_allowed_get_urls += self.user_allowed_get
         user_allowed_get_urls += self.gm_allowed_get
 
-        for url,data in self.user_allowed_post.items():
+        for url, data in self.user_allowed_post.items():
             resp_json = hm.try_post_item(self, self.api_URL + url, data, self.user_header)
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                                 "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
         for url in user_allowed_get_urls:
             resp_json = hm.try_get_item(self, self.api_URL + url, self.user_header)
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
-                             "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
+                                "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
         for url in self.user_allowed_delete:
             resp_json = hm.try_delete_item(self, self.api_URL + url, self.user_header)
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
-                             "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
+                                "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
     def test_review_post_normal(self):
         self.prepare_docs()
         self.prepare_lists()
-        review_data = {"reviewer_id" : self.user_person_id,
-                          "value" : "50.0",
-                          "description" : "string"}
+        review_data = {"reviewer_id": self.user_person_id,
+                       "value": "50.0",
+                       "description": "string"}
         for url in self.review_valid_post:
             resp_json = hm.try_post_item(self, self.api_URL + url,
-                             review_data, self.user_header)
+                                         review_data, self.user_header)
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
-                            "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
+                                "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
     def test_review_wrong_reviewer_id(self):
         self.prepare_docs()
@@ -391,7 +397,7 @@ class TestAuth(unittest.TestCase):
             resp_json = hm.try_post_item(self, self.api_URL + url,
                                          review_data, self.user_header)
             self.assertEqual(ERR.AUTH, resp_json["result"],
-                                "%s must return ERR.AUTH for user %s" % (url, self.user_person_id))
+                             "%s must return ERR.AUTH for user %s" % (url, self.user_person_id))
 
     def test_review_delete_normal(self):
         self.prepare_docs()
@@ -408,7 +414,7 @@ class TestAuth(unittest.TestCase):
                                 "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
         for rev_id in rev_ids:
             resp_json = hm.try_delete_item(self, self.api_URL + "/reviews/" + rev_id,
-                                         self.user_header)
+                                           self.user_header)
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                                 "DELETE %s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
@@ -427,9 +433,9 @@ class TestAuth(unittest.TestCase):
                                 "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
         for rev_id in rev_ids:
             resp_json = hm.try_delete_item(self, self.api_URL + "/reviews/" + rev_id,
-                                         self.other_user_header)
+                                           self.other_user_header)
             self.assertEqual(ERR.AUTH, resp_json["result"],
-                                "DELETE %s must return ERR.AUTH for user %s" % (url, self.user_person_id))
+                             "DELETE %s must return ERR.AUTH for user %s" % (url, self.user_person_id))
 
     def test_get_unauth(self):
         self.prepare_docs()
@@ -515,7 +521,6 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.AUTH_INVALID_PHONE, resp.json()["result"])
 
-
     def test_wrong_sms_code(self):
         phone_no = "79803322212"
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
@@ -533,7 +538,7 @@ class TestAuth(unittest.TestCase):
                                        "session_id": cur_session.id})
             self.assertEqual(200, resp.status_code)
             self.assertEqual(ERR.AUTH_CODE_INCORRECT, resp.json()["result"])
-            self.assertEqual("wrong code, %s attempts remain"%(max_attempts - i - 1),
+            self.assertEqual("wrong code, %s attempts remain" % (max_attempts - i - 1),
                              resp.json()["error_message"])
         resp = requests.post(self.api_URL + "/finish_phone_confirmation",
                              json={"auth_code": "some_wrong_code",
@@ -566,7 +571,6 @@ class TestAuth(unittest.TestCase):
                                    "session_id": cur_session.id})
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.AUTH_SESSION_EXPIRED, resp.json()["result"])
-
 
     def test_multiple_sms(self):
         phone_no = "79803322212"
@@ -625,14 +629,13 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(ERR.OK, resp.json()["result"])
         resp = requests.post(self.api_URL + "/password",
                              json={"password": password,
-                                   "session_id" : cur_session.id})
+                                   "session_id": cur_session.id})
         self.assertEqual(ERR.OK, resp.json()["result"])
         return phone_no, password
-
 
 
 if __name__ == "__main__":
     print("test_auth argv: " + str(sys.argv))
     if "--test" in sys.argv:
         sys.argv.remove("--test")
-    unittest.main(verbosity = 1)
+    unittest.main(verbosity=1)

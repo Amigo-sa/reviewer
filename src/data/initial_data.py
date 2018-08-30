@@ -5,6 +5,7 @@ import re
 
 skills = []
 
+
 def wipe_db(db_name):
     try:
         revDb = _get_db(db_name)
@@ -15,24 +16,30 @@ def wipe_db(db_name):
         print("Failed to wipe DB")
         print(str(e))
 
+
 def prepare_soft_skills():
     for skill in skills[1]:
         soft_skill = model.SoftSkill(skill)
         soft_skill.save()
+
 
 def prepare_hard_skills():
     for skill in skills[0]:
         hard_skill = model.HardSkill(skill)
         hard_skill.save()
 
+
 def prepare_initial_admin():
     pass
+
 
 def prepare_group_permissions():
     pass
 
+
 def prepare_auth_permission():
     pass
+
 
 def read_skill_list(filename):
     file = open(filename)
@@ -53,10 +60,11 @@ def read_skill_list(filename):
         if len(skill_names) != cat_count:
             raise SyntaxError("Ошибка парсинга skills.csv")
         for index, name in enumerate(skill_names):
-            print("%d %s" % (index,name))
+            print("%d %s" % (index, name))
             if len(name) > 0:
                 skills[index].append(name)
     print(skills)
+
 
 if __name__ == "__main__":
     wipe_db("reviewer")

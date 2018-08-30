@@ -24,14 +24,14 @@ for doc_class in doc_class_list:
     print("--------------------------------------------------")
     cur_class = str(doc_class.__name__)
     print(cur_class + " references:")
-    links.update({cur_class : []})
-    fields.update({cur_class : []})
+    links.update({cur_class: []})
+    fields.update({cur_class: []})
     member_list = inspect.getmembers(doc_class, None)
-    for name,cls in member_list:
+    for name, cls in member_list:
         if "__dict__" not in str(name):
-            if "pymodm.fields.ReferenceField" in str(cls)\
+            if "pymodm.fields.ReferenceField" in str(cls) \
                     or "reviewer_model.ValidatedReferenceField" in str(cls):
-                #print(cls)
+                # print(cls)
                 rel_model = cls.related_model.__name__
                 print(rel_model)
                 links[cur_class].append(rel_model)
@@ -82,18 +82,18 @@ dot.attr(overlap='false')
 for cls, field_list in fields.items():
     label = cls
     for field in field_list:
-       label+= r"\n" + field
-    dot.node(cls,label)
+        label += r"\n" + field
+    dot.node(cls, label)
 
 for main, refs in links.items():
     for r in refs:
-        dot.edge(main,r)
+        dot.edge(main, r)
 
-dot.engine="dot"
-dot.format="svg"
+dot.engine = "dot"
+dot.format = "svg"
 dot.render('../db_model/drawer_output/schema', view=False)
-dot.format="png"
+dot.format = "png"
 dot.render('../db_model/drawer_output/schema', view=False)
-#for eng in ENGINES:
+# for eng in ENGINES:
 #    dot.engine=eng
 #    dot.render('test-output/schema_'+eng, view=True)

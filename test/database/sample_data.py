@@ -46,6 +46,7 @@ def clear_db():
         print("dropped collection " + col)
     print("done")
 
+
 def wipe_db(db_name):
     try:
         revDb = _get_db(db_name)
@@ -55,6 +56,7 @@ def wipe_db(db_name):
     except Exception as e:
         print("Failed to wipe DB")
         print(str(e))
+
 
 def fill_db():
     persons = {
@@ -233,7 +235,6 @@ def fill_db():
             ),
     }
 
-
     person_specializations = {
         "Shatokhin_MCU":
             PersonSpecialization(
@@ -277,7 +278,7 @@ def fill_db():
                 departments["IIT"],
                 specializations["Student"],
                 None,
-                {"graduation" : "окончил"},
+                {"graduation": "окончил"},
                 False
             ),
         "Vovka":
@@ -643,12 +644,12 @@ def fill_db():
     auth_users = {
         "admin":
             AuthInfo(
-                phone_no = "88001112233",
-                last_send_time = datetime.datetime.now(datetime.timezone.utc),
-                is_approved = True,
-                password = "0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c",
-                session_id = "12345",
-                permissions = 1
+                phone_no="88001112233",
+                last_send_time=datetime.datetime.now(datetime.timezone.utc),
+                is_approved=True,
+                password="0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c",
+                session_id="12345",
+                permissions=1
             ),
         "generic_user":
             AuthInfo(
@@ -658,7 +659,7 @@ def fill_db():
                 password="0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c",
                 session_id="55555",
                 permissions=0,
-                person_id = persons["Leni4"]
+                person_id=persons["Leni4"]
             ),
     }
     print("Filling db...")
@@ -766,7 +767,7 @@ def display_data():
               " " +
               ss.ss_id.name +
               ": " +
-              "%.1f"%ss.level)
+              "%.1f" % ss.level)
 
     print("----Specializations")
     for item in Specialization.objects.all():
@@ -776,10 +777,10 @@ def display_data():
     print("----Person Specializations:")
     for item in PersonSpecialization.objects.all():
         print("{0} - {1} {2}, {3}, рейтинг - {4}".format(item.person_id.surname,
-                                      item.specialization_id.type,
-                                      item.specialization_id.detail,
-                                      item.department_id.name,
-                                      item.level))
+                                                         item.specialization_id.type,
+                                                         item.specialization_id.detail,
+                                                         item.department_id.name,
+                                                         item.level))
         if not item.is_active:
             print("Неактивен")
         print(item.details)
@@ -884,7 +885,7 @@ def display_data():
             item.description))
         print("Варианты ответов:")
         for key, value in item.survey_options.items():
-            print("%s: %s"%(key,value))
+            print("%s: %s" % (key, value))
 
     print("----Survey Responses:")
     for item in SurveyResponse.objects.all():
@@ -905,6 +906,7 @@ def display_data():
                 ))
         else:
             print("Опрос не завершён")
+
 
 if __name__ == "__main__":
     db_name = constants.db_name

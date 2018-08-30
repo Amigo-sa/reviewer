@@ -13,6 +13,7 @@ from collections import Counter
 
 model_version = "0.4"
 
+
 # Функция для определения перечня зависимых документов
 def get_dependent_list(doc, dep_id_list):
     """
@@ -31,6 +32,7 @@ def get_dependent_list(doc, dep_id_list):
             if dep not in dep_id_list:
                 get_dependent_list(dep, dep_id_list)
 
+
 # Ручное добавление правил удаления для списков ссылок
 def init_model():
     GroupRole.register_delete_rule(
@@ -38,12 +40,13 @@ def init_model():
     GroupPermission.register_delete_rule(
         GroupMember, "permissions", fields.ReferenceField.PULL)
 
+
 db_name = constants.db_name
 print("DB initialized with argv: " + str(sys.argv))
 if len(sys.argv) > 1:
     if '--test' in str(sys.argv):
         db_name = constants.db_name_test
-print("Working with DB '%s' \n"%db_name)
+print("Working with DB '%s' \n" % db_name)
 connect(constants.mongo_db + "/" + db_name, alias="reviewer")
 
 
@@ -60,10 +63,11 @@ class ValidatedReferenceField(fields.ReferenceField):
                     raise ValidationError("ссылка на _id несуществующего объекта")
             else:
                 if not self.related_model.objects.get({"_id": ref_field.pk}):
-                    raise ValidationError("ссылка на _id несуществующего объекта %s" %self.related_model.__name__)
+                    raise ValidationError("ссылка на _id несуществующего объекта %s" % self.related_model.__name__)
             old_clean(instance)
 
         setattr(cls, "clean", new_clean)
+
 
 class ValidatedReferenceList(fields.ListField):
     def contribute_to_class(self, cls, name):
@@ -81,6 +85,7 @@ class ValidatedReferenceList(fields.ListField):
             old_clean(instance)
 
         setattr(cls, "clean", new_clean)
+
 
 class Service(MongoModel):
     version = fields.CharField()
@@ -193,6 +198,7 @@ class Specialization(MongoModel):
         indexes = [IndexModel([("detail", pymongo.DESCENDING)],
                               unique=False)]
 
+
 class PersonSpecialization(MongoModel):
     person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     department_id = ValidatedReferenceField(Department, on_delete=ReferenceField.CASCADE)
@@ -235,7 +241,6 @@ class GroupPermission(MongoModel):
 
 
 class Group(MongoModel):
-
     department_id = ValidatedReferenceField(Department, on_delete=ReferenceField.CASCADE)
     name = fields.CharField()
     role_list = ValidatedReferenceList(field=
@@ -265,7 +270,7 @@ class GroupMember(MongoModel):
     group_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE, required=True, blank=False)
     role_id = ValidatedReferenceField(GroupRole, on_delete=ReferenceField.DO_NOTHING, blank=True)
     permissions = ValidatedReferenceList(field=
-                                   fields.ReferenceField(GroupPermission), blank=True)
+                                         fields.ReferenceField(GroupPermission), blank=True)
     is_active = fields.BooleanField(required=True, default=True)
 
     class Meta:
@@ -287,8 +292,8 @@ class GroupMember(MongoModel):
         self.role_id = role.pk
         self.save()
 
-class GroupTest(MongoModel):
 
+class GroupTest(MongoModel):
     group_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE, blank=False)
     name = fields.CharField()
     info = fields.CharField()
@@ -318,7 +323,6 @@ class GroupTest(MongoModel):
     id, получится надёжнее ценой одного лишнего обращения к базе с поиском по _id. 
     - использовать свои классы для валидации, пока не дойдём до суровой оптимизации.
     """
-
 
 
 class TestResult(MongoModel):
@@ -424,6 +428,7 @@ class GroupTestReview(MongoModel):
                                ("subject_id", pymongo.DESCENDING)],
                               unique=True)]
 
+
 class Survey(MongoModel):
     group_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE)
     description = fields.CharField()
@@ -435,9 +440,9 @@ class Survey(MongoModel):
         connection_alias = "reviewer"
         final = True
 
+
 # TODO Добавить валидацию: вариант ответа должен быть предусмотрен
 class SurveyResponse(MongoModel):
-
     survey_id = ValidatedReferenceField(Survey, on_delete=ReferenceField.CASCADE)
     person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     chosen_option = fields.CharField(required=True)
@@ -450,10 +455,11 @@ class SurveyResponse(MongoModel):
                                ("person_id", pymongo.DESCENDING)],
                               unique=True)]
 
+
 class AuthInfo(MongoModel):
     phone_no = fields.CharField()
     auth_code = fields.CharField(blank=True)
-    #TODO заменить на DateTimeField
+    # TODO заменить на DateTimeField
     last_send_time = fields.TimestampField()
     attempts = fields.IntegerField(default=0)
     is_approved = fields.BooleanField(default=False)
