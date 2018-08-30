@@ -5,6 +5,7 @@ import datetime
 import random
 from pymodm.connection import connect, _get_db
 from node.settings import constants
+from node.api.auth import hash_password, gen_session_id
 
 fill_script_version = "0.4"
 
@@ -45,6 +46,26 @@ def clear_db():
         revDb.drop_collection(col)
         print("dropped collection " + col)
     print("done")
+
+def prepare_initial_admin():
+    try:
+        phone_no = "79032233223"
+        password = "SomeSecurePass"
+        auth_info = AuthInfo()
+        auth_info.is_approved = True
+        auth_info.phone_no = phone_no
+        auth_info.password = hash_password(password)
+        session_id = gen_session_id()
+        auth_info.session_id = session_id
+        auth_info.permissions = 1
+        auth_info.save()
+        print("phone_no for login: " + phone_no)
+        print("pass: " + password)
+        print("generated session_id: " + auth_info.session_id)
+        return auth_info.session_id
+    except Exception as e:
+        print("Failed to prepare first admin")
+        print(str(e))
 
 
 def wipe_db(db_name):
@@ -919,5 +940,6 @@ if __name__ == "__main__":
     print("Filling DB '%s' \n" % db_name)
     connect(constants.mongo_db + "/" + db_name, alias="reviewer")
     wipe_db("reviewer")
+    prepare_initial_admin()
     fill_db()
     display_data()
