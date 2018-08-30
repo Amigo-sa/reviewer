@@ -663,22 +663,13 @@ def fill_db():
     }
 
     auth_users = {
-        "admin":
-            AuthInfo(
-                phone_no="88001112233",
-                last_send_time=datetime.datetime.now(datetime.timezone.utc),
-                is_approved=True,
-                password="0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c",
-                session_id="12345",
-                permissions=1
-            ),
         "generic_user":
             AuthInfo(
-                phone_no="88005553535",
+                phone_no="78005553535",
                 last_send_time=datetime.datetime.now(datetime.timezone.utc),
                 is_approved=True,
-                password="0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c",
-                session_id="55555",
+                password=hash_password("12345678"),
+                session_id=None,
                 permissions=0,
                 person_id=persons["Leni4"]
             ),
