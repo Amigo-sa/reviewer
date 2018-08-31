@@ -20,8 +20,10 @@ if __debug__:
     @bp.route('/')
     @bp.route('/index')
     def index():
+        from node.node_server import app_mode
+        result_string = "Application in {0} mode<br>".format(app_mode)
         collection_names = rev_db.list_collection_names()
-        result_string = "Db content: <br>"
+        result_string += "Db content: <br>"
         for name in collection_names:
             result_string += "Column: {0}<br>".format(name)
             collection = rev_db[name]
