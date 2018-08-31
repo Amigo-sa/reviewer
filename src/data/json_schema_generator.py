@@ -12,43 +12,63 @@ for name, desc in members:
         doc_class_list.append(desc)
         class_names.append(name)
 
+field_aliases = {
+    "fields.CharField" : "string",
+    "fields.DateTimeField" : "date",
+    "fields.FloatField" : "double",
+    "fields.IntegerField" : "int",
+    "fields.BooleanField" : "bool",
+    "fields.TimestampField" : "timestamp",
+    "pymodm.fields.ReferenceField" : "objectId",
+    "reviewer_model.ValidatedReferenceField" : "objectId",
+
+
+}
+ignore_list = [
+    "Service",
+    "ValidatedReferenceField",
+    "ValidatedReferenceList"
+]
+
+def convert(name):
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
+client = MongoClient('localhost', 27017)
+db = client.reviewer
+
 links = {}
 fields = {}
 for doc_class in doc_class_list:
-    print("--------------------------------------------------")
     cur_class = str(doc_class.__name__)
-    print(cur_class + " references:")
-    links.update({cur_class: []})
-    fields.update({cur_class: []})
+    if cur_class in ignore_list:
+        continue
+    print("--------------------------------------------------")
+    print(cur_class + ":")
+    val = {
+        "$jsonSchema": {
+            "bsonType": "object",
+            "properties": {}
+        }
+    }
+    col_name = convert(cur_class)
+    print("Collection " + col_name)
     member_list = inspect.getmembers(doc_class, None)
+    properties = {}
     for name, cls in member_list:
         if "__dict__" not in str(name):
-            field = {"name": name}
-            if "fields.CharField" in str(cls):
-                field.update({"type": "string"})
-                fields[cur_class].append(field)
-            if "fields.DateTimeField" in str(cls):
-                field.update({"type": "date"})
-                fields[cur_class].append(field)
-            if "fields.FloatField" in str(cls):
-                field.update({"type": "double"})
-                fields[cur_class].append(field)
-            if "fields.IntegerField" in str(cls):
-                field.update({"type": "int"})
-                fields[cur_class].append(field)
-            if "fields.BooleanField" in str(cls):
-                field.update({"type": "bool"})
-                fields[cur_class].append(field)
-            if "fields.TimestampField" in str(cls):
-                field.update({"type": "timestamp"})
-                fields[cur_class].append(field)
+            for py_name, bson_name in field_aliases.items():
+                if py_name in str(cls):
+                    if bson_name == "list":
+                        pass
+                    elif bson_name == "dict":
+                        pass
+                    else:
+                        properties.update({name: {
+                            "bsonType": [bson_name, "null"]
+                        }})
+
             """
-            if "pymodm.fields.ReferenceField" in str(cls) \
-                    or "reviewer_model.ValidatedReferenceField" in str(cls):
-                rel_model = cls.related_model.__name__
-                print(rel_model)
-                links[cur_class].append(rel_model)
-                # TODO implement
             if "reviewer_model.ValidatedReferenceList" in str(cls):
                 member_list = inspect.getmembers(cls, None)
                 rel_model = cls._field.related_model.__name__
@@ -64,65 +84,7 @@ for doc_class in doc_class_list:
                 field = name# + ': "list"'
                 fields[cur_class].append(field)
             """
-
-ignore_list = [
-    "Service",
-    "ValidatedReferenceField",
-    "ValidatedReferenceList"
-]
-for item in ignore_list:
-    links.pop(item)
-    class_names.remove(item)
-    fields.pop(item)
-
-def convert(name):
-    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
-
-
-print(fields)
-
-client = MongoClient('localhost', 27017)
-db = client.reviewer
-
-for key, values in fields.items():
-    col_name = convert(key)
-    print(col_name)
-    # TODO required
-    val = {
-        "$jsonSchema": {
-            "bsonType": "object",
-            "properties": {}
-        }
-    }
-    props = {}
-    for item in values:
-        props.update({item["name"] : {
-            "bsonType": [item["type"], "null"]
-        }})
-    val["$jsonSchema"]["properties"].update(props)
+    val["$jsonSchema"]["properties"].update(properties)
     print(val)
     print(db.command("collMod", col_name, validator=val))
-
-
-"""
-val = {
-  "$jsonSchema": {
-     "bsonType": "object",
-     "required": ["first_name"],
-     "properties": {
-        "first_name": {
-           "bsonType": "string",
-           "description": "must be a string and is required"
-        },
-     }
-  }
-}
-"""
-
-
-
-
-
-
 
