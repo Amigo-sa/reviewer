@@ -42,19 +42,23 @@ except Exception as e:
     logging.error(str(e))
     app_mode = "development"
 
+fh = None
 if app_mode == "production":
-    log_path = os.path.abspath(constants.log_path)
-    #log_dir = os.path.dirname(log_path)
+    try:
+        log_path = os.path.abspath(constants.log_path)
+        #log_dir = os.path.dirname(log_path)
 
-    #if not os.path.exists(log_dir):
-    #    os.makedirs(log_dir)
+        #if not os.path.exists(log_dir):
+            #os.makedirs(log_dir)
 
-    fh = logging.FileHandler(log_path)
-    logging.basicConfig(handlers=[fh], level=logging.DEBUG)
+        fh = logging.FileHandler(log_path)
+        logging.basicConfig(handlers=[fh], level=logging.DEBUG)
+    except Exception as e:
+        logging.exception(str(e))
 
 
 def start_server(port, protocol="http", log=True):
-    if app_mode == "production" and not log:
+    if fh and not log:
         logging.root.removeHandler(fh)
     if protocol == "http":
         app.run(port=port)
