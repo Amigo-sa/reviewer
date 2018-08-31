@@ -44,10 +44,10 @@ except Exception as e:
 
 if app_mode == "production":
     log_path = os.path.abspath(constants.log_path)
-    log_dir = os.path.dirname(log_path)
+    #log_dir = os.path.dirname(log_path)
 
-    if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
+    #if not os.path.exists(log_dir):
+    #    os.makedirs(log_dir)
 
     fh = logging.FileHandler(log_path)
     logging.basicConfig(handlers=[fh], level=logging.DEBUG)
