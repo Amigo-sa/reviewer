@@ -431,7 +431,7 @@ class GroupTestReview(MongoModel):
 
 class Survey(MongoModel):
     group_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE)
-    description = fields.CharField()
+    description = fields.CharField(required=True)
     survey_options = fields.DictField(required=True)
     survey_result = fields.DictField(default=None)
 

@@ -54,6 +54,7 @@ class TestApi(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        # TODO в окончательной версии лучше вайпнуть ДБ тут тоже
         requests.post(cls.api_URL + "/shutdown")
 
     def tearDown(self):
