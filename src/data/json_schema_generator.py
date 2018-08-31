@@ -27,40 +27,41 @@ for doc_class in doc_class_list:
             if "fields.CharField" in str(cls):
                 field.update({"type": "string"})
                 fields[cur_class].append(field)
+            if "fields.DateTimeField" in str(cls):
+                field.update({"type": "date"})
+                fields[cur_class].append(field)
+            if "fields.FloatField" in str(cls):
+                field.update({"type": "double"})
+                fields[cur_class].append(field)
+            if "fields.IntegerField" in str(cls):
+                field.update({"type": "int"})
+                fields[cur_class].append(field)
+            if "fields.BooleanField" in str(cls):
+                field.update({"type": "bool"})
+                fields[cur_class].append(field)
+            if "fields.TimestampField" in str(cls):
+                field.update({"type": "timestamp"})
+                fields[cur_class].append(field)
             """
             if "pymodm.fields.ReferenceField" in str(cls) \
                     or "reviewer_model.ValidatedReferenceField" in str(cls):
                 rel_model = cls.related_model.__name__
                 print(rel_model)
                 links[cur_class].append(rel_model)
-                # TODO inmplement
+                # TODO implement
             if "reviewer_model.ValidatedReferenceList" in str(cls):
                 member_list = inspect.getmembers(cls, None)
                 rel_model = cls._field.related_model.__name__
                 print(rel_model)
                 links[cur_class].append(rel_model)
-                # TODO inmplement
+                # TODO implement
             
-            if "fields.DateTimeField" in str(cls):
-                field = name# + ': "datetime"'
-                fields[cur_class].append(field)
-            if "fields.FloatField" in str(cls):
-                field = name# + ': "float"'
-                fields[cur_class].append(field)
+            
             if "fields.DictField" in str(cls):
                 field = name# + ': "dict"'
                 fields[cur_class].append(field)
             if "fields.ListField" in str(cls):
                 field = name# + ': "list"'
-                fields[cur_class].append(field)
-            if "fields.IntegerField" in str(cls):
-                field = name# + ': "int"'
-                fields[cur_class].append(field)
-            if "fields.BooleanField" in str(cls):
-                field = name# + ': "bool"'
-                fields[cur_class].append(field)
-            if "fields.TimestampField" in str(cls):
-                field = name# + ': "timestamp"'
                 fields[cur_class].append(field)
             """
 
@@ -97,7 +98,7 @@ for key, values in fields.items():
     props = {}
     for item in values:
         props.update({item["name"] : {
-            "bsonType": item["type"]
+            "bsonType": [item["type"], "null"]
         }})
     val["$jsonSchema"]["properties"].update(props)
     print(val)
