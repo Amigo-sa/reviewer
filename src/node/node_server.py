@@ -38,7 +38,8 @@ app.register_blueprint(surveys)
 
 try:
     app_mode = os.environ["REVIEWER_APP_MODE"]
-except:
+except Exception as e:
+    logging.error(str(e))
     app_mode = "development"
 
 if app_mode == "production":
