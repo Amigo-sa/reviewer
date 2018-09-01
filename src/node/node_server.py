@@ -43,26 +43,18 @@ except Exception as e:
     app_mode = "development"
 
 fh = None
-if app_mode == "production":
+if not fh and app_mode == "production":
     try:
         log_path = os.path.abspath(constants.log_path)
 
-        fh = logging.FileHandler(log_path)
+        fh = logging.FileHandler(log_path, mode="w")
         fh.setLevel(logging.DEBUG)
-
-        sh = logging.StreamHandler()
-        sh.setLevel(logging.DEBUG)
 
         root_logger = logging.getLogger()
         root_logger.setLevel(logging.DEBUG)
 
         root_logger.addHandler(fh)
-        app.logger.addHandler(fh)
-        #root_logger.addHandler(sh)
-        #app.logger.addHandler(sh)
 
-        from flask.logging import default_handler
-        app.logger.removeHandler(default_handler)
     except Exception as e:
         logging.exception(str(e))
 
@@ -122,5 +114,3 @@ update_network_thread = UpdateNetwork()
 #update_network_thread.start()
 
 
-def get_app_mode():
-    return app_mode
