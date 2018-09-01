@@ -4,7 +4,7 @@ from random import randint
 from bson import ObjectId
 import node.settings.errors as ERR
 import node.settings.constants as constants
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from data.reviewer_model import *
 from datetime import datetime, timezone, timedelta, date
 from node.api.auth import hash_password, gen_session_id
@@ -20,6 +20,11 @@ if __debug__:
     @bp.route('/')
     @bp.route('/index')
     def index():
+        current_app.logger.info("log info")
+        current_app.logger.debug("log debug")
+        current_app.logger.warning("log warning")
+        current_app.logger.error("log error")
+
         from node.node_server import app_mode
         result_string = "Application in {0} mode<br>".format(app_mode)
         collection_names = rev_db.list_collection_names()
