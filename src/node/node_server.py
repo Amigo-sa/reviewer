@@ -17,10 +17,12 @@ from node.api.persons import bp as persons
 from node.api.skills import bp as skills
 from node.api.group_tests import bp as group_tests
 from node.api.surveys import bp as surveys
+from node.api.logging import bp as bp_logging
 from pymodm.connection import connect
 import logging
 import logging.handlers
 import os
+from flask.logging import default_handler
 
 app = Flask(__name__)
 app.register_blueprint(debug)
@@ -50,18 +52,23 @@ if not fh and app_mode == "production":
         fh = logging.FileHandler(log_path, mode="w")
         fh.setLevel(logging.DEBUG)
 
-        root_logger = logging.getLogger()
-        root_logger.setLevel(logging.DEBUG)
+        logger = app.logger
+        logger.setLevel(logging.DEBUG)
 
-        root_logger.addHandler(fh)
+        logger.addHandler(fh)
 
     except Exception as e:
         logging.exception(str(e))
 
 
+app.register_blueprint(bp_logging)
+
+
 def start_server(port, protocol="http", log=True):
+    if not log:
+        app.logger.removeHandler(default_handler)
     if fh and not log:
-        root_logger.removeHandler(fh)
+        logger.removeHandler(fh)
     if protocol == "http":
         app.run(port=port)
     elif protocol == "https":

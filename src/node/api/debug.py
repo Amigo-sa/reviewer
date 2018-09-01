@@ -20,11 +20,6 @@ if __debug__:
     @bp.route('/')
     @bp.route('/index')
     def index():
-        current_app.logger.info("log info")
-        current_app.logger.debug("log debug")
-        current_app.logger.warning("log warning")
-        current_app.logger.error("log error")
-
         from node.node_server import app_mode
         result_string = "Application in {0} mode<br>".format(app_mode)
         collection_names = rev_db.list_collection_names()
