@@ -46,20 +46,20 @@ fh = None
 if app_mode == "production":
     try:
         log_path = os.path.abspath(constants.log_path)
-        #log_dir = os.path.dirname(log_path)
-
-        #if not os.path.exists(log_dir):
-            #os.makedirs(log_dir)
 
         fh = logging.FileHandler(log_path)
-        logging.basicConfig(handlers=[fh], level=logging.DEBUG)
+
+        root_logger = logging.getLogger()
+        root_logger.setLevel(logging.DEBUG)
+
+        root_logger.addHandler(fh)
     except Exception as e:
         logging.exception(str(e))
 
 
 def start_server(port, protocol="http", log=True):
     if fh and not log:
-        logging.root.removeHandler(fh)
+        root_logger.removeHandler(fh)
     if protocol == "http":
         app.run(port=port)
     elif protocol == "https":
