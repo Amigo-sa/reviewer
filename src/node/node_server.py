@@ -20,7 +20,7 @@ from node.api.surveys import bp as surveys
 from node.api.logging import bp as bp_logging
 from pymodm.connection import connect
 import logging
-import logging.handlers
+from logging.handlers import RotatingFileHandler
 import os
 from flask.logging import default_handler
 
@@ -49,7 +49,7 @@ if not fh and app_mode == "production":
     try:
         log_path = os.path.abspath(constants.log_path)
 
-        fh = logging.FileHandler(log_path, mode="w")
+        fh = RotatingFileHandler(log_path, maxBytes= 100000, backupCount=5)
         fh.setLevel(logging.DEBUG)
 
         logger = app.logger
