@@ -48,11 +48,18 @@ if app_mode == "production":
         log_path = os.path.abspath(constants.log_path)
 
         fh = logging.FileHandler(log_path)
+        fh.setLevel(logging.DEBUG)
+
+        sh = logging.StreamHandler()
+        sh.setLevel(logging.DEBUG)
 
         root_logger = logging.getLogger()
         root_logger.setLevel(logging.DEBUG)
 
         root_logger.addHandler(fh)
+        app.logger.addHandler(fh)
+        root_logger.addHandler(sh)
+        app.logger.addHandler(sh)
     except Exception as e:
         logging.exception(str(e))
 
