@@ -5,4 +5,4 @@
 2) Выбрать File->Import->Choose Files
 
 Файл с client api для просмотра из браузера опубликован по ссылке:
-https://documenter.getpostman.com/view/4747165/RWMEQUrb
+https://documenter.getpostman.com/view/4747165/RWaDWBCi
