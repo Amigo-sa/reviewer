@@ -58,8 +58,11 @@ if app_mode == "production":
 
         root_logger.addHandler(fh)
         app.logger.addHandler(fh)
-        root_logger.addHandler(sh)
-        app.logger.addHandler(sh)
+        #root_logger.addHandler(sh)
+        #app.logger.addHandler(sh)
+
+        from flask.logging import default_handler
+        app.logger.removeHandler(default_handler)
     except Exception as e:
         logging.exception(str(e))
 
@@ -118,3 +121,6 @@ class UpdateNetwork(Thread):
 update_network_thread = UpdateNetwork()
 #update_network_thread.start()
 
+
+def get_app_mode():
+    return app_mode
