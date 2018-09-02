@@ -313,3 +313,36 @@ def get_reviewer_id_by_review_id(_id):
     return None
 
 
+@bp.route("/set_user_permissions", methods= ["POST"])
+@required_auth("admin")
+def set_user_permissions():
+    req = request.get_json()
+    try:
+        phone_no = str(req["phone_no"])
+        permissions = req["permissions"]
+        if not check_phone_format(phone_no):
+            return jsonify({"result": ERR.AUTH_INVALID_PHONE}), 200
+        auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
+        if not auth_info.count():
+            return jsonify({"result": ERR.NO_DATA}), 200
+        auth_info = auth_info.first()
+        if not auth_info.is_approved:
+            return jsonify({"result": ERR.AUTH}), 200
+        if permissions == "admin":
+            auth_info.permissions = auth_info.permissions | 1
+        elif permissions == "user":
+            auth_info.permissions = auth_info.permissions & ~1
+        else:
+            return jsonify({"result": ERR.INPUT}), 200
+        auth_info.save()
+        result = {"result": ERR.OK}
+
+    except KeyError as e:
+        result = {"result": ERR.INPUT}
+
+    except Exception as e:
+        result = {"result": ERR.AUTH}
+
+    return jsonify(result), 200
+
+

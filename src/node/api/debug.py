@@ -4,7 +4,7 @@ from random import randint
 from bson import ObjectId
 import node.settings.errors as ERR
 import node.settings.constants as constants
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from data.reviewer_model import *
 from datetime import datetime, timezone, timedelta, date
 from node.api.auth import hash_password, gen_session_id
