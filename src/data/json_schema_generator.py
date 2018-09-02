@@ -66,9 +66,19 @@ for doc_class in doc_class_list:
             for py_name, bson_name in field_aliases.items():
                 if py_name in str(cls):
                     if bson_name == "list":
-                    #    item_type = cls._field
-                     #   print(item_type)
-
+                        item_type = cls._field
+                        for ref_py_name, ref_bson_name in field_aliases.items():
+                            if ref_py_name in str(item_type):
+                                if ref_bson_name == "list":
+                                    raise TypeError("nested lists are not supported")
+                                properties.update({
+                                    name: {
+                                        "bsonType": "array",
+                                        "items": {
+                                            "bsonType": [ref_bson_name, "null"]
+                                        }
+                                    }
+                                })
                         pass
                     elif bson_name == "ref_list":
                         properties.update({
