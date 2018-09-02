@@ -22,9 +22,8 @@ field_aliases = {
     "pymodm.fields.ReferenceField" : "objectId",
     "reviewer_model.ValidatedReferenceField" : "objectId",
     "reviewer_model.ValidatedReferenceList" : "ref_list",
-    "fields.ListField" : "list"
-
-
+    "fields.ListField" : "list",
+    "fields.DictField" : "dict"
 }
 ignore_list = [
     "Service",
@@ -79,7 +78,6 @@ for doc_class in doc_class_list:
                                         }
                                     }
                                 })
-                        pass
                     elif bson_name == "ref_list":
                         properties.update({
                             name: {
@@ -91,7 +89,11 @@ for doc_class in doc_class_list:
                         })
                         pass
                     elif bson_name == "dict":
-                        pass
+                        properties.update({
+                            name: {
+                                "bsonType": ["object", "null"]
+                            }
+                        })
                     else:
                         properties.update({name: {
                             "bsonType": [bson_name, "null"]
@@ -116,4 +118,3 @@ for doc_class in doc_class_list:
     val["$jsonSchema"]["properties"].update(properties)
     #print(val)
     print(db.command("collMod", col_name, validator=val))
-
