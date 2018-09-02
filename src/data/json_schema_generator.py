@@ -21,6 +21,8 @@ field_aliases = {
     "fields.TimestampField" : "timestamp",
     "pymodm.fields.ReferenceField" : "objectId",
     "reviewer_model.ValidatedReferenceField" : "objectId",
+    "reviewer_model.ValidatedReferenceList" : "ref_list",
+    "fields.ListField" : "list"
 
 
 }
@@ -43,8 +45,8 @@ for doc_class in doc_class_list:
     cur_class = str(doc_class.__name__)
     if cur_class in ignore_list:
         continue
-    print("--------------------------------------------------")
-    print(cur_class + ":")
+    #print("--------------------------------------------------")
+    #print(cur_class + ":")
     val = {
         "$jsonSchema": {
             "bsonType": "object",
@@ -52,14 +54,31 @@ for doc_class in doc_class_list:
         }
     }
     col_name = convert(cur_class)
-    print("Collection " + col_name)
+    #print("Collection " + col_name)
     member_list = inspect.getmembers(doc_class, None)
     properties = {}
+    # TODO required
+    # TODO allow blank
+    # TODO custom filters
+    # TODO filter blank
     for name, cls in member_list:
         if "__dict__" not in str(name):
             for py_name, bson_name in field_aliases.items():
                 if py_name in str(cls):
                     if bson_name == "list":
+                    #    item_type = cls._field
+                     #   print(item_type)
+
+                        pass
+                    elif bson_name == "ref_list":
+                        properties.update({
+                            name: {
+                                "bsonType" : "array",
+                                "items":{
+                                    "bsonType" : ["objectId", "null"]
+                                }
+                            }
+                        })
                         pass
                     elif bson_name == "dict":
                         pass
@@ -85,6 +104,6 @@ for doc_class in doc_class_list:
                 fields[cur_class].append(field)
             """
     val["$jsonSchema"]["properties"].update(properties)
-    print(val)
+    #print(val)
     print(db.command("collMod", col_name, validator=val))
 
