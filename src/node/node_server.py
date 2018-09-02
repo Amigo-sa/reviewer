@@ -67,6 +67,8 @@ app.register_blueprint(bp_logging)
 def start_server(port, protocol="http", log=True):
     if not log:
         app.logger.removeHandler(default_handler)
+        for handler in logging.getLogger().handlers:
+            logging.getLogger().removeHandler(handler)
     if fh and not log:
         logger.removeHandler(fh)
     if protocol == "http":
