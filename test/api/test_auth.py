@@ -325,7 +325,7 @@ class TestAuth(unittest.TestCase):
                                                  middle_name="Батькович",
                                                  surname="Серый",
                                                  birth_date=datetime.date(1170, 6, 12).isoformat(),
-                                                 phone_no="+79007745737"))
+                                                 phone_no="79007745737"))
 
     def test_user_restricted_access(self):
 

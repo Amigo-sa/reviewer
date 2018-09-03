@@ -87,7 +87,7 @@ def fill_db():
                 "Александрович",
                 "Дунаев",
                 datetime.date(1986, 5, 1),
-                "88005553535"),
+                "78005553535"),
         "Maniac":
             Person(
                 "Кирилл",
@@ -665,7 +665,7 @@ def fill_db():
     auth_users = {
         "generic_user":
             AuthInfo(
-                phone_no="78005553535",
+                phone_no=persons["Leni4"].phone_no,
                 last_send_time=datetime.datetime.now(datetime.timezone.utc),
                 is_approved=True,
                 password=hash_password("12345678"),

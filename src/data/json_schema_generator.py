@@ -2,6 +2,7 @@
 import os, sys, inspect, re
 import data.reviewer_model
 from pymongo import MongoClient
+from node.settings import constants
 
 
 def convert(name):
@@ -9,7 +10,7 @@ def convert(name):
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 
-def create_validators(ip='localhost', port=27017, db_name='reviewer'):
+def create_validators(uri="mongodb://localhost:27017", db_name='reviewer'):
 
     members = inspect.getmembers(data.reviewer_model, inspect.isclass)
     doc_class_list = []
@@ -34,8 +35,16 @@ def create_validators(ip='localhost', port=27017, db_name='reviewer'):
         "ValidatedReferenceField",
         "ValidatedReferenceList"
     ]
+    special_rules = {
+        "person" : {
+            "phone_no" :
+                {
+                    "pattern": "^[0-9]+$"
+                }
+        }
+    }
 
-    client = MongoClient(ip, port)
+    client = MongoClient(uri)
     db = client[db_name]
     col_list = db.collection_names()
 
@@ -100,6 +109,9 @@ def create_validators(ip='localhost', port=27017, db_name='reviewer'):
                             required_fields.append(name)
                         if cls.blank:
                             properties[name]["bsonType"].append("null")
+                        if col_name in special_rules:
+                            if name in special_rules[col_name]:
+                                properties[name].update(special_rules[col_name][name])
         val["$jsonSchema"]["properties"].update(properties)
         if required_fields:
             val["$jsonSchema"].update({"required" : required_fields})
@@ -111,4 +123,4 @@ def create_validators(ip='localhost', port=27017, db_name='reviewer'):
             print(db.command("create", col_name, validator=val))
 
 if __name__ == "__main__":
-    create_validators()
+    create_validators(constants.mongo_db, constants.db_name)
