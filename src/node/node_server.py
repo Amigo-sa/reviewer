@@ -8,17 +8,16 @@ import pymongo
 from flask import Flask
 from node.api.versioning import register_api_default, register_api_v1, register_api_v2
 from node.api.logging import bp as bp_logging
+from node.api.logging import configure_logger
 from pymodm.connection import connect
 import logging
-from logging.handlers import RotatingFileHandler
 import os
-from flask.logging import default_handler
+
 
 app = Flask(__name__)
 register_api_default(app)
 register_api_v1(app)
 register_api_v2(app)
-
 
 try:
     app_mode = os.environ["REVIEWER_APP_MODE"]
@@ -26,33 +25,18 @@ except Exception as e:
     logging.error(str(e))
     app_mode = "development"
 
-fh = None
-if not fh and app_mode == "production":
-    try:
-        log_path = os.path.abspath(constants.log_path)
-
-        fh = RotatingFileHandler(log_path, maxBytes= 100000, backupCount=5)
-        fh.setLevel(logging.DEBUG)
-
-        logger = app.logger
-        logger.setLevel(logging.DEBUG)
-
-        logger.addHandler(fh)
-
-    except Exception as e:
-        logging.exception(str(e))
-
+if app_mode == "production":
+    configure_logger(app)
 
 app.register_blueprint(bp_logging)
 
 
 def start_server(port, protocol="http", log=True):
     if not log:
-        app.logger.removeHandler(default_handler)
         for handler in logging.getLogger().handlers:
             logging.getLogger().removeHandler(handler)
-    if fh and not log:
-        logger.removeHandler(fh)
+        for handler in app.logger.handlers:
+            app.logger.removeHandler(handler)
     if protocol == "http":
         app.run(port=port)
     elif protocol == "https":
