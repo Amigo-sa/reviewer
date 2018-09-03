@@ -44,8 +44,8 @@ for doc_class in doc_class_list:
     cur_class = str(doc_class.__name__)
     if cur_class in ignore_list:
         continue
-    #print("--------------------------------------------------")
-    #print(cur_class + ":")
+    print("--------------------------------------------------")
+    print(cur_class + ":")
     val = {
         "$jsonSchema": {
             "bsonType": "object",
@@ -53,13 +53,10 @@ for doc_class in doc_class_list:
         }
     }
     col_name = convert(cur_class)
-    #print("Collection " + col_name)
+    print("Collection " + col_name)
     member_list = inspect.getmembers(doc_class, None)
     properties = {}
-    # TODO required
-    # TODO allow blank
-    # TODO custom filters
-    # TODO filter blank
+    required_fields = []
     for name, cls in member_list:
         if "__dict__" not in str(name):
             for py_name, bson_name in field_aliases.items():
@@ -72,7 +69,7 @@ for doc_class in doc_class_list:
                                     raise TypeError("nested lists are not supported")
                                 properties.update({
                                     name: {
-                                        "bsonType": "array",
+                                        "bsonType": ["array"],
                                         "items": {
                                             "bsonType": [ref_bson_name, "null"]
                                         }
@@ -81,9 +78,9 @@ for doc_class in doc_class_list:
                     elif bson_name == "ref_list":
                         properties.update({
                             name: {
-                                "bsonType" : "array",
+                                "bsonType" : ["array"],
                                 "items":{
-                                    "bsonType" : ["objectId", "null"]
+                                    "bsonType" : ["objectId"]
                                 }
                             }
                         })
@@ -91,30 +88,21 @@ for doc_class in doc_class_list:
                     elif bson_name == "dict":
                         properties.update({
                             name: {
-                                "bsonType": ["object", "null"]
+                                "bsonType": ["object"]
                             }
                         })
                     else:
                         properties.update({name: {
-                            "bsonType": [bson_name, "null"]
+                            "bsonType": [bson_name]
                         }})
-
-            """
-            if "reviewer_model.ValidatedReferenceList" in str(cls):
-                member_list = inspect.getmembers(cls, None)
-                rel_model = cls._field.related_model.__name__
-                print(rel_model)
-                links[cur_class].append(rel_model)
-                # TODO implement
-            
-            
-            if "fields.DictField" in str(cls):
-                field = name# + ': "dict"'
-                fields[cur_class].append(field)
-            if "fields.ListField" in str(cls):
-                field = name# + ': "list"'
-                fields[cur_class].append(field)
-            """
+                    if cls.required:
+                        required_fields.append(name)
+                    if cls.blank:
+                        print(cls)
+                        properties[name]["bsonType"].append("null")
+                        print(properties)
     val["$jsonSchema"]["properties"].update(properties)
-    #print(val)
+    if required_fields:
+        val["$jsonSchema"].update({"required" : required_fields})
+    print(val)
     print(db.command("collMod", col_name, validator=val))
