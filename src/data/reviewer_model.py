@@ -108,7 +108,8 @@ class Person(MongoModel):
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("phone_no", pymongo.DESCENDING)],
-                              unique=True)]
+                              unique=True,
+                              partialFilterExpression= { "phone_no": { "$exists": True } })]
 
 
 class Organization(MongoModel):
