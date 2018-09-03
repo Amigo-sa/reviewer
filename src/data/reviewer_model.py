@@ -88,7 +88,8 @@ class ValidatedReferenceList(fields.ListField):
 
 
 class Service(MongoModel):
-    version = fields.CharField()
+    db_version = fields.CharField()
+    api_version = fields.CharField()
 
     class Meta:
         write_concern = WriteConcern(j=True)

@@ -346,3 +346,17 @@ def set_user_permissions():
     return jsonify(result), 200
 
 
+@bp.route("/version", methods=["GET"])
+def get_version():
+    try:
+        service = Service.objects.all().first()
+        result = {"result": ERR.OK,
+                  "db_version": service.db_version,
+                  "api_version": service.api_version}
+    except:
+        result = {"result": ERR.DB}
+
+    return jsonify(result), 200
+
+
+

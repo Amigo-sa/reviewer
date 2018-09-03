@@ -1002,7 +1002,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "9a1ca549-90f8-41ff-aebc-07ba16e7a4d1",
+								"id": "7e44f1e9-2e8e-491e-9fea-ebeded157a8c",
 								"type": "text/javascript",
 								"exec": [
 									"pm.environment.set(\"phone_no\", \"78005553535\");",
@@ -1035,7 +1035,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"phone_no\": \"{{phone_no}}\",\n\t\"permissions\":\"user\"\n}"
+							"raw": "{\n\t\"phone_no\": \"{{phone_no}}\",\n\t\"permissions\":\"admin\"\n}"
 						},
 						"url": {
 							"raw": "{{server_url}}/set_user_permissions",
@@ -1172,6 +1172,74 @@
 							],
 							"cookie": [],
 							"body": "{\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "get_version",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{server_url}}/version",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"version"
+							]
+						},
+						"description": "Получает текующую версию API и базы"
+					},
+					"response": [
+						{
+							"name": "get_version",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "{{server_url}}/version",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"version"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "50",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 03 Sep 2018 18:27:54 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"api_version\":\"1\",\"db_version\":\"0.4\",\"result\":0}\n"
 						}
 					]
 				}

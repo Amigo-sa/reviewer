@@ -676,7 +676,7 @@ def fill_db():
     }
     print("Filling db...")
     print("Fill script version is " + fill_script_version)
-    service = Service(fill_script_version)
+    service = Service(fill_script_version, constants.api_version)
     service.save()
     for key, item in persons.items():
         item.save()
