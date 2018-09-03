@@ -313,7 +313,7 @@ def get_reviewer_id_by_review_id(_id):
     return None
 
 
-@bp.route("/set_user_permissions", methods= ["POST"])
+@bp.route("/user_permissions", methods= ["POST"])
 @required_auth("admin")
 def set_user_permissions():
     req = request.get_json()

@@ -1038,12 +1038,12 @@
 							"raw": "{\n\t\"phone_no\": \"{{phone_no}}\",\n\t\"permissions\":\"admin\"\n}"
 						},
 						"url": {
-							"raw": "{{server_url}}/set_user_permissions",
+							"raw": "{{server_url}}/user_permissions",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
-								"set_user_permissions"
+								"user_permissions"
 							]
 						},
 						"description": "Устанавливает права пользователю"
@@ -1068,12 +1068,12 @@
 									"raw": "{\n\t\"phone_no\": \"78005553535\",\n\t\"permissions\":\"user\"\n}"
 								},
 								"url": {
-									"raw": "{{server_url}}/set_user_permissions",
+									"raw": "{{server_url}}/user_permissions",
 									"host": [
 										"{{server_url}}"
 									],
 									"path": [
-										"set_user_permissions"
+										"user_permissions"
 									]
 								}
 							},
@@ -1132,12 +1132,12 @@
 									"raw": "{\n\t\"phone_no\": \"78005553535\",\n\t\"permissions\":\"admin\"\n}"
 								},
 								"url": {
-									"raw": "{{server_url}}/set_user_permissions",
+									"raw": "{{server_url}}/user_permissions",
 									"host": [
 										"{{server_url}}"
 									],
 									"path": [
-										"set_user_permissions"
+										"user_permissions"
 									]
 								}
 							},
