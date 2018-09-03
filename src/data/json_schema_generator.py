@@ -57,13 +57,14 @@ def create_validators(uri="mongodb://localhost:27017", db_name='reviewer'):
         val = {
             "$jsonSchema": {
                 "bsonType": "object",
+                "additionalProperties": False,
                 "properties": {}
             }
         }
         col_name = convert(cur_class)
         print("Collection " + col_name)
         member_list = inspect.getmembers(doc_class, None)
-        properties = {}
+        properties = {"_id": {}}
         required_fields = []
         for name, cls in member_list:
             if "__dict__" not in str(name):
