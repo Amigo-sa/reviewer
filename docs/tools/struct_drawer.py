@@ -29,6 +29,7 @@ for doc_class in doc_class_list:
     member_list = inspect.getmembers(doc_class, None)
     for name, cls in member_list:
         if "__dict__" not in str(name):
+            field = ""
             if "pymodm.fields.ReferenceField" in str(cls) \
                     or "reviewer_model.ValidatedReferenceField" in str(cls):
                 # print(cls)
@@ -41,30 +42,27 @@ for doc_class in doc_class_list:
                 print(rel_model)
                 links[cur_class].append(rel_model)
             if "fields.CharField" in str(cls):
-                field = name + ": char"
-                fields[cur_class].append(field)
+                field += name + ": char"
             if "fields.DateTimeField" in str(cls):
-                field = name + ": datetime"
-                fields[cur_class].append(field)
+                field += name + ": datetime"
             if "fields.FloatField" in str(cls):
-                field = name + ": float"
-                fields[cur_class].append(field)
+                field += name + ": float"
             if "fields.DictField" in str(cls):
-                field = name + ": dict"
-                fields[cur_class].append(field)
+                field += name + ": dict"
             if "fields.ListField" in str(cls):
-                field = name + ": list"
-                fields[cur_class].append(field)
+                field += name + ": list"
             if "fields.IntegerField" in str(cls):
-                field = name + ": int"
-                fields[cur_class].append(field)
+                field += name + ": int"
             if "fields.BooleanField" in str(cls):
-                field = name + ": bool"
-                fields[cur_class].append(field)
+                field += name + ": bool"
             if "fields.TimestampField" in str(cls):
-                field = name + ": timestamp"
+                field += name + ": timestamp"
+            if field:
+                if cls.required:
+                    field += "*"
+                if cls.blank:
+                    field += "?"
                 fields[cur_class].append(field)
-
 ignore_list = [
     "Service",
     "ValidatedReferenceField",
@@ -88,6 +86,9 @@ for cls, field_list in fields.items():
 for main, refs in links.items():
     for r in refs:
         dot.edge(main, r)
+
+#dot.attr("node", shape="rectangle")
+#dot.node("legend", r"* - required\n? - allow blank")
 
 dot.engine = "dot"
 dot.format = "svg"
