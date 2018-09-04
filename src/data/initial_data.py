@@ -68,6 +68,10 @@ def prepare_auth_permission():
     pass
 
 
+def prepare_group_roles():
+    pass
+
+
 def read_skill_list(filename):
     file = open(filename)
     header = file.readline()

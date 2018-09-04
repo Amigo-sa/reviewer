@@ -109,7 +109,8 @@ class Person(MongoModel):
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("phone_no", pymongo.DESCENDING)],
-                              unique=True)]
+                              unique=True,
+                              partialFilterExpression= { "phone_no": { "$exists": True } })]
 
 
 class Organization(MongoModel):
@@ -432,7 +433,7 @@ class GroupTestReview(MongoModel):
 
 class Survey(MongoModel):
     group_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE)
-    description = fields.CharField()
+    description = fields.CharField(required=True)
     survey_options = fields.DictField(required=True)
     survey_result = fields.DictField(default=None)
 
