@@ -2,7 +2,7 @@
 from bson import ObjectId
 import node.settings.errors as ERR
 import node.settings.constants as constants
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from data.reviewer_model import *
 from node.api.auth import required_auth
 from node.api.base_functions import delete_resource, list_resources
@@ -186,6 +186,49 @@ def get_person_info(person_id):
                     "birth_date": birth_date_str,
                     "phone_no": person.phone_no}
             result = {"result": ERR.OK, "data": data}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except:
+        result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/persons/<string:person_id>/photo", methods=['PUT'])
+@required_auth("user")
+def post_person_photo(person_id):
+    try:
+        header = request.headers.get('Content-Type')
+        if header != "image/jpeg":
+            return jsonify({"result": ERR.INPUT}), 200
+        if Person(_id=person_id) in Person.objects.raw({"_id": ObjectId(person_id)}):
+            person = Person(_id=person_id)
+            person.photo = request.get_data()
+            person.save()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except KeyError:
+        result = {"result": ERR.INPUT}
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
+    return jsonify(result), 200
+
+
+@bp.route("/persons/<string:person_id>/photo", methods=['GET'])
+def get_person_photo(person_id):
+    try:
+        if Person(_id=person_id) in Person.objects.raw({"_id": ObjectId(person_id)}):
+            person = Person(_id=person_id)
+            person.refresh_from_db()
+            if not person.photo:
+                return "", 204
+            image_binary = person.photo
+            response = make_response(image_binary)
+            response.headers.set('Content-Type', 'image/jpeg')
+            response.headers.set(
+                'Content-Disposition', 'attachment', filename='%s.jpg' % person_id)
+            return response
         else:
             result = {"result": ERR.NO_DATA}
     except:

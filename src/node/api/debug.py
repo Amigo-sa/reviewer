@@ -31,7 +31,9 @@ if __debug__:
             collection = rev_db[name]
             cursor = collection.find({})
             for document in cursor:
-                  result_string += "document: {0}<br>".format(document)
+                if "photo" in document:
+                    document["photo"] = "binnary data (edited)"
+                result_string += "document: {0}<br>".format(document)
         return result_string
 
     @bp.route("/shutdown", methods = ['POST'])
