@@ -6,6 +6,7 @@ import random
 from pymodm.connection import connect, _get_db
 from node.settings import constants
 from node.api.auth import hash_password, gen_session_id
+from bson.binary import Binary, BINARY_SUBTYPE
 
 fill_script_version = "0.4"
 
@@ -80,6 +81,7 @@ def wipe_db(db_name):
 
 
 def fill_db():
+    #leni4_photo = Binary(b"\x01\x02\x03\x04\x05\x03\x08\x05", BINARY_SUBTYPE)
     persons = {
         "Leni4":
             Person(
@@ -87,7 +89,9 @@ def fill_db():
                 "Александрович",
                 "Дунаев",
                 datetime.date(1986, 5, 1),
-                "78005553535"),
+                "78005553535",
+                #leni4_photo
+            ),
         "Maniac":
             Person(
                 "Кирилл",
