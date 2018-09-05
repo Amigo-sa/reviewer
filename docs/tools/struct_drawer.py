@@ -57,6 +57,8 @@ for doc_class in doc_class_list:
                 field += name + ": bool"
             if "fields.TimestampField" in str(cls):
                 field += name + ": timestamp"
+            if "fields.BinaryField" in str(cls):
+                field += name + ": binary"
             if field:
                 if cls.required:
                     field += "*"

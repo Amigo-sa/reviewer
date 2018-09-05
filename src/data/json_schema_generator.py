@@ -28,7 +28,8 @@ def create_validators(uri="mongodb://localhost:27017", db_name='reviewer'):
         "reviewer_model.ValidatedReferenceField" : "objectId",
         "reviewer_model.ValidatedReferenceList" : "ref_list",
         "fields.ListField" : "list",
-        "fields.DictField" : "dict"
+        "fields.DictField" : "dict",
+        "fields.BinaryField" : "binData"
     }
     ignore_list = [
         "ValidatedReferenceField",

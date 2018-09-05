@@ -81,7 +81,7 @@ def wipe_db(db_name):
 
 
 def fill_db():
-    #leni4_photo = Binary(b"\x01\x02\x03\x04\x05\x03\x08\x05", BINARY_SUBTYPE)
+
     persons = {
         "Leni4":
             Person(
@@ -89,9 +89,7 @@ def fill_db():
                 "Александрович",
                 "Дунаев",
                 datetime.date(1986, 5, 1),
-                "78005553535",
-                #leni4_photo
-            ),
+                "78005553535"),
         "Maniac":
             Person(
                 "Кирилл",
@@ -695,6 +693,12 @@ def fill_db():
     service = Service(fill_script_version, constants.api_version)
     service.save()
     for key, item in persons.items():
+        try:
+            with open(r"./img/" + key + r".jpg", mode='rb') as file:
+                fileContent = file.read()
+            item.photo = Binary(fileContent)
+        except FileNotFoundError:
+            pass
         item.save()
     for key, item in organizations.items():
         item.save()

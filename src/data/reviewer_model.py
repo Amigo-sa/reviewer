@@ -103,7 +103,7 @@ class Person(MongoModel):
     surname = fields.CharField()
     birth_date = fields.DateTimeField()
     phone_no = fields.CharField()
-    #photo = fields.BinaryField()
+    photo = fields.BinaryField()
 
     class Meta:
         write_concern = WriteConcern(j=True)
