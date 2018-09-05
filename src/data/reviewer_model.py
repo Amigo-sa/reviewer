@@ -11,7 +11,7 @@ from node.settings import constants
 
 from collections import Counter
 
-model_version = "0.4"
+model_version = constants.db_model_version
 
 
 # Функция для определения перечня зависимых документов
@@ -103,6 +103,7 @@ class Person(MongoModel):
     surname = fields.CharField()
     birth_date = fields.DateTimeField()
     phone_no = fields.CharField()
+    #photo = fields.BinaryField()
 
     class Meta:
         write_concern = WriteConcern(j=True)

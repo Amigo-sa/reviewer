@@ -6,6 +6,7 @@ parentPath = os.path.abspath("..//..//src")
 if parentPath not in sys.path:
     sys.path.insert(0, parentPath)
 from node.api.auth import hash_password, gen_session_id
+from node.settings import constants
 
 skills = []
 
@@ -71,6 +72,11 @@ def prepare_auth_permission():
 def prepare_group_roles():
     pass
 
+def prepare_version_info():
+    service = model.Service()
+    service.db_version = constants.db_model_version
+    service.api_version = constants.api_version
+
 
 def read_skill_list(filename):
     file = open(filename)
@@ -93,6 +99,7 @@ def read_skill_list(filename):
 
 if __name__ == "__main__":
     wipe_db("reviewer")
+    prepare_version_info()
     read_skill_list("skills.csv")
     prepare_soft_skills()
     prepare_hard_skills()

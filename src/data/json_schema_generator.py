@@ -31,7 +31,6 @@ def create_validators(uri="mongodb://localhost:27017", db_name='reviewer'):
         "fields.DictField" : "dict"
     }
     ignore_list = [
-        "Service",
         "ValidatedReferenceField",
         "ValidatedReferenceList"
     ]

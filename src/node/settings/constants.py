@@ -9,6 +9,7 @@ node_server_port = 5000
 mongo_db = "mongodb://localhost:27017"
 db_name_test = "reviewer_test"
 db_name = "reviewer"
+db_model_version = "0.4"
 
 # auth
 mock_smsc_url = "http://127.0.0.1:5010"
