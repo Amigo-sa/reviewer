@@ -1161,6 +1161,15 @@ class TestApi(unittest.TestCase):
                                 post_data, self.admin_header)
         self.assertEqual(ERR.INPUT, resp["result"])
 
+
+    def test_get_version(self):
+        service = model.Service("0.2", "3")
+        service.save()
+        data = requests.get(self.api_URL + "/version").json()
+        self.assertEqual("0.2", data["db_version"], "must return correct db version")
+        self.assertEqual("3", data["api_version"], "must return correct api version")
+        pass
+
     def pass_invalid_ref(self, url_post, auth="admin", **kwargs):
         data = self.generate_doc(kwargs.items())
         if auth == "reviewer":
