@@ -11,6 +11,7 @@ from flask import Flask, Blueprint
 import datetime
 import sys
 import data.reviewer_model as model
+from bson.binary import Binary
 
 from node.node_server import start_server
 from node.settings import constants
@@ -134,7 +135,6 @@ class TestAuth(unittest.TestCase):
         self.admin_header = {"Authorization":
                                  "Bearer " + hm.prepare_first_admin()}
 
-    # TODO Surveys!
     def prepare_lists(self):
         # admin only routes
         self.admin_only_post = [
@@ -193,6 +193,10 @@ class TestAuth(unittest.TestCase):
                                             "chosen_option": "1"}
         }
 
+        self.user_allowed_put = [
+            "/persons/%s/photo" % self.user_person_id
+        ]
+
         self.gm_allowed_get = [
             "/group_members/%s" % self.group_member_id
         ]
@@ -235,6 +239,11 @@ class TestAuth(unittest.TestCase):
             "/tests/%s" % self.test_id,
             "/tests/results/%s" % self.test_result_id,
             "/tests/results",
+            "/version",
+
+        ]
+        self.no_auth_data_get = [
+            "/persons/%s/photo" % self.user_person_id,
         ]
 
     def prepare_docs(self):
@@ -333,6 +342,17 @@ class TestAuth(unittest.TestCase):
         self.prepare_lists()
         # trying posts and deletes
         post_data = {"sample": "data"}
+
+        cont_header = self.user_header
+        cont_header.update({"Content-Type": "image/jpeg"})
+
+        resp = requests.put(self.api_URL + "/persons/%s/photo" % self.other_person_id,
+                            headers=cont_header,
+                            data=bytes(b"\x01"))
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(ERR.AUTH, resp.json()["result"])
+
+
         for url in self.admin_only_post:
             resp_json = hm.try_post_item(self, self.api_URL + url,
                                          post_data, self.user_header)
@@ -370,10 +390,21 @@ class TestAuth(unittest.TestCase):
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                                 "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
+        cont_header = self.user_header
+        cont_header.update({"Content-Type": "image/jpeg"})
+        for url in self.user_allowed_put:
+            resp = requests.put(self.api_URL + url,
+                                headers=cont_header,
+                                data=bytes(b"\x01"))
+            self.assertEqual(200, resp.status_code)
+            self.assertEqual(ERR.OK, resp.json()["result"])
+
         for url in self.user_allowed_delete:
             resp_json = hm.try_delete_item(self, self.api_URL + url, self.user_header)
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                                 "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
+
+
 
     def test_review_post_normal(self):
         self.prepare_docs()
@@ -444,6 +475,15 @@ class TestAuth(unittest.TestCase):
                        "value": "50.0",
                        "description": "string"}
         rev_ids = []
+        person = model.Person(_id= self.user_person_id)
+        person.refresh_from_db()
+        person.photo = Binary(b"\x01")
+        person.save()
+
+        for url in self.no_auth_data_get:
+            resp = requests.get(self.api_URL + url)
+            self.assertEqual(200, resp.status_code)
+            self.assertTrue(resp.content)
         for url in self.review_valid_post:
             resp_json = hm.try_post_item(self, self.api_URL + url,
                                          review_data, self.user_header)
