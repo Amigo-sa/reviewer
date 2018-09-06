@@ -1172,7 +1172,35 @@ class TestApi(unittest.TestCase):
         pass
 
     def test_put_photo(self):
-        pass
+        person = model.Person(
+            "Леонид",
+            "Александрович",
+            "Дунаев",
+            datetime.date(1986, 5, 1),
+            "78005553535")
+        person.save()
+        with open(r"../database/img/Leni4.jpg", mode='rb') as file:
+            file_content = file.read()
+        headers = {"Content-Type" : "image/jpeg"}
+        headers.update(self.admin_header)
+        resp = requests.put(self.api_URL + "/persons/%s/photo" % str(person.pk),
+                     headers= headers,
+                     data= file_content)
+        self.assertEqual(200, resp.status_code, "status code must be 200")
+        person.refresh_from_db()
+        self.assertEqual(file_content, bytes(person.photo), "file must be saved to db")
+        person.delete()
+        resp = requests.put(self.api_URL + "/persons/%s/photo" % str(person.pk),
+                            headers=headers,
+                            data=file_content)
+        self.assertEqual(200, resp.status_code, "status code must be 200")
+        self.assertEqual(ERR.NO_DATA, resp.json()["result"], "must return ERR.NO_DATA if no person exist")
+        headers["Content-Type"] = "some other type"
+        resp = requests.put(self.api_URL + "/persons/%s/photo" % str(person.pk),
+                            headers=headers,
+                            data=file_content)
+        self.assertEqual(ERR.INPUT, resp.json()["result"], "must return ERR.INPUT for wrong content type")
+
 
     def test_get_photo(self):
         with open(r"../database/img/Leni4.jpg", mode='rb') as file:
@@ -1187,16 +1215,16 @@ class TestApi(unittest.TestCase):
                     bin_data)
         person.save()
         resp = requests.get(self.api_URL + "/persons/%s/photo" % str(person.pk))
-        self.assertEqual(resp.status_code, 200, "response code must be 200")
-        self.assertEqual(resp.headers["Content-Type"], "image/jpeg", "must return correct Content-Type")
-        self.assertEqual(resp.headers["Content-Disposition"],
-                         "attachment; filename=%s.jpg" % str(person.pk),
+        self.assertEqual( 200, resp.status_code,"response code must be 200")
+        self.assertEqual("image/jpeg",resp.headers["Content-Type"],  "must return correct Content-Type")
+        self.assertEqual("attachment; filename=%s.jpg" % str(person.pk),
+                         resp.headers["Content-Disposition"],
                          "must return correct Content-Disposition")
-        self.assertEqual(file_content,resp.content, "must return correct image")
+        self.assertEqual(file_content, resp.content, "must return correct image")
         person.delete()
         resp = requests.get(self.api_URL + "/persons/%s/photo" % str(person.pk))
-        self.assertEqual(resp.status_code, 200, "response code must be 200")
-        self.assertEqual(resp.json()["result"], ERR.NO_DATA, "must return ERR.NO_DATA when no person exists")
+        self.assertEqual( 200, resp.status_code,"response code must be 200")
+        self.assertEqual( ERR.NO_DATA, resp.json()["result"], "must return ERR.NO_DATA when no person exists")
         person = model.Person(
             "Иван",
             "Иванович",
@@ -1205,7 +1233,7 @@ class TestApi(unittest.TestCase):
             "78005553565")
         person.save()
         resp = requests.get(self.api_URL + "/persons/%s/photo" % str(person.pk))
-        self.assertEqual(resp.status_code, 204, "response code must be 204 when no photo present")
+        self.assertEqual(204, resp.status_code,"response code must be 204 when no photo present")
 
     def pass_invalid_ref(self, url_post, auth="admin", **kwargs):
         data = self.generate_doc(kwargs.items())
