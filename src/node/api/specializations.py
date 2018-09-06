@@ -5,7 +5,7 @@ import node.settings.constants as constants
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
 from node.api.auth import required_auth
-from node.api.base_functions import delete_resource, list_resources
+from node.api.base_functions import delete_resource, list_resources, add_resource
 
 bp = Blueprint('specializations', __name__)
 
@@ -13,22 +13,9 @@ bp = Blueprint('specializations', __name__)
 @bp.route("/specializations", methods=['POST'])
 @required_auth("admin")
 def add_specializations():
-    req = request.get_json()
-    try:
-        type = req['type']
-        detail = req["detail"] if 'detail' in req else None
-        specialization = Specialization(type)
-        if detail: specialization.detail = detail
-        specialization.save()
-        result = {"result": ERR.OK,
-                  "id": str(specialization.pk)}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except Exception as e:
-        result = {"result": ERR.DB,
-                  "error_message": str(e)}
-
-    return jsonify(result), 200
+    return add_resource(Specialization,
+                        ["type"],
+                        optional_fields=["detail"])
 
 
 @bp.route("/specializations/<string:_id>", methods=['DELETE'])

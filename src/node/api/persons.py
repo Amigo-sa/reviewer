@@ -5,7 +5,7 @@ import node.settings.constants as constants
 from flask import Blueprint, request, jsonify, make_response
 from data.reviewer_model import *
 from node.api.auth import required_auth
-from node.api.base_functions import delete_resource, list_resources
+from node.api.base_functions import delete_resource, list_resources, add_resource
 
 bp = Blueprint('persons', __name__)
 
@@ -13,28 +13,12 @@ bp = Blueprint('persons', __name__)
 @bp.route("/persons", methods = ['POST'])
 @required_auth("admin")
 def add_person():
-    req = request.get_json()
-    try:
-        first_name = req['first_name']
-        middle_name = req['middle_name']
-        surname = req['surname']
-        birth_date = req['birth_date']
-        phone_no = req['phone_no']
-    except:
-        return jsonify({"result": ERR.INPUT}), 200
-    try:
-        person = Person(first_name,
-                        middle_name,
-                        surname,
-                        birth_date,
-                        phone_no)
-        person.save()
-        result = {"result":ERR.OK,
-                  "id": str(person.pk)}
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
+    return add_resource(Person,
+                        ["first_name",
+                         "middle_name",
+                         "surname",
+                         "birth_date",
+                         "phone_no"])
 
 
 @bp.route("/persons", methods=['GET'])

@@ -5,7 +5,7 @@ import node.settings.constants as constants
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
 from node.api.auth import required_auth
-from node.api.base_functions import delete_resource, list_resources
+from node.api.base_functions import delete_resource, list_resources,add_resource
 
 bp = Blueprint('groups', __name__)
 
@@ -13,22 +13,11 @@ bp = Blueprint('groups', __name__)
 @bp.route("/departments/<string:id>/groups", methods = ['POST'])
 @required_auth("admin")
 def add_group(id):
-    req = request.get_json()
-    try:
-        name = req['name']
-        if Department(_id=id) in Department.objects.raw({"_id": ObjectId(id)}):
-            group = Group(Department(_id=id), name)
-            group.save()
-            result = {"result":ERR.OK,
-                      "id": str(group.pk)}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
+    return add_resource(Group,
+                        ["name"],
+                        Department,
+                        id,
+                        "department_id")
 
 
 @bp.route("/groups/<string:id>", methods = ['DELETE'])
@@ -93,20 +82,8 @@ def get_role_list_for_group(id):
 @bp.route("/group_roles", methods = ['POST'])
 @required_auth("admin")
 def add_group_role():
-    req = request.get_json()
-    try:
-        name = req['name']
-    except:
-        return jsonify({"result": ERR.INPUT}), 200
-    try:
-        group_role = GroupRole(name)
-        group_role.save()
-        result = {"result":ERR.OK,
-                  "id": str(group_role.pk)}
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
+    return add_resource(GroupRole,
+                        ["name"])
 
 
 @bp.route("/group_roles/<string:id>", methods = ['DELETE'])
@@ -125,20 +102,8 @@ def list_group_roles():
 @bp.route("/group_permissions", methods = ['POST'])
 @required_auth("admin")
 def add_group_permission():
-    req = request.get_json()
-    try:
-        name = req['name']
-    except:
-        return jsonify({"result": ERR.INPUT}), 200
-    try:
-        group_permission = GroupPermission(name)
-        group_permission.save()
-        result = {"result":ERR.OK,
-                  "id": str(group_permission.pk)}
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
+    return add_resource(GroupPermission,
+                        ["name"])
 
 
 @bp.route("/group_permissions/<string:id>", methods = ['DELETE'])

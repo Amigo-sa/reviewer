@@ -5,7 +5,7 @@ import node.settings.constants as constants
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
 from node.api.auth import required_auth
-from node.api.base_functions import delete_resource, list_resources
+from node.api.base_functions import delete_resource, list_resources, add_resource
 
 bp = Blueprint('departments', __name__)
 
@@ -13,22 +13,11 @@ bp = Blueprint('departments', __name__)
 @bp.route("/organizations/<string:id>/departments", methods = ['POST'])
 @required_auth("admin")
 def add_department(id):
-    req = request.get_json()
-    try:
-        name = req['name']
-        if Organization(_id=id) in Organization.objects.raw({"_id": ObjectId(id)}):
-            department = Department(name, Organization(_id=id))
-            department.save()
-            result = {"result":ERR.OK,
-                      "id": str(department.pk)}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
+    return add_resource(Department,
+                        ["name"],
+                        Organization,
+                        id,
+                        "organization_id")
 
 
 @bp.route("/departments/<string:id>", methods = ['DELETE'])

@@ -5,31 +5,16 @@ import node.settings.constants as constants
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
 from node.api.auth import required_auth
-from node.api.base_functions import delete_resource, list_resources
+from node.api.base_functions import delete_resource, list_resources, add_resource
 
 bp = Blueprint('skills', __name__)
-
-
-def add_skill(skill_cls):
-    req = request.get_json()
-    try:
-        name = req['name']
-        skill = skill_cls(name)
-        skill.save()
-        result = {"result":ERR.OK,
-                  "id": str(skill.pk)}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
-
-    return jsonify(result), 200
 
 
 @bp.route("/soft_skills", methods = ['POST'])
 @required_auth("admin")
 def add_soft_skill():
-    return add_skill(SoftSkill)
+    return add_resource(SoftSkill,
+                        ["name"])
 
 
 @bp.route("/soft_skills/<string:id>", methods = ['DELETE'])
@@ -48,7 +33,8 @@ def list_soft_skills():
 @bp.route("/hard_skills", methods = ['POST'])
 @required_auth("admin")
 def add_hard_skill():
-    return add_skill(HardSkill)
+    return add_resource(HardSkill,
+                        ["name"])
 
 
 @bp.route("/hard_skills/<string:id>", methods = ['DELETE'])

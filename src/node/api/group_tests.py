@@ -5,7 +5,7 @@ import node.settings.constants as constants
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
 from node.api.auth import required_auth
-from node.api.base_functions import delete_resource, list_resources
+from node.api.base_functions import delete_resource, list_resources, add_resource
 
 bp = Blueprint('group_tests', __name__)
 
@@ -13,22 +13,12 @@ bp = Blueprint('group_tests', __name__)
 @bp.route("/groups/<string:id>/tests", methods = ['POST'])
 @required_auth("admin")
 def add_group_test(id):
-    req = request.get_json()
-    try:
-        name = req['name']
-        info = req['info']
-        if Group.objects.raw({"_id": ObjectId(id)}).count():
-            group_test = GroupTest(Group(_id=id), name, info)
-            group_test.save()
-            result = {"result":ERR.OK,
-                      "id": str(group_test.pk)}
-        else:
-            result = {"result": ERR.NO_DATA}
-    except KeyError:
-        return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
-    return jsonify(result), 200
+    return add_resource(GroupTest,
+                        ["name",
+                         "info"],
+                        Group,
+                        id,
+                        "group_id")
 
 
 @bp.route("/tests/<string:id>", methods = ['DELETE'])
