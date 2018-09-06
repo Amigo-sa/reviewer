@@ -16,6 +16,7 @@ import sys
 import api_helper_methods as hm
 import data.reviewer_model as model
 from pymodm.errors import DoesNotExist
+from bson.binary import Binary, BINARY_SUBTYPE
 
 node_port = 5002
 
@@ -1169,6 +1170,42 @@ class TestApi(unittest.TestCase):
         self.assertEqual("0.2", data["db_version"], "must return correct db version")
         self.assertEqual("3", data["api_version"], "must return correct api version")
         pass
+
+    def test_put_photo(self):
+        pass
+
+    def test_get_photo(self):
+        with open(r"../database/img/Leni4.jpg", mode='rb') as file:
+            file_content = file.read()
+        bin_data = Binary(file_content)
+        person = model.Person(
+                    "Леонид",
+                    "Александрович",
+                    "Дунаев",
+                    datetime.date(1986, 5, 1),
+                    "78005553535",
+                    bin_data)
+        person.save()
+        resp = requests.get(self.api_URL + "/persons/%s/photo" % str(person.pk))
+        self.assertEqual(resp.status_code, 200, "response code must be 200")
+        self.assertEqual(resp.headers["Content-Type"], "image/jpeg", "must return correct Content-Type")
+        self.assertEqual(resp.headers["Content-Disposition"],
+                         "attachment; filename=%s.jpg" % str(person.pk),
+                         "must return correct Content-Disposition")
+        self.assertEqual(file_content,resp.content, "must return correct image")
+        person.delete()
+        resp = requests.get(self.api_URL + "/persons/%s/photo" % str(person.pk))
+        self.assertEqual(resp.status_code, 200, "response code must be 200")
+        self.assertEqual(resp.json()["result"], ERR.NO_DATA, "must return ERR.NO_DATA when no person exists")
+        person = model.Person(
+            "Иван",
+            "Иванович",
+            "Петров",
+            datetime.date(1986, 5, 1),
+            "78005553565")
+        person.save()
+        resp = requests.get(self.api_URL + "/persons/%s/photo" % str(person.pk))
+        self.assertEqual(resp.status_code, 204, "response code must be 204 when no photo present")
 
     def pass_invalid_ref(self, url_post, auth="admin", **kwargs):
         data = self.generate_doc(kwargs.items())
