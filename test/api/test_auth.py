@@ -153,7 +153,8 @@ class TestAuth(unittest.TestCase):
             "/hard_skills",
             "/groups/%s/surveys" % self.group_id,
             "/groups/%s/tests" % self.group_id,
-            "/tests/%s/results" % self.test_id
+            "/tests/%s/results" % self.test_id,
+            "/user_permissions"
         ]
         self.admin_only_delete = [
             "/organizations/%s" % self.org_id,
@@ -248,7 +249,8 @@ class TestAuth(unittest.TestCase):
 
     def prepare_docs(self):
         # prepare user
-        auth_user = hm.prepare_logged_in_person("78001112233")
+        self.user_phone = "78001112233"
+        auth_user = hm.prepare_logged_in_person(self.user_phone)
         self.user_person_id = auth_user["person_id"]
         self.user_session_id = auth_user["session_id"]
         self.user_header = {"Authorization":
@@ -335,6 +337,69 @@ class TestAuth(unittest.TestCase):
                                                  surname="Серый",
                                                  birth_date=datetime.date(1170, 6, 12).isoformat(),
                                                  phone_no="79007745737"))
+
+    def test_set_user_permissions(self):
+        self.prepare_docs()
+        post_data = {"phone_no" : self.user_phone,
+                     "permissions" : "admin"}
+        auth_info = model.AuthInfo.objects.get({"phone_no" : self.user_phone})
+        auth_info.refresh_from_db()
+        auth_info.permissions = 0x02
+        auth_info.save()
+        resp = requests.post(self.api_URL + "/user_permissions",
+                             json=post_data,
+                             headers=self.admin_header)
+        self.assertEqual(200, resp.status_code, "resp status must be 200")
+        self.assertEqual(ERR.OK, resp.json()["result"])
+        auth_info.refresh_from_db()
+        self.assertEqual(0x03, auth_info.permissions, "admin flag must be set")
+        post_data = {"phone_no": self.user_phone,
+                     "permissions": "user"}
+        resp = requests.post(self.api_URL + "/user_permissions",
+                             json=post_data,
+                             headers=self.admin_header)
+        self.assertEqual(200, resp.status_code, "resp status must be 200")
+        self.assertEqual(ERR.OK, resp.json()["result"])
+        auth_info.refresh_from_db()
+        self.assertEqual(0x02, auth_info.permissions, "admin flag must be unset")
+
+        post_data = {"phone_no": "somefakephone",
+                     "permissions": "user"}
+        resp = requests.post(self.api_URL + "/user_permissions",
+                             json=post_data,
+                             headers=self.admin_header)
+        self.assertEqual(200, resp.status_code, "resp status must be 200")
+        self.assertEqual(ERR.AUTH_INVALID_PHONE, resp.json()["result"],
+                         "must return ERR.INVALID_PHONE on wrong phone format")
+
+        post_data = {"phone_no": "78008989998",
+                     "permissions": "user"}
+        resp = requests.post(self.api_URL + "/user_permissions",
+                             json=post_data,
+                             headers=self.admin_header)
+        self.assertEqual(200, resp.status_code, "resp status must be 200")
+        self.assertEqual(ERR.NO_DATA, resp.json()["result"], "must return ERR.NO_DATA when no user exists")
+
+        auth_info.is_approved = False
+        auth_info.save()
+        post_data = {"phone_no": self.user_phone,
+                     "permissions": "user"}
+        resp = requests.post(self.api_URL + "/user_permissions",
+                             json=post_data,
+                             headers=self.admin_header)
+        self.assertEqual(200, resp.status_code, "resp status must be 200")
+        self.assertEqual(ERR.AUTH, resp.json()["result"], "must return ERR_AUTH when user is not approved")
+
+        auth_info.is_approved = True
+        auth_info.save()
+        post_data = {"phone_no": self.user_phone,
+                     "permissions": "god_emperor"}
+        resp = requests.post(self.api_URL + "/user_permissions",
+                             json=post_data,
+                             headers=self.admin_header)
+        self.assertEqual(200, resp.status_code, "resp status must be 200")
+        self.assertEqual(ERR.INPUT, resp.json()["result"], "must return ERR_INPUT on invalid input")
+
 
     def test_user_restricted_access(self):
 
