@@ -32,15 +32,21 @@ def configure_logger(app):
         for handler in app.logger.handlers:
             app.logger.removeHandler(handler)
 
-        log_path = os.path.abspath(constants.log_path)
+        try:
+            log_path = os.environ["REVIEWER_LOG_PATH"]
+        except Exception as e:
+            logging.error("Environment variable REVIEWER_LOG_PATH not defined, using default path")
+            log_path = os.path.abspath(constants.log_path)
 
-        fh = RotatingFileHandler(log_path, maxBytes= 100000, backupCount=5)
+        fh = RotatingFileHandler(log_path, maxBytes= 1000000, backupCount=5)
         fh.setLevel(logging.DEBUG)
 
         logger = app.logger
         logger.setLevel(logging.DEBUG)
 
         logger.addHandler(fh)
+
+        logger.propagate = False
 
     except Exception as e:
         logging.exception(str(e))
