@@ -6,7 +6,6 @@ from pymodm.errors import ValidationError
 from pymongo.operations import IndexModel
 import pymongo
 from pymodm.connection import connect
-import data.settings as settings
 from node.settings import constants
 
 from collections import Counter
