@@ -46,6 +46,9 @@ print("DB initialized with argv: " + str(sys.argv))
 if len(sys.argv) > 1:
     if '--test' in str(sys.argv):
         db_name = constants.db_name_test
+    if '--load_test' in str(sys.argv):
+        db_name = constants.db_name_load_test
+
 print("Working with DB '%s' \n" % db_name)
 connect(constants.mongo_db + "/" + db_name, alias="reviewer")
 

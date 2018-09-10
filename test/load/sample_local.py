@@ -1,23 +1,32 @@
+from node.settings import constants
+import os, sys, inspect, re
+db_name = constants.db_name
+if len(sys.argv) > 1:
+    if '--test' in str(sys.argv):
+        db_name = constants.db_name_test
+    if '--load_test' in str(sys.argv):
+        db_name = constants.db_name_load_test
+
 from pymongo import MongoClient
 uri="mongodb://localhost:27017"
-db_name='reviewer'
 client = MongoClient(uri)
 db = client[db_name]
 
 colList = db.list_collection_names()
 for col in colList:
     db.drop_collection(col)
+    #db[col].delete_many({})
     print("dropped collection " + col)
 print("done")
 
 import context
 import data.reviewer_model as model
-import os, sys, inspect, re
+
 
 from bson import ObjectId
 import datetime
 import random
-from node.settings import constants
+
 
 
 
@@ -47,20 +56,16 @@ ignore_list = [
     ]
 
 to_fill = {
-    "person" : 20000,
-    "group" : 1000,
-    "person_ss" : 100000,
-    "person_hs" : 100000,
-    "ss_review" : 100000,
-    "hs_review" : 100000,
-    "specialization_review" : 100000,
+    "person" : 2000,
+    "group" : 100,
+    "person_ss" : 1000,
+    "person_hs" : 1000,
+    "ss_review" : 1000,
+    "hs_review" : 1000,
+    "specialization_review" : 1000,
 }
 filled={}
 starting_ids = {}
-
-#global_oid = 0xF00000000000000000000000
-
-doc_dependencies = {}
 doc_fields = {}
 
 members = inspect.getmembers(model, inspect.isclass)
@@ -74,8 +79,7 @@ for doc_class in doc_class_list:
     if cur_class in ignore_list:
         continue
     member_list = inspect.getmembers(doc_class, None)
-    fields = []
-    dependencies = []
+    fields = {}
     col_name = convert(cur_class)
     for name, cls in member_list:
         if "__dict__" not in str(name):
@@ -83,88 +87,86 @@ for doc_class in doc_class_list:
                 if py_name in str(cls):
                     if py_name == "pymodm.fields.ReferenceField" or\
                         py_name == "reviewer_model.ValidatedReferenceField":
-                        rel_model = cls.related_model.__name__
-                        dependencies.append((name, bson_name, convert(rel_model)))
-                        fields.append((name, bson_name, convert(rel_model)))
+                        rel_model = convert(cls.related_model.__name__)
                     elif py_name == "reviewer_model.ValidatedReferenceList":
                         member_list = inspect.getmembers(cls, None)
-                        rel_model = cls._field.related_model.__name__
-                        dependencies.append((name, bson_name, convert(rel_model)))
-                        fields.append((name, bson_name, convert(rel_model)))
+                        rel_model = convert(cls._field.related_model.__name__)
                     else:
-                        fields.append((name, bson_name))
-
-    doc_dependencies.update({col_name : dependencies})
+                        rel_model = None
+                    fields.update({ name : {
+                                   "type" : bson_name,
+                                   "ref"  : rel_model}})
     doc_fields.update({col_name : fields})
 
-doc_ctr = 0
+doc_ctr = 1
 
+remaining_fields = doc_fields.copy()
 
-#TODO implement proper condition check
-for k in range(5):
-    print("step %s"% (k + 1))
+while len(remaining_fields) > 0:
+    print("--------------")
     for col_name, field_list in doc_fields.items():
         print("------")
         print(datetime.datetime.now())
-        can_add = True
+        can_fill = True
         if col_name in filled:
-            print(col_name + " is filled, skipping")
-            can_add = False
-        for dep in doc_dependencies[col_name]:
-            if dep[2] not in filled:
-                print(dep[2] + " not filled yet, skipping for now")
-                can_add = False
-        if can_add:
-            print("now filling " + col_name)
-            doc_list = []
-            starting_ids.update({col_name : doc_ctr + 1})
+            print(col_name + " is already filled, skipping")
+            can_fill = False
+        for field, info in field_list.items():
+            if info["ref"] and info["ref"] not in filled:
+                print("%s not filled yet, skipping %s for now" %(info["ref"],col_name))
+                can_fill = False
+        if can_fill:
+            print("filling " + col_name)
+            #doc_list = []
+            starting_ids.update({col_name : doc_ctr})
             added_cnt = 0
             if col_name in to_fill:
                 insert_amount = to_fill[col_name]
             else:
                 insert_amount = 10
             for i in range(insert_amount):
-                doc_ctr += 1
                 cur_doc = {"_id" : doc_ctr}
-                #global_oid += 1
-                for field in field_list:
-                    if field[1] == "string":
-                        cur_doc.update({field[0] : field[0] + "_" + str(doc_ctr)})
-                    elif field[1] == "date":
-                        cur_doc.update({field[0]: datetime.datetime(random.randrange(1900, 2000),
+                for field, info in field_list.items():
+                    if info["type"] == "string":
+                        cur_doc.update({field : field + "_" + str(random.randint(0,999)) +
+                                                                 "_" + str(doc_ctr)})
+                    elif info["type"] == "date":
+                        cur_doc.update({field: datetime.datetime(random.randrange(1900, 2000),
                                              random.randrange(1, 12),
                                              random.randrange(1, 28))})
-                    elif field[1] == "double":
-                        cur_doc.update({field[0]: random.random()*100})
-                    elif field[1] == "int":
-                        cur_doc.update({field[0]: random.randint(0,10)})
-                    elif field[1] == "bool":
-                        cur_doc.update({field[0]: True})
-                    elif field[1] == "timestamp":
-                        cur_doc.update({field[0]: None})
-                    elif field[1] == "list":
-                        cur_doc.update({field[0]: ["stub"]})
-                    elif field[1] == "dict":
-                        cur_doc.update({field[0]: {"1" : "stub"}})
-                    elif field[1] == "binData":
+                    elif info["type"] == "double":
+                        cur_doc.update({field: random.random()*100})
+                    elif info["type"] == "int":
+                        cur_doc.update({field: random.randint(0,10)})
+                    elif info["type"] == "bool":
+                        cur_doc.update({field: True})
+                    elif info["type"] == "timestamp":
+                        cur_doc.update({field: None})
+                    elif info["type"] == "list":
+                        cur_doc.update({field: ["stub"]})
+                    elif info["type"] == "dict":
+                        cur_doc.update({field: {"1" : "stub"}})
+                    elif info["type"] == "binData":
                         pass
-                    elif field[1] == "objectId":
-                        start = starting_ids[field[2]]
+                    elif info["type"] == "objectId":
+                        start = starting_ids[info["ref"]]
 #                        print(start)
-                        amt = filled[field[2]]
+                        amt = filled[info["ref"]]
 #                        print(amt)
                         num = start + random.randint(0,amt)
-                        cur_doc.update({field[0]: num})
-                doc_list.append(cur_doc)
+                        cur_doc.update({field: num})
+                #doc_list.append(cur_doc)
                 #TODO handle uniqueness properly
                 try:
                     db[col_name].insert_one(cur_doc)
-                    added_cnt+= 1
+                    added_cnt += 1
+                    doc_ctr += 1
                 except:
-                    doc_ctr -= 1
+                    pass
             #cnt = len(db[col_name].insert_many(doc_list, ordered=False).inserted_ids)
             #filled.update({col_name : cnt})
             filled.update({col_name: added_cnt})
+            remaining_fields.pop(col_name)
 
 db["service"].insert_one({"db_version" : "0.4",
                           "api_version" : constants.api_version})
