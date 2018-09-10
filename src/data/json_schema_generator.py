@@ -124,4 +124,10 @@ def create_validators(uri="mongodb://localhost:27017", db_name='reviewer'):
             print(db.command("create", col_name, validator=val))
 
 if __name__ == "__main__":
-    create_validators(constants.mongo_db, constants.db_name)
+    db_name = constants.db_name
+    print("DB initialized with argv: " + str(sys.argv))
+    if len(sys.argv) > 1:
+        if '--test' in str(sys.argv):
+            db_name = constants.db_name_test
+    print("Working with DB '%s' \n" % db_name)
+    create_validators(constants.mongo_db, db_name)

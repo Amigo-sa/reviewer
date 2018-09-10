@@ -174,4 +174,8 @@ def get_gm_dict(group_member):
     return gm_data
 
 if __name__ == "__main__":
+    if __name__ == "__main__":
+        print("test_auth argv: " + str(sys.argv))
+        if "--test" in sys.argv:
+            sys.argv.remove("--test")
     unittest.main(verbosity=1)
