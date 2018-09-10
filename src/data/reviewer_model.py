@@ -46,7 +46,7 @@ try:
     if os.environ["REVIEWER_APP_MODE"] == "production":
         db_name = constants.db_name
     elif os.environ["REVIEWER_APP_MODE"] == "development":
-        db_name = constants.db_name_test
+        db_name = constants.db_name_develop
     elif os.environ["REVIEWER_APP_MODE"] == "local":
         db_name = constants.db_name
     else:
