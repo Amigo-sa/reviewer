@@ -948,6 +948,8 @@ if __name__ == "__main__":
             exit()
         if '--test' in str(sys.argv):
             db_name = constants.db_name_test
+        if '--load_test' in str(sys.argv):
+            db_name = constants.db_name_load_test
     print("Filling DB '%s' \n" % db_name)
     connect(constants.mongo_db + "/" + db_name, alias="reviewer")
     wipe_db("reviewer")
