@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys, inspect, re
-import data.reviewer_model
+import reviewer_model
+import context
 from pymongo import MongoClient
 from node.settings import constants
 
@@ -12,7 +13,7 @@ def convert(name):
 
 def create_validators(uri="mongodb://localhost:27017", db_name='reviewer'):
 
-    members = inspect.getmembers(data.reviewer_model, inspect.isclass)
+    members = inspect.getmembers(reviewer_model, inspect.isclass)
     doc_class_list = []
     for name, desc in members:
         if "reviewer_model." in str(desc):
