@@ -8,6 +8,8 @@ import pymongo
 from pymodm.connection import connect
 import context
 from node.settings import constants
+import os
+import logging
 
 from collections import Counter
 
@@ -40,8 +42,19 @@ def init_model():
     GroupPermission.register_delete_rule(
         GroupMember, "permissions", fields.ReferenceField.PULL)
 
+try:
+    if os.environ["REVIEWER_APP_MODE"] == "production":
+        db_name = constants.db_name
+    elif os.environ["REVIEWER_APP_MODE"] == "development":
+        db_name = constants.db_name_develop
+    elif os.environ["REVIEWER_APP_MODE"] == "local":
+        db_name = constants.db_name
+    else:
+        logging.error("Environment variable REVIEWER_APP_MODE value incorrect!")
+except:
+    logging.error("Environment variable REVIEWER_APP_MODE must be defined !")
+    raise
 
-db_name = constants.db_name
 print("DB initialized with argv: " + str(sys.argv))
 if len(sys.argv) > 1:
     if '--test' in str(sys.argv):

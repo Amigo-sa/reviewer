@@ -10,6 +10,7 @@ mongo_db = "mongodb://localhost:27017"
 db_name_test = "reviewer_test"
 db_name_load_test = "reviewer_load"
 db_name = "reviewer"
+db_name_develop = "reviewer_develop"
 db_model_version = "0.4"
 
 # auth
@@ -19,8 +20,6 @@ confirmation_timeout_minutes = 2
 confirmation_max_attempts = 3
 authorization_max_attempts = 5
 
-#logging
-log_path = "/var/log/reviewer_develop/node_server.log"
 
 # api_version
 api_version = 1

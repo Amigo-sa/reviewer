@@ -22,10 +22,10 @@ register_api_v2(app)
 try:
     app_mode = os.environ["REVIEWER_APP_MODE"]
 except Exception as e:
-    logging.error(str(e))
-    app_mode = "development"
+    logging.error("Environment variable REVIEWER_APP_MODE must be defined !")
+    raise
 
-if app_mode == "production":
+if app_mode == "production" or app_mode == "development":
     configure_logger(app)
 
 app.register_blueprint(bp_logging)
