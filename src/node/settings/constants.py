@@ -10,6 +10,7 @@ mongo_db = "mongodb://localhost:27017"
 db_name_test = "reviewer_test"
 db_name_load_test = "reviewer_load"
 db_name = "reviewer"
+db_name_develop = "reviewer_develop"
 db_model_version = "0.4"
 
 # auth
