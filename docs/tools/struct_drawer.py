@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys
 
-parentPath = os.path.abspath("..//..//src")
-if parentPath not in sys.path:
-    sys.path.insert(0, parentPath)
+import context
 
 import data.reviewer_model
 import sys, inspect
