@@ -824,11 +824,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "cc5da107-2199-4f89-89c8-dd8ec7183e9d",
+								"id": "a769c254-08fd-47b8-b519-1860ac93e355",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"phone_no\", \"78005553535\");",
-									"pm.environment.set(\"password\", \"12345678\");"
+									"pm.environment.set(\"phone_no\", \"79032233223\");",
+									"pm.environment.set(\"password\", \"SomeSecurePass\");"
 								]
 							}
 						},
@@ -6995,7 +6995,286 @@
 			"name": "skills",
 			"item": [
 				{
+					"name": "add_skill_type",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"Интеллектуальные\"\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/skill_types",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"skill_types"
+							]
+						},
+						"description": "Добавляет тип скилла в набор\n\nНеобходимая авторизация - админ"
+					},
+					"response": [
+						{
+							"name": "add_skill_type",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": false
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\":\"Интеллектуальные\"\n}"
+								},
+								"url": {
+									"raw": "{{server_url}}/skill_types",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"skill_types"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 11 Sep 2018 17:49:22 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"id\":\"5b98002221313710048a7f6f\",\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "delete_skill_type",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "daaafb8c-68a8-475b-99f2-c6c70ed14ba4",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"skill_type_id\", \"5b97fe612131371bd8f5e504\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/skill_types/{{skill_type_id}}",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"skill_types",
+								"{{skill_type_id}}"
+							]
+						},
+						"description": "Удаляет тип навыка из базы\n\nНеобходимая авторизация - админ"
+					},
+					"response": [
+						{
+							"name": "delete_skill_type",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"disabled": false
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{server_url}}/skill_types/5b97fe612131371bd8f5e504",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"skill_types",
+										"5b97fe612131371bd8f5e504"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "13",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 11 Sep 2018 17:48:52 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"result\":0}\n"
+						}
+					]
+				},
+				{
+					"name": "list_skill_types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/skill_types",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"skill_types"
+							]
+						},
+						"description": "Получает список возможных типов навыков\n\nНеобходимая авторизация - не требуется"
+					},
+					"response": [
+						{
+							"name": "list_skill_types",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{server_url}}/skill_types",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"skill_types"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "255",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 11 Sep 2018 17:32:47 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5",
+									"name": "Server",
+									"description": "A name for the server"
+								}
+							],
+							"cookie": [],
+							"body": "{\"list\":[{\"id\":\"5b97fac32131370ae40086ed\",\"name\":\"\\u041e\\u0431\\u0449\\u0438\\u0439 \\u0442\\u0438\\u043f\"},{\"id\":\"5b97fbca2131371b84bb75ee\",\"name\":\"\\u0418\\u043d\\u0442\\u0435\\u043b\\u043b\\u0435\\u043a\\u0442\\u0443\\u0430\\u043b\\u044c\\u043d\\u044b\\u0435\"}],\"result\":0}\n"
+						}
+					]
+				},
+				{
 					"name": "add_soft_skill",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "222e12a2-f388-4a4f-8021-b37bb52010e5",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"skill_type_id\", \"5b97fe612131371bd8f5e504\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -7013,11 +7292,13 @@
 							"raw": "{\n\t\"name\":\"Безбашенность\"\n}"
 						},
 						"url": {
-							"raw": "{{server_url}}/soft_skills",
+							"raw": "{{server_url}}/skill_types/{{skill_type_id}}/soft_skills",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
+								"skill_types",
+								"{{skill_type_id}}",
 								"soft_skills"
 							]
 						},
@@ -7031,7 +7312,13 @@
 								"header": [
 									{
 										"key": "Content-Type",
-										"value": "application/json"
+										"value": "application/json",
+										"disabled": false
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"disabled": false
 									}
 								],
 								"body": {
@@ -7039,16 +7326,13 @@
 									"raw": "{\n\t\"name\":\"Безбашенность\"\n}"
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/soft_skills",
-									"protocol": "http",
+									"raw": "{{server_url}}/skill_types/5b98002221313710048a7f6f/soft_skills",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{server_url}}"
 									],
-									"port": "5000",
 									"path": [
+										"skill_types",
+										"5b98002221313710048a7f6f",
 										"soft_skills"
 									]
 								}
@@ -7071,7 +7355,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Mon, 23 Jul 2018 18:17:44 GMT",
+									"value": "Tue, 11 Sep 2018 17:50:03 GMT",
 									"name": "Date",
 									"description": "The date and time that the message was sent"
 								},
@@ -7083,7 +7367,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\"id\":\"5b561bc8213137138060e252\",\"result\":0}\n"
+							"body": "{\"id\":\"5b98004b21313710048a7f70\",\"result\":0}\n"
 						}
 					]
 				},
@@ -7266,6 +7550,18 @@
 				},
 				{
 					"name": "add_hard_skill",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5ea1154f-1275-491e-b102-e82cd01f66cd",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"skill_type_id\", \"5b97fe612131371bd8f5e504\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -7283,11 +7579,13 @@
 							"raw": "{\n\t\"name\":\"Угнетение угнетенных\"\n}"
 						},
 						"url": {
-							"raw": "{{server_url}}/hard_skills",
+							"raw": "{{server_url}}/skill_types/{{skill_type_id}}/hard_skills",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
+								"skill_types",
+								"{{skill_type_id}}",
 								"hard_skills"
 							]
 						},
@@ -7301,7 +7599,13 @@
 								"header": [
 									{
 										"key": "Content-Type",
-										"value": "application/json"
+										"value": "application/json",
+										"disabled": false
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"disabled": false
 									}
 								],
 								"body": {
@@ -7309,16 +7613,13 @@
 									"raw": "{\n\t\"name\":\"Угнетение угнетенных\"\n}"
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/hard_skills",
-									"protocol": "http",
+									"raw": "{{server_url}}/skill_types/5b98002221313710048a7f6f/hard_skills",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{server_url}}"
 									],
-									"port": "5000",
 									"path": [
+										"skill_types",
+										"5b98002221313710048a7f6f",
 										"hard_skills"
 									]
 								}
@@ -7341,7 +7642,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Mon, 23 Jul 2018 18:18:52 GMT",
+									"value": "Tue, 11 Sep 2018 17:50:23 GMT",
 									"name": "Date",
 									"description": "The date and time that the message was sent"
 								},
@@ -7353,7 +7654,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\"id\":\"5b561c0c213137138060e253\",\"result\":0}\n"
+							"body": "{\"id\":\"5b98005f21313710048a7f71\",\"result\":0}\n"
 						}
 					]
 				},
@@ -8842,7 +9143,7 @@
 	],
 	"variable": [
 		{
-			"id": "acc67a03-90d3-4967-be06-09970f36a113",
+			"id": "cb0c7a56-4015-4812-81d3-ee9b0678f00c",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"
