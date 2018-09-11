@@ -21,13 +21,12 @@ print("done")
 
 import context
 import data.reviewer_model as model
+from node.api.auth import hash_password, gen_session_id
 
 from bson import ObjectId, son
 
 import datetime
 import random
-
-
 
 
 def convert(name):
@@ -52,12 +51,13 @@ field_aliases = {
 ignore_list = [
         "ValidatedReferenceField",
         "ValidatedReferenceList",
-        "Service"
+        "Service",
+        "AuthInfo"
     ]
 
 to_fill = {
     "person" : 20000,
-    "group" : 1000,
+    "group" : 10,
     "person_ss" : 100000,
     "person_hs" : 100000,
     "ss_review" : 100000,
@@ -139,6 +139,7 @@ def gen_ref(num : int, refs : list):
     return out_list
 
 remaining_fields = doc_fields.copy()
+one_pass_for_everyone = hash_password("12345")
 
 while len(remaining_fields) > 0:
     print("--------------")
@@ -190,7 +191,7 @@ while len(remaining_fields) > 0:
                     if info["ref"] == r_name:
                         r_field_names.append(field)
 
-
+            auth_list = []
             for i in range(insert_amount):
                 cur_doc = {"_id" : doc_ctr}
                 #first we are going to fill reference fields that are in unique index
@@ -230,20 +231,46 @@ while len(remaining_fields) > 0:
                             num = start + random.randint(0,amt)
                             cur_doc.update({field: num})
                 doc_list.append(cur_doc)
-                #TODO handle uniqueness properly
-                try:
-                    #db[col_name].insert_one(cur_doc)
-                    added_cnt += 1
-                    doc_ctr += 1
-                except:
-                    pass
+
+                if col_name == "person":
+                    auth_doc = {"_id": doc_ctr + to_fill["person"]}
+                    auth_doc.update({
+                        "attempts": 0,
+                        "auth_code": None,
+                        "is_approved": True,
+                        "last_send_time": None,
+                        "password": one_pass_for_everyone,
+                        "permissions": random.randint(0, 1),
+                        "person_id": cur_doc["_id"],
+                        "phone_no" : cur_doc["phone_no"],
+                        "session_id" : None
+                    })
+                    auth_list.append(auth_doc)
+                doc_ctr += 1
+
             cnt = len(db[col_name].insert_many(doc_list, ordered=False).inserted_ids)
-            filled.update({col_name : cnt})
-            #filled.update({col_name: added_cnt})
+            filled.update({col_name: cnt})
+            if auth_list:
+                a_cnt = len(db["auth_info"].insert_many(auth_list, ordered=False).inserted_ids)
+                doc_ctr += a_cnt
+
             remaining_fields.pop(col_name)
 
-db["service"].insert_one({"db_version" : "0.4",
+db["service"].insert_one({"_id" : doc_ctr,
+                          "db_version" : "0.4",
                           "api_version" : constants.api_version})
+doc_ctr+= 1
+db["auth_info"].insert_one({"_id" : doc_ctr,
+                          "attempts": 0,
+                        "auth_code": None,
+                        "is_approved": True,
+                        "last_send_time": None,
+                        "password": hash_password("SomeSecurePass"),
+                        "permissions": 1,
+                        "person_id": None,
+                        "phone_no" : "79032233223",
+                        "session_id" : None})
+doc_ctr+= 1
 
 print("--------------------------")
 print("total inserted:")
