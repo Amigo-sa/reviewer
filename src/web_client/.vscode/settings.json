@@ -1,0 +1,8 @@
+{
+    "editor.formatOnSave": true,
+    "typescript.format.enable": true,
+    "tslint.autoFixOnSave": true,
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+}
