@@ -204,7 +204,7 @@ while len(remaining_fields) > 0:
                                              r_cnts)
                     for i, r_name in enumerate(r_field_names):
                         start = starting_ids[r_col_names[i]]
-                        cur_doc.update({r_field_names[i]: start + ref_field_vals[i]})
+                        cur_doc.update({r_field_names[i]: int_to_obj_id(start + ref_field_vals[i])})
                 for field, info in field_list.items():
                     if info["type"] == "string":
                         cur_doc.update({field : field + "_" + str(random.randint(0,999)) +
