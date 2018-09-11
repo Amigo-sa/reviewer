@@ -22,8 +22,8 @@ print("done")
 import context
 import data.reviewer_model as model
 
+from bson import ObjectId, son
 
-from bson import ObjectId
 import datetime
 import random
 
@@ -56,17 +56,18 @@ ignore_list = [
     ]
 
 to_fill = {
-    "person" : 2000,
-    "group" : 100,
-    "person_ss" : 1000,
-    "person_hs" : 1000,
-    "ss_review" : 1000,
-    "hs_review" : 1000,
-    "specialization_review" : 1000,
+    "person" : 20000,
+    "group" : 1000,
+    "person_ss" : 100000,
+    "person_hs" : 100000,
+    "ss_review" : 100000,
+    "hs_review" : 100000,
+    "specialization_review" : 100000,
 }
 filled={}
 starting_ids = {}
 doc_fields = {}
+doc_u_indexes = {}
 
 members = inspect.getmembers(model, inspect.isclass)
 doc_class_list = []
@@ -96,9 +97,46 @@ for doc_class in doc_class_list:
                     fields.update({ name : {
                                    "type" : bson_name,
                                    "ref"  : rel_model}})
+
     doc_fields.update({col_name : fields})
+    # This is all about indexes on reference fields (not lists of references)
+    # Indexes that are combined with string fields are not considered,
+    # because uniqueness of the pair is guaranteed by string field
+    unique_indexes = []
+    if hasattr(doc_class.Meta, "indexes"):
+        for index in doc_class.Meta.indexes:
+            if index.document["unique"] == True:
+                ind_dict = index.document["key"].to_dict()
+                has_string = False
+                for field, order in ind_dict.items():
+                    if fields[field]["type"] == "string":
+                        has_string = True
+                    if fields[field]["type"] == "objectId":
+                        unique_indexes.append(field)
+                if has_string:
+                    unique_indexes = []
+    if len(unique_indexes) > 0:
+        doc_u_indexes.update({col_name: unique_indexes})
 
 doc_ctr = 1
+
+def gen_ref(num : int, refs : list):
+    n = num
+    #TODO dividers must be calculated once per collection
+    dividers = [1] * len(refs)
+    for i in range(len(refs)):
+        dividers[i] = refs[i]
+        for j in range(0,i):
+            if (i != j):
+                dividers[i] *= dividers[j]
+    dividers.pop(len(refs)-1)
+    out_list = []
+    for div in dividers:
+        (q,r) = divmod(n, div)
+        out_list.append(q)
+        n = r
+    out_list.append(n)
+    return out_list
 
 remaining_fields = doc_fields.copy()
 
@@ -116,16 +154,53 @@ while len(remaining_fields) > 0:
                 print("%s not filled yet, skipping %s for now" %(info["ref"],col_name))
                 can_fill = False
         if can_fill:
+            ref_count = {}
             print("filling " + col_name)
-            #doc_list = []
-            starting_ids.update({col_name : doc_ctr})
-            added_cnt = 0
             if col_name in to_fill:
                 insert_amount = to_fill[col_name]
             else:
                 insert_amount = 10
+            increment = 1
+            if col_name in doc_u_indexes:
+                print("Need to guarantee reference combinations uniqueness for %s"%col_name)
+                max_comb = 1
+
+                for field, info in field_list.items():
+                    if field in doc_u_indexes[col_name]:
+                        max_comb *= filled[info["ref"]]
+                        ref_count.update({info["ref"] : filled[info["ref"]]})
+                print("Maximum reference combinations: %s" % max_comb)
+                print("Requested reference combinations: %s" % insert_amount)
+                if max_comb < insert_amount:
+                    raise ValueError("uniqueness is impossible for %s" %col_name)
+                print(ref_count)
+                increment = int(max_comb/insert_amount)
+            doc_list = []
+            cur_starting_id = doc_ctr
+            starting_ids.update({col_name : cur_starting_id})
+            added_cnt = 0
+
+            r_col_names = []
+            r_cnts = []
+            r_field_names = []
+            for r_name, r_cnt in ref_count.items():
+                r_col_names.append(r_name)
+                r_cnts.append(r_cnt)
+                for field, info in field_list.items():
+                    if info["ref"] == r_name:
+                        r_field_names.append(field)
+
+
             for i in range(insert_amount):
                 cur_doc = {"_id" : doc_ctr}
+                #first we are going to fill reference fields that are in unique index
+                if ref_count:
+
+                    ref_field_vals = gen_ref(increment *(doc_ctr - cur_starting_id),
+                                             r_cnts)
+                    for i, r_name in enumerate(r_field_names):
+                        start = starting_ids[r_col_names[i]]
+                        cur_doc.update({r_field_names[i]: start + ref_field_vals[i]})
                 for field, info in field_list.items():
                     if info["type"] == "string":
                         cur_doc.update({field : field + "_" + str(random.randint(0,999)) +
@@ -149,23 +224,22 @@ while len(remaining_fields) > 0:
                     elif info["type"] == "binData":
                         pass
                     elif info["type"] == "objectId":
-                        start = starting_ids[info["ref"]]
-#                        print(start)
-                        amt = filled[info["ref"]]
-#                        print(amt)
-                        num = start + random.randint(0,amt)
-                        cur_doc.update({field: num})
-                #doc_list.append(cur_doc)
+                        if info["ref"] not in ref_count:
+                            start = starting_ids[info["ref"]]
+                            amt = filled[info["ref"]]
+                            num = start + random.randint(0,amt)
+                            cur_doc.update({field: num})
+                doc_list.append(cur_doc)
                 #TODO handle uniqueness properly
                 try:
-                    db[col_name].insert_one(cur_doc)
+                    #db[col_name].insert_one(cur_doc)
                     added_cnt += 1
                     doc_ctr += 1
                 except:
                     pass
-            #cnt = len(db[col_name].insert_many(doc_list, ordered=False).inserted_ids)
-            #filled.update({col_name : cnt})
-            filled.update({col_name: added_cnt})
+            cnt = len(db[col_name].insert_many(doc_list, ordered=False).inserted_ids)
+            filled.update({col_name : cnt})
+            #filled.update({col_name: added_cnt})
             remaining_fields.pop(col_name)
 
 db["service"].insert_one({"db_version" : "0.4",
