@@ -28,6 +28,7 @@ from data.reviewer_model import (Department,
                                  Specialization,
                                  SSReview,
                                  Service,
+                                 SkillType,
                                  SoftSkill,
                                  PersonSpecialization,
                                  Survey,
@@ -163,25 +164,37 @@ def fill_db():
                 organizations["MPEI"])
     }
 
+    skill_types = {
+        "default":
+            SkillType(
+                "Общий тип")
+    }
+
     hard_skills = {
         "VFP":
             HardSkill(
-                "Visual Fox Pro"),
+                "Visual Fox Pro",
+                 skill_types["default"]),
         "uC":
             HardSkill(
-                "C для микроконтроллеров"),
+                "C для микроконтроллеров",
+                 skill_types["default"]),
         "digSch":
             HardSkill(
-                "Цифровая схемотехника"),
+                "Цифровая схемотехника",
+                 skill_types["default"]),
         "litrbol":
             HardSkill(
-                "Литрбол"),
+                "Литрбол",
+                 skill_types["default"]),
         "phoneRepair":
             HardSkill(
-                "Ремонт телефонов"),
+                "Ремонт телефонов",
+                 skill_types["default"]),
         "psySupp":
             HardSkill(
-                "Психологическое подавление")
+                "Психологическое подавление",
+                 skill_types["default"])
     }
 
     person_hs = {
@@ -220,22 +233,28 @@ def fill_db():
     soft_skills = {
         "Communication":
             SoftSkill(
-                "Communication"),
+                "Communication",
+                 skill_types["default"]),
         "Courtesy":
             SoftSkill(
-                "Courtesy"),
+                "Courtesy",
+                 skill_types["default"]),
         "Flexibility":
             SoftSkill(
-                "Flexibility"),
+                "Flexibility",
+                 skill_types["default"]),
         "Integrity":
             SoftSkill(
-                "Integrity"),
+                "Integrity",
+                 skill_types["default"]),
         "Interpersonal skills":
             SoftSkill(
-                "Interpersonal skills"),
+                "Interpersonal skills",
+                 skill_types["default"]),
         "Positive attitude":
             SoftSkill(
-                "Positive attitude")
+                "Positive attitude",
+                 skill_types["default"])
     }
 
     person_ss = {}
@@ -703,6 +722,8 @@ def fill_db():
     for key, item in organizations.items():
         item.save()
     for key, item in departments.items():
+        item.save()
+    for key, item in skill_types.items():
         item.save()
     for key, item in hard_skills.items():
         item.save()

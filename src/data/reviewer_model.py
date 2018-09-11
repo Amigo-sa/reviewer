@@ -154,7 +154,7 @@ class Department(MongoModel):
                               unique=True)]
 
 
-class HardSkill(MongoModel):
+class SkillType(MongoModel):
     name = fields.CharField()
 
     class Meta:
@@ -162,6 +162,19 @@ class HardSkill(MongoModel):
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("name", pymongo.DESCENDING)],
+                              unique=True)]
+
+
+class HardSkill(MongoModel):
+    name = fields.CharField()
+    skill_type_id = ValidatedReferenceField(SkillType, on_delete=ReferenceField.CASCADE)
+
+    class Meta:
+        write_concern = WriteConcern(j=True)
+        connection_alias = "reviewer"
+        final = True
+        indexes = [IndexModel([("name", pymongo.DESCENDING),
+                               ("skill_type_id", pymongo.DESCENDING)],
                               unique=True)]
 
 
@@ -181,12 +194,14 @@ class PersonHS(MongoModel):
 
 class SoftSkill(MongoModel):
     name = fields.CharField()
+    skill_type_id = ValidatedReferenceField(SkillType, on_delete=ReferenceField.CASCADE)
 
     class Meta:
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
-        indexes = [IndexModel([("name", pymongo.DESCENDING)],
+        indexes = [IndexModel([("name", pymongo.DESCENDING),
+                               ("skill_type_id", pymongo.DESCENDING)],
                               unique=True)]
 
 
