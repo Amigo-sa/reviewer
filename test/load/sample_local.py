@@ -34,7 +34,7 @@ def convert(name):
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 def int_to_obj_id(num):
-    return ObjectId('{:024x}'.format(num))
+    return ObjectId(num.to_bytes(12, byteorder='big'))
 
 field_aliases = {
         "fields.CharField" : "string",
