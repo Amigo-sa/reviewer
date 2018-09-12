@@ -63,7 +63,7 @@ class TestApi(unittest.TestCase):
 
     def setUp(self):
         # requests.post(self.api_URL + "/wipe")
-        hm.wipe_db(constants.db_name)
+        hm.wipe_db()
         self.admin_header = {"Authorization":
                                  "Bearer " + hm.prepare_first_admin()}
 

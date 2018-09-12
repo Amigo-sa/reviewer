@@ -129,7 +129,7 @@ class TestAuth(unittest.TestCase):
 
     def setUp(self):
         # requests.post(self.api_URL + "/wipe")
-        hm.wipe_db(constants.db_name)
+        hm.wipe_db()
         cur_session.id = None
         cur_session.received_code = None
         self.admin_header = {"Authorization":
