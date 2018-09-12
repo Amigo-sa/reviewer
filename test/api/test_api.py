@@ -250,6 +250,35 @@ class TestApi(unittest.TestCase):
         with self.assertRaises(DoesNotExist):
             skill_type.refresh_from_db()
 
+    def test_list_skill_types(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_name"
+        skill_type.save()
+        skill_type.refresh_from_db()
+        list = self.get_item_list("/skill_types")
+        self.assertEqual(1, len(list), "must return only one item")
+        self.assertEqual("sample_name", list[0]["name"], "must get correct name")
+
+    def test_add_soft_skill(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_skill_type"
+        skill_type.save()
+        post_data = {"name": "some_name"}
+        ss_id = self.post_item("/skill_types/%s/soft_skills" % skill_type.pk, post_data)
+        soft_skill = model.SoftSkill(_id=ss_id)
+        soft_skill.refresh_from_db()
+        self.assertEqual("some_name", soft_skill.name, "must save correct name")
+
+    def test_add_hard_skill(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_skill_type"
+        skill_type.save()
+        post_data = {"name": "some_name"}
+        hs_id = self.post_item("/skill_types/%s/hard_skills" % skill_type.pk, post_data)
+        hard_skill = model.HardSkill(_id=hs_id)
+        hard_skill.refresh_from_db()
+        self.assertEqual("some_name", hard_skill.name, "must save correct name")
+
 
     def test_group_roles_normal(self):
         self.t_simple_normal("/group_roles",
