@@ -227,12 +227,29 @@ class TestApi(unittest.TestCase):
                              "/soft_skills",
                              "/soft_skills",
                              name="string")
-
+    @unittest.skip("rewriting")
     def test_hard_skill_normal(self):
         self.t_simple_normal("/hard_skills",
                              "/hard_skills",
                              "/hard_skills",
                              name="string")
+
+    def test_add_skill_type(self):
+        post_data = {"name": "some_name"}
+        st_id = self.post_item("/skill_types", post_data)
+        skill_type = model.SkillType(_id=st_id)
+        skill_type.refresh_from_db()
+        self.assertEqual("some_name", skill_type.name, "must save correct name")
+
+    def test_delete_skill_type(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_name"
+        skill_type.save()
+        skill_type.refresh_from_db()
+        self.delete_item("/skill_types/%s" % skill_type.pk)
+        with self.assertRaises(DoesNotExist):
+            skill_type.refresh_from_db()
+
 
     def test_group_roles_normal(self):
         self.t_simple_normal("/group_roles",
