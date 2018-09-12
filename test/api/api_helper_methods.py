@@ -165,9 +165,10 @@ def prepare_first_admin():
         print(str(e))
 
 
-def wipe_db(db_name):
+def wipe_db():
     try:
-        revDb = _get_db(db_name)
+        revDb = _get_db("reviewer")
+        print("Deleting records from %s" %revDb)
         colList = revDb.list_collection_names()
         for col in colList:
             revDb[col].delete_many({})

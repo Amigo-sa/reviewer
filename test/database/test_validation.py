@@ -58,7 +58,7 @@ class TestValidation(unittest.TestCase):
         pass
 
     def setUp(self):
-        hm.wipe_db(constants.db_name)
+        hm.wipe_db()
 
     @classmethod
     def clear_collection(cls, collection_class):

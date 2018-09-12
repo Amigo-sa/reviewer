@@ -63,7 +63,7 @@ class TestApi(unittest.TestCase):
 
     def setUp(self):
         # requests.post(self.api_URL + "/wipe")
-        hm.wipe_db(constants.db_name)
+        hm.wipe_db()
         self.admin_header = {"Authorization":
                                  "Bearer " + hm.prepare_first_admin()}
 
@@ -196,14 +196,30 @@ class TestApi(unittest.TestCase):
         return id_list
 
     def prepare_hs(self):
-        post_data = self.generate_doc(dict(name="string").items())
-        hs_id = self.post_item('/hard_skills', post_data)
-        return [hs_id, post_data]
+        skill_type = model.SkillType()
+        skill_type.name = "hard_skill_type"
+        skill_type.save()
+        hard_skill = model.HardSkill()
+        hard_skill.name = "hs_name"
+        hard_skill.skill_type_id = skill_type.pk
+        hard_skill.save()
+        return [str(hard_skill.pk), {
+            "name" : "hs_name",
+            "skill_type_id": str(skill_type.pk)
+        }]
 
     def prepare_ss(self):
-        post_data = self.generate_doc(dict(name="string").items())
-        ss_id = self.post_item('/soft_skills', post_data)
-        return [ss_id, post_data]
+        skill_type = model.SkillType()
+        skill_type.name = "soft_skill_type"
+        skill_type.save()
+        soft_skill = model.SoftSkill()
+        soft_skill.name = "ss_name"
+        soft_skill.skill_type_id = skill_type.pk
+        soft_skill.save()
+        return [str(soft_skill.pk), {
+            "name": "ss_name",
+            "skill_type_id": str(skill_type.pk)
+        }]
 
     def test_organization_normal(self):
         self.t_simple_normal("/organizations",
@@ -222,17 +238,133 @@ class TestApi(unittest.TestCase):
                              phone_no="number_string"
                              )
 
-    def test_soft_skill_normal(self):
-        self.t_simple_normal("/soft_skills",
-                             "/soft_skills",
-                             "/soft_skills",
-                             name="string")
 
-    def test_hard_skill_normal(self):
-        self.t_simple_normal("/hard_skills",
-                             "/hard_skills",
-                             "/hard_skills",
-                             name="string")
+    def test_add_skill_type(self):
+        post_data = {"name": "some_name"}
+        st_id = self.post_item("/skill_types", post_data)
+        skill_type = model.SkillType(_id=st_id)
+        skill_type.refresh_from_db()
+        self.assertEqual("some_name", skill_type.name, "must save correct name")
+        with self.assertRaises(AssertionError):
+            self.post_item("/skill_types", post_data)
+
+    def test_delete_skill_type(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_name"
+        skill_type.save()
+        skill_type.refresh_from_db()
+        self.delete_item("/skill_types/%s" % skill_type.pk)
+        with self.assertRaises(DoesNotExist):
+            skill_type.refresh_from_db()
+        with self.assertRaises(AssertionError):
+            self.delete_item("/skill_types/%s" % skill_type.pk)
+
+    def test_list_skill_types(self):
+        pks = []
+        for i in range(2):
+            skill_type = model.SkillType()
+            skill_type.name = "name%s"%i
+            skill_type.save()
+            pks.append(str(skill_type.pk))
+        list = self.get_item_list("/skill_types")
+        self.assertEqual(2, len(list), "must return all items")
+        for i in range(2):
+            self.assertIn({"id" : pks[i],
+                       "name" : "name%s"%i},
+                      list, "must return correct list")
+
+    def test_add_soft_skill(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_skill_type"
+        skill_type.save()
+        post_data = {"name": "some_name"}
+        ss_id = self.post_item("/skill_types/%s/soft_skills" % skill_type.pk, post_data)
+        soft_skill = model.SoftSkill(_id=ss_id)
+        soft_skill.refresh_from_db()
+        self.assertEqual("some_name", soft_skill.name, "must save correct name")
+        with self.assertRaises(AssertionError):
+            self.post_item("/skill_types/%s/soft_skills" % skill_type.pk, post_data)
+
+    def test_add_hard_skill(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_skill_type"
+        skill_type.save()
+        post_data = {"name": "some_name"}
+        hs_id = self.post_item("/skill_types/%s/hard_skills" % skill_type.pk, post_data)
+        hard_skill = model.HardSkill(_id=hs_id)
+        hard_skill.refresh_from_db()
+        self.assertEqual("some_name", hard_skill.name, "must save correct name")
+        with self.assertRaises(AssertionError):
+            self.post_item("/skill_types/%s/hard_skills" % skill_type.pk, post_data)
+
+    def test_delete_soft_skill(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_skill_type"
+        skill_type.save()
+        soft_skill = model.SoftSkill()
+        soft_skill.name = "sample_name"
+        soft_skill.skill_type_id=skill_type.pk
+        soft_skill.save()
+        soft_skill.refresh_from_db()
+        self.delete_item("/soft_skills/%s" % soft_skill.pk)
+        with self.assertRaises(DoesNotExist):
+            soft_skill.refresh_from_db()
+        with self.assertRaises(AssertionError):
+            self.delete_item("/soft_skills/%s" % soft_skill.pk)
+
+    def test_delete_hard_skill(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_skill_type"
+        skill_type.save()
+        hard_skill = model.HardSkill()
+        hard_skill.name = "sample_name"
+        hard_skill.skill_type_id=skill_type.pk
+        hard_skill.save()
+        hard_skill.refresh_from_db()
+        self.delete_item("/hard_skills/%s" % hard_skill.pk)
+        with self.assertRaises(DoesNotExist):
+            hard_skill.refresh_from_db()
+        with self.assertRaises(AssertionError):
+            self.delete_item("/hard_skills/%s" % hard_skill.pk)
+
+    def test_list_soft_skills(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_skill_type"
+        skill_type.save()
+        pks = []
+        for i in range(2):
+            soft_skill = model.SoftSkill()
+            soft_skill.name = "name%s"%i
+            soft_skill.skill_type_id = skill_type.pk
+            soft_skill.save()
+            pks.append(str(soft_skill.pk))
+        list = self.get_item_list("/soft_skills")
+        self.assertEqual(2, len(list), "must return all items")
+        for i in range(2):
+            self.assertIn({"id" : pks[i],
+                       "name" : "name%s"%i,
+                       "skill_type" : str(skill_type.pk)},
+                      list, "must return correct list")
+
+    def test_list_hard_skills(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_skill_type"
+        skill_type.save()
+        pks = []
+        for i in range(2):
+            hard_skill = model.HardSkill()
+            hard_skill.name = "name%s"%i
+            hard_skill.skill_type_id = skill_type.pk
+            hard_skill.save()
+            pks.append(str(hard_skill.pk))
+        list = self.get_item_list("/hard_skills")
+        self.assertEqual(2, len(list), "must return all items")
+        for i in range(2):
+            self.assertIn({"id" : pks[i],
+                       "name" : "name%s"%i,
+                       "skill_type" : str(skill_type.pk)},
+                      list, "must return correct list")
+
 
     def test_group_roles_normal(self):
         self.t_simple_normal("/group_roles",
@@ -793,16 +925,6 @@ class TestApi(unittest.TestCase):
                                  phone_no="number_string"
                                  )
 
-    def test_soft_skill_duplicate(self):
-        self.post_duplicate_item("/soft_skills",
-                                 "/soft_skills",
-                                 name="string")
-
-    def test_hard_skill_duplicate(self):
-        self.post_duplicate_item("/hard_skills",
-                                 "/hard_skills",
-                                 name="string")
-
     def test_group_roles_duplicate(self):
         self.post_duplicate_item("/group_roles",
                                  "/group_roles",
@@ -904,10 +1026,14 @@ class TestApi(unittest.TestCase):
                                 "department_id": dep_id,
                                 "type": "Student",
                                 "description": "specialization_description"})
-        hs_id = self.post_item("/hard_skills",
-                               {"name": "hard_skill_name"})
-        ss_id = self.post_item("/soft_skills",
-                               {"name": "soft_skill_name"})
+        st_id = self.post_item("/skill_types",
+                               {"name" : "skill_type_name"})
+        hs_id = self.post_item("/skill_types/%s/hard_skills" % st_id,
+                               {"name": "hard_skill_name",
+                                "skill_type_id" : st_id})
+        ss_id = self.post_item("/skill_types/%s/soft_skills" % st_id,
+                               {"name": "soft_skill_name",
+                                "skill_type_id": st_id})
         post_routes = [
             "/organizations",
             "/organizations/%s/departments" % org_id,
@@ -925,8 +1051,9 @@ class TestApi(unittest.TestCase):
             "/persons/%s/hard_skills/%s/reviews" % (p_id, hs_id),
             "/persons/%s/soft_skills/%s/reviews" % (p_id, ss_id),
             "/persons",
-            "/soft_skills",
-            "/hard_skills",
+            "/skill_types",
+            "/skill_types/%s/soft_skills" % st_id,
+            "/skill_types/%s/hard_skills" % st_id,
             "/groups/%s/tests" % group_id,
             "/tests/%s/results" % g_test_id
         ]

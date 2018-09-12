@@ -8,8 +8,6 @@ from node.settings import constants
 from node.api.auth import hash_password, gen_session_id
 from bson.binary import Binary, BINARY_SUBTYPE
 
-fill_script_version = "0.4"
-
 from data.reviewer_model import (Department,
                                  Group,
                                  GroupPermission,
@@ -28,6 +26,7 @@ from data.reviewer_model import (Department,
                                  Specialization,
                                  SSReview,
                                  Service,
+                                 SkillType,
                                  SoftSkill,
                                  PersonSpecialization,
                                  Survey,
@@ -38,7 +37,9 @@ from data.reviewer_model import (Department,
                                  get_dependent_list,
                                  init_model)
 
+from data.initial_data import fill_initial_data
 
+"""
 def clear_db():
     print("clearing db...")
     revDb = _get_db("reviewer")
@@ -47,27 +48,6 @@ def clear_db():
         revDb.drop_collection(col)
         print("dropped collection " + col)
     print("done")
-
-def prepare_initial_admin():
-    try:
-        phone_no = "79032233223"
-        password = "SomeSecurePass"
-        auth_info = AuthInfo()
-        auth_info.is_approved = True
-        auth_info.phone_no = phone_no
-        auth_info.password = hash_password(password)
-        session_id = gen_session_id()
-        auth_info.session_id = session_id
-        auth_info.permissions = 1
-        auth_info.save()
-        print("phone_no for login: " + phone_no)
-        print("pass: " + password)
-        print("generated session_id: " + auth_info.session_id)
-        return auth_info.session_id
-    except Exception as e:
-        print("Failed to prepare first admin")
-        print(str(e))
-
 
 def wipe_db(db_name):
     try:
@@ -78,7 +58,7 @@ def wipe_db(db_name):
     except Exception as e:
         print("Failed to wipe DB")
         print(str(e))
-
+"""
 
 def fill_db():
 
@@ -134,15 +114,15 @@ def fill_db():
                 "79050100001"),
         "Ivanov":
             Person(
+                "Полуэкт",
+                "Степанович",
                 "Иванов",
-                "Степан",
-                "Полуэктович",
                 datetime.date(1812, 6, 24)),
         "Petrov":
             Person(
+                "Иван",
+                "Васильевич",
                 "Петров",
-                "Василий",
-                "Поликарпович",
                 datetime.date(1812, 6, 24))
     }
 
@@ -162,91 +142,6 @@ def fill_db():
                 "Кафедра ЭФИС",
                 organizations["MPEI"])
     }
-
-    hard_skills = {
-        "VFP":
-            HardSkill(
-                "Visual Fox Pro"),
-        "uC":
-            HardSkill(
-                "C для микроконтроллеров"),
-        "digSch":
-            HardSkill(
-                "Цифровая схемотехника"),
-        "litrbol":
-            HardSkill(
-                "Литрбол"),
-        "phoneRepair":
-            HardSkill(
-                "Ремонт телефонов"),
-        "psySupp":
-            HardSkill(
-                "Психологическое подавление")
-    }
-
-    person_hs = {
-        "Leni4_VFP":
-            PersonHS(
-                persons["Leni4"],
-                hard_skills["VFP"],
-                15.0),
-        "Leni4_uC":
-            PersonHS(
-                persons["Leni4"],
-                hard_skills["uC"],
-                60.0),
-        "Maniac_phoneRepair":
-            PersonHS(
-                persons["Maniac"],
-                hard_skills["phoneRepair"],
-                99.0),
-        "Shatokhin_uC":
-            PersonHS(
-                persons["Shatokhin"],
-                hard_skills["uC"],
-                90.0),
-        "Pashka_litrbol":
-            PersonHS(
-                persons["Pashka"],
-                hard_skills["litrbol"],
-                100.0),
-        "Anisimov_psySupp":
-            PersonHS(
-                persons["Anisimov"],
-                hard_skills["psySupp"],
-                95.0),
-    }
-
-    soft_skills = {
-        "Communication":
-            SoftSkill(
-                "Communication"),
-        "Courtesy":
-            SoftSkill(
-                "Courtesy"),
-        "Flexibility":
-            SoftSkill(
-                "Flexibility"),
-        "Integrity":
-            SoftSkill(
-                "Integrity"),
-        "Interpersonal skills":
-            SoftSkill(
-                "Interpersonal skills"),
-        "Positive attitude":
-            SoftSkill(
-                "Positive attitude")
-    }
-
-    person_ss = {}
-    for pers_key, person in persons.items():
-        for ss_key, soft_skill in soft_skills.items():
-            ss = PersonSS(
-                person,
-                soft_skill,
-                random.random() * 100.0
-            )
-            person_ss.update({person.surname + "_" + soft_skill.name: ss})
 
     specializations = {
         "TOE_Tutor":
@@ -362,36 +257,6 @@ def fill_db():
             )
     }
 
-    group_permissions = {
-        "read_info":
-            GroupPermission(
-                "read_info"
-            ),
-        "modify_info":
-            GroupPermission(
-                "modify_info"
-            ),
-        "create_test":
-            GroupPermission(
-                "create_test"
-            ),
-        "participate_test":
-            GroupPermission(
-                "participate_test"
-            ),
-        "schedule_event":
-            GroupPermission(
-                "schedule_event"
-            ),
-        "create_survey":
-            GroupPermission(
-                "create_survey"),
-        "participate_survey":
-            GroupPermission(
-                "participate_survey"
-            )
-    }
-
     groups = {
         "Arduino":
             Group(departments["IIT"],
@@ -405,6 +270,9 @@ def fill_db():
                   )
     }
 
+    from data.initial_data import group_permission_dict as group_permissions
+    from data.initial_data import hard_skill_list, soft_skill_list
+
     roles_in_groups = {
         "Shatokhin_admin_arduino":
             GroupMember(persons["Shatokhin"],
@@ -412,8 +280,7 @@ def fill_db():
                         group_roles["admin"],
                         [group_permissions["read_info"],
                          group_permissions["modify_info"],
-                         group_permissions["create_test"],
-                         group_permissions["schedule_event"]]),
+                         group_permissions["create_survey"]]),
         "Leni4_member_arduino":
             GroupMember(persons["Leni4"],
                         groups["Arduino"],
@@ -493,47 +360,6 @@ def fill_db():
                        ["Оценка: 5.0",
                         "Время: 0:04"]
                        )
-    }
-
-    ss_reviews = {
-        "bogi_anisimov_posAtt":
-            SSReview(
-                persons["Bogi"],
-                person_ss["Анисимов_Positive attitude"],
-                1.0,
-                "Очень негативный человек!!!1"
-            ),
-        "Leni4_Maniac_posAtt":
-            SSReview(
-                persons["Leni4"],
-                person_ss["Ярин_Communication"],
-                40.0,
-                "Картавит"
-            )
-    }
-
-    hs_reviews = {
-        "Shatokhin_Leni4_uC":
-            HSReview(
-                persons["Shatokhin"],
-                person_hs["Leni4_uC"],
-                90.0,
-                "Способен запрограммировать даже советский утюг"
-            ),
-        "Pashka_Maniac_phone":
-            HSReview(
-                persons["Pashka"],
-                person_hs["Maniac_phoneRepair"],
-                0.0,
-                "Ушатал мне мобилу"
-            ),
-        "Bogi_Anisimov_psy":
-            HSReview(
-                persons["Bogi"],
-                person_hs["Anisimov_psySupp"],
-                100.0,
-                "Подавил так подавил"
-            )
     }
 
     p_spec_reviews = {
@@ -688,10 +514,9 @@ def fill_db():
                 person_id=persons["Leni4"]
             ),
     }
+
     print("Filling db...")
-    print("Fill script version is " + fill_script_version)
-    service = Service(fill_script_version, constants.api_version)
-    service.save()
+
     for key, item in persons.items():
         try:
             with open(r"./img/" + key + r".jpg", mode='rb') as file:
@@ -704,21 +529,61 @@ def fill_db():
         item.save()
     for key, item in departments.items():
         item.save()
-    for key, item in hard_skills.items():
-        item.save()
-    for key, item in person_hs.items():
-        item.save()
-    for key, item in soft_skills.items():
-        item.save()
-    for key, item in person_ss.items():
-        item.save()
+    # add skills
+    for key,item in persons.items():
+        for i in range(10):
+            p_ss = PersonSS()
+            p_ss.person_id = item.pk
+            p_ss.level = random.random() * 100
+            p_ss.ss_id = random.choice(random.choice(soft_skill_list))
+            try:
+                p_ss.save()
+                print("%s получил софт скилл %s -> %s"%(item.surname, p_ss.ss_id.skill_type_id.name, p_ss.ss_id.name))
+            except:
+                print("Не повезло: %s пропустил софт скилл"%item.surname)
+            p_hs = PersonHS()
+            p_hs.person_id = item.pk
+            p_hs.level = random.random() * 100
+            p_hs.hs_id = random.choice(random.choice(hard_skill_list))
+            try:
+                p_hs.save()
+                print("%s получил хард скилл %s -> %s"%(item.surname, p_hs.hs_id.skill_type_id.name, p_hs.hs_id.name))
+            except:
+                print("Не повезло: %s пропустил хард скилл"%item.surname)
+
+    for i in range(100):
+        reviewer = random.choice(list(persons.values()))
+        reviewed = random.choice(list(PersonHS.objects.all()))
+        hs_review = HSReview()
+        hs_review.reviewer_id = reviewer.pk
+        hs_review.subject_id = reviewed.pk
+        hs_review.value = random.random() * 100
+        hs_review.description = "Описание отзыва %s на %s пользователя %s"%(reviewer.surname, reviewed.hs_id.name,
+                                    reviewed.person_id.surname)
+        try:
+            hs_review.save()
+        except:
+            pass
+        reviewer = random.choice(list(persons.values()))
+        reviewed = random.choice(list(PersonSS.objects.all()))
+        ss_review = SSReview()
+        ss_review.reviewer_id = reviewer.pk
+        ss_review.subject_id = reviewed.pk
+        ss_review.value = random.choice([0,100])
+        ss_review.description = "Описание %s %s на %s пользователя %s" % (
+                                ("лайка" if ss_review.value == 100 else "дизлайка"),
+                                reviewer.surname, reviewed.ss_id.name,
+                                reviewed.person_id.surname)
+        try:
+            ss_review.save()
+        except:
+            pass
+
     for key, item in specializations.items():
         item.save()
     for key, item in person_specializations.items():
         item.save()
     for key, item in group_roles.items():
-        item.save()
-    for key, item in group_permissions.items():
         item.save()
     for key, item in groups.items():
         item.save()
@@ -727,10 +592,6 @@ def fill_db():
     for key, item in group_tests.items():
         item.save()
     for key, item in test_results.items():
-        item.save()
-    for key, item in ss_reviews.items():
-        item.save()
-    for key, item in hs_reviews.items():
         item.save()
     for key, item in p_spec_reviews.items():
         item.save()
@@ -783,23 +644,23 @@ def display_data():
 
     print("----Person Hard Skills:")
     for item in PersonHS.objects.all():
-        print(item.person_id.surname +
-              ", " +
-              item.hs_id.name +
-              ", lvl: " +
-              str(item.level))
+        print("%s %s -> %s: %3.1f" %
+              (item.person_id.surname,
+               item.hs_id.skill_type_id.name,
+               item.hs_id.name,
+               item.level))
 
     print("----Soft Skills:")
     for item in SoftSkill.objects.all():
         print(item.name + " _id:" + str(item.pk))
 
     print("----Person Soft Skills:")
-    for ss in PersonSS.objects.all():
-        print(ss.person_id.surname +
-              " " +
-              ss.ss_id.name +
-              ": " +
-              "%.1f" % ss.level)
+    for item in PersonSS.objects.all():
+        print("%s %s -> %s: %3.1f" %
+              (item.person_id.surname,
+               item.ss_id.skill_type_id.name,
+               item.ss_id.name,
+               item.level))
 
     print("----Specializations")
     for item in Specialization.objects.all():
@@ -855,7 +716,7 @@ def display_data():
 
     print("----Soft Skill Reviews:")
     for item in SSReview.objects.all():
-        print("{0} оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
+        print("{0} оставил отзыв с оценкой {1:3.1f} на {2} пользователя {3} с комментарием: {4}".format(
             item.reviewer_id.surname,
             item.value,
             item.subject_id.ss_id.name,
@@ -864,7 +725,7 @@ def display_data():
 
     print("----Hard Skill Reviews:")
     for item in HSReview.objects.all():
-        print("{0} оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
+        print("{0} оставил отзыв с оценкой {1:3.1f} на {2} пользователя {3} с комментарием: {4}".format(
             item.reviewer_id.surname,
             item.value,
             item.subject_id.hs_id.name,
@@ -941,6 +802,7 @@ def display_data():
 
 
 if __name__ == "__main__":
+    """
     db_name = constants.db_name
     if len(sys.argv) > 1:
         if '--help' in str(sys.argv):
@@ -953,8 +815,10 @@ if __name__ == "__main__":
         if '--develop' in str(sys.argv):
             db_name = constants.db_name_develop
     print("Filling DB '%s' \n" % db_name)
-    connect(constants.mongo_db + "/" + db_name, alias="reviewer")
-    wipe_db("reviewer")
-    prepare_initial_admin()
+    """
+    #connect(constants.mongo_db + "/" + db_name, alias="reviewer")
+    #wipe_db("reviewer")
+    fill_initial_data("..//..//src//data//hard_skills.csv",
+                      "..//..//src//data//soft_skills.csv")
     fill_db()
     display_data()

@@ -8,8 +8,6 @@ if parentPath not in sys.path:
 from node.api.auth import hash_password, gen_session_id
 from node.settings import constants
 
-skills = []
-
 group_permissions =[
     "full_control",
     "read_info",
@@ -17,29 +15,54 @@ group_permissions =[
     "add_members",
     "remove_members",
     "create_survey",
+    "participate_survey",
+    "participate_test"
 ]
 
-def wipe_db(db_name):
+group_permission_dict = {}
+
+hard_skill_list = []
+soft_skill_list = []
+
+def wipe_db():
     try:
-        revDb = _get_db(db_name)
-        colList = revDb.list_collection_names()
+        rev_db = _get_db("reviewer")
+        print("working database is %s" % rev_db)
+        colList = rev_db.list_collection_names()
         for col in colList:
-            revDb[col].delete_many({})
+            rev_db[col].delete_many({})
     except Exception as e:
         print("Failed to wipe DB")
         print(str(e))
 
+def prepare_hard_skills(hs_path):
+    hard_skills = read_skill_list(hs_path)
+    for i, skill_sub in enumerate(hard_skills):
+        skill_type = model.SkillType(skill_sub[0])
+        skill_type.save()
+        #hard_skill_list.append([skill_type.pk])
+        hard_skill_list.append([])
+        skill_sub.pop(0)
+        for skill in skill_sub:
+            hard_skill = model.HardSkill()
+            hard_skill.name = skill
+            hard_skill.skill_type_id = skill_type.pk
+            hard_skill.save()
+            hard_skill_list[i].append(hard_skill.pk)
 
-def prepare_soft_skills():
-    for skill in skills[1]:
-        soft_skill = model.SoftSkill(skill)
-        soft_skill.save()
-
-
-def prepare_hard_skills():
-    for skill in skills[0]:
-        hard_skill = model.HardSkill(skill)
-        hard_skill.save()
+def prepare_soft_skills(ss_path):
+    soft_skills = read_skill_list(ss_path)
+    for i, skill_sub in enumerate(soft_skills):
+        skill_type = model.SkillType(skill_sub[0])
+        skill_type.save()
+        soft_skill_list.append([skill_type.pk])
+        skill_sub.pop(0)
+        for skill in skill_sub:
+            soft_skill = model.SoftSkill()
+            soft_skill.name = skill
+            soft_skill.skill_type_id = skill_type.pk
+            soft_skill.save()
+            soft_skill_list[i].append(soft_skill.pk)
 
 # TODO это не безопасно
 def prepare_initial_admin():
@@ -47,12 +70,12 @@ def prepare_initial_admin():
         auth_info = model.AuthInfo()
         auth_info.is_approved = True
         auth_info.phone_no = "79032233223"
-        auth_info.password = hash_password("SomeVerySecurePass")
-        session_id = gen_session_id()
-        auth_info.session_id = session_id
+        auth_info.password = hash_password("SomeSecurePass")
+        #session_id = gen_session_id()
+        #auth_info.session_id = session_id
         auth_info.permissions = 1
         auth_info.save()
-        return auth_info.session_id
+        #return auth_info.session_id
     except Exception as e:
         print("Failed to prepare first admin")
         print(str(e))
@@ -63,6 +86,7 @@ def prepare_group_permissions():
         g_perm = model.GroupPermission()
         g_perm.name = permission
         g_perm.save()
+        group_permission_dict.update({permission : g_perm.pk})
 
 
 def prepare_auth_permission():
@@ -79,30 +103,39 @@ def prepare_version_info():
 
 
 def read_skill_list(filename):
+    skill_list = []
     file = open(filename)
     header = file.readline()
     header = header.splitlines()[0]
-    skill_cats = header.split(";")
-    for cat in skill_cats:
-        skills.append([])
-    cat_count = len(skill_cats)
+    skill_types = header.split(";")
+    for t in skill_types:
+        skill_list.append([t])
+    type_count = len(skill_types)
+    #print(type_count)
+    #print(skill_types)
     lines = file.readlines()
     for line in lines:
         line = line.splitlines()[0]
         skill_names = line.split(";")
-        if len(skill_names) != cat_count:
+        if len(skill_names) != type_count:
             raise SyntaxError("Ошибка парсинга skills.csv")
         for index, name in enumerate(skill_names):
             if len(name) > 0:
-                skills[index].append(name)
+                skill_list[index].append(name)
+    return skill_list
+
+def fill_initial_data(hs_path, ss_path):
+    wipe_db()
+    prepare_version_info()
+    prepare_hard_skills(hs_path)
+    prepare_soft_skills(ss_path)
+    prepare_auth_permission()
+    prepare_group_roles()
+    prepare_group_permissions()
+    prepare_initial_admin()
 
 
 if __name__ == "__main__":
-    wipe_db("reviewer")
-    prepare_version_info()
-    read_skill_list("skills.csv")
-    prepare_soft_skills()
-    prepare_hard_skills()
-    prepare_auth_permission()
-    prepare_group_permissions()
-    prepare_initial_admin()
+    fill_initial_data("hard_skills.csv", "soft_skills.csv")
+
+
