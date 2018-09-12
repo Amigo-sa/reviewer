@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from pymodm.connection import connect, _get_db
-import reviewer_model as model
+import context
+import data.reviewer_model as model
 import re, os, sys
 parentPath = os.path.abspath("..//..//src")
 if parentPath not in sys.path:
