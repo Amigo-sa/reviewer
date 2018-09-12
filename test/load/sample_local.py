@@ -33,6 +33,9 @@ def convert(name):
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
+def int_to_obj_id(num):
+    return ObjectId(num.to_bytes(12, byteorder='big'))
+
 field_aliases = {
         "fields.CharField" : "string",
         "fields.DateTimeField" : "date",
@@ -193,7 +196,7 @@ while len(remaining_fields) > 0:
 
             auth_list = []
             for i in range(insert_amount):
-                cur_doc = {"_id" : doc_ctr}
+                cur_doc = {"_id" : int_to_obj_id(doc_ctr)}
                 #first we are going to fill reference fields that are in unique index
                 if ref_count:
 
@@ -201,7 +204,7 @@ while len(remaining_fields) > 0:
                                              r_cnts)
                     for i, r_name in enumerate(r_field_names):
                         start = starting_ids[r_col_names[i]]
-                        cur_doc.update({r_field_names[i]: start + ref_field_vals[i]})
+                        cur_doc.update({r_field_names[i]: int_to_obj_id(start + ref_field_vals[i])})
                 for field, info in field_list.items():
                     if info["type"] == "string":
                         cur_doc.update({field : field + "_" + str(random.randint(0,999)) +
@@ -229,11 +232,11 @@ while len(remaining_fields) > 0:
                             start = starting_ids[info["ref"]]
                             amt = filled[info["ref"]]
                             num = start + random.randint(0,amt)
-                            cur_doc.update({field: num})
+                            cur_doc.update({field: int_to_obj_id(num)})
                 doc_list.append(cur_doc)
 
                 if col_name == "person":
-                    auth_doc = {"_id": doc_ctr + to_fill["person"]}
+                    auth_doc = {"_id": int_to_obj_id(doc_ctr + to_fill["person"])}
                     auth_doc.update({
                         "attempts": 0,
                         "auth_code": None,
@@ -256,11 +259,11 @@ while len(remaining_fields) > 0:
 
             remaining_fields.pop(col_name)
 
-db["service"].insert_one({"_id" : doc_ctr,
+db["service"].insert_one({"_id" : int_to_obj_id(doc_ctr),
                           "db_version" : "0.4",
                           "api_version" : constants.api_version})
 doc_ctr+= 1
-db["auth_info"].insert_one({"_id" : doc_ctr,
+db["auth_info"].insert_one({"_id" : int_to_obj_id(doc_ctr),
                           "attempts": 0,
                         "auth_code": None,
                         "is_approved": True,
