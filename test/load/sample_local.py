@@ -35,6 +35,7 @@ def convert(name):
 
 def int_to_obj_id(num):
     return ObjectId(num.to_bytes(12, byteorder='big'))
+    #return num
 
 field_aliases = {
         "fields.CharField" : "string",
@@ -67,6 +68,7 @@ to_fill = {
     "hs_review" : 100000,
     "specialization_review" : 100000,
 }
+#to_fill = {"group_member" : 1000}
 filled={}
 starting_ids = {}
 doc_fields = {}
@@ -129,10 +131,9 @@ def gen_ref(num : int, refs : list):
     dividers = [1] * len(refs)
     for i in range(len(refs)):
         dividers[i] = refs[i]
-        for j in range(0,i):
-            if (i != j):
-                dividers[i] *= dividers[j]
-    dividers.pop(len(refs)-1)
+    for i in range(len(refs) - 2, -1, -1):
+        dividers[i] *= dividers[i+1]
+    dividers.pop(0)
     out_list = []
     for div in dividers:
         (q,r) = divmod(n, div)
@@ -199,9 +200,8 @@ while len(remaining_fields) > 0:
                 cur_doc = {"_id" : int_to_obj_id(doc_ctr)}
                 #first we are going to fill reference fields that are in unique index
                 if ref_count:
-
-                    ref_field_vals = gen_ref(increment *(doc_ctr - cur_starting_id),
-                                             r_cnts)
+                    relative_num = increment *(doc_ctr - cur_starting_id)
+                    ref_field_vals = gen_ref(relative_num, r_cnts)
                     for i, r_name in enumerate(r_field_names):
                         start = starting_ids[r_col_names[i]]
                         cur_doc.update({r_field_names[i]: int_to_obj_id(start + ref_field_vals[i])})
@@ -236,7 +236,8 @@ while len(remaining_fields) > 0:
                 doc_list.append(cur_doc)
 
                 if col_name == "person":
-                    auth_doc = {"_id": int_to_obj_id(doc_ctr + to_fill["person"])}
+                    auth_doc = {"_id": int_to_obj_id(doc_ctr + \
+                                (10 if not ("person" in to_fill) else to_fill["person"]))}
                     auth_doc.update({
                         "attempts": 0,
                         "auth_code": None,
