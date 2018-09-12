@@ -39,7 +39,9 @@ from data.reviewer_model import (Department,
                                  get_dependent_list,
                                  init_model)
 
+from data.initial_data import fill_initial_data
 
+"""
 def clear_db():
     print("clearing db...")
     revDb = _get_db("reviewer")
@@ -48,27 +50,6 @@ def clear_db():
         revDb.drop_collection(col)
         print("dropped collection " + col)
     print("done")
-
-def prepare_initial_admin():
-    try:
-        phone_no = "79032233223"
-        password = "SomeSecurePass"
-        auth_info = AuthInfo()
-        auth_info.is_approved = True
-        auth_info.phone_no = phone_no
-        auth_info.password = hash_password(password)
-        session_id = gen_session_id()
-        auth_info.session_id = session_id
-        auth_info.permissions = 1
-        auth_info.save()
-        print("phone_no for login: " + phone_no)
-        print("pass: " + password)
-        print("generated session_id: " + auth_info.session_id)
-        return auth_info.session_id
-    except Exception as e:
-        print("Failed to prepare first admin")
-        print(str(e))
-
 
 def wipe_db(db_name):
     try:
@@ -79,7 +60,7 @@ def wipe_db(db_name):
     except Exception as e:
         print("Failed to wipe DB")
         print(str(e))
-
+"""
 
 def fill_db():
 
@@ -163,109 +144,6 @@ def fill_db():
                 "Кафедра ЭФИС",
                 organizations["MPEI"])
     }
-
-    skill_types = {
-        "default":
-            SkillType(
-                "Общий тип")
-    }
-
-    hard_skills = {
-        "VFP":
-            HardSkill(
-                "Visual Fox Pro",
-                 skill_types["default"]),
-        "uC":
-            HardSkill(
-                "C для микроконтроллеров",
-                 skill_types["default"]),
-        "digSch":
-            HardSkill(
-                "Цифровая схемотехника",
-                 skill_types["default"]),
-        "litrbol":
-            HardSkill(
-                "Литрбол",
-                 skill_types["default"]),
-        "phoneRepair":
-            HardSkill(
-                "Ремонт телефонов",
-                 skill_types["default"]),
-        "psySupp":
-            HardSkill(
-                "Психологическое подавление",
-                 skill_types["default"])
-    }
-
-    person_hs = {
-        "Leni4_VFP":
-            PersonHS(
-                persons["Leni4"],
-                hard_skills["VFP"],
-                15.0),
-        "Leni4_uC":
-            PersonHS(
-                persons["Leni4"],
-                hard_skills["uC"],
-                60.0),
-        "Maniac_phoneRepair":
-            PersonHS(
-                persons["Maniac"],
-                hard_skills["phoneRepair"],
-                99.0),
-        "Shatokhin_uC":
-            PersonHS(
-                persons["Shatokhin"],
-                hard_skills["uC"],
-                90.0),
-        "Pashka_litrbol":
-            PersonHS(
-                persons["Pashka"],
-                hard_skills["litrbol"],
-                100.0),
-        "Anisimov_psySupp":
-            PersonHS(
-                persons["Anisimov"],
-                hard_skills["psySupp"],
-                95.0),
-    }
-
-    soft_skills = {
-        "Communication":
-            SoftSkill(
-                "Communication",
-                 skill_types["default"]),
-        "Courtesy":
-            SoftSkill(
-                "Courtesy",
-                 skill_types["default"]),
-        "Flexibility":
-            SoftSkill(
-                "Flexibility",
-                 skill_types["default"]),
-        "Integrity":
-            SoftSkill(
-                "Integrity",
-                 skill_types["default"]),
-        "Interpersonal skills":
-            SoftSkill(
-                "Interpersonal skills",
-                 skill_types["default"]),
-        "Positive attitude":
-            SoftSkill(
-                "Positive attitude",
-                 skill_types["default"])
-    }
-
-    person_ss = {}
-    for pers_key, person in persons.items():
-        for ss_key, soft_skill in soft_skills.items():
-            ss = PersonSS(
-                person,
-                soft_skill,
-                random.random() * 100.0
-            )
-            person_ss.update({person.surname + "_" + soft_skill.name: ss})
 
     specializations = {
         "TOE_Tutor":
@@ -381,35 +259,6 @@ def fill_db():
             )
     }
 
-    group_permissions = {
-        "read_info":
-            GroupPermission(
-                "read_info"
-            ),
-        "modify_info":
-            GroupPermission(
-                "modify_info"
-            ),
-        "create_test":
-            GroupPermission(
-                "create_test"
-            ),
-        "participate_test":
-            GroupPermission(
-                "participate_test"
-            ),
-        "schedule_event":
-            GroupPermission(
-                "schedule_event"
-            ),
-        "create_survey":
-            GroupPermission(
-                "create_survey"),
-        "participate_survey":
-            GroupPermission(
-                "participate_survey"
-            )
-    }
 
     groups = {
         "Arduino":
@@ -424,6 +273,14 @@ def fill_db():
                   )
     }
 
+    from data.initial_data import group_permissions as group_permission_list
+
+    group_permissions = {}
+    for perm_name in group_permission_list:
+        permission = GroupPermission.objects.get({"name" : perm_name})
+        group_permissions.update({perm_name : permission})
+
+
     roles_in_groups = {
         "Shatokhin_admin_arduino":
             GroupMember(persons["Shatokhin"],
@@ -431,8 +288,7 @@ def fill_db():
                         group_roles["admin"],
                         [group_permissions["read_info"],
                          group_permissions["modify_info"],
-                         group_permissions["create_test"],
-                         group_permissions["schedule_event"]]),
+                         group_permissions["create_survey"]]),
         "Leni4_member_arduino":
             GroupMember(persons["Leni4"],
                         groups["Arduino"],
@@ -514,46 +370,6 @@ def fill_db():
                        )
     }
 
-    ss_reviews = {
-        "bogi_anisimov_posAtt":
-            SSReview(
-                persons["Bogi"],
-                person_ss["Анисимов_Positive attitude"],
-                1.0,
-                "Очень негативный человек!!!1"
-            ),
-        "Leni4_Maniac_posAtt":
-            SSReview(
-                persons["Leni4"],
-                person_ss["Ярин_Communication"],
-                40.0,
-                "Картавит"
-            )
-    }
-
-    hs_reviews = {
-        "Shatokhin_Leni4_uC":
-            HSReview(
-                persons["Shatokhin"],
-                person_hs["Leni4_uC"],
-                90.0,
-                "Способен запрограммировать даже советский утюг"
-            ),
-        "Pashka_Maniac_phone":
-            HSReview(
-                persons["Pashka"],
-                person_hs["Maniac_phoneRepair"],
-                0.0,
-                "Ушатал мне мобилу"
-            ),
-        "Bogi_Anisimov_psy":
-            HSReview(
-                persons["Bogi"],
-                person_hs["Anisimov_psySupp"],
-                100.0,
-                "Подавил так подавил"
-            )
-    }
 
     p_spec_reviews = {
         "Shatokhin_Pashka_sr":
@@ -709,8 +525,8 @@ def fill_db():
     }
     print("Filling db...")
     print("Fill script version is " + fill_script_version)
-    service = Service(fill_script_version, constants.api_version)
-    service.save()
+    #service = Service(fill_script_version, constants.api_version)
+    #service.save()
     for key, item in persons.items():
         try:
             with open(r"./img/" + key + r".jpg", mode='rb') as file:
@@ -723,6 +539,7 @@ def fill_db():
         item.save()
     for key, item in departments.items():
         item.save()
+    """
     for key, item in skill_types.items():
         item.save()
     for key, item in hard_skills.items():
@@ -733,13 +550,16 @@ def fill_db():
         item.save()
     for key, item in person_ss.items():
         item.save()
+    for key, item in ss_reviews.items():
+        item.save()
+    for key, item in hs_reviews.items():
+        item.save()
+    """
     for key, item in specializations.items():
         item.save()
     for key, item in person_specializations.items():
         item.save()
     for key, item in group_roles.items():
-        item.save()
-    for key, item in group_permissions.items():
         item.save()
     for key, item in groups.items():
         item.save()
@@ -748,10 +568,6 @@ def fill_db():
     for key, item in group_tests.items():
         item.save()
     for key, item in test_results.items():
-        item.save()
-    for key, item in ss_reviews.items():
-        item.save()
-    for key, item in hs_reviews.items():
         item.save()
     for key, item in p_spec_reviews.items():
         item.save()
@@ -962,6 +778,7 @@ def display_data():
 
 
 if __name__ == "__main__":
+    """
     db_name = constants.db_name
     if len(sys.argv) > 1:
         if '--help' in str(sys.argv):
@@ -974,8 +791,10 @@ if __name__ == "__main__":
         if '--develop' in str(sys.argv):
             db_name = constants.db_name_develop
     print("Filling DB '%s' \n" % db_name)
-    connect(constants.mongo_db + "/" + db_name, alias="reviewer")
-    wipe_db("reviewer")
-    prepare_initial_admin()
+    """
+    #connect(constants.mongo_db + "/" + db_name, alias="reviewer")
+    #wipe_db("reviewer")
+    fill_initial_data("..//..//src//data//hard_skills.csv",
+                      "..//..//src//data//soft_skills.csv")
     fill_db()
     display_data()

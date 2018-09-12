@@ -3,7 +3,7 @@ Budgeting;Bidding;Equipment Design;Distribution;Design & Specification;Account M
 Change Management;Contract Management;Equipment Management;Purchasing & Procurement;Field Studies;Customer Relations;Competitive Analysis;Leases;Company Secretary;Accounts Receivable;Classified Advertisements;Applications Development;Musical Composition;Freehand;Corporate Image
 Decision Making;Inventory Control;Order Processing;Warehousing;New Equipment Design;Distributor Relations;Image Development;Policies & Procedures;Intellectual Property;Auditing;Compensation & Benefits;Capacity Planning;Creative Writing;Picasa;Corporate Relations
 Employee Evaluation;Outsourcing;Production Planning;Transportation;Product Testing;Incentive Programs;Marketing Communication;Security;Mergers & Acquisitions;Capital Budgeting;Employee Discipline;EDI;Story Line Development;Print Design & Layout;Fund Raising
-Hiring;Project Management;Equipment Maintenance & Repair;Shipping;Simulation Dev.;International Expansion;Media Buying/Evaluation;Equipment Purchasing;Stock Administration;Cost Accounting;Grievance Resolution;Enterprise Resource Planning;Drawing;Dreamweaver;Media Presentations
+Hiring;Project Management;Equipment Maintenance & Repair;Shipping;Simulation Dev.;International Expansion;Media Buying/Evaluation;Equipment Purchasing;Stock Administration;Cost Accounting;Grievance Resolution;Enterprise Resource Planning ERP;Drawing;Dreamweaver;Media Presentations
 IPO;Call Centre Operations;ISO 9XXX / 1XXXXX;JIT;Diagnostics;Product Demonstrations;New Product Development;Mailroom Management;Copyrights & Trademarks;Debt Negotiations;Industrial Relations;Information Management;Visual Composition;Illustrator;Community Relations
 Merger & Acquisitions;Environmental Protection;Plant Design & Layout;Traffic Management;Lab Management;Sales Administration;Pricing;Reception;Employment Ordinance;Financial Analysis;Outplacement;Languages – JAVA, C+++, etc;;Corel Draw;Corporate Philanthropy
 Profit & Loss;Manpower Planning;Quality Assurance;;Patent Application;Sales Management;Brand Management;Space Planning;International Agreements;Forecasting;Succession Planning;Software Customization;;Photography;Employee Communication
@@ -17,24 +17,24 @@ International Management;;;;Technical Writing;Telemarketing;Channel Marketing;;;
 Joint Ventures;;;;;Sales Analysis;Corporate Identity;;;Banking Relations;Team Building;Business Systems Planning;;;
 Multi-sites Management;;;;;Salespersons Recruitment;Market Research & Analysis;;;Capital Investment;Career Coaching;CRM;;;
 Organizational Development;;;;;Sales Training;Marketing promotions;;;Cost Control;Workforce Forecast/Planning;Enterprise Asset Management;;;
-Strategic Partnership;;;;;Contract Negotiation;Merchandising;;;Equity/Debt Management;Training Administration;ERP;;;
-Business Re-engineering;;;;;Direct Sales;Packaging;;;Financial Reporting;Executive Recruiting;Integration Software;;;
-Cost Control;;;;;Forecasting;;;;Foreign Exchange;Labour Negotiations;Software Development;;;
-Diversification;;;;;Proposal Writing;;;;Internal Controls;Salary Administration;System Development;;;
-Government Relations;;;;;Trade Shows;;;;Lending;Training;Technical Writing;;;
-Investor Relations;;;;;Sales Kits;;;;Payroll;;UNIX;;;
-Labour Relations;;;;;Show Room Management;;;;Risk Management;;User Documentation;;;
-Negotiation;;;;;;;;;Treasury;;Voice & Data Communications;;;
-Project Management;;;;;;;;;Venture Capital Relations;;Web Site Content Writer;;;
-Strategic Planning;;;;;;;;;Actuarial/Rating Analysis;;Web Site Editor;;;
-;;;;;;;;;Budget Control;;CAD;;;
-;;;;;;;;;Cash Management;;EAP;;;
-;;;;;;;;;Credit/Collections;;Hardware Management;;;
-;;;;;;;;;Feasibility Studies;;Intranet Development;;;
-;;;;;;;;;Financing;;Portal Design/Development;;;
-;;;;;;;;;General Ledger;;System Analysis;;;
-;;;;;;;;;Investor Relations;;Technical Evangelism;;;
-;;;;;;;;;Lines of Credit;;Telecommunications;;;
-;;;;;;;;;Fund Management;;Usability Engineering;;;
-;;;;;;;;;Stockholder Relations;;User Interface;;;
-;;;;;;;;;Investor Presentations;;Word Processing;;;
+Strategic Partnership;;;;;Contract Negotiation;Merchandising;;;Equity/Debt Management;Training Administration;Integration Software;;;
+Business Re-engineering;;;;;Direct Sales;Packaging;;;Financial Reporting;Executive Recruiting;Software Development;;;
+Cost Control;;;;;Forecasting;;;;Foreign Exchange;Labour Negotiations;System Development;;;
+Diversification;;;;;Proposal Writing;;;;Internal Controls;Salary Administration;Technical Writing;;;
+Government Relations;;;;;Trade Shows;;;;Lending;Training;UNIX;;;
+Investor Relations;;;;;Sales Kits;;;;Payroll;;User Documentation;;;
+Labour Relations;;;;;Show Room Management;;;;Risk Management;;Voice & Data Communications;;;
+Negotiation;;;;;;;;;Treasury;;Web Site Content Writer;;;
+Project Management;;;;;;;;;Venture Capital Relations;;Web Site Editor;;;
+Strategic Planning;;;;;;;;;Actuarial/Rating Analysis;;CAD;;;
+;;;;;;;;;Budget Control;;EAP;;;
+;;;;;;;;;Cash Management;;Hardware Management;;;
+;;;;;;;;;Credit/Collections;;Intranet Development;;;
+;;;;;;;;;Feasibility Studies;;Portal Design/Development;;;
+;;;;;;;;;Financing;;System Analysis;;;
+;;;;;;;;;General Ledger;;Technical Evangelism;;;
+;;;;;;;;;Investor Relations;;Telecommunications;;;
+;;;;;;;;;Lines of Credit;;Usability Engineering;;;
+;;;;;;;;;Fund Management;;User Interface;;;
+;;;;;;;;;Stockholder Relations;;Word Processing;;;
+;;;;;;;;;Investor Presentations;;;;;

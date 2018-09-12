@@ -8,8 +8,6 @@ if parentPath not in sys.path:
 from node.api.auth import hash_password, gen_session_id
 from node.settings import constants
 
-
-
 group_permissions =[
     "full_control",
     "read_info",
@@ -17,27 +15,23 @@ group_permissions =[
     "add_members",
     "remove_members",
     "create_survey",
+    "participate_survey",
+    "participate_test"
 ]
 
-def wipe_db(db_name):
+def wipe_db():
     try:
-        revDb = _get_db(db_name)
-        colList = revDb.list_collection_names()
+        rev_db = _get_db("reviewer")
+        print("working database is %s" % rev_db)
+        colList = rev_db.list_collection_names()
         for col in colList:
-            revDb[col].delete_many({})
+            rev_db[col].delete_many({})
     except Exception as e:
         print("Failed to wipe DB")
         print(str(e))
 
-
-def prepare_soft_skills():
-    for skill in skills[1]:
-        soft_skill = model.SoftSkill(skill)
-        soft_skill.save()
-
-
-def prepare_hard_skills():
-    hard_skills = read_skill_list("hard_skills.csv")
+def prepare_hard_skills(hs_path):
+    hard_skills = read_skill_list(hs_path)
     for skill_sub in hard_skills:
         skill_type = model.SkillType(skill_sub[0])
         skill_type.save()
@@ -48,8 +42,8 @@ def prepare_hard_skills():
             hard_skill.skill_type_id = skill_type.pk
             hard_skill.save()
 
-def prepare_soft_skills():
-    hard_skills = read_skill_list("soft_skills.csv")
+def prepare_soft_skills(ss_path):
+    hard_skills = read_skill_list(ss_path)
     for skill_sub in hard_skills:
         skill_type = model.SkillType(skill_sub[0])
         skill_type.save()
@@ -66,12 +60,12 @@ def prepare_initial_admin():
         auth_info = model.AuthInfo()
         auth_info.is_approved = True
         auth_info.phone_no = "79032233223"
-        auth_info.password = hash_password("SomeVerySecurePass")
-        session_id = gen_session_id()
-        auth_info.session_id = session_id
+        auth_info.password = hash_password("SomeSecurePass")
+        #session_id = gen_session_id()
+        #auth_info.session_id = session_id
         auth_info.permissions = 1
         auth_info.save()
-        return auth_info.session_id
+        #return auth_info.session_id
     except Exception as e:
         print("Failed to prepare first admin")
         print(str(e))
@@ -119,12 +113,18 @@ def read_skill_list(filename):
                 skill_list[index].append(name)
     return skill_list
 
-if __name__ == "__main__":
-    wipe_db("reviewer")
+def fill_initial_data(hs_path, ss_path):
+    wipe_db()
     prepare_version_info()
-    prepare_hard_skills()
-    prepare_soft_skills()
+    prepare_hard_skills(hs_path)
+    prepare_soft_skills(ss_path)
     prepare_auth_permission()
     prepare_group_roles()
     prepare_group_permissions()
     prepare_initial_admin()
+
+
+if __name__ == "__main__":
+    fill_initial_data("hard_skills.csv", "soft_skills.csv")
+
+
