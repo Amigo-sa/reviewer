@@ -196,14 +196,30 @@ class TestApi(unittest.TestCase):
         return id_list
 
     def prepare_hs(self):
-        post_data = self.generate_doc(dict(name="string").items())
-        hs_id = self.post_item('/hard_skills', post_data)
-        return [hs_id, post_data]
+        skill_type = model.SkillType()
+        skill_type.name = "hard_skill_type"
+        skill_type.save()
+        hard_skill = model.HardSkill()
+        hard_skill.name = "hs_name"
+        hard_skill.skill_type_id = skill_type.pk
+        hard_skill.save()
+        return [str(hard_skill.pk), {
+            "name" : "hs_name",
+            "skill_type_id": str(skill_type.pk)
+        }]
 
     def prepare_ss(self):
-        post_data = self.generate_doc(dict(name="string").items())
-        ss_id = self.post_item('/soft_skills', post_data)
-        return [ss_id, post_data]
+        skill_type = model.SkillType()
+        skill_type.name = "soft_skill_type"
+        skill_type.save()
+        soft_skill = model.SoftSkill()
+        soft_skill.name = "ss_name"
+        soft_skill.skill_type_id = skill_type.pk
+        soft_skill.save()
+        return [str(soft_skill.pk), {
+            "name": "ss_name",
+            "skill_type_id": str(skill_type.pk)
+        }]
 
     def test_organization_normal(self):
         self.t_simple_normal("/organizations",
@@ -222,17 +238,6 @@ class TestApi(unittest.TestCase):
                              phone_no="number_string"
                              )
 
-    def test_soft_skill_normal(self):
-        self.t_simple_normal("/soft_skills",
-                             "/soft_skills",
-                             "/soft_skills",
-                             name="string")
-    @unittest.skip("rewriting")
-    def test_hard_skill_normal(self):
-        self.t_simple_normal("/hard_skills",
-                             "/hard_skills",
-                             "/hard_skills",
-                             name="string")
 
     def test_add_skill_type(self):
         post_data = {"name": "some_name"}
@@ -920,16 +925,6 @@ class TestApi(unittest.TestCase):
                                  phone_no="number_string"
                                  )
 
-    def test_soft_skill_duplicate(self):
-        self.post_duplicate_item("/soft_skills",
-                                 "/soft_skills",
-                                 name="string")
-
-    def test_hard_skill_duplicate(self):
-        self.post_duplicate_item("/hard_skills",
-                                 "/hard_skills",
-                                 name="string")
-
     def test_group_roles_duplicate(self):
         self.post_duplicate_item("/group_roles",
                                  "/group_roles",
@@ -1031,10 +1026,14 @@ class TestApi(unittest.TestCase):
                                 "department_id": dep_id,
                                 "type": "Student",
                                 "description": "specialization_description"})
-        hs_id = self.post_item("/hard_skills",
-                               {"name": "hard_skill_name"})
-        ss_id = self.post_item("/soft_skills",
-                               {"name": "soft_skill_name"})
+        st_id = self.post_item("/skill_types",
+                               {"name" : "skill_type_name"})
+        hs_id = self.post_item("/skill_types/%s/hard_skills" % st_id,
+                               {"name": "hard_skill_name",
+                                "skill_type_id" : st_id})
+        ss_id = self.post_item("/skill_types/%s/soft_skills" % st_id,
+                               {"name": "soft_skill_name",
+                                "skill_type_id": st_id})
         post_routes = [
             "/organizations",
             "/organizations/%s/departments" % org_id,
@@ -1052,8 +1051,9 @@ class TestApi(unittest.TestCase):
             "/persons/%s/hard_skills/%s/reviews" % (p_id, hs_id),
             "/persons/%s/soft_skills/%s/reviews" % (p_id, ss_id),
             "/persons",
-            "/soft_skills",
-            "/hard_skills",
+            "/skill_types",
+            "/skill_types/%s/soft_skills" % st_id,
+            "/skill_types/%s/hard_skills" % st_id,
             "/groups/%s/tests" % group_id,
             "/tests/%s/results" % g_test_id
         ]

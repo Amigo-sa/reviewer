@@ -149,12 +149,13 @@ class TestAuth(unittest.TestCase):
             "/group_members/%s/permissions" % self.group_member_id,
             "/group_members/%s/group_roles" % self.group_member_id,
             "/specializations",
-            "/soft_skills",
-            "/hard_skills",
+            "/skill_types/%s/soft_skills" % self.skill_type_id,
+            "/skill_types/%s/hard_skills" % self.skill_type_id,
             "/groups/%s/surveys" % self.group_id,
             "/groups/%s/tests" % self.group_id,
             "/tests/%s/results" % self.test_id,
-            "/user_permissions"
+            "/user_permissions",
+            "/skill_types"
         ]
         self.admin_only_delete = [
             "/organizations/%s" % self.org_id,
@@ -172,6 +173,7 @@ class TestAuth(unittest.TestCase):
             "/surveys/%s" % self.survey_id,
             "/tests/%s" % self.test_id,
             "/tests/results/%s" % self.test_result_id,
+            "/skill_types/%s" % self.skill_type_id
         ]
         self.admin_only_patch = [
             "/group_members/%s" % self.group_member_id,
@@ -241,6 +243,7 @@ class TestAuth(unittest.TestCase):
             "/tests/results/%s" % self.test_result_id,
             "/tests/results",
             "/version",
+            "/skill_types"
 
         ]
         self.no_auth_data_get = [
@@ -281,10 +284,25 @@ class TestAuth(unittest.TestCase):
                                           "specialization_id": self.spec_id
                                           })
 
-        self.soft_skill_id = hm.post_item(self, self.api_URL + "/soft_skills",
-                                          {"name": "string"})
-        self.hard_skill_id = hm.post_item(self, self.api_URL + "/hard_skills",
-                                          {"name": "string"})
+        skill_type = model.SkillType()
+        skill_type.name = "skill_type_name"
+        skill_type.save()
+
+        self.skill_type_id = str(skill_type.pk)
+
+        hard_skill = model.HardSkill()
+        hard_skill.name = "hs_name"
+        hard_skill.skill_type_id = skill_type.pk
+        hard_skill.save()
+
+        self.hard_skill_id = str(hard_skill.pk)
+
+        soft_skill = model.SoftSkill()
+        soft_skill.name = "ss_name"
+        soft_skill.skill_type_id = skill_type.pk
+        soft_skill.save()
+
+        self.soft_skill_id = str(soft_skill.pk)
 
         survey = model.Survey()
         survey.group_id = self.group_id
