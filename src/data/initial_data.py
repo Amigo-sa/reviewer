@@ -19,6 +19,11 @@ group_permissions =[
     "participate_test"
 ]
 
+group_permission_dict = {}
+
+hard_skill_list = []
+soft_skill_list = []
+
 def wipe_db():
     try:
         rev_db = _get_db("reviewer")
@@ -32,27 +37,32 @@ def wipe_db():
 
 def prepare_hard_skills(hs_path):
     hard_skills = read_skill_list(hs_path)
-    for skill_sub in hard_skills:
+    for i, skill_sub in enumerate(hard_skills):
         skill_type = model.SkillType(skill_sub[0])
         skill_type.save()
+        #hard_skill_list.append([skill_type.pk])
+        hard_skill_list.append([])
         skill_sub.pop(0)
         for skill in skill_sub:
             hard_skill = model.HardSkill()
             hard_skill.name = skill
             hard_skill.skill_type_id = skill_type.pk
             hard_skill.save()
+            hard_skill_list[i].append(hard_skill.pk)
 
 def prepare_soft_skills(ss_path):
-    hard_skills = read_skill_list(ss_path)
-    for skill_sub in hard_skills:
+    soft_skills = read_skill_list(ss_path)
+    for i, skill_sub in enumerate(soft_skills):
         skill_type = model.SkillType(skill_sub[0])
         skill_type.save()
+        soft_skill_list.append([skill_type.pk])
         skill_sub.pop(0)
         for skill in skill_sub:
             soft_skill = model.SoftSkill()
             soft_skill.name = skill
             soft_skill.skill_type_id = skill_type.pk
             soft_skill.save()
+            soft_skill_list[i].append(soft_skill.pk)
 
 # TODO это не безопасно
 def prepare_initial_admin():
@@ -76,6 +86,7 @@ def prepare_group_permissions():
         g_perm = model.GroupPermission()
         g_perm.name = permission
         g_perm.save()
+        group_permission_dict.update({permission : g_perm.pk})
 
 
 def prepare_auth_permission():
