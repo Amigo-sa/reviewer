@@ -538,18 +538,20 @@ def fill_db():
             p_ss.ss_id = random.choice(random.choice(soft_skill_list))
             try:
                 p_ss.save()
-                print("%s получил софт скилл %s -> %s"%(item.surname, p_ss.ss_id.skill_type_id.name, p_ss.ss_id.name))
+                #print("%s получил софт скилл %s -> %s"%(item.surname, p_ss.ss_id.skill_type_id.name, p_ss.ss_id.name))
             except:
-                print("Не повезло: %s пропустил софт скилл"%item.surname)
+                #print("Не повезло: %s пропустил софт скилл"%item.surname)
+                pass
             p_hs = PersonHS()
             p_hs.person_id = item.pk
             p_hs.level = random.random() * 100
             p_hs.hs_id = random.choice(random.choice(hard_skill_list))
             try:
                 p_hs.save()
-                print("%s получил хард скилл %s -> %s"%(item.surname, p_hs.hs_id.skill_type_id.name, p_hs.hs_id.name))
+                #print("%s получил хард скилл %s -> %s"%(item.surname, p_hs.hs_id.skill_type_id.name, p_hs.hs_id.name))
             except:
-                print("Не повезло: %s пропустил хард скилл"%item.surname)
+                #print("Не повезло: %s пропустил хард скилл"%item.surname)
+                pass
 
     for i in range(100):
         reviewer = random.choice(list(persons.values()))
@@ -821,4 +823,4 @@ if __name__ == "__main__":
     fill_initial_data("..//..//src//data//hard_skills.csv",
                       "..//..//src//data//soft_skills.csv")
     fill_db()
-    display_data()
+    #display_data()
