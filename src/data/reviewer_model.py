@@ -173,7 +173,8 @@ class HardSkill(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
-        indexes = [IndexModel([("name", pymongo.DESCENDING)],
+        indexes = [IndexModel([("name", pymongo.DESCENDING),
+                               ("skill_type_id", pymongo.DESCENDING)],
                               unique=True)]
 
 
@@ -199,7 +200,8 @@ class SoftSkill(MongoModel):
         write_concern = WriteConcern(j=True)
         connection_alias = "reviewer"
         final = True
-        indexes = [IndexModel([("name", pymongo.DESCENDING)],
+        indexes = [IndexModel([("name", pymongo.DESCENDING),
+                               ("skill_type_id", pymongo.DESCENDING)],
                               unique=True)]
 
 
