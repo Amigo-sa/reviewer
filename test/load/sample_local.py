@@ -60,13 +60,14 @@ ignore_list = [
     ]
 
 to_fill = {
-    "person" : 20000,
-    "group" : 10,
-    "person_ss" : 100000,
-    "person_hs" : 100000,
-    "ss_review" : 100000,
-    "hs_review" : 100000,
-    "specialization_review" : 100000,
+     "person" : 200,
+   "group" : 12,
+   "person_ss" : 100,
+   "person_hs" : 100,
+   "ss_review" : 100,
+   "hs_review" : 100,
+   "specialization_review" : 100,
+   "person_specialization": 1100,
 }
 #to_fill = {"group_member" : 1000}
 filled={}
@@ -231,7 +232,7 @@ while len(remaining_fields) > 0:
                         if info["ref"] not in ref_count:
                             start = starting_ids[info["ref"]]
                             amt = filled[info["ref"]]
-                            num = start + random.randint(0,amt)
+                            num = start + random.randint(0,amt-1)
                             cur_doc.update({field: int_to_obj_id(num)})
                 doc_list.append(cur_doc)
 
