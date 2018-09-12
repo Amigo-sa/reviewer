@@ -105,7 +105,7 @@ def prepare_version_info():
 
 def read_skill_list(filename):
     skill_list = []
-    file = open(filename)
+    file = open(filename, encoding="utf-8")
     header = file.readline()
     header = header.splitlines()[0]
     skill_types = header.split(";")
