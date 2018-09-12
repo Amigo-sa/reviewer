@@ -240,6 +240,8 @@ class TestApi(unittest.TestCase):
         skill_type = model.SkillType(_id=st_id)
         skill_type.refresh_from_db()
         self.assertEqual("some_name", skill_type.name, "must save correct name")
+        with self.assertRaises(AssertionError):
+            self.post_item("/skill_types", post_data)
 
     def test_delete_skill_type(self):
         skill_type = model.SkillType()
@@ -249,15 +251,22 @@ class TestApi(unittest.TestCase):
         self.delete_item("/skill_types/%s" % skill_type.pk)
         with self.assertRaises(DoesNotExist):
             skill_type.refresh_from_db()
+        with self.assertRaises(AssertionError):
+            self.delete_item("/skill_types/%s" % skill_type.pk)
 
     def test_list_skill_types(self):
-        skill_type = model.SkillType()
-        skill_type.name = "sample_name"
-        skill_type.save()
-        skill_type.refresh_from_db()
+        pks = []
+        for i in range(2):
+            skill_type = model.SkillType()
+            skill_type.name = "name%s"%i
+            skill_type.save()
+            pks.append(str(skill_type.pk))
         list = self.get_item_list("/skill_types")
-        self.assertEqual(1, len(list), "must return only one item")
-        self.assertEqual("sample_name", list[0]["name"], "must get correct name")
+        self.assertEqual(2, len(list), "must return all items")
+        for i in range(2):
+            self.assertIn({"id" : pks[i],
+                       "name" : "name%s"%i},
+                      list, "must return correct list")
 
     def test_add_soft_skill(self):
         skill_type = model.SkillType()
@@ -268,6 +277,8 @@ class TestApi(unittest.TestCase):
         soft_skill = model.SoftSkill(_id=ss_id)
         soft_skill.refresh_from_db()
         self.assertEqual("some_name", soft_skill.name, "must save correct name")
+        with self.assertRaises(AssertionError):
+            self.post_item("/skill_types/%s/soft_skills" % skill_type.pk, post_data)
 
     def test_add_hard_skill(self):
         skill_type = model.SkillType()
@@ -278,6 +289,76 @@ class TestApi(unittest.TestCase):
         hard_skill = model.HardSkill(_id=hs_id)
         hard_skill.refresh_from_db()
         self.assertEqual("some_name", hard_skill.name, "must save correct name")
+        with self.assertRaises(AssertionError):
+            self.post_item("/skill_types/%s/hard_skills" % skill_type.pk, post_data)
+
+    def test_delete_soft_skill(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_skill_type"
+        skill_type.save()
+        soft_skill = model.SoftSkill()
+        soft_skill.name = "sample_name"
+        soft_skill.skill_type_id=skill_type.pk
+        soft_skill.save()
+        soft_skill.refresh_from_db()
+        self.delete_item("/soft_skills/%s" % soft_skill.pk)
+        with self.assertRaises(DoesNotExist):
+            soft_skill.refresh_from_db()
+        with self.assertRaises(AssertionError):
+            self.delete_item("/soft_skills/%s" % soft_skill.pk)
+
+    def test_delete_hard_skill(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_skill_type"
+        skill_type.save()
+        hard_skill = model.HardSkill()
+        hard_skill.name = "sample_name"
+        hard_skill.skill_type_id=skill_type.pk
+        hard_skill.save()
+        hard_skill.refresh_from_db()
+        self.delete_item("/hard_skills/%s" % hard_skill.pk)
+        with self.assertRaises(DoesNotExist):
+            hard_skill.refresh_from_db()
+        with self.assertRaises(AssertionError):
+            self.delete_item("/hard_skills/%s" % hard_skill.pk)
+
+    def test_list_soft_skills(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_skill_type"
+        skill_type.save()
+        pks = []
+        for i in range(2):
+            soft_skill = model.SoftSkill()
+            soft_skill.name = "name%s"%i
+            soft_skill.skill_type_id = skill_type.pk
+            soft_skill.save()
+            pks.append(str(soft_skill.pk))
+        list = self.get_item_list("/soft_skills")
+        self.assertEqual(2, len(list), "must return all items")
+        for i in range(2):
+            self.assertIn({"id" : pks[i],
+                       "name" : "name%s"%i,
+                       "skill_type" : str(skill_type.pk)},
+                      list, "must return correct list")
+
+    def test_list_hard_skills(self):
+        skill_type = model.SkillType()
+        skill_type.name = "sample_skill_type"
+        skill_type.save()
+        pks = []
+        for i in range(2):
+            hard_skill = model.HardSkill()
+            hard_skill.name = "name%s"%i
+            hard_skill.skill_type_id = skill_type.pk
+            hard_skill.save()
+            pks.append(str(hard_skill.pk))
+        list = self.get_item_list("/hard_skills")
+        self.assertEqual(2, len(list), "must return all items")
+        for i in range(2):
+            self.assertIn({"id" : pks[i],
+                       "name" : "name%s"%i,
+                       "skill_type" : str(skill_type.pk)},
+                      list, "must return correct list")
 
 
     def test_group_roles_normal(self):
