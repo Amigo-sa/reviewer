@@ -119,7 +119,7 @@ def read_skill_list(filename):
         line = line.splitlines()[0]
         skill_names = line.split(";")
         if len(skill_names) != type_count:
-            raise SyntaxError("Ошибка парсинга skills.csv")
+            raise SyntaxError("Ошибка парсинга %s"% filename)
         for index, name in enumerate(skill_names):
             if len(name) > 0:
                 skill_list[index].append(name)

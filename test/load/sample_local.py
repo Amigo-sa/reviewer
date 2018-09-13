@@ -1,3 +1,19 @@
+#Settings
+#Number of docs to insert:
+to_fill = {
+        "person" : 20,
+        "group" : 12,
+        "person_ss" : 100,
+        "person_hs" : 100,
+        "ss_review" : 100,
+        "hs_review" : 1000,
+        "specialization_review" : 10000,
+        "person_specialization": 1100,
+}
+#Offet to validate each inserted doc against pymodm validation rules
+validate_after_fill = True
+
+
 from node.settings import constants
 import os, sys, inspect, re
 db_name = constants.db_name
@@ -59,17 +75,7 @@ ignore_list = [
         "AuthInfo"
     ]
 
-to_fill = {
-     "person" : 200,
-   "group" : 12,
-   "person_ss" : 100,
-   "person_hs" : 100,
-   "ss_review" : 100,
-   "hs_review" : 100,
-   "specialization_review" : 100,
-   "person_specialization": 1100,
-}
-#to_fill = {"group_member" : 1000}
+
 filled={}
 starting_ids = {}
 doc_fields = {}
@@ -145,6 +151,8 @@ def gen_ref(num : int, refs : list):
 
 remaining_fields = doc_fields.copy()
 one_pass_for_everyone = hash_password("12345")
+
+all_group_roles = []
 
 while len(remaining_fields) > 0:
     print("--------------")
@@ -228,6 +236,9 @@ while len(remaining_fields) > 0:
                         cur_doc.update({field: {"1" : "stub"}})
                     elif info["type"] == "binData":
                         pass
+                    elif info["type"] == "ref_list":
+                        if col_name == "group" and field == "role_list":
+                            cur_doc.update({"role_list" : all_group_roles})
                     elif info["type"] == "objectId":
                         if info["ref"] not in ref_count:
                             start = starting_ids[info["ref"]]
@@ -253,7 +264,11 @@ while len(remaining_fields) > 0:
                     auth_list.append(auth_doc)
                 doc_ctr += 1
 
-            cnt = len(db[col_name].insert_many(doc_list, ordered=False).inserted_ids)
+            inserted_ids = db[col_name].insert_many(doc_list, ordered=False).inserted_ids
+            if col_name == "group_role":
+                all_group_roles = inserted_ids
+                print(inserted_ids)
+            cnt = len(inserted_ids)
             filled.update({col_name: cnt})
             if auth_list:
                 a_cnt = len(db["auth_info"].insert_many(auth_list, ordered=False).inserted_ids)
@@ -282,4 +297,15 @@ print("total inserted:")
 for key,item in filled.items():
     print("%s: %s"% (key,item))
 
+
+if validate_after_fill:
+    if sys.platform == "win32":
+        val = input("Validate docs? Type something to validate or press return to skip\n\n")
+        if val:
+            for doc_class in doc_class_list:
+                if doc_class.__name__ not in ignore_list:
+                    print("validating %s..." % doc_class.__name__, end="", flush=True)
+                    for obj in doc_class.objects.all():
+                        obj.clean()
+                    print(" done")
 
