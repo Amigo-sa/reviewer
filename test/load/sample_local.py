@@ -1,15 +1,15 @@
 # Settings
 # Number of docs to insert:
 to_fill = {
-        "person" : 100,
-        "group_member" : 90,
+        "person" : 10,
+        "group_member" : 11,
         "group" : 20,
-        "person_ss" : 400,
-        "person_hs" : 400,
-        "ss_review" : 90,
-        "hs_review" : 90,
-        "specialization_review" : 90,
-        "person_specialization": 900,
+        "person_ss" : 40,
+        "person_hs" : 40,
+        "ss_review" : 110,
+        "hs_review" : 110,
+        "specialization_review" : 11,
+        "person_specialization": 11,
 }
 # Offer to validate each inserted doc against pymodm validation rules
 validate_after_fill = False
@@ -310,7 +310,7 @@ for key,item in filled.items():
 
 
 if validate_after_fill:
-    if sys.platform == "win32":
+    if True:    #sys.platform == "win32":
         val = input("Validate docs? Type something to validate or press return to skip\n\n")
         if val:
             for doc_class in doc_class_list:
