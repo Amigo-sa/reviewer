@@ -1,18 +1,21 @@
-#Settings
-#Number of docs to insert:
+# Settings
+# Number of docs to insert:
 to_fill = {
-        "person" : 20,
-        "group" : 12,
-        "person_ss" : 100,
-        "person_hs" : 100,
-        "ss_review" : 100,
-        "hs_review" : 1000,
-        "specialization_review" : 10000,
-        "person_specialization": 1100,
+        "person" : 100,
+        "group_member" : 90,
+        "group" : 20,
+        "person_ss" : 400,
+        "person_hs" : 400,
+        "ss_review" : 90,
+        "hs_review" : 90,
+        "specialization_review" : 90,
+        "person_specialization": 900,
 }
-#Offet to validate each inserted doc against pymodm validation rules
-validate_after_fill = True
-
+# Offer to validate each inserted doc against pymodm validation rules
+validate_after_fill = False
+# Fields that must be as diverse as possible when generating unique multi-reference combos
+# If two or more fields from this list are present in the doc, diversity of each field is not guaranteed.
+diverse = ["person_id"]
 
 from node.settings import constants
 import os, sys, inspect, re
@@ -203,7 +206,15 @@ while len(remaining_fields) > 0:
                 for field, info in field_list.items():
                     if info["ref"] == r_name:
                         r_field_names.append(field)
-
+            #diversify
+            for item in diverse:
+                if item in r_field_names:
+                    ind = r_field_names.index(item)
+                    if ind > 0:
+                        r_col_names[0], r_col_names[ind] = r_col_names[ind], r_col_names[0]
+                        r_cnts[0], r_cnts[ind] = r_cnts[ind], r_cnts[0]
+                        r_field_names[0], r_field_names[ind] = r_field_names[ind], r_field_names[0]
+                    break
             auth_list = []
             for i in range(insert_amount):
                 cur_doc = {"_id" : int_to_obj_id(doc_ctr)}
@@ -265,9 +276,9 @@ while len(remaining_fields) > 0:
                 doc_ctr += 1
 
             inserted_ids = db[col_name].insert_many(doc_list, ordered=False).inserted_ids
+            #all groups will have all roles possible to avoid validation issues
             if col_name == "group_role":
                 all_group_roles = inserted_ids
-                print(inserted_ids)
             cnt = len(inserted_ids)
             filled.update({col_name: cnt})
             if auth_list:
