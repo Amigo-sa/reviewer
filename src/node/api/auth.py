@@ -231,7 +231,6 @@ def gen_session_id():
 def hash_password(password):
     pass_hash = hashlib.sha256(password.encode("utf-8"))
     hash_hex = pass_hash.hexdigest()
-    print(hash_hex)
     return hash_hex
 
 
@@ -265,11 +264,11 @@ def required_auth(required_permissions="admin"):
                 if auth_info.count():
                     auth_info = auth_info.first()
                 else:
-                    return jsonify({"result": ERR.AUTH}), 200
+                    return jsonify({"result": ERR.AUTH_NO_SESSION}), 200
                 if auth_info.permissions & 1 and required_permissions != "reviewer":
                     return f(*args, **kwargs)
                 if required_permissions == "admin":
-                    return jsonify({"result": ERR.AUTH}), 200
+                    return jsonify({"result": ERR.AUTH_NO_PERMISSIONS}), 200
                 if required_permissions == "user" and auth_info.person_id:
                     if "person_id" in kwargs:
                         person_id = kwargs["person_id"]
