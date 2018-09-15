@@ -260,6 +260,7 @@ def required_auth(required_permissions="admin"):
             else:
                 auth_token = ''
             try:
+                print(auth_token)
                 auth_info = AuthInfo.objects.raw({"session_id": auth_token})
                 if auth_info.count():
                     auth_info = auth_info.first()
