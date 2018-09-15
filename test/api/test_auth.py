@@ -433,27 +433,27 @@ class TestAuth(unittest.TestCase):
                             headers=cont_header,
                             data=bytes(b"\x01"))
         self.assertEqual(200, resp.status_code)
-        self.assertEqual(ERR.AUTH, resp.json()["result"])
+        self.assertEqual(ERR.AUTH_NO_PERMISSIONS, resp.json()["result"])
 
 
         for url in self.admin_only_post:
             resp_json = hm.try_post_item(self, self.api_URL + url,
                                          post_data, self.user_header)
-            self.assertEqual(ERR.AUTH, resp_json["result"],
+            self.assertEqual(ERR.AUTH_NO_PERMISSIONS, resp_json["result"],
                              "%s is restricted to post for user %s" % (url, self.user_person_id))
         for url in self.admin_only_delete:
             resp_json = hm.try_delete_item(self, self.api_URL + url, self.user_header)
-            self.assertEqual(ERR.AUTH, resp_json["result"],
+            self.assertEqual(ERR.AUTH_NO_PERMISSIONS, resp_json["result"],
                              "%s is restricted to delete for user %s" % (url, self.user_person_id))
         for url in self.admin_only_patch:
             resp_json = hm.try_patch_item(self, self.api_URL + url,
                                           post_data, self.user_header)
-            self.assertEqual(ERR.AUTH, resp_json["result"],
+            self.assertEqual(ERR.AUTH_NO_PERMISSIONS, resp_json["result"],
                              "%s is restricted to patch for user %s" % (url, self.user_person_id))
         for url in self.admin_only_get:
             resp_json = hm.try_get_item(self, self.api_URL + url,
                                         self.user_header)
-            self.assertEqual(ERR.AUTH, resp_json["result"],
+            self.assertEqual(ERR.AUTH_NO_PERMISSIONS, resp_json["result"],
                              "%s is restricted to get for user %s" % (url, self.user_person_id))
 
     def test_user_allowed_access(self):
@@ -510,8 +510,8 @@ class TestAuth(unittest.TestCase):
         for url in self.review_valid_post:
             resp_json = hm.try_post_item(self, self.api_URL + url,
                                          review_data, self.user_header)
-            self.assertEqual(ERR.AUTH, resp_json["result"],
-                             "%s must return ERR.AUTH for user %s" % (url, self.user_person_id))
+            self.assertEqual(ERR.AUTH_NO_PERMISSIONS, resp_json["result"],
+                             "%s must return ERR.AUTH_NO_PERMISSIONS for user %s" % (url, self.user_person_id))
 
     def test_review_delete_normal(self):
         self.prepare_docs()
@@ -548,8 +548,8 @@ class TestAuth(unittest.TestCase):
         for rev_id in rev_ids:
             resp_json = hm.try_delete_item(self, self.api_URL + "/reviews/" + rev_id,
                                            self.other_user_header)
-            self.assertEqual(ERR.AUTH, resp_json["result"],
-                             "DELETE %s must return ERR.AUTH for user %s" % (url, self.user_person_id))
+            self.assertEqual(ERR.AUTH_NO_PERMISSIONS, resp_json["result"],
+                             "DELETE %s must return ERR.AUTH_NO_PERMISSIONS for user %s" % (url, self.user_person_id))
 
     def test_get_unauth(self):
         self.prepare_docs()
