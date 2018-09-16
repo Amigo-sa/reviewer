@@ -56,7 +56,7 @@ def find_persons():
                                                 }
                                     }
                                }
-                          }
+                          },
                          )
         else:
             return jsonify({"result": ERR.INPUT}), 200
@@ -79,6 +79,18 @@ def find_persons():
         if Department.objects.raw({"_id": ObjectId(department_id)}).count():
             pipeline += ({"$match":
                               {"person_specialization.department_id": ObjectId(department_id)}},
+                         {"$project":
+                              {"first_name": 1,
+                               "middle_name": 1,
+                               "surname": 1,
+                               "person_specialization":
+                                   {"$filter": {"input": "$person_specialization",
+                                                "as": "spec",
+                                                "cond": {"$in": ["$$spec.department_id", [department_id]]}
+                                                }
+                                    }
+                               }
+                          },
                         )
         else:
             err = ERR.NO_DATA
@@ -90,6 +102,18 @@ def find_persons():
                 departments.append(department.pk)
             pipeline += ({"$match":
                               {"person_specialization.department_id": {"$in": departments}}},
+                         {"$project":
+                              {"first_name": 1,
+                               "middle_name": 1,
+                               "surname": 1,
+                               "person_specialization":
+                                   {"$filter": {"input": "$person_specialization",
+                                                "as": "spec",
+                                                "cond": {"$in": ["$$spec.department_id", departments]}
+                                                }
+                                    }
+                               }
+                          },
                         )
         else:
             err = ERR.NO_DATA
