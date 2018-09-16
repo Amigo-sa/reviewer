@@ -47,6 +47,8 @@ try:
         db_name = constants.db_name
     elif os.environ["REVIEWER_APP_MODE"] == "development":
         db_name = constants.db_name_develop
+    elif os.environ["REVIEWER_APP_MODE"] == "load":
+        db_name = constants.db_name_load_test
     elif os.environ["REVIEWER_APP_MODE"] == "local":
         db_name = constants.db_name
     else:

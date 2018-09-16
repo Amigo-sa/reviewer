@@ -25,7 +25,7 @@ except Exception as e:
     logging.error("Environment variable REVIEWER_APP_MODE must be defined !")
     raise
 
-if app_mode == "production" or app_mode == "development":
+if app_mode == "production" or app_mode == "development" or app_mode == "load":
     configure_logger(app)
 
 app.register_blueprint(bp_logging)
