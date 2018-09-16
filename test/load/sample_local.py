@@ -17,14 +17,17 @@ validate_after_fill = False
 # If two or more fields from this list are present in the doc, diversity of each field is not guaranteed.
 diverse = ["person_id"]
 
+import context
 from node.settings import constants
 import os, sys, inspect, re
 db_name = constants.db_name
+os.environ["REVIEWER_APP_MODE"] = "local"
 if len(sys.argv) > 1:
     if '--test' in str(sys.argv):
         db_name = constants.db_name_test
     if '--load_test' in str(sys.argv):
         db_name = constants.db_name_load_test
+        os.environ["REVIEWER_APP_MODE"] = "load"
 
 from pymongo import MongoClient
 uri="mongodb://localhost:27017"
@@ -38,7 +41,7 @@ for col in colList:
     print("dropped collection " + col)
 print("done")
 
-import context
+
 import data.reviewer_model as model
 from node.api.auth import hash_password, gen_session_id
 
