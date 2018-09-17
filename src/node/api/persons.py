@@ -64,14 +64,13 @@ def find_persons():
     if 'group_id' in request.args:
         group_id = request.args['group_id']
         if Group.objects.raw({"_id": ObjectId(group_id)}).count():
-            pipeline += ({"$lookup":
-                            {"from": "group_member",
-                             "localField": "_id",
-                             "foreignField": "person_id",
-                             "as": "role"}},
-                         {"$match":
-                             {"role.group_id": ObjectId(group_id)}},
-                         )
+            group_members = []
+            for group_member in GroupMember.objects.raw({"group_id": ObjectId(group_id)}):
+                group_members.append(group_member.person_id.pk)
+            pipeline += ({"$match":
+                              {"_id": {"$in": group_members}}},
+
+            )
         else:
             err = ERR.NO_DATA
     elif 'department_id' in request.args:
