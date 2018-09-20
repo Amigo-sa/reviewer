@@ -230,8 +230,11 @@ while len(remaining_fields) > 0:
                         cur_doc.update({r_field_names[i]: int_to_obj_id(start + ref_field_vals[i])})
                 for field, info in field_list.items():
                     if info["type"] == "string":
-                        cur_doc.update({field : field + "_" + str(random.randint(0,999)) +
-                                                                 "_" + str(doc_ctr)})
+                        if field == "phone_no":
+                            cur_doc.update({field: "8901"+ "%07d"%(doc_ctr)})
+                        else:
+                            cur_doc.update({field : field + "_" + str(random.randint(0,999)) +
+                                                                     "_" + str(doc_ctr)})
                     elif info["type"] == "date":
                         cur_doc.update({field: datetime.datetime(random.randrange(1900, 2000),
                                              random.randrange(1, 12),
@@ -270,7 +273,7 @@ while len(remaining_fields) > 0:
                         "is_approved": True,
                         "last_send_time": None,
                         "password": one_pass_for_everyone,
-                        "permissions": random.randint(0, 1),
+                        "permissions": 0,
                         "person_id": cur_doc["_id"],
                         "phone_no" : cur_doc["phone_no"],
                         "session_id" : None
