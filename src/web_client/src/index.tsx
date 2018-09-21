@@ -4,7 +4,6 @@ import * as ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
-import registerServiceWorker from './registerServiceWorker';
 import AuthStore from './stores/AuthStore';
 const stores = {
     AuthStore
@@ -18,4 +17,5 @@ ReactDOM.render(
     </Provider>,
     document.getElementById('root') as HTMLElement
 );
-registerServiceWorker();
+// TODO: temp disable service worker. There is problem with it on apache server.
+// registerServiceWorker();
