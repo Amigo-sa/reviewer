@@ -271,7 +271,7 @@ while len(remaining_fields) > 0:
                         "attempts": 0,
                         "auth_code": None,
                         "is_approved": True,
-                        "last_send_time": None,
+                        "last_send_time": datetime.datetime.now(datetime.timezone.utc),
                         "password": one_pass_for_everyone,
                         "permissions": 0,
                         "person_id": cur_doc["_id"],
