@@ -1,0 +1,519 @@
+body{
+	
+}
+#con{
+	width: 100%;
+	height: auto;
+	background-color: #ffffff;
+}
+.img_log{
+	width: 93px;
+	height: auto;
+	margin-left: 65px;
+	margin-top: 11px;
+}
+/* Skill for life reviewer */
+
+.s_f_l{
+	position: absolute;
+	width: 281px;
+	height: 64px;
+	left: 100px;
+	top: 28px;
+}
+.sfl{
+	display: block;
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: bold;
+	line-height: normal;
+	font-size: 30px;
+	color: #000000;
+	font-size: 33px;
+}
+.rev{
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: bold;
+	line-height: normal;
+	font-size: 20px;
+	color: #02588A;
+}
+
+
+/* О проекте Участники Регистрация */
+
+.head_menu{
+	float: left;
+}
+.head_menu ul{
+	list-style-type: none;
+	position: absolute;
+	height: 22px;
+	left: 539px;
+	top: 38px;
+}
+.head_menu ul li{
+	display: inline;
+	margin: 10px;
+}
+.head_menu ul li a{
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 21px;
+	font-size: 20px;
+	color: #02588A;
+	text-decoration: none;
+}
+
+.cont{
+	margin-left: 385px;
+	margin-top: 114px;
+	width: 980px;
+	height: 627px;
+}
+
+/* Rectangle */
+.search{
+	float: right;
+	width: 335px;
+	margin-right: 75px;
+	margin-top: 30px;
+}
+.search input{
+	float: left;
+	width: 286px;
+	height: 44px;
+	background: #F6F6F6;
+	border: 1px solid #EAEAEA;
+	box-sizing: border-box;
+}
+.search button {
+	border: 0;
+	float: left;
+	width: 46px;
+	height: 44px;
+	background-color: #C4C4C4;
+}
+
+.ikon img{
+	width: 108px;
+	height: 108px;
+	margin-bottom: 15px;
+
+	background: url(img-2.png);
+	border: 1px solid #C9C9C9;
+	box-sizing: border-box;
+	border-radius: 107.5px;
+}
+
+/* Иванова Анастасия Ивановна */
+
+.anastasia{
+	display: block;
+	margin: auto;
+	width: 239px;
+	height: 20px;
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 21px;
+	font-size: 20px;
+	text-align: center;
+
+	color: #B2B2B2;
+}
+.ivanovna{
+	display: block;
+	margin: auto;
+	width: 239px;
+	height: 35px;
+	border-bottom: solid 1px #EBEBEB;
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 21px;
+	font-size: 20px;
+	text-align: center;
+
+	color: #B2B2B2;
+}
+
+
+/* Мой профиль Опросы Сообщения Поиск Рейтинг Отзывы Настройки */
+.my_profile{
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 35px;
+	font-size: 20px;
+	color: #008CDF;
+}
+.ikon ul{
+	list-style-type: none;
+	width: 237px;
+	height: 232px;
+	text-align: left;
+	margin-top: 15px;
+}
+.ikon ul li a{
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 35px;
+	font-size: 20px;
+
+	color: #676767;
+	text-decoration: none;
+}
+
+.sidebar {
+	margin-left: 64px;
+	margin-top: 5px;
+	width: 300px;
+	height: 581px;
+	float: left;
+	background-color: #FBFBFB;
+	text-align: center;
+	margin-right: 30px;
+}
+
+
+
+/* Иванова Анастасия Ивановна */
+.name{
+	width: 710px;
+	height: 32px;
+	float: left;
+
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 32px;
+	font-size: 30px;
+
+	color: #676767;
+	margin-left: 15px;
+}
+.name h2{
+	display: block;
+	width: 430px;
+	font-family: Roboto;
+	font-size: 30px;
+	line-height: 32px;
+	color: #676767;
+	float: left;
+}
+/* online */
+
+.onli{
+	display: block;
+	float: left;
+	width: 49px;
+	height: 19px;
+
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 19px;
+	font-size: 18px;
+
+	color: #C6C6C6;
+	margin-top: 10px;
+}
+/* Статус: Сотрудник Организация: ИТМО (Полное название организации) Направление: Экономика */
+.TTH{
+	width: 454px;
+	height: 70px;
+	float: left;
+	margin-left: 15px;
+	margin-top: 10px;
+}
+.TTH span{
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 19px;
+	font-size: 18px;
+	color: #919191;
+	display: block;
+}
+
+/* Архив */
+.archive{
+	position: absolute;
+	top: 165px;
+	right: 75px;
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: 300;
+	line-height: 17px;
+	font-size: 16px;
+	text-decoration-line: underline;
+	color: #37B9EC;
+}
+/* ivaniva */
+.ava_big{
+	float: left;
+}
+.ava_big img{
+	width: 228px;
+	height: 287px;
+	border: 1px solid #EBEBEB;
+}
+
+/* Архив анкеты */
+.archive img{
+	float: left;
+	width: 18px;
+}
+.archive a{
+	width: 102px;
+	height: 17px;
+
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: 300;
+	line-height: 17px;
+	font-size: 16px;
+	text-decoration-line: underline;
+
+	color: #37B9EC;
+}
+
+/* Профессия */
+.profession{
+	width: 710px;
+	height: 160px;
+	float: left;
+	margin-left: 15px;
+}
+.profession h3{
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 42px;
+	font-size: 24px;
+
+	color: #5A5A5A;
+}
+/* менеджер */
+.profession h6{
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 32px;
+	font-size: 18px;
+	color: #B2B2B2;
+	float: left;
+}
+/* 8,5 7,2 */
+.level{
+	float: left;
+	width: 150px;
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: 300;
+	line-height: 74px;
+	font-size: 42px;
+
+	color: #B5B4B4;
+}
+.level span{
+	display: block;
+}
+.level canvas{
+	width: 40px;
+	height: 40px;
+}
+/* целеустремленность стрессоустойчивость оперативность готовность изучать новое */
+.prof_quality{
+	float: left;
+	margin-top: 10px;
+}
+.prof_quality ul{
+	float: left;
+	list-style-type: none;
+	padding-left: 0;
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 32px;
+	font-size: 18px;
+	color: #BFBFBF;
+}
+.person_quality{
+	margin-left: 60px;
+}
+/* heart */
+.person_quality ul li img{	
+	width: 23px;
+	height: 23px;
+}
+	/* 342 */
+.indicators{
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 25px;
+	font-size: 14px;
+
+	color: #797979;
+}
+/* Опрос первокурсников */
+
+.prof_quality h5{
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 42px;
+	font-size: 24px;
+
+	color: #5A5A5A;
+}
+
+/* Rectangle */
+
+.prof_quality ul li progress{
+	width: 204px;
+	height: 18.81px;
+	color: #008CDF;
+	margin-left: 30px;
+}
+.quality{
+	float: left;
+	width: 1085px;
+	height: auto;
+	margin-right: 75px;
+}
+
+/* Заметки о себе */
+
+.about_oneself{
+	float: left;
+	width: 1085px;
+	height: auto;
+	margin-right: 75px;
+}
+.about_oneself h5{
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 25px;
+	font-size: 24px;
+	color: #000000;
+}
+	/* Возможно размещение короткого пояснительного текста о себе с указанием личных достижений и значимых наград Характер: спокойный, усидчивый, умение ставить цели и достигать их */
+
+.about_oneself p{
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: 300;
+	line-height: normal;
+	font-size: 16px;
+	color: #767676;
+}
+/*Мои опросы*/
+.questions{
+	float: left;
+	width: 1400px;
+	height: auto;
+	margin-left: 60px;
+	margin-top: 30px;
+}
+.questions h3{
+	margin-bottom: 30px;
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 27px;
+	font-size: 26px;
+	color: #008CDF;
+}
+.quest{
+	width: 100%;
+	height: auto;
+	background-color: #F2F2F2;
+	float: left;
+}
+.headings{
+	float: left;
+	margin: 2%;
+	width: 29%;
+	height: auto;
+}
+.headings h4{
+	margin-bottom: 20px;
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 23px;
+	font-size: 22px;
+	color: #323232;
+}
+.headings p{
+	margin-bottom: 50px;
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: 300;
+	line-height: 17px;
+	font-size: 16px;
+	color: #767676;
+}
+.headings_rigt{
+	
+}
+/* result-for */
+.prog_green{
+	width: 340px;
+	height: 42.1px;
+	background: #009643;
+	margin-bottom: 15px;
+}
+.prog_orange{
+	width: 340px;
+	height: 42.1px;
+	background: #EAB600;
+}
+	/* Показать еще */
+.add_a_poll{
+	width: 226px;
+	height: 62px;
+	border: solid 2px #0FA5FE;
+	text-align: center;
+	margin: 10px auto;
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: bold;
+	line-height: 21px;
+	font-size: 20px;
+	color: #0FA5FE;
+	cursor: pointer;
+}
+.add_a_poll:hover{
+	border: solid 1px #C9C9C9;
+}
+.add_a_poll span{
+	display: block;
+	margin-top: 7%;
+}
+/* Подвал */
+
+.foot{
+	width: 100%;
+	height: 50px;
+	float: left;
+	text-align: center;
+	background: #FFFFFF;
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 19px;
+	font-size: 18px;
+	color: #C9C9C9;
+}
+.foot span{
+	display: block;
+	margin-top: 15px;
+}
