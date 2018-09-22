@@ -19,27 +19,8 @@
             "allow-leading-underscore",
             "ban-keywords"
         ],
-        "member-ordering": [
-            true,
-            {
-                "order": [
-                    "public-static-field",
-                    "public-static-method",
-                    "protected-static-field",
-                    "protected-static-method",
-                    "private-static-field",
-                    "private-static-method",
-                    "public-constructor",
-                    "protected-constructor",
-                    "private-constructor",
-                    "public-instance-method",
-                    "public-instance-field",
-                    "protected-instance-method",
-                    "protected-instance-field",
-                    "private-instance-method",
-                    "private-instance-field"
-                ]
-            }
-        ]
+        "object-literal-sort-keys": false,
+        "member-ordering": false,
+        "one-line": false
     }
 }
