@@ -992,7 +992,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"result\": 0,\n    \"session_id\": \"65855f243adc5806e47fbf5a34a935c6\"\n}"
+							"body": "{\n\t\"person_id\": \"65855f243adc5806e47fbf5a\",\n    \"result\": 0,\n    \"session_id\": \"65855f243adc5806e47fbf5a34a935c6\"\n}"
 						}
 					]
 				},
@@ -1361,10 +1361,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "afd741e1-70a0-4df6-9773-2db5ed5d8148",
+								"id": "9f5989ad-2ffd-4ebe-af75-450f5931a082",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"organization_id\", \"5b75bd722131370cc0941ae1\");"
+									"pm.environment.set(\"organization_id\", \"5b9d193210720875506caec2\");"
 								]
 							}
 						}
@@ -1377,7 +1377,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer adf7b398fdd8e3c54fa5c540a682bded"
+								"value": "Bearer {{auth_token}}"
 							}
 						],
 						"body": {
@@ -9143,7 +9143,7 @@
 	],
 	"variable": [
 		{
-			"id": "5566bfe2-bc18-49eb-8fc3-222daed0a78d",
+			"id": "ce0659cc-7b34-455e-a4eb-ab122ca80be0",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"
