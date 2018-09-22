@@ -1,26 +1,18 @@
-import { action, observable } from 'mobx';
-import auth from '../agent/auth';
+import { action, observable } from "mobx";
+import auth from "../agent/auth";
 
 interface IUserData {
-    phone: string,
-    password: string,
-    token: string
+    phone: string;
+    password: string;
+    token: string;
 }
 
 class AuthStore {
-    @observable public inProgress: boolean = false;
-    @observable public errors: any = undefined;
-    @observable public isAuth: boolean = false;
 
-    @observable
-    public user: IUserData = {
-        password: '',
-        phone: '',
-        token: '',
-    };
     constructor() {
-        console.log('Construct AuthStore');
+        console.log("Construct AuthStore");
     }
+
     @action
     public setPhone(phone: string) {
         this.user.phone = phone;
@@ -31,8 +23,8 @@ class AuthStore {
     }
 
     @action public reset() {
-        this.user.phone = '';
-        this.user.password = '';
+        this.user.phone = "";
+        this.user.password = "";
     }
 
     @action public login() {
@@ -46,7 +38,7 @@ class AuthStore {
                 // this.errors = err.response && err.response.body && err.response.body.errors;
                 console.log(err);
                 throw err;
-            }))
+            }));
         // .finally(action(() => { this.inProgress = false; }));
     }
 
@@ -55,9 +47,19 @@ class AuthStore {
     }
 
     @action public logout() {
-        this.setToken('');
+        this.setToken("");
         return Promise.resolve();
     }
+    @observable public inProgress: boolean = false;
+    @observable public errors: any = undefined;
+    @observable public isAuth: boolean = false;
+
+    @observable
+    public user: IUserData = {
+        password: "",
+        phone: "",
+        token: "",
+    };
 
     @action
     protected setToken(token: string) {
