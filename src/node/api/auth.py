@@ -33,7 +33,7 @@ def user_login():
             session_id = gen_session_id()
             auth_info.session_id = session_id
             auth_info.attempts = 0
-            auth_info.last_send_time = datetime.now(timezone.utc)
+            auth_info.last_auth_time = datetime.now(timezone.utc)
             auth_info.save()
             result = {"result": ERR.OK,
                       "session_id": session_id}
