@@ -114,8 +114,7 @@ def prepare_org_structure():
 def age_session(phone_no, minutes):
     try:
         auth_info = model.AuthInfo.objects.get({"phone_no": phone_no})
-        ts = auth_info.last_send_time
-        dt = ts.as_datetime()
+        dt = auth_info.last_send_time
         dt -= timedelta(minutes=int(minutes))
         auth_info.last_send_time = dt
         auth_info.save()
