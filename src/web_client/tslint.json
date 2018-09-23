@@ -21,6 +21,8 @@
         ],
         "object-literal-sort-keys": false,
         "member-ordering": false,
-        "one-line": false
+        "one-line": false,
+        "no-string-literal": false,
+        "prefer-const": false
     }
 }
