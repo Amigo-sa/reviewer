@@ -33,7 +33,7 @@ def user_login():
             session_id = gen_session_id()
             auth_info.session_id = session_id
             auth_info.attempts = 0
-            auth_info.last_send_time = datetime.now(timezone.utc)
+            auth_info.last_auth_time = datetime.utcnow()
             auth_info.save()
             result = {"result": ERR.OK,
                       "session_id": session_id}
@@ -106,15 +106,15 @@ def confirm_phone():
             if old_auth_info.is_approved:
                 raise AuthError("номер уже подтверждён")
             else:
-                last_send_time = old_auth_info.last_send_time.as_datetime()
-                if datetime.now(timezone.utc) < last_send_time + sms_timeout:
+                last_send_time = old_auth_info.last_send_time
+                if datetime.utcnow() < last_send_time + sms_timeout:
                     auth_err = ERR.AUTH_SMS_TIMEOUT
                     raise AuthError("слишком частые СМС")
                 else:
                     old_auth_info.delete()
         new_auth_info = AuthInfo()
         new_auth_info.phone_no = phone_no
-        new_auth_info.last_send_time = datetime.now(timezone.utc)
+        new_auth_info.last_send_time = datetime.utcnow()
         code = gen_sms_code()
         session_id = gen_session_id()
         new_auth_info.session_id = session_id
@@ -153,10 +153,10 @@ def finish_phone_confirmation():
         auth_info = AuthInfo.objects.raw({"session_id": session_id})
         if auth_info.count():
             auth_info = auth_info.first()
-            sent_time = auth_info.last_send_time.as_datetime()
+            sent_time = auth_info.last_send_time
             if auth_info.is_approved:
                 result = {"result": ERR.OK}
-            elif sent_time < datetime.now(timezone.utc) - confirm_timeout:
+            elif sent_time < datetime.utcnow() - confirm_timeout:
                 err = ERR.AUTH_SESSION_EXPIRED
                 raise AuthError("session expired")
             elif auth_info.auth_code == auth_code:

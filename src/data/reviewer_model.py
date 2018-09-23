@@ -497,8 +497,8 @@ class SurveyResponse(MongoModel):
 class AuthInfo(MongoModel):
     phone_no = fields.CharField()
     auth_code = fields.CharField(blank=True)
-    # TODO заменить на DateTimeField
-    last_send_time = fields.TimestampField()
+    last_send_time = fields.DateTimeField(blank=True)
+    last_auth_time = fields.DateTimeField(blank=True)
     attempts = fields.IntegerField(default=0)
     is_approved = fields.BooleanField(default=False)
     password = fields.CharField(blank=True)
