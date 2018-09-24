@@ -31,24 +31,33 @@ def find_persons():
         skip = int(request.args['query_start'])
     else:
         skip = 0
-    pipeline =()
-    person_spec_project_filter = 1
+    pipeline = ({"$lookup":
+                     {"from": "person_specialization",
+                      "localField": "_id",
+                      "foreignField": "person_id",
+                      "as": "person_specialization"}},)
     err = ERR.OK
-    departments = []
     if "specialization" in request.args:
         spec_type = request.args["specialization"]
         if Specialization.objects.raw({"type": spec_type}).count():
             specializations = []
             for specialization in Specialization.objects.raw({"type": spec_type}):
                 specializations.append(specialization.pk)
-            specialists = []
-            for person_spec in PersonSpecialization.objects.raw({"specialization_id": {"$in": specializations}}):
-                specialists.append(person_spec.person_id.pk)
-            pipeline += ({"$match": {"_id": {"$in": specialists}}},)
-            person_spec_project_filter = \
-                {"$filter": {"input": "$person_specialization",
-                             "as": "spec",
-                             "cond": {"$in": ["$$spec.specialization_id", specializations]}}}
+            pipeline += ({"$match":
+                              {"person_specialization.specialization_id": {"$in": specializations}}},
+                         {"$project":
+                              {"first_name": 1,
+                               "middle_name": 1,
+                               "surname": 1,
+                                  "person_specialization":
+                                   {"$filter": {"input": "$person_specialization",
+                                                "as": "spec",
+                                                "cond": {"$in": ["$$spec.specialization_id",specializations]}
+                                                }
+                                    }
+                               }
+                          },
+                         )
         else:
             return jsonify({"result": ERR.INPUT}), 200
 
@@ -67,14 +76,21 @@ def find_persons():
     elif 'department_id' in request.args:
         department_id = request.args['department_id']
         if Department.objects.raw({"_id": ObjectId(department_id)}).count():
-            specialists = []
-            for person_spec in PersonSpecialization.objects.raw({"department_id": ObjectId(department_id)}):
-                specialists.append(person_spec.person_id.pk)
-            pipeline += ({"$match": {"_id": {"$in": specialists}}},)
-            person_spec_project_filter = \
-                {"$filter": {"input": "$person_specialization",
-                             "as": "spec",
-                             "cond": {"$in": ["$$spec.department_id", [ObjectId(department_id)]]}}}
+            pipeline += ({"$match":
+                              {"person_specialization.department_id": ObjectId(department_id)}},
+                         {"$project":
+                              {"first_name": 1,
+                               "middle_name": 1,
+                               "surname": 1,
+                               "person_specialization":
+                                   {"$filter": {"input": "$person_specialization",
+                                                "as": "spec",
+                                                "cond": {"$in": ["$$spec.department_id", [department_id]]}
+                                                }
+                                    }
+                               }
+                          },
+                        )
         else:
             err = ERR.NO_DATA
     elif 'organization_id' in request.args:
@@ -83,16 +99,29 @@ def find_persons():
             departments = []
             for department in Department.objects.raw({"organization_id": ObjectId(organization_id)}):
                 departments.append(department.pk)
-            specialists = []
-            for person_spec in PersonSpecialization.objects.raw({"department_id": {"$in": departments}}):
-                specialists.append(person_spec.person_id.pk)
-            pipeline += ({"$match": {"_id": {"$in": specialists}}},)
-            person_spec_project_filter = \
-                {"$filter": {"input": "$person_specialization",
-                             "as": "spec",
-                             "cond": {"$in": ["$$spec.department_id", departments]}}}
+            pipeline += ({"$match":
+                              {"person_specialization.department_id": {"$in": departments}}},
+                         {"$project":
+                              {"first_name": 1,
+                               "middle_name": 1,
+                               "surname": 1,
+                               "person_specialization":
+                                   {"$filter": {"input": "$person_specialization",
+                                                "as": "spec",
+                                                "cond": {"$in": ["$$spec.department_id", departments]}
+                                                }
+                                    }
+                               }
+                          },
+                        )
         else:
             err = ERR.NO_DATA
+    """ #оставим этот код на случай если понадобится отфильтровать пользователей без специализации
+    else:
+        pipeline += ({"$match":
+                            {"$or": [{"tutor.department_id": {"$exists": True}},
+                                    {"student.department_id": {"$exists": True}}]}},
+                    )"""
     if "surname" in request.args:
         pipeline += ({"$match":
                              {"surname": {"$regex": request.args['surname'], "$options": "i"}}},
@@ -107,17 +136,6 @@ def find_persons():
                      )
     pipeline += ({"$skip": skip},
                  {"$limit": limit})
-    pipeline += ({"$lookup":
-                      {"from": "person_specialization",
-                       "localField": "_id",
-                       "foreignField": "person_id",
-                       "as": "person_specialization"}},
-                 {"$project":
-                      {"first_name": 1,
-                       "middle_name": 1,
-                       "surname": 1,
-                       "person_specialization": person_spec_project_filter}}
-                 )
     if err == ERR.NO_DATA:
         return jsonify({"result": ERR.NO_DATA}), 200
     try:
