@@ -1,13 +1,23 @@
 import { action, observable } from "mobx";
 import auth from "../agent/auth";
+import UserLoginResponse from "../server-api/registration/UserLoginResponse";
+import ErrorCodes from "../server-api/ErrorCodes";
+import { rejects } from "assert";
 
-interface IUserData {
+export interface IUserData {
     phone: string;
-    password: string;
-    token: string;
+    session_id?: string;
+    uid?: string;
+    data?: object;
 }
 
-class AuthStore {
+export class AuthStore {
+    @observable public isAuth: boolean = false;
+
+    @observable
+    public user: IUserData = {
+        phone: "",
+    };
 
     constructor() {
         console.log("Construct AuthStore");
@@ -18,28 +28,17 @@ class AuthStore {
         this.user.phone = phone;
     }
 
-    @action public setPassword(password: string) {
-        this.user.password = password;
-    }
-
     @action public reset() {
-        this.user.phone = "";
-        this.user.password = "";
+        // this.user = null;
     }
 
-    @action public login() {
-        this.inProgress = true;
-        this.errors = undefined;
-        return auth.login(this.user.phone, this.user.password)
-            .then((data) => {
-                console.log(data);
-                this.isAuth = true;
-            }).catch(action((err) => {
-                // this.errors = err.response && err.response.body && err.response.body.errors;
-                console.log(err);
-                throw err;
-            }));
-        // .finally(action(() => { this.inProgress = false; }));
+    @action
+    public authenticate(phone: string, password: string) {
+        return auth.login(phone, password)
+            .then((responce: UserLoginResponse) => { this.setUser(responce); })
+            .then(() => { this.getCurrentUser(true); })
+            .then(action(() => { this.setPhone(phone); this.isAuth = true; }))
+            .catch(( err ) => { console.error("Authenticate", err); });
     }
 
     @action public register() {
@@ -50,21 +49,30 @@ class AuthStore {
         this.setToken("");
         return Promise.resolve();
     }
-    @observable public inProgress: boolean = false;
-    @observable public errors: any = undefined;
-    @observable public isAuth: boolean = false;
-
-    @observable
-    public user: IUserData = {
-        password: "",
-        phone: "",
-        token: "",
-    };
 
     @action
-    protected setToken(token: string) {
-        this.user.token = token;
+    protected setUser(responce: UserLoginResponse) {
+        this.setToken(responce.session_id);
+        this.user.uid = responce.person_id;
+    }
+
+    @action
+    protected setToken(token?: string) {
+        this.user.session_id = token;
+    }
+
+    @action
+    public tryAuthenticate() {
+        return this.getCurrentUser()
+            .then(action(() => { this.isAuth = true; }))
+            .catch((err: object) => { console.error("tryAuthenticate", err); });
+    }
+
+    protected getCurrentUser(force?: boolean): Promise<Response> {
+        return !force && this.user && this.isAuth
+            ? Promise.resolve(this.user)
+            : auth.get(this.user);
     }
 }
 
-export default new AuthStore();
+export const authStore = new AuthStore();

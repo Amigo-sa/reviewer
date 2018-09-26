@@ -1,26 +1,22 @@
-import Axios from "axios";
-
-const API_ROOT = "http://151.248.120.88/reviewer/";
+import RegistrationApi from "../server-api/registration/RegistrationApi";
+import UserLoginRequest from "../server-api/registration/UserLoginRequest";
+import Request from "../server-api/Request";
+import ErrorCodes from "../server-api/ErrorCodes";
+import { IUserData } from "../stores/AuthStore";
 
 const auth = {
     login: (phone: string, password: string) => {
-        return Axios.post(API_ROOT + "/user_login", {
-            data: {
-                password: { password },
-                phone_no: phone,
-            },
-            method: "post",
-            responseType: "json",
-        });
+        return RegistrationApi.userLogin(new UserLoginRequest(phone, password));
     },
-    register: (phone: string, email: string, password: string) => {
-        return Axios.post(API_ROOT + "/confirm_phone_no", {
-            data: {
-                phone_no: phone,
-            },
-            method: "post",
-            responseType: "json",
-        });
+
+    get: ( user?: IUserData) => {
+        if ( user && user.session_id && user.uid ) {
+            // TODO send request to get user
+            return RegistrationApi.getProfile(new Request( user.session_id ), user.uid);
+        }
+        else {
+            return Promise.reject(ErrorCodes.AUTHORIZATION_ERROR);
+        }
     },
 };
 
