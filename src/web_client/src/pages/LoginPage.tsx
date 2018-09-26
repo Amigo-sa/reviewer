@@ -2,6 +2,9 @@ import * as React from "react";
 import { Button, TextField } from "@material-ui/core";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
 import { AuthStore } from "../stores/AuthStore";
+import { inject, observer } from "mobx-react";
+import { observable, action } from "mobx";
+import { Redirect } from "react-router-dom";
 
 interface IAuthProps {
     auth: AuthStore;
@@ -34,17 +37,19 @@ class LoginPage extends React.Component<IAuthProps, IState> {
     public pending = false;
 
     @action
-    public loginChangeHandler = (event) => {
-        this.user.login = event.target.value;
+    public loginChangeHandler = (event: any) => {
+        this.user["login"] = event.target.value;
     }
 
     @action
-    public passwordChangeHandler = (event) => {
-        this.user.password = event.target.value;
+    public passwordChangeHandler = (event: any) => {
+        this.user["password"] = event.target.value;
     }
 
     public state = {
         open: false,
+        login: "",
+        password: "",
     };
 
     public handleClose = () => {
@@ -53,35 +58,35 @@ class LoginPage extends React.Component<IAuthProps, IState> {
         });
     }
 
-    public handleClick = () => {
+    public handleClickOpen = () => {
         this.setState({
             open: true,
         });
     }
 
-    public handleSubmit = (event) => {
+    public handleAuth = (event: any) => {
         event.preventDefault();
         const { auth } = this.injected;
-        const { login, password } = this.user;
         this.pending = true;
         this.isAuth = false;
         this.error = null;
 
-        auth.authenticate(login.trim(), password.trim())
-            .then(action(() => { this.isAuth = true; }))
-            .catch((err) => { this.error = err; })
-            .finally(() => { this.pending = false; });
+        auth.authenticate(this.user["login"].trim(), this.user["password"].trim())
+            .then(action(() => { this.isAuth = true; this.pending = false; }))
+            .catch((err: any) => { this.error = err; this.pending = false; });
+        // TODO: check why finally doesn't support.
+        // .finally(() => { this.pending = false; });
     }
 
-    public handleChange(e) {
+    public handleChange(e: any) {
         this.setState({
             login: e.target.value,
         });
     }
 
     public render() {
-        let errText = !!this.error && this.error.userMessage;
-        if ( !this.pending && this.isAuth ) {
+        // let errText = !!this.error && this.error.userMessage;
+        if (!this.pending && this.isAuth) {
             return <Redirect to="/" />;
         }
 
@@ -93,36 +98,36 @@ class LoginPage extends React.Component<IAuthProps, IState> {
                     onClose={this.handleClose}
                     aria-labelledby="form-dialog-title"
                 >
-                <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                    Войдите для доступа к страницам.
+                    <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Войдите для доступа к страницам.
                     </DialogContentText>
-                    <TextField
-                        autoFocus="true"
-                        margin="dense"
-                        id="phone"
-                        label="Телефон"
-                        type="text"
-                        fullWidth="true"
-                        onChange={this.loginChangeHandler}
-                    />
-                    <TextField
-                        autoFocus="true"
-                        margin="dense"
-                        id="password"
-                        label="Пароль"
-                        type="password"
-                        fullWidth="true"
-                        onChange={this.passwordChangeHandler}
-                    />
-                </DialogContent>
+                        <TextField
+                            autoFocus={true}
+                            margin="dense"
+                            id="phone"
+                            label="Телефон"
+                            type="text"
+                            fullWidth={true}
+                            onChange={this.loginChangeHandler}
+                        />
+                        <TextField
+                            autoFocus={true}
+                            margin="dense"
+                            id="password"
+                            label="Пароль"
+                            type="password"
+                            fullWidth={true}
+                            onChange={this.passwordChangeHandler}
+                        />
+                    </DialogContent>
                     <DialogActions>
                         <Button onClick={this.handleClose} color="primary">
-                         закрыть
+                            закрыть
                         </Button>
                         <Button onClick={this.handleAuth} color="primary">
-                        Войти
+                            Войти
                         </Button>
                     </DialogActions>
                 </Dialog>

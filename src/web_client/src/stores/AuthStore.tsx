@@ -1,8 +1,6 @@
 import { action, observable } from "mobx";
 import auth from "../agent/auth";
 import UserLoginResponse from "../server-api/registration/UserLoginResponse";
-import ErrorCodes from "../server-api/ErrorCodes";
-import { rejects } from "assert";
 
 export interface IUserData {
     phone: string;
@@ -17,6 +15,9 @@ export class AuthStore {
     @observable
     public user: IUserData = {
         phone: "",
+        session_id: undefined,
+        uid: undefined,
+        data: undefined,
     };
 
     constructor() {
@@ -38,7 +39,7 @@ export class AuthStore {
             .then((responce: UserLoginResponse) => { this.setUser(responce); })
             .then(() => { this.getCurrentUser(true); })
             .then(action(() => { this.setPhone(phone); this.isAuth = true; }))
-            .catch(( err ) => { console.error("Authenticate", err); });
+            .catch((err) => { console.error("Authenticate", err); });
     }
 
     @action public register() {
@@ -68,11 +69,13 @@ export class AuthStore {
             .catch((err: object) => { console.error("tryAuthenticate", err); });
     }
 
-    protected getCurrentUser(force?: boolean): Promise<Response> {
-        return !force && this.user && this.isAuth
-            ? Promise.resolve(this.user)
-            : auth.get(this.user);
+    protected getCurrentUser(force?: boolean): Promise<IUserData> {
+        // return !force && this.user && this.isAuth
+        //     ? Promise.resolve(this.user)
+        //     : auth.get(this.user);
+
+        return Promise.resolve(this.user);
     }
 }
-
-export const authStore = new AuthStore();
+const authStore = new AuthStore();
+export default authStore;

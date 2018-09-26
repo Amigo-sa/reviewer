@@ -5,9 +5,9 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import registerServiceWorker from "./registerServiceWorker";
-import AuthStore from "./stores/AuthStore";
+import authStore from "./stores/AuthStore";
 const stores = {
-    AuthStore,
+    authStore,
 };
 
 ReactDOM.render(

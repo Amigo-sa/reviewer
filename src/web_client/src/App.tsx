@@ -7,7 +7,7 @@ import PersonalPage from "./pages/PersonalPage";
 import SearchPeoplesPage from "./pages/SearchPeoplesPage";
 import SearchStructuresPage from "./pages/SearchStructuresPage";
 import PrivateRoute from "./components/PrivateRoute";
-import LoginPage from "./pages/loginPage";
+import LoginPage from "./pages/LoginPage";
 
 class App extends React.Component<any> {
     public render() {
