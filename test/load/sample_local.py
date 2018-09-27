@@ -1,15 +1,15 @@
 # Settings
 # Number of docs to insert:
 to_fill = {
-        "person" : 10,
-        "group_member" : 11,
-        "group" : 20,
-        "person_ss" : 40,
-        "person_hs" : 40,
-        "ss_review" : 110,
-        "hs_review" : 110,
+        "person" : 20010,
+        "group_member" : 20011,
+        "group" : 1000,
+        "person_ss" : 100000,
+        "person_hs" : 100000,
+        "ss_review" : 200110,
+        "hs_review" : 200110,
         "specialization_review" : 11,
-        "person_specialization": 11,
+        "person_specialization": 20011,
 }
 # Offer to validate each inserted doc against pymodm validation rules
 validate_after_fill = False
@@ -123,7 +123,7 @@ for doc_class in doc_class_list:
     unique_indexes = []
     if hasattr(doc_class.Meta, "indexes"):
         for index in doc_class.Meta.indexes:
-            if index.document["unique"] == True:
+            if "unique" in index.document and index.document["unique"] == True:
                 ind_dict = index.document["key"].to_dict()
                 has_string = False
                 for field, order in ind_dict.items():

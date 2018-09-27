@@ -131,7 +131,10 @@ class Person(MongoModel):
         final = True
         indexes = [IndexModel([("phone_no", pymongo.DESCENDING)],
                               unique=True,
-                              partialFilterExpression= { "phone_no": { "$exists": True } })]
+                              partialFilterExpression= { "phone_no": { "$exists": True } }),
+                   IndexModel("first_name"),
+                   IndexModel("middle_name"),
+                   IndexModel("surname")]
 
 
 class Organization(MongoModel):
@@ -155,7 +158,8 @@ class Department(MongoModel):
         final = True
         indexes = [IndexModel([("name", pymongo.DESCENDING),
                                ("organization_id", pymongo.DESCENDING)],
-                              unique=True)]
+                              unique=True),
+                   IndexModel("organization_id")]
 
 
 class SkillType(MongoModel):
@@ -253,7 +257,9 @@ class PersonSpecialization(MongoModel):
         indexes = [IndexModel([("person_id", pymongo.DESCENDING),
                                ("department_id", pymongo.DESCENDING),
                                ("specialization_id", pymongo.DESCENDING)],
-                              unique=True)]
+                              unique=True),
+                   IndexModel("department_id"),
+                   IndexModel("specialization_id")]
 
 
 class GroupRole(MongoModel):
@@ -318,7 +324,8 @@ class GroupMember(MongoModel):
         indexes = [IndexModel([("person_id", pymongo.DESCENDING),
                                ("group_id", pymongo.DESCENDING),
                                ("role_id", pymongo.DESCENDING)],
-                              unique=True)]
+                              unique=True),
+                   IndexModel("group_id")]
 
     def set_role(self, role: GroupRole):
         if not role:
