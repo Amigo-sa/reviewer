@@ -79,7 +79,7 @@ export default class ServerApiHelper {
         }
 
         // if in request there is auth token, then create header with it's info
-        let headers = new Object();
+        const headers = new Object();
         if (request instanceof Request) {
             headers["Authorization"] = "Bearer " + (request as Request).authorizationToken;
         }

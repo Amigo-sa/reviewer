@@ -1,18 +1,22 @@
 import * as React from "react";
 import { Route, Redirect, RouteProps } from "react-router-dom";
 import { inject, observer } from "mobx-react";
-import { REDIRECT_TO } from "../constants";
+import { REDIRECT_TO_LOGIN } from "../constants";
 import { AuthStore } from "../stores/AuthStore";
-import { RouterProps } from "react-router";
-import { Component } from "react";
+import { ScaleLoader } from "react-spinners";
 
 interface IAuthProps extends RouteProps {
-    auth: AuthStore;
+  authStore: AuthStore;
 }
 
-@inject("auth")
+interface IPrivateRoute {
+  isAuth: boolean;
+  pending: boolean;
+}
+
+@inject("authStore")
 @observer
-export default class PrivateRoute extends React.Component<RouteProps, {}> {
+export default class PrivateRoute extends React.Component<RouteProps, IPrivateRoute> {
   constructor(props: RouteProps){
     super(props);
     this.state = {
@@ -25,8 +29,8 @@ export default class PrivateRoute extends React.Component<RouteProps, {}> {
   }
 
   public componentDidMount() {
-    let { auth } = this.injected;
-    auth
+    const { authStore } = this.injected;
+    authStore
       .tryAuthenticate()
       .then(() => this.setState({isAuth: true}))
       .catch(() => this.setState({isAuth: false}))
@@ -34,21 +38,30 @@ export default class PrivateRoute extends React.Component<RouteProps, {}> {
   }
 
   public render() {
-    let Comp = this.props.component;
-    const { auth } = this.injected;
-    return <Route render={ props => {
-              if(this.state.pending) {
+    const Component: any = this.props.component;
+    return (
+        <Route
+          render={ (props) => {
+              if ( this.state.pending ) {
                 return (
-                  <div className={'Centered'}>
-                    <Spinner name="tree-bounce" color="blue"/> 
+                  <div className={"Centered"}>
+                    <ScaleLoader
+                      height={150}
+                      color={"#123abc"}
+                      loading={this.state.pending}
+                    />
                   </div>
-                )
+                );
               }else {
-                if(!this.state.isAuth){
-                  return <Redirect to={REDIRECT_TO}/>
+                if ( !this.state.isAuth ){
+                  return <Redirect to={REDIRECT_TO_LOGIN}/>;
                 }
-                return <Comp {...props}/>
+                // return React.createElement(Component, props)
+                return <Component {...props}/>;
               }
-            }} />
+            }
+          }
+        />
+    );
   }
 }

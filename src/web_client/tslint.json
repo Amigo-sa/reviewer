@@ -17,12 +17,14 @@
             true,
             "check-format",
             "allow-leading-underscore",
-            "ban-keywords"
+            "ban-keywords",
+            "allow-pascal-case"
         ],
         "object-literal-sort-keys": false,
         "member-ordering": false,
         "one-line": false,
-        "no-string-literal": false,
-        "prefer-const": false
+        "jsx-no-multiline-js": false,
+        "jsx-no-lambda": false,
+        "no-string-literal": false
     }
 }

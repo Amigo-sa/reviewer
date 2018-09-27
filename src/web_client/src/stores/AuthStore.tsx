@@ -66,15 +66,15 @@ export class AuthStore {
     public tryAuthenticate() {
         return this.getCurrentUser()
             .then(action(() => { this.isAuth = true; }))
-            .catch((err: object) => { console.error("tryAuthenticate", err); });
+            .catch(( err: object ) => { console.error("Authenticate false"); throw err; });
     }
 
-    protected getCurrentUser(force?: boolean): Promise<IUserData> {
-        // return !force && this.user && this.isAuth
-        //     ? Promise.resolve(this.user)
-        //     : auth.get(this.user);
+    protected getCurrentUser(force?: boolean): Promise<any> {
+        return !force && this.user && this.isAuth
+            ? Promise.resolve(this.user)
+            : auth.get(this.user);
 
-        return Promise.resolve(this.user);
+        // return Promise.resolve(this.user);
     }
 }
 const authStore = new AuthStore();

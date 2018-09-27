@@ -5,9 +5,10 @@ import { AuthStore } from "../stores/AuthStore";
 import { inject, observer } from "mobx-react";
 import { observable, action } from "mobx";
 import { Redirect } from "react-router-dom";
+import { REDIRECT_TO_AFTER_LOGIN } from "../constants";
 
 interface IAuthProps {
-    auth: AuthStore;
+    authStore: AuthStore;
 }
 
 interface IState {
@@ -16,7 +17,7 @@ interface IState {
     password: string;
 }
 
-@inject("auth")
+@inject("authStore")
 @observer
 class LoginPage extends React.Component<IAuthProps, IState> {
     @observable
@@ -66,12 +67,12 @@ class LoginPage extends React.Component<IAuthProps, IState> {
 
     public handleAuth = (event: any) => {
         event.preventDefault();
-        const { auth } = this.injected;
+        const { authStore } = this.injected;
         this.pending = true;
         this.isAuth = false;
         this.error = null;
 
-        auth.authenticate(this.user["login"].trim(), this.user["password"].trim())
+        authStore.authenticate(this.user["login"].trim(), this.user["password"].trim())
             .then(action(() => { this.isAuth = true; this.pending = false; }))
             .catch((err: any) => { this.error = err; this.pending = false; });
         // TODO: check why finally doesn't support.
@@ -87,7 +88,7 @@ class LoginPage extends React.Component<IAuthProps, IState> {
     public render() {
         // let errText = !!this.error && this.error.userMessage;
         if (!this.pending && this.isAuth) {
-            return <Redirect to="/" />;
+            return <Redirect to={REDIRECT_TO_AFTER_LOGIN} />;
         }
 
         return (
@@ -102,10 +103,10 @@ class LoginPage extends React.Component<IAuthProps, IState> {
                     <DialogContent>
                         <DialogContentText>
                             Войдите для доступа к страницам.
-                    </DialogContentText>
+                        </DialogContentText>
                         <TextField
                             autoFocus={true}
-                            margin="dense"
+                            margin="normal"
                             id="phone"
                             label="Телефон"
                             type="text"
@@ -114,7 +115,7 @@ class LoginPage extends React.Component<IAuthProps, IState> {
                         />
                         <TextField
                             autoFocus={true}
-                            margin="dense"
+                            margin="normal"
                             id="password"
                             label="Пароль"
                             type="password"
