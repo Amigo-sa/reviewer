@@ -112,7 +112,7 @@ class Service(MongoModel):
     api_version = fields.CharField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
 
@@ -126,7 +126,7 @@ class Person(MongoModel):
     photo = fields.BinaryField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("phone_no", pymongo.DESCENDING)],
@@ -141,7 +141,7 @@ class Organization(MongoModel):
     name = fields.CharField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("name", pymongo.DESCENDING)],
@@ -153,7 +153,7 @@ class Department(MongoModel):
     organization_id = ValidatedReferenceField(Organization, on_delete=ReferenceField.CASCADE)
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("name", pymongo.DESCENDING),
@@ -166,7 +166,7 @@ class SkillType(MongoModel):
     name = fields.CharField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("name", pymongo.DESCENDING)],
@@ -178,7 +178,7 @@ class HardSkill(MongoModel):
     skill_type_id = ValidatedReferenceField(SkillType, on_delete=ReferenceField.CASCADE)
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("name", pymongo.DESCENDING),
@@ -192,7 +192,7 @@ class PersonHS(MongoModel):
     level = fields.FloatField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("person_id", pymongo.DESCENDING),
@@ -205,7 +205,7 @@ class SoftSkill(MongoModel):
     skill_type_id = ValidatedReferenceField(SkillType, on_delete=ReferenceField.CASCADE)
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("name", pymongo.DESCENDING),
@@ -219,7 +219,7 @@ class PersonSS(MongoModel):
     level = fields.FloatField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("person_id", pymongo.DESCENDING),
@@ -234,7 +234,7 @@ class Specialization(MongoModel):
     detail = fields.CharField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("detail", pymongo.DESCENDING)],
@@ -251,7 +251,7 @@ class PersonSpecialization(MongoModel):
     is_active = fields.BooleanField(required=True, default=True)
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("person_id", pymongo.DESCENDING),
@@ -266,7 +266,7 @@ class GroupRole(MongoModel):
     name = fields.CharField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("name", pymongo.DESCENDING)],
@@ -277,7 +277,7 @@ class GroupPermission(MongoModel):
     name = fields.CharField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("name", pymongo.DESCENDING)],
@@ -291,7 +291,7 @@ class Group(MongoModel):
                                        fields.ReferenceField(GroupRole))
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("name", pymongo.DESCENDING),
@@ -318,7 +318,7 @@ class GroupMember(MongoModel):
     is_active = fields.BooleanField(required=True, default=True)
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("person_id", pymongo.DESCENDING),
@@ -344,7 +344,7 @@ class GroupTest(MongoModel):
     info = fields.CharField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
 
@@ -376,7 +376,7 @@ class TestResult(MongoModel):
     result_data = fields.ListField(field=fields.CharField())
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("test_id", pymongo.DESCENDING),
@@ -391,7 +391,7 @@ class SSReview(MongoModel):
     description = fields.CharField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
@@ -406,7 +406,7 @@ class HSReview(MongoModel):
     description = fields.CharField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
@@ -421,7 +421,7 @@ class SpecializationReview(MongoModel):
     description = fields.CharField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
@@ -436,7 +436,7 @@ class GroupReview(MongoModel):
     description = fields.CharField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
@@ -451,7 +451,7 @@ class GroupMemberReview(MongoModel):
     description = fields.CharField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
@@ -466,7 +466,7 @@ class GroupTestReview(MongoModel):
     description = fields.CharField()
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
@@ -481,7 +481,7 @@ class Survey(MongoModel):
     survey_result = fields.DictField(default=None)
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
 
@@ -493,7 +493,7 @@ class SurveyResponse(MongoModel):
     chosen_option = fields.CharField(required=True)
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("survey_id", pymongo.DESCENDING),
@@ -514,7 +514,7 @@ class AuthInfo(MongoModel):
     permissions = fields.IntegerField(default=0)
 
     class Meta:
-        write_concern = WriteConcern(j=True)
+        write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("phone_no", pymongo.DESCENDING)],
