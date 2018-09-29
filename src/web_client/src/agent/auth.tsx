@@ -1,6 +1,5 @@
 import RegistrationApi from "../server-api/registration/RegistrationApi";
 import UserLoginRequest from "../server-api/registration/UserLoginRequest";
-import Request from "../server-api/Request";
 import ErrorCodes from "../server-api/ErrorCodes";
 import { IUserData } from "../stores/AuthStore";
 
@@ -12,7 +11,13 @@ const auth = {
     get: ( user?: IUserData) => {
         if ( user && user.session_id && user.uid ) {
             // TODO send request to get user
-            return RegistrationApi.getProfile(new Request( user.session_id ), user.uid);
+            const headers = new Object();
+            headers["Authorization"] = "Bearer " + user.session_id;
+            RegistrationApi.getAllProfiles(headers).then((data) => { console.log("Persons", data); });
+
+            const me = RegistrationApi.getProfile(headers, user.uid).then((data) => { console.log("Person", data); });
+            console.log("Person", me);
+            return Promise.resolve("Ура получили данные");
         }
         else {
             return Promise.reject(ErrorCodes.AUTHORIZATION_ERROR);

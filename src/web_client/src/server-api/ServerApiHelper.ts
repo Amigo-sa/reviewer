@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from "axios";
-import Request from "./Request";
 
 /**
  * Enumeration defining HTTP request methods.
@@ -8,6 +7,12 @@ const enum HttpRequestMethod {
     GET = "get",
     POST = "post",
     DELETE = "delete",
+}
+
+export interface IRequestConfig {
+    request?: object;
+    timeout?: number;
+    headers?: object;
 }
 
 /**
@@ -26,11 +31,13 @@ export default class ServerApiHelper {
      * @param url server endpoint
      * @param timeout timeout value
      */
-    public static makePostRequest<Response>(request: object,
-                                            url: string,
-                                            timeout = ServerApiHelper.DEFAULT_TIMEOUT): Promise<Response> {
+    public static makePostRequest<Response>(url: string, config: IRequestConfig): Promise<Response> {
         // make request with needed arguments
-        return ServerApiHelper._makeRequest(request, url, HttpRequestMethod.POST, timeout);
+        return ServerApiHelper._makeRequest(HttpRequestMethod.POST,
+                                            url,
+                                            config.request,
+                                            config.timeout || ServerApiHelper.DEFAULT_TIMEOUT,
+                                            config.headers);
     }
 
     /**
@@ -39,11 +46,13 @@ export default class ServerApiHelper {
      * @param url server endpoint
      * @param timeout timeout value
      */
-    public static makeGetRequest<Response>(request: object,
-                                           url: string,
-                                           timeout = ServerApiHelper.DEFAULT_TIMEOUT): Promise<Response> {
+    public static makeGetRequest<Response>(url: string, config: IRequestConfig): Promise<Response> {
         // make request with needed arguments
-        return ServerApiHelper._makeRequest(request, url, HttpRequestMethod.GET, timeout);
+        return ServerApiHelper._makeRequest(HttpRequestMethod.GET,
+            url,
+            config.request,
+            config.timeout || ServerApiHelper.DEFAULT_TIMEOUT,
+            config.headers);
     }
 
     /**
@@ -52,22 +61,24 @@ export default class ServerApiHelper {
      * @param url server endpoint
      * @param timeout timeout value
      */
-    public static makeDeleteRequest<Response>(request: object,
-                                              url: string,
-                                              timeout = ServerApiHelper.DEFAULT_TIMEOUT): Promise<Response> {
+    public static makeDeleteRequest<Response>(url: string,
+                                              request: object,
+                                              timeout = ServerApiHelper.DEFAULT_TIMEOUT,
+                                              headers?: object): Promise<Response> {
         // make request with needed arguments
-        return ServerApiHelper._makeRequest(request, url, HttpRequestMethod.DELETE, timeout);
+        return ServerApiHelper._makeRequest(url, HttpRequestMethod.DELETE, request, timeout, headers);
     }
 
     /**
      * Makes request to server.
      */
-    private static _makeRequest<Response>(request: object,
+    private static _makeRequest<Response>(method: string,
                                           url: string,
-                                          method: string,
-                                          timeout: number): Promise<Response> {
+                                          request?: object,
+                                          timeout?: number,
+                                          headers?: object): Promise<Response> {
         // create intial values of request data
-        let requestData: object | null = request;
+        let requestData: object | undefined | null = request;
         let requestUrl = url;
 
         // update url and request data for GET request method
@@ -79,10 +90,12 @@ export default class ServerApiHelper {
         }
 
         // if in request there is auth token, then create header with it's info
-        const headers = new Object();
-        if (request instanceof Request) {
-            headers["Authorization"] = "Bearer " + (request as Request).authorizationToken;
+        /*
+        headers = new Object();
+        if (headers instanceof Headers) {
+            headers["Authorization"] = "Bearer " + (headers as Headers).authorizationToken;
         }
+        */
 
         // create promise base on Axios http request
         const result = new Promise<Response>((resolve, reject) => {
@@ -117,11 +130,11 @@ export default class ServerApiHelper {
      * @param url initial url value
      * @param urlVariables url variables
      */
-    private static _addVariablesToUrl(url: string, urlVariables: object): string {
+    private static _addVariablesToUrl(url: string, urlVariables: object | undefined | null): string {
         let result: string = url;
 
         // add url variables, if need
-        if (Object.keys(urlVariables).length > 0) {
+        if (urlVariables && Object.keys(urlVariables).length > 0) {
             // @ts-ignore compiler doesn't find that variable uses in template literal
             const variables: string = this._convertUrlVariablesToString(urlVariables);
             // @ts-ignore
