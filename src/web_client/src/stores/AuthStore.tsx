@@ -46,7 +46,8 @@ export class AuthStore {
                 });
             })
             .then(action(() => {
-                this.setPhone(phone); this.isAuth = true;
+                this.setPhone(phone);
+                this.isAuth = true;
             }))
             .catch((err) => {
                 console.error("Authenticate", err);
@@ -81,27 +82,33 @@ export class AuthStore {
     }
 
     private getCurrentUser(force?: boolean): Promise<IUserData> {
-        if (!force && this.user && this.isAuth) {
-            return Promise.resolve(this.user);
+        let resultPromise: Promise<IUserData>;
+
+        if (!force && this.user && this.isAuth && this.user.session_id) {
+            resultPromise = Promise.resolve(this.user);
         }
         else {
-            const headers = new Object();
-            headers["Authorization"] = "Bearer " + this.user.session_id;
-            const resultPromise = new Promise<IUserData>((resolve, reject) => {
-                RegistrationApi.getProfile(headers, this.user.uid!)
-                    .then((data) => {
-                        console.log("Person", data);
-                        resolve(this.user);
-                    })
-                    .catch((err) => {
-                        // process error from server
-                        resolve(err);
-                    });
-            });
-
-            return resultPromise;
+            if (this.user.uid) {
+                resultPromise = new Promise<IUserData>((resolve, reject) => {
+                    RegistrationApi.getProfile(this.user.uid!)
+                        .then((data) => {
+                            console.log("Person", data);
+                            resolve(this.user);
+                        })
+                        .catch((err) => {
+                            // process error from server
+                            resolve(err);
+                        });
+                });
+            }
+            else {
+                resultPromise = Promise.reject(new Error());
+            }
         }
+
+        return resultPromise;
     }
 }
+
 const authStore = new AuthStore();
 export default authStore;

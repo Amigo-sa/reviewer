@@ -7,16 +7,16 @@ import UserProfileResponce from "./UserProfileResponce";
 export default class RegistrationApi {
 
     public static userLogin(request: UserLoginRequest): Promise<UserLoginResponse> {
-        return ServerApiHelper.makePostRequest<UserLoginResponse>(SERVER_HOST + "/user_login", { request });
+        return ServerApiHelper.makePostRequest<UserLoginResponse>(request, SERVER_HOST + "/user_login");
     }
 
     // TODO: move to Persons class
-    public static getProfile(headers: object, uid: string): Promise<UserProfileResponce> {
-        return ServerApiHelper.makeGetRequest<UserProfileResponce>(SERVER_HOST + "/persons/" + uid, {headers});
+    public static getProfile(uid: string): Promise<UserProfileResponce> {
+        return ServerApiHelper.makeGetRequest<UserProfileResponce>(null, SERVER_HOST + "/persons/" + uid, true);
     }
 
     // TODO: move to Persons model
-    public static getAllProfiles(headers: object): Promise<UserProfileResponce> {
-        return ServerApiHelper.makeGetRequest<UserProfileResponce>(SERVER_HOST + "/persons", {headers});
+    public static getAllProfiles(): Promise<UserProfileResponce> {
+        return ServerApiHelper.makeGetRequest<UserProfileResponce>(null, SERVER_HOST + "/persons", true);
     }
 }

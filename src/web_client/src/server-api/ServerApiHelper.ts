@@ -1,5 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 
+// TODO: temp import
+import authStore from "src/stores/AuthStore";
+
 /**
  * Enumeration defining HTTP request methods.
  */
@@ -7,12 +10,6 @@ const enum HttpRequestMethod {
     GET = "get",
     POST = "post",
     DELETE = "delete",
-}
-
-export interface IRequestConfig {
-    request?: object;
-    timeout?: number;
-    headers?: object;
 }
 
 /**
@@ -29,54 +26,55 @@ export default class ServerApiHelper {
      * Makes HTTP POST request to specific url.
      * @param request object contains data which need to send to server.
      * @param url server endpoint
+     * @param isAuth indicates if need to use authorization info in request
      * @param timeout timeout value
      */
-    public static makePostRequest<Response>(url: string, config: IRequestConfig): Promise<Response> {
+    public static makePostRequest<Response>(request: object | null,
+                                            url: string,
+                                            isAuth = false,
+                                            timeout = ServerApiHelper.DEFAULT_TIMEOUT): Promise<Response> {
         // make request with needed arguments
-        return ServerApiHelper._makeRequest(HttpRequestMethod.POST,
-                                            url,
-                                            config.request,
-                                            config.timeout || ServerApiHelper.DEFAULT_TIMEOUT,
-                                            config.headers);
+        return ServerApiHelper._makeRequest(request, url, isAuth, HttpRequestMethod.POST, timeout);
     }
 
     /**
      * Makes HTTP GET request to specific url.
      * @param request object contains data which need to send to server.
      * @param url server endpoint
+     * @param isAuth indicates if need to use authorization info in request
      * @param timeout timeout value
      */
-    public static makeGetRequest<Response>(url: string, config: IRequestConfig): Promise<Response> {
+    public static makeGetRequest<Response>(request: object | null,
+                                           url: string,
+                                           isAuth = false,
+                                           timeout = ServerApiHelper.DEFAULT_TIMEOUT): Promise<Response> {
         // make request with needed arguments
-        return ServerApiHelper._makeRequest(HttpRequestMethod.GET,
-            url,
-            config.request,
-            config.timeout || ServerApiHelper.DEFAULT_TIMEOUT,
-            config.headers);
+        return ServerApiHelper._makeRequest(request, url, isAuth, HttpRequestMethod.GET, timeout);
     }
 
     /**
      * Makes HTTP DELETE request to specific url.
      * @param request object contains data which need to send to server.
      * @param url server endpoint
+     * @param isAuth indicates if need to use authorization info in request
      * @param timeout timeout value
      */
-    public static makeDeleteRequest<Response>(url: string,
-                                              request: object,
-                                              timeout = ServerApiHelper.DEFAULT_TIMEOUT,
-                                              headers?: object): Promise<Response> {
+    public static makeDeleteRequest<Response>(request: object | null,
+                                              url: string,
+                                              isAuth = false,
+                                              timeout = ServerApiHelper.DEFAULT_TIMEOUT): Promise<Response> {
         // make request with needed arguments
-        return ServerApiHelper._makeRequest(url, HttpRequestMethod.DELETE, request, timeout, headers);
+        return ServerApiHelper._makeRequest(request, url, isAuth, HttpRequestMethod.DELETE, timeout);
     }
 
     /**
      * Makes request to server.
      */
-    private static _makeRequest<Response>(method: string,
+    private static _makeRequest<Response>(request: object | null,
                                           url: string,
-                                          request?: object,
-                                          timeout?: number,
-                                          headers?: object): Promise<Response> {
+                                          isAuth: boolean,
+                                          method: string,
+                                          timeout: number): Promise<Response> {
         // create intial values of request data
         let requestData: object | undefined | null = request;
         let requestUrl = url;
@@ -90,12 +88,11 @@ export default class ServerApiHelper {
         }
 
         // if in request there is auth token, then create header with it's info
-        /*
-        headers = new Object();
-        if (headers instanceof Headers) {
-            headers["Authorization"] = "Bearer " + (headers as Headers).authorizationToken;
+        const headers = new Object();
+        // TODO: temp send auth token over headers, need to use cookie inestead of it
+        if (isAuth) {
+            headers["Authorization"] = "Bearer " + authStore.user.session_id;
         }
-        */
 
         // create promise base on Axios http request
         const result = new Promise<Response>((resolve, reject) => {
