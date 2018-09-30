@@ -1,67 +1,76 @@
 import * as React from "react";
 import { Route, Redirect, RouteProps } from "react-router-dom";
-import { inject, observer } from "mobx-react";
 import { REDIRECT_TO_LOGIN } from "../constants";
-import { AuthStore } from "../stores/AuthStore";
 import { ScaleLoader } from "react-spinners";
 
-interface IAuthProps extends RouteProps {
-  authStore: AuthStore;
+/**
+ * Interface of authorizaiton helper.
+ * Knows how to work with authorization in application.
+ */
+export interface IAuthorizationUIHelper {
+    tryAuthenticate(): Promise<void>;
 }
 
-interface IPrivateRoute {
-  isAuth: boolean;
-  pending: boolean;
+interface IPrivateRouteProps extends RouteProps {
+    authHelper: IAuthorizationUIHelper;
 }
 
-@inject("authStore")
-@observer
-export default class PrivateRoute extends React.Component<RouteProps, IPrivateRoute> {
-  constructor(props: RouteProps){
-    super(props);
-    this.state = {
-      isAuth: false,
-      pending: true,
-    };
-  }
-  get injected() {
-    return this.props as IAuthProps;
-  }
+interface IPrivateRouteState {
+    isAuth: boolean;
+    pending: boolean;
+}
 
-  public componentDidMount() {
-    const { authStore } = this.injected;
-    authStore
-      .tryAuthenticate()
-      .then(() => this.setState({isAuth: true}))
-      .catch(() => this.setState({isAuth: false}))
-      .then(() => this.setState({pending: false}));
-  }
+/**
+ * PrivateRoute component.
+ * Helps to work with private pages.
+ */
+export default class PrivateRoute extends React.Component<IPrivateRouteProps, IPrivateRouteState> {
+    constructor(props: IPrivateRouteProps) {
+        super(props);
+        this.state = {
+            isAuth: false,
+            pending: true,
+        };
+    }
 
-  public render() {
-    const Component: any = this.props.component;
-    return (
-        <Route
-          render={ (props) => {
-              if ( this.state.pending ) {
-                return (
-                  <div className={"Centered"}>
-                    <ScaleLoader
-                      height={150}
-                      color={"#123abc"}
-                      loading={this.state.pending}
-                    />
-                  </div>
-                );
-              }else {
-                if ( !this.state.isAuth ){
-                  return <Redirect to={REDIRECT_TO_LOGIN}/>;
+    public componentDidMount() {
+        // check if user already make authorization
+        // TODO: make checking
+
+        // try to authorization
+        this.props.authHelper
+            .tryAuthenticate()
+            .then(() => this.setState({ isAuth: true }))
+            .catch(() => this.setState({ isAuth: false }))
+            .then(() => this.setState({ pending: false }));
+    }
+
+    public render() {
+        const Component: any = this.props.component;
+        return (
+            <Route
+                render={(props) => {
+                    if (this.state.pending) {
+                        return (
+                            <div className={"Centered"}>
+                                <ScaleLoader
+                                    height={150}
+                                    color={"#123abc"}
+                                    loading={this.state.pending}
+                                />
+                            </div>
+                        );
+                    } else {
+                        if (!this.state.isAuth) {
+                            // TODO: need to add info about from where we open Login page.
+                            // We need to redirect to this page after user makes logining success
+                            return <Redirect to={REDIRECT_TO_LOGIN} />;
+                        }
+                        return <Component {...props} />;
+                    }
                 }
-                // return React.createElement(Component, props)
-                return <Component {...props}/>;
-              }
-            }
-          }
-        />
-    );
-  }
+                }
+            />
+        );
+    }
 }

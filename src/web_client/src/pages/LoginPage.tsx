@@ -88,6 +88,7 @@ class LoginPage extends React.Component<IAuthProps, IState> {
     public render() {
         // let errText = !!this.error && this.error.userMessage;
         if (!this.pending && this.isAuth) {
+            // TODO: need to redirect to page where we start login process.
             return <Redirect to={REDIRECT_TO_AFTER_LOGIN} />;
         }
 

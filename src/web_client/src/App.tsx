@@ -8,6 +8,10 @@ import SearchPeoplesPage from "./pages/SearchPeoplesPage";
 import SearchStructuresPage from "./pages/SearchStructuresPage";
 import PrivateRoute from "./components/PrivateRoute";
 import LoginPage from "./pages/LoginPage";
+import AuthorizationUIHelper from "./AuthorizationUIHelper";
+import authStore from "./stores/AuthStore";
+
+const authUIHelper = new AuthorizationUIHelper(authStore);
 
 class App extends React.Component<any> {
     public render() {
@@ -15,10 +19,10 @@ class App extends React.Component<any> {
             <Switch>
                 <Route exact={true} path="/" component={Main} />
                 <Route path="/login" component={LoginPage} />
-                <PrivateRoute path="/personal" component={PersonalPage} />
-                <PrivateRoute path="/search-peoples" component={SearchPeoplesPage} />
-                <PrivateRoute path="/search-structures" component={SearchStructuresPage} />
-                <PrivateRoute path="/add-survey" component={AddSurveyPage} />
+                <PrivateRoute path="/personal" component={PersonalPage} authHelper={authUIHelper} />
+                <PrivateRoute path="/search-peoples" component={SearchPeoplesPage} authHelper={authUIHelper} />
+                <PrivateRoute path="/search-structures" component={SearchStructuresPage} authHelper={authUIHelper} />
+                <PrivateRoute path="/add-survey" component={AddSurveyPage} authHelper={authUIHelper} />
             </Switch>
         );
     }
