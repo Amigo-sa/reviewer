@@ -12,6 +12,12 @@ const enum HttpRequestMethod {
     DELETE = "delete",
 }
 
+export interface IRequestConfig {
+    request?: object;
+    timeout?: number;
+    headers?: object;
+}
+
 /**
  * Contains help methods for work with server api.
  */
@@ -101,7 +107,6 @@ export default class ServerApiHelper {
                 url: requestUrl,
                 data: requestData,
                 timeout,
-                headers,
             }).then((response: AxiosResponse<any>) => {
                 resolve(response.data);
             }, (reason: any) => {

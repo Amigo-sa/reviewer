@@ -72,6 +72,7 @@ export class AuthStore {
 
     @action
     protected setToken(token?: string) {
+        localStorage.setItem("Token", JSON.stringify(token));
         this.user.session_id = token;
     }
 
