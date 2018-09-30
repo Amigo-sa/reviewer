@@ -1,5 +1,6 @@
 import { action, observable } from "mobx";
-import auth from "../agent/auth";
+import RegistrationApi from "src/server-api/registration/RegistrationApi";
+import UserLoginRequest from "src/server-api/registration/UserLoginRequest";
 import UserLoginResponse from "../server-api/registration/UserLoginResponse";
 
 export interface IUserData {
@@ -35,11 +36,21 @@ export class AuthStore {
 
     @action
     public authenticate(phone: string, password: string) {
-        return auth.login(phone, password)
-            .then((responce: UserLoginResponse) => { this.setUser(responce); })
-            .then(() => { this.getCurrentUser(true); })
-            .then(action(() => { this.setPhone(phone); this.isAuth = true; }))
-            .catch((err) => { console.error("Authenticate", err); });
+        return RegistrationApi.userLogin(new UserLoginRequest(phone, password))
+            .then((responce: UserLoginResponse) => {
+                this.setUser(responce);
+            })
+            .then(() => {
+                this.getCurrentUser(true).catch((err) => {
+                    console.error("get current user error", err);
+                });
+            })
+            .then(action(() => {
+                this.setPhone(phone); this.isAuth = true;
+            }))
+            .catch((err) => {
+                console.error("Authenticate", err);
+            });
     }
 
     @action public register() {
@@ -66,15 +77,30 @@ export class AuthStore {
     public tryAuthenticate() {
         return this.getCurrentUser()
             .then(action(() => { this.isAuth = true; }))
-            .catch(( err: object ) => { console.error("Authenticate false"); throw err; });
+            .catch((err: object) => { console.error("Authenticate false"); throw err; });
     }
 
-    protected getCurrentUser(force?: boolean): Promise<any> {
-        return !force && this.user && this.isAuth
-            ? Promise.resolve(this.user)
-            : auth.get(this.user);
+    private getCurrentUser(force?: boolean): Promise<IUserData> {
+        if (!force && this.user && this.isAuth) {
+            return Promise.resolve(this.user);
+        }
+        else {
+            const headers = new Object();
+            headers["Authorization"] = "Bearer " + this.user.session_id;
+            const resultPromise = new Promise<IUserData>((resolve, reject) => {
+                RegistrationApi.getProfile(headers, this.user.uid!)
+                    .then((data) => {
+                        console.log("Person", data);
+                        resolve(this.user);
+                    })
+                    .catch((err) => {
+                        // process error from server
+                        resolve(err);
+                    });
+            });
 
-        // return Promise.resolve(this.user);
+            return resultPromise;
+        }
     }
 }
 const authStore = new AuthStore();
