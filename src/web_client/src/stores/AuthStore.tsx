@@ -1,5 +1,6 @@
 import { action, observable } from "mobx";
 import RegistrationApi from "src/server-api/registration/RegistrationApi";
+import PersonsApi from "src/server-api/persons/PersonsApi";
 import UserLoginRequest from "src/server-api/registration/UserLoginRequest";
 import UserLoginResponse from "../server-api/registration/UserLoginResponse";
 
@@ -90,7 +91,7 @@ export class AuthStore {
         else {
             if (this.user.uid) {
                 resultPromise = new Promise<IUserData>((resolve, reject) => {
-                    RegistrationApi.getProfile(this.user.uid!)
+                    PersonsApi.getPersonInfo(this.user.uid!)
                         .then((data) => {
                             console.log("Person", data);
                             resolve(this.user);
