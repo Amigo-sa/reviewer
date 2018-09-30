@@ -2,7 +2,7 @@
 from bson import ObjectId
 import node.settings.errors as ERR
 import node.settings.constants as constants
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from data.reviewer_model import *
 from datetime import datetime, timezone, timedelta, date
 import random
@@ -24,6 +24,7 @@ class AuthError(Exception):
 @bp.route("/user_login", methods= ["POST"])
 def user_login():
     req = request.get_json()
+    session_id = None
     try:
         phone_no = req["phone_no"]
         password = req["password"]
@@ -35,8 +36,7 @@ def user_login():
             auth_info.attempts = 0
             auth_info.last_auth_time = datetime.utcnow()
             auth_info.save()
-            result = {"result": ERR.OK,
-                      "session_id": session_id}
+            result = {"result": ERR.OK}
             if auth_info.person_id:
                 result.update({"person_id": str(auth_info.person_id.pk)})
         else:
@@ -53,7 +53,10 @@ def user_login():
     except Exception as e:
         result = {"result": ERR.AUTH}
         print(str(e))
-    return jsonify(result), 200
+    resp = make_response(jsonify(result), 200)
+    if session_id:
+        resp.set_cookie('session_id', str(session_id))
+    return resp
 
 
 @bp.route("/oauth/token", methods= ["POST"])
@@ -257,11 +260,7 @@ def required_auth(required_permissions="admin"):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            auth_header = request.headers.get('Authorization')
-            if auth_header:
-                auth_token = auth_header.split(" ")[1]
-            else:
-                auth_token = ''
+            auth_token = request.cookies.get('session_id')
             try:
                 auth_info = AuthInfo.objects.raw({"session_id": auth_token})
                 if auth_info.count():

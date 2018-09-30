@@ -64,19 +64,19 @@ class TestApi(unittest.TestCase):
     def setUp(self):
         # requests.post(self.api_URL + "/wipe")
         hm.wipe_db()
-        self.admin_header = {"Authorization":
-                                 "Bearer " + hm.prepare_first_admin()}
+        self.admin_header = {"Cookie":
+                                 "session_id=" + hm.prepare_first_admin()}
 
     def setup_reviewer(self):
         reviewer = hm.prepare_logged_in_person("78001112233")
-        self.reviewer_header = {"Authorization":
-                                    "Bearer " + reviewer["session_id"]}
+        self.reviewer_header = {"Cookie":
+                                    "session_id=" + reviewer["session_id"]}
         self.reviewer_id = reviewer["person_id"]
 
     def setup_reviewer2(self):
         reviewer = hm.prepare_logged_in_person("78001112234")
-        self.reviewer_header2 = {"Authorization":
-                                     "Bearer " + reviewer["session_id"]}
+        self.reviewer_header2 = {"Cookie":
+                                     "session_id=" + reviewer["session_id"]}
         self.reviewer_id2 = reviewer["person_id"]
 
     def t_simple_normal(self, url_get, url_post, url_delete, *args, **kwargs):
