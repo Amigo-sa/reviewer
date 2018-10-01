@@ -6,6 +6,9 @@ import App from "./App";
 import "./index.css";
 import registerServiceWorker from "./registerServiceWorker";
 import authStore from "./stores/AuthStore";
+import { MuiThemeProvider } from "@material-ui/core/styles";
+import theme from "./Theme";
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 const stores = {
     authStore,
@@ -14,7 +17,10 @@ const stores = {
 ReactDOM.render(
     <Provider {...stores}>
         <BrowserRouter>
-            <App />
+            <MuiThemeProvider theme={theme}>
+                <CssBaseline />
+                <App />
+            </MuiThemeProvider>
         </BrowserRouter>
     </Provider>,
     document.getElementById("root") as HTMLElement,
