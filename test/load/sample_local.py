@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Settings
 # Number of docs to insert:
 to_fill = {
