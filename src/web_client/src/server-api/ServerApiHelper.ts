@@ -1,8 +1,5 @@
 import axios, { AxiosResponse } from "axios";
 
-// TODO: temp import
-import authStore from "src/stores/AuthStore";
-
 /**
  * Enumeration defining HTTP request methods.
  */
@@ -10,12 +7,6 @@ const enum HttpRequestMethod {
     GET = "get",
     POST = "post",
     DELETE = "delete",
-}
-
-export interface IRequestConfig {
-    request?: object;
-    timeout?: number;
-    headers?: object;
 }
 
 /**
@@ -93,12 +84,8 @@ export default class ServerApiHelper {
             requestData = null;
         }
 
-        // if in request there is auth token, then create header with it's info
+        // create headers
         const headers = new Object();
-        // TODO: temp send auth token over headers, need to use cookie inestead of it
-        if (isAuth) {
-            headers["Authorization"] = "Bearer " + authStore.user.session_id;
-        }
 
         // create promise base on Axios http request
         const result = new Promise<Response>((resolve, reject) => {
@@ -107,6 +94,7 @@ export default class ServerApiHelper {
                 url: requestUrl,
                 data: requestData,
                 timeout,
+                headers,
             }).then((response: AxiosResponse<any>) => {
                 resolve(response.data);
             }, (reason: any) => {
