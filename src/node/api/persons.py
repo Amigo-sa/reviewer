@@ -34,6 +34,34 @@ def find_persons():
     pipeline =()
     person_spec_project_filter = 1
     err = ERR.OK
+
+    group_debug = False
+    if "group_id_mod" in request.args:
+        group_debug = True
+        group_id = request.args['group_id_mod']
+        group_qs = Group.objects.raw({"_id": ObjectId(group_id)})
+        if group_qs.count():
+            print(group_qs.count())
+            pipeline += ({"$match": {"group_id": ObjectId(group_id)}},)
+            pipeline += ({"$lookup":
+                              {"from": "person"
+                              ,"localField": "person_id"
+                              ,"foreignField": "_id"
+                              ,"as": "person_member"}
+                          },)
+
+            pipeline += ({"$project":
+                              {
+                                  # TODO это вообще нормально, что приходится брать 1-й элемент массива?
+                                  # по идее, должно возвращаться просто значение, а не как массив
+                                  "first_name": {"$arrayElemAt":["$person_member.first_name", 0]},
+                                  "middle_name": {"$arrayElemAt":["$person_member.middle_name",0]},
+                                  "surname": {"$arrayElemAt":["$person_member.surname",0]},
+                                  "_id" : {"$arrayElemAt":["$person_member._id",0]}
+                              }},)
+        else:
+            err = ERR.NO_DATA
+
     if "specialization" in request.args:
         spec_type = request.args["specialization"]
         spec_qs = Specialization.objects.raw({"type": spec_type});
@@ -151,7 +179,8 @@ def find_persons():
         return jsonify({"result": ERR.NO_DATA}), 200
     try:
         lst = []
-        for person in Person.objects.aggregate(*pipeline):
+        target_cls = Person if not group_debug else GroupMember
+        for person in target_cls.objects.aggregate(*pipeline):
             if "person_specialization" in person and person["person_specialization"]:
                 specialization = person["specialization"][0]["type"]
                 org_name = person["organization"][0]["name"]
