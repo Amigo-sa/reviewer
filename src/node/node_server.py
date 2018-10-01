@@ -44,7 +44,7 @@ def start_server(port, protocol="http", log=True):
 
 
 if __name__ == "__main__":
-    start_server(constants.node_server_port, protocol="https")
+    start_server(constants.node_server_port, protocol="http", log=False)
 
 
 def is_db_exists():
