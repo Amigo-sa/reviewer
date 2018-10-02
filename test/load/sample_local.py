@@ -2,9 +2,10 @@
 # Settings
 # Number of docs to insert:
 to_fill = {
-        "person" : 20010,
-        "group_member" : 20011,
-        "group" : 1000,
+        "person" : 10000,
+        "group_member" : 1000000,
+        "group" : 10,
+        "group_role" : 10,
         "person_ss" : 100000,
         "person_hs" : 100000,
         "ss_review" : 200110,
