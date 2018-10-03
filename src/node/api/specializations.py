@@ -122,8 +122,8 @@ def set_person_specialization_additions(_id):
             result = {"result": ERR.OK}
         else:
             result = {"result": ERR.NO_DATA}
-    except Exception as ex:
-        print(ex)
-        result = {"result": ERR.DB, "error_message": str(ex)}
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
 
     return jsonify(result), 200

@@ -49,10 +49,9 @@ def user_login():
             auth_info.save()
     except KeyError as e:
         result = {"result": ERR.INPUT}
-        print(str(e))
     except Exception as e:
-        result = {"result": ERR.AUTH}
-        print(str(e))
+        result = {"result": ERR.AUTH,
+                  "error_message": str(e)}
     resp = make_response(jsonify(result), 200)
     if session_id:
         resp.set_cookie('session_id', str(session_id))
@@ -138,8 +137,8 @@ def confirm_phone():
         result = {"result": err,
                   "error_message": str(e)}
     except Exception as e:
-        print(str(e))
-        result = {"result": ERR.DB}
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
 
     return jsonify(result), 200
 
@@ -176,7 +175,6 @@ def finish_phone_confirmation():
                     message = "out of attempts, auth code destroyed"
                 result = {"result": ERR.AUTH_CODE_INCORRECT,
                           "error_message": message}
-                print("%s attempts remain"%attempts_remain)
                 if auth_info.attempts == max_attempts:
                     auth_info.auth_code = None
                     auth_info.session_id = None
@@ -187,14 +185,13 @@ def finish_phone_confirmation():
                       "error_message": "no session found"}
     except KeyError as e:
         result = {"result": ERR.INPUT}
-        print(repr(e))
     except AuthError as e:
         result = {"result": err,
                   "error_message": str(e)}
-        print(repr(e))
     except Exception as e:
-        result = {"result": ERR.DB}
-        print(repr(e))
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
+
 
     return jsonify(result), 200
 
@@ -215,10 +212,9 @@ def set_password():
             result = {"result": ERR.INPUT}
     except KeyError as e:
         result = {"result": ERR.INPUT}
-        print(str(e))
     except Exception as e:
-        result = {"result": ERR.AUTH}
-        print(str(e))
+        result = {"result": ERR.AUTH,
+                  "error_message": str(e)}
 
     return jsonify(result), 200
 
@@ -226,7 +222,6 @@ def set_password():
 def gen_sms_code():
     code = random.randint(0,9999)
     codestr = "{0:04}".format(code)
-    print(codestr)
     return codestr
 
 

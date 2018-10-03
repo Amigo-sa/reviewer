@@ -64,18 +64,18 @@ def set_role_list_for_group(id):
 
 @bp.route("/groups/<string:id>/role_list", methods=['GET'])
 def get_role_list_for_group(id):
-    list = []
     try:
-        if Group(_id=id) in Group.objects.raw({"_id": ObjectId(id)}):
-            group =  Group(_id=id)
-            group.refresh_from_db()
-            for role in group.role_list:
-                list.append({"id" : str(role.pk)})
-            result = {"result": ERR.OK, "list": list}
+        group_qs = Group.objects.raw({"_id": ObjectId(id)})
+        if group_qs.count():
+            group = group_qs.first()
+            roles = list({"id" : str(role.pk)} for role in group.role_list)
+            result = {"result": ERR.OK, "list": roles}
         else:
             result = {"result": ERR.NO_DATA}
-    except:
-        result = {"result": ERR.DB}
+
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
     return jsonify(result), 200
 
 
@@ -158,9 +158,9 @@ def add_group_member(id):
             result = {"result": ERR.NO_DATA}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
-    except Exception as ex:
-        print(ex)
-        result = {"result":ERR.DB}
+    except Exception as e:
+        result = {"result":ERR.DB,
+                  "error_message": str(e)}
 
     return jsonify(result), 200
 
@@ -274,9 +274,9 @@ def add_group_role_to_group_member(id):
             result = {"result": ERR.NO_DATA}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
-    except Exception as ex:
-        print(ex)
-        result = {"result":ERR.DB, "error_message": str(ex)}
+    except Exception as e:
+        result = {"result":ERR.DB,
+                  "error_message": str(e)}
 
     return jsonify(result), 200
 
@@ -303,8 +303,8 @@ def set_group_member_status(id):
             result = {"result": ERR.OK}
         else:
             result = {"result": ERR.NO_DATA}
-    except Exception as ex:
-        print(ex)
-        result = {"result":ERR.DB, "error_message": str(ex)}
+    except Exception as e:
+        result = {"result":ERR.DB,
+                  "error_message": str(e)}
 
     return jsonify(result), 200

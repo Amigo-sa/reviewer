@@ -101,7 +101,6 @@ def get_test_result_info(id):
 
 @bp.route("/tests/results", methods=['GET'])
 def find_test_results():
-    lst = []
     query = {}
     err = ERR.OK
     if 'person_id' in request.args:
@@ -118,12 +117,12 @@ def find_test_results():
             err = ERR.NO_DATA
     try:
         if err == ERR.OK:
-            for test_result in TestResult.objects.raw(query):
-                lst.append({"id": str(test_result.pk)})
-            result = {"result": ERR.OK, "list": lst}
+            test_result_qs = TestResult.objects.raw(query)
+            test_results = list({"id": str(key["_id"])} for key in test_result_qs.values())
+            result = {"result": ERR.OK, "list": test_results}
         else:
             result = {"result": ERR.NO_DATA}
-    except Exception as ex:
-        print(ex)
-        result = {"result": ERR.DB}
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
     return jsonify(result), 200

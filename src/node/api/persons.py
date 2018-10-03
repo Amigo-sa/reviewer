@@ -41,7 +41,6 @@ def find_persons():
         group_id = request.args['group_id_mod']
         group_qs = Group.objects.raw({"_id": ObjectId(group_id)})
         if group_qs.count():
-            print(group_qs.count())
             pipeline += ({"$match": {"group_id": ObjectId(group_id)}},)
             pipeline += ({"$lookup":
                               {"from": "person"
@@ -282,7 +281,6 @@ def list_group_members_by_person_id(id):
 
 
 def find_person_skills(skill_cls):
-    lst = []
     query = {}
     err = ERR.OK
     if skill_cls == SoftSkill:
@@ -308,14 +306,14 @@ def find_person_skills(skill_cls):
             query.update({tag: ObjectId(s_id)})
     try:
         if err == ERR.OK:
-            for person_s in person_skill_cls.objects.raw(query):
-                lst.append({"id": str(person_s.pk)})
-            result = {"result": ERR.OK, "list": lst}
+            person_skill_qs = person_skill_cls.objects.raw(query)
+            person_skills = list({"id": str(key["_id"])} for key in person_skill_qs.values())
+            result = {"result": ERR.OK, "list": person_skills}
         else:
             result = {"result": ERR.NO_DATA}
-    except Exception as ex:
-        print(ex)
-        result = {"result": ERR.DB}
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
     return jsonify(result), 200
 
 

@@ -57,9 +57,9 @@ def find_surveys():
                             "options": survey.survey_options,
                             "results": survey.survey_result})
             result = {"result": ERR.OK, "list": lst}
-    except Exception as ex:
-        print(ex)
-        result = {"result": ERR.DB}
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
     return jsonify(result), 200
 
 
