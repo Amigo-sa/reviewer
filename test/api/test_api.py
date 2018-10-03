@@ -680,6 +680,7 @@ class TestApi(unittest.TestCase):
         )
         p_spec_1.save()
 
+
         # test if person_1 is in return list
         p_list = self.get_item_list("/persons")
         p_1_ref_dict = struct["person_1"]
@@ -697,7 +698,18 @@ class TestApi(unittest.TestCase):
         p_2_ref_dict.update({"organization_name": "None"})
         self.assertIn(p_2_ref_dict, p_list, "must return correct person info")
 
+        p_spec_4 = model.PersonSpecialization(
+            ObjectId(struct["person_1"]["id"]),
+            ObjectId(struct["dep_1"]["id"]),
+            ObjectId(struct["spec_3"]["id"]),
+            50.0,
+            {"detail": "text"},
+            True
+        )
+        p_spec_4.save()
+
         p_list = self.get_item_list("/persons?specialization=Tutor")
+        self.assertEqual(1, len(p_list), "must not contain duplicates")
         self.assertIn(p_1_ref_dict, p_list, "must return correct person info")
         self.assertNotIn(p_2_ref_dict, p_list, "must not return non-matching persons info")
 
@@ -729,6 +741,7 @@ class TestApi(unittest.TestCase):
         p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
         self.assertTrue(p2_id)
         p_list = self.get_item_list("/persons?department_id=%s" % struct["dep_1"]["id"])
+        self.assertEqual(1, len(p_list), "must not contain duplicates")
         p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
         self.assertTrue(p1_id)
         p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
@@ -739,6 +752,7 @@ class TestApi(unittest.TestCase):
         p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
         self.assertTrue(p2_id)
         p_list = self.get_item_list("/persons?organization_id=%s" % struct["org_1"]["id"])
+        self.assertEqual(1, len(p_list), "must not contain duplicates")
         p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
         self.assertTrue(p1_id)
         p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
@@ -811,6 +825,11 @@ class TestApi(unittest.TestCase):
         gm_info = self.get_item_data("/group_members/" + gm_id)
         ref_gm_info.update({"is_active": "False"})
         self.assertDictEqual(ref_gm_info, gm_info)
+        # test for duplicates in search
+        post_data = {"person_id": person_id}
+        gm2_id = self.post_item("/groups/%s/group_members" % group_id, post_data)
+        p_list = self.get_item_list("/persons?group_id=" + group_id)
+        self.assertEqual(1, len(p_list), "must contain no duplicate persons")
         # delete
         self.delete_item("/group_members/" + gm_id)
         resp_json = requests.get(self.api_URL + "/group_members/" + gm_id, headers=self.admin_header).json()

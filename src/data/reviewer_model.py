@@ -152,10 +152,9 @@ class Person(MongoModel):
         pipeline = ()
         person_spec_project_filter = 1
         err = ERR.OK
-
-        group_debug = False
+        target_cls = Person
         if "group_id_mod" in args:
-            group_debug = True
+            target_cls = GroupMember
             group_id = args['group_id_mod']
             group_qs = Group.objects.raw({"_id": ObjectId(group_id)})
             if group_qs.count():
@@ -164,17 +163,17 @@ class Person(MongoModel):
                                   {"from": "person"
                                       , "localField": "person_id"
                                       , "foreignField": "_id"
-                                      , "as": "person_member"}
+                                      , "as": "target_person"}
                               },)
 
                 pipeline += ({"$project":
                     {
                         # TODO это вообще нормально, что приходится брать 1-й элемент массива?
                         # по идее, должно возвращаться просто значение, а не как массив
-                        "first_name": {"$arrayElemAt": ["$person_member.first_name", 0]},
-                        "middle_name": {"$arrayElemAt": ["$person_member.middle_name", 0]},
-                        "surname": {"$arrayElemAt": ["$person_member.surname", 0]},
-                        "_id": {"$arrayElemAt": ["$person_member._id", 0]}
+                        "first_name": {"$arrayElemAt": ["$target_person.first_name", 0]},
+                        "middle_name": {"$arrayElemAt": ["$target_person.middle_name", 0]},
+                        "surname": {"$arrayElemAt": ["$target_person.surname", 0]},
+                        "_id": {"$arrayElemAt": ["$target_person._id", 0]}
                     }},)
             else:
                 err = ERR.NO_DATA
@@ -194,6 +193,34 @@ class Person(MongoModel):
                     {"$filter": {"input": "$person_specialization",
                                  "as": "spec",
                                  "cond": {"$in": ["$$spec.specialization_id", specializations]}}}
+            else:
+                return {"result": ERR.INPUT}
+
+        if "specialization_mod" in args:
+            target_cls = PersonSpecialization
+            spec_type = args["specialization_mod"]
+            spec_qs = Specialization.objects.raw({"type": spec_type});
+            if spec_qs.count():
+                pipeline += ({"$lookup":
+                                  {"from": "specialization"
+                                      , "localField": "specialization_id"
+                                      , "foreignField": "_id"
+                                      , "as": "spec"}
+                              },)
+                pipeline += ({"$match": {"spec.type": spec_type}},)
+                pipeline += ({"$lookup":
+                                  {"from": "person"
+                                      , "localField": "person_id"
+                                      , "foreignField": "_id"
+                                      , "as": "target_person"}
+                              },)
+                pipeline += ({"$project":
+                    {
+                        "first_name": {"$arrayElemAt": ["$target_person.first_name", 0]},
+                        "middle_name": {"$arrayElemAt": ["$target_person.middle_name", 0]},
+                        "surname": {"$arrayElemAt": ["$target_person.surname", 0]},
+                        "_id": {"$arrayElemAt": ["$target_person._id", 0]}
+                    }},)
             else:
                 return {"result": ERR.INPUT}
 
@@ -296,7 +323,7 @@ class Person(MongoModel):
             {"result": ERR.NO_DATA}
         try:
             lst = []
-            target_cls = Person if not group_debug else GroupMember
+
             for person in target_cls.objects.aggregate(*pipeline):
                 if "person_specialization" in person and person["person_specialization"]:
                     specialization = person["specialization"][0]["type"]

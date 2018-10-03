@@ -39,6 +39,8 @@ def prepare_org_structure():
     spec_1.save()
     spec_2 = model.Specialization("Student")
     spec_2.save()
+    spec_3 = model.Specialization("Tutor", "ММ")
+    spec_3.save()
     group_role_1 = model.GroupRole("role_1")
     group_role_1.save()
     group_role_2 = model.GroupRole("role_2")
@@ -90,6 +92,11 @@ def prepare_org_structure():
             "type": spec_2.type,
             "detail": None,
             "id": str(spec_2.pk),
+        },
+        "spec_3": {
+            "type": spec_3.type,
+            "detail": spec_3.detail,
+            "id": str(spec_3.pk),
         },
         "group_1": {
             "name": group_1.name,

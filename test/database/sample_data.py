@@ -300,6 +300,12 @@ def fill_db():
                         [group_permissions["read_info"],
                          group_permissions["create_survey"],
                          group_permissions["participate_survey"]]),
+        "Leni4_student_a403":
+            GroupMember(persons["Leni4"],
+                        groups["A403"],
+                        group_roles["student"],
+                        [group_permissions["read_info"],
+                         group_permissions["participate_survey"]]),
         "Pashka_student_a403":
             GroupMember(persons["Pashka"],
                         groups["A403"],
@@ -823,4 +829,4 @@ if __name__ == "__main__":
     fill_initial_data("..//..//src//data//hard_skills.csv",
                       "..//..//src//data//soft_skills.csv")
     fill_db()
-    #display_data()
+    display_data()
