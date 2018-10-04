@@ -296,7 +296,8 @@ class Group(MongoModel):
         final = True
         indexes = [IndexModel([("name", pymongo.DESCENDING),
                                ("department_id", pymongo.DESCENDING)],
-                              unique=True)]
+                              unique=True),
+                   IndexModel("department_id")]
 
 
 class GroupMember(MongoModel):
@@ -396,7 +397,8 @@ class SSReview(MongoModel):
         final = True
         indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
                                ("subject_id", pymongo.DESCENDING)],
-                              unique=True)]
+                              unique=True),
+                   IndexModel("subject_id")]
 
 
 class HSReview(MongoModel):
@@ -411,7 +413,8 @@ class HSReview(MongoModel):
         final = True
         indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
                                ("subject_id", pymongo.DESCENDING)],
-                              unique=True)]
+                              unique=True),
+                   IndexModel("subject_id")]
 
 
 class SpecializationReview(MongoModel):
@@ -426,7 +429,8 @@ class SpecializationReview(MongoModel):
         final = True
         indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
                                ("subject_id", pymongo.DESCENDING)],
-                              unique=True)]
+                              unique=True),
+                   IndexModel("subject_id")]
 
 
 class GroupReview(MongoModel):
@@ -441,7 +445,8 @@ class GroupReview(MongoModel):
         final = True
         indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
                                ("subject_id", pymongo.DESCENDING)],
-                              unique=True)]
+                              unique=True),
+                   IndexModel("subject_id")]
 
 
 class GroupMemberReview(MongoModel):
@@ -456,7 +461,8 @@ class GroupMemberReview(MongoModel):
         final = True
         indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
                                ("subject_id", pymongo.DESCENDING)],
-                              unique=True)]
+                              unique=True),
+                   IndexModel("subject_id")]
 
 
 class GroupTestReview(MongoModel):
@@ -471,7 +477,8 @@ class GroupTestReview(MongoModel):
         final = True
         indexes = [IndexModel([("reviewer_id", pymongo.DESCENDING),
                                ("subject_id", pymongo.DESCENDING)],
-                              unique=True)]
+                              unique=True),
+                   IndexModel("subject_id")]
 
 
 class Survey(MongoModel):
@@ -518,7 +525,8 @@ class AuthInfo(MongoModel):
         connection_alias = "reviewer"
         final = True
         indexes = [IndexModel([("phone_no", pymongo.DESCENDING)],
-                              unique=True)]
+                              unique=True),
+                   IndexModel("session_id")]
 
 
 init_model()
