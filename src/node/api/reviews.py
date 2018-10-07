@@ -124,6 +124,8 @@ def post_person_skill_review(skill_review_cls, p_id, s_id):
         s_review = skill_review_cls(reviewer_id, person_s.pk, value, description)
         s_review.save()
 
+        update_subject_level(skill_review_cls, person_s)
+
         result = {"result": ERR.OK,
                   "id": str(s_review.pk)}
 
@@ -152,25 +154,29 @@ def post_person_soft_skill_review(p_id, ss_id):
 @required_auth("reviewer")
 def delete_review(id):
     try:
-        result = {"result": ERR.NO_DATA}
+        err = ERR.NO_DATA
+        review_cls = None
         if SpecializationReview(_id=id) in SpecializationReview.objects.raw({"_id":ObjectId(id)}):
-            SpecializationReview(_id=id).delete()
-            result = {"result": ERR.OK}
+            review_cls = SpecializationReview
         if HSReview(_id=id) in HSReview.objects.raw({"_id":ObjectId(id)}):
-            HSReview(_id=id).delete()
-            result = {"result": ERR.OK}
+            review_cls = HSReview
         if SSReview(_id=id) in SSReview.objects.raw({"_id":ObjectId(id)}):
-            SSReview(_id=id).delete()
-            result = {"result": ERR.OK}
+            review_cls = SSReview
         if GroupReview(_id=id) in GroupReview.objects.raw({"_id":ObjectId(id)}):
-            GroupReview(_id=id).delete()
-            result = {"result": ERR.OK}
+            review_cls = GroupReview
         if GroupTestReview(_id=id) in GroupTestReview.objects.raw({"_id":ObjectId(id)}):
-            GroupTestReview(_id=id).delete()
-            result = {"result": ERR.OK}
+            review_cls = GroupTestReview
         if GroupMemberReview(_id=id) in GroupMemberReview.objects.raw({"_id":ObjectId(id)}):
-            GroupMemberReview(_id=id).delete()
-            result = {"result": ERR.OK}
+            review_cls = GroupMemberReview
+
+        if review_cls:
+            err = ERR.OK
+            review = review_cls(_id=id)
+            review.refresh_from_db()
+            review_cls(_id=id).delete()
+            update_subject_level(review_cls, review.subject_id)
+
+        result = {"result": err}
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
@@ -242,3 +248,16 @@ def find_reviews():
         result = {"result": ERR.DB,
                   "error_message": str(ex)}
     return jsonify(result), 200
+
+
+def update_subject_level(review_cls, subj):
+    pipeline = ({"$match": {"subject_id": subj.pk}},
+                {"$group": {"_id": "null",
+                            "value": {"$avg": "$value"}
+                            }
+                 },
+                )
+
+    result = list(review_cls.objects.aggregate(*pipeline))
+    subj.level = result[0]["value"] if result else 50.0
+    subj.save()
