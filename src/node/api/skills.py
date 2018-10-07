@@ -34,7 +34,7 @@ def list_skill_types():
 @required_auth("admin")
 def add_soft_skill(id):
     return add_resource(SoftSkill,
-                        ["name"],
+                        ["name", "weight"],
                         SkillType,
                         id,
                         "skill_type_id")
@@ -51,7 +51,8 @@ def list_soft_skills():
     return list_resources(SoftSkill,
                           {"id": "_id",
                            "name": "name",
-                           "skill_type": "skill_type_id"})
+                           "skill_type": "skill_type_id",
+                           "weight": "weight"})
 
 
 @bp.route("/skill_types/<string:id>/hard_skills", methods = ['POST'])

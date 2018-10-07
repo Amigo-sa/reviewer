@@ -277,11 +277,12 @@ class TestApi(unittest.TestCase):
         skill_type = model.SkillType()
         skill_type.name = "sample_skill_type"
         skill_type.save()
-        post_data = {"name": "some_name"}
+        post_data = {"name": "some_name", "weight": 1}
         ss_id = self.post_item("/skill_types/%s/soft_skills" % skill_type.pk, post_data)
         soft_skill = model.SoftSkill(_id=ss_id)
         soft_skill.refresh_from_db()
         self.assertEqual("some_name", soft_skill.name, "must save correct name")
+        self.assertEqual(1, soft_skill.weight, "must save correct weight")
         with self.assertRaises(AssertionError):
             self.post_item("/skill_types/%s/soft_skills" % skill_type.pk, post_data)
 
@@ -1033,7 +1034,8 @@ class TestApi(unittest.TestCase):
                                 "skill_type_id" : st_id})
         ss_id = self.post_item("/skill_types/%s/soft_skills" % st_id,
                                {"name": "soft_skill_name",
-                                "skill_type_id": st_id})
+                                "skill_type_id": st_id,
+                                "weight": 1})
         post_routes = [
             "/organizations",
             "/organizations/%s/departments" % org_id,

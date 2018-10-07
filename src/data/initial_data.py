@@ -52,7 +52,7 @@ def prepare_hard_skills(hs_path):
             hard_skill_list[i].append(hard_skill.pk)
 
 def prepare_soft_skills(ss_path):
-    soft_skills = read_skill_list(ss_path)
+    soft_skills = read_skill_list(ss_path, weights=True)
     for i, skill_sub in enumerate(soft_skills):
         skill_type = model.SkillType(skill_sub[0])
         skill_type.save()
@@ -60,7 +60,8 @@ def prepare_soft_skills(ss_path):
         skill_sub.pop(0)
         for skill in skill_sub:
             soft_skill = model.SoftSkill()
-            soft_skill.name = skill
+            soft_skill.name = skill[0]
+            soft_skill.weight = int(skill[1])
             soft_skill.skill_type_id = skill_type.pk
             soft_skill.save()
             soft_skill_list[i].append(soft_skill.pk)
@@ -103,12 +104,14 @@ def prepare_version_info():
     service.api_version = constants.api_version
 
 
-def read_skill_list(filename):
+def read_skill_list(filename, weights=False):
     skill_list = []
     file = open(filename, encoding="utf-8")
     header = file.readline()
     header = header.splitlines()[0]
     skill_types = header.split(";")
+    if weights:
+        skill_types = skill_types[::2]
     for t in skill_types:
         skill_list.append([t])
     type_count = len(skill_types)
@@ -118,10 +121,12 @@ def read_skill_list(filename):
     for line in lines:
         line = line.splitlines()[0]
         skill_names = line.split(";")
+        if weights:
+            skill_names = list(zip(skill_names[::2], skill_names[1::2]))
         if len(skill_names) != type_count:
             raise SyntaxError("Ошибка парсинга %s"% filename)
         for index, name in enumerate(skill_names):
-            if len(name) > 0:
+            if len(name[0]) if weights else len(name) > 0:
                 skill_list[index].append(name)
     return skill_list
 

@@ -203,6 +203,7 @@ class PersonHS(MongoModel):
 class SoftSkill(MongoModel):
     name = fields.CharField()
     skill_type_id = ValidatedReferenceField(SkillType, on_delete=ReferenceField.CASCADE)
+    weight = fields.IntegerField()
 
     class Meta:
         write_concern = WriteConcern(w=1)

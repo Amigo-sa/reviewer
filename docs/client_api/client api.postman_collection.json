@@ -824,7 +824,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "a769c254-08fd-47b8-b519-1860ac93e355",
+								"id": "b5622f30-57a5-4da5-8bdc-e371c91c17e0",
 								"type": "text/javascript",
 								"exec": [
 									"pm.environment.set(\"phone_no\", \"79032233223\");",
@@ -992,7 +992,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n\t\"person_id\": \"65855f243adc5806e47fbf5a\",\n    \"result\": 0,\n    \"session_id\": \"65855f243adc5806e47fbf5a34a935c6\"\n}"
+							"body": "{\n    \"person_id\": \"5b54c4a72131371cb0cbdd45\",\n    \"result\": 0,\n    \"session_id\": \"65855f243adc5806e47fbf5a34a935c6\"\n}"
 						}
 					]
 				},
@@ -7267,10 +7267,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "222e12a2-f388-4a4f-8021-b37bb52010e5",
+								"id": "9ece58b7-b37a-4c82-b1ce-92b4f1ebb7ec",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"skill_type_id\", \"5b97fe612131371bd8f5e504\");"
+									"pm.environment.set(\"skill_type_id\", \"5bb9fdaa2131371954d2bc9f\");"
 								]
 							}
 						}
@@ -7289,7 +7289,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"Безбашенность\"\n}"
+							"raw": "{\n\t\"name\":\"Безбашенность\",\n\t\"weight\": 1\n}"
 						},
 						"url": {
 							"raw": "{{server_url}}/skill_types/{{skill_type_id}}/soft_skills",
@@ -7377,10 +7377,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "0b00adb7-65eb-47d8-90cc-391c1e6e61a5",
+								"id": "66f05214-42d8-4b16-acb0-6faacd7992f9",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"ss_id\", \"5b4e38d02131371ce8dd8246\");"
+									"pm.environment.set(\"ss_id\", \"5bb9ffea2131371434ee26de\");"
 								]
 							}
 						}
@@ -9143,7 +9143,7 @@
 	],
 	"variable": [
 		{
-			"id": "ce0659cc-7b34-455e-a4eb-ab122ca80be0",
+			"id": "3ced25df-cf4a-4f11-b45c-660b69a24c0c",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"
