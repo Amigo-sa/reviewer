@@ -13,23 +13,42 @@ from random import randint
 
 def prepare_subject(target_cls):
     objects = {}
+    person = model.Person(
+        "Иван",
+        "Иванович",
+        "Ленин",
+        date(1984, 2, 6),
+        "79001002030")
+    person.save()
+    skill_type = model.SkillType("skill_type_1")
+    skill_type.save()
     if target_cls == model.PersonHS:
-        person = model.Person(
-            "Иван",
-            "Иванович",
-            "Ленин",
-            date(1984, 2, 6),
-            "79001002030")
-        person.save()
         objects.update({"parent_id" : str(person.pk)})
-        skill_type = model.SkillType("skill_type_1")
-        skill_type.save()
         hs = model.HardSkill("hard_skill_1", skill_type.pk)
         hs.save()
         objects.update({"subject_id": str(hs.pk)})
         person_hs = model.PersonHS(person.pk, hs.pk, 50)
         person_hs.save()
         objects.update({"db_obj" : person_hs})
+    if target_cls == model.PersonSS:
+        objects.update({"parent_id" : str(person.pk)})
+        ss = model.SoftSkill("soft_skill_1", skill_type.pk)
+        ss.save()
+        objects.update({"subject_id": str(ss.pk)})
+        person_ss = model.PersonSS(person.pk, ss.pk, 50)
+        person_ss.save()
+        objects.update({"db_obj" : person_ss})
+    if target_cls == model.PersonSpecialization:
+        org = model.Organization("МЭИ")
+        org.save()
+        dep = model.Department("ИИТ", org.pk)
+        dep.save()
+        spec = model.Specialization("Tutor", "ТОЭ")
+        spec.save()
+        p_spec = model.PersonSpecialization(person.pk, dep.pk, spec.pk, 50)
+        p_spec.save()
+        objects.update({"db_obj": p_spec})
+        objects.update({"subject_id": str(p_spec.pk)})
     return objects
 
 def prepare_org_structure():

@@ -914,7 +914,7 @@ class TestApi(unittest.TestCase):
         review_list = self.get_item_list("/reviews?subject_id=" + gm_id)
         self.assertEqual([], review_list)
 
-    def test_update_person_hard_skill_with_review(self):
+    def test_update_hard_skill_level_with_review(self):
         rev_struct = hm.prepare_subject(model.PersonHS)
         self.setup_reviewer()
         self.setup_reviewer2()
@@ -939,6 +939,60 @@ class TestApi(unittest.TestCase):
                        post_data, auth="reviewer2")
         person_hs.refresh_from_db()
         self.assertEqual(60, person_hs.level, "must calculate correct level")
+
+    def test_update_soft_skill_level_with_review(self):
+        rev_struct = hm.prepare_subject(model.PersonSS)
+        self.setup_reviewer()
+        self.setup_reviewer2()
+        post_data = {
+            "reviewer_id": str(self.reviewer_id),
+            "value": 70,
+            "description": "some_descr"
+        }
+        self.post_item("/persons/%s/soft_skills/%s/reviews" %
+                       (rev_struct["parent_id"], rev_struct["subject_id"]),
+                       post_data, auth="reviewer")
+        person_ss = rev_struct["db_obj"]
+        person_ss.refresh_from_db()
+        self.assertEqual(70, person_ss.level, "must calculate correct level")
+        post_data = {
+            "reviewer_id": str(self.reviewer_id2),
+            "value": 50,
+            "description": "some_descr"
+        }
+        self.post_item("/persons/%s/soft_skills/%s/reviews" %
+                       (rev_struct["parent_id"], rev_struct["subject_id"]),
+                       post_data, auth="reviewer2")
+        person_ss.refresh_from_db()
+        self.assertEqual(60, person_ss.level, "must calculate correct level")
+
+    @unittest.skip("not implemented in api")
+    def test_update_specialization_level_with_review(self):
+        rev_struct = hm.prepare_subject(model.PersonSpecialization)
+        self.setup_reviewer()
+        self.setup_reviewer2()
+        post_data = {
+            "reviewer_id": str(self.reviewer_id),
+            "value": 70,
+            "description": "some_descr"
+        }
+        self.post_item("/specializations/%s/reviews" %
+                       (rev_struct["subject_id"]),
+                       post_data, auth="reviewer")
+        p_spec = rev_struct["db_obj"]
+        p_spec.refresh_from_db()
+        self.assertEqual(70, p_spec.level, "must calculate correct level")
+        post_data = {
+            "reviewer_id": str(self.reviewer_id2),
+            "value": 50,
+            "description": "some_descr"
+        }
+        self.post_item("/specializations/%s/reviews" %
+                       (rev_struct["subject_id"]),
+                       post_data, auth="reviewer2")
+        p_spec = rev_struct["db_obj"]
+        p_spec.refresh_from_db()
+        self.assertEqual(60, p_spec.level, "must calculate correct level")
 
 
     def test_organization_duplicate(self):
