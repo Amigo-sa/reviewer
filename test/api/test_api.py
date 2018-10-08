@@ -17,6 +17,7 @@ import api_helper_methods as hm
 import data.reviewer_model as model
 from pymodm.errors import DoesNotExist
 from bson.binary import Binary, BINARY_SUBTYPE
+from datetime import date
 
 node_port = 5002
 
@@ -337,6 +338,7 @@ class TestApi(unittest.TestCase):
             soft_skill = model.SoftSkill()
             soft_skill.name = "name%s"%i
             soft_skill.skill_type_id = skill_type.pk
+            soft_skill.weight = i+1
             soft_skill.save()
             pks.append(str(soft_skill.pk))
         list = self.get_item_list("/soft_skills")
@@ -344,7 +346,8 @@ class TestApi(unittest.TestCase):
         for i in range(2):
             self.assertIn({"id" : pks[i],
                        "name" : "name%s"%i,
-                       "skill_type" : str(skill_type.pk)},
+                       "skill_type" : str(skill_type.pk),
+                       "weight" : str(i+1)},
                       list, "must return correct list")
 
     def test_list_hard_skills(self):
@@ -910,6 +913,33 @@ class TestApi(unittest.TestCase):
         # verify for one subject
         review_list = self.get_item_list("/reviews?subject_id=" + gm_id)
         self.assertEqual([], review_list)
+
+    def test_update_person_hard_skill_with_review(self):
+        rev_struct = hm.prepare_subject(model.PersonHS)
+        self.setup_reviewer()
+        self.setup_reviewer2()
+        post_data = {
+            "reviewer_id" : str(self.reviewer_id),
+            "value" : 70,
+            "description" : "some_descr"
+        }
+        self.post_item("/persons/%s/hard_skills/%s/reviews"%
+                       (rev_struct["parent_id"], rev_struct["subject_id"]),
+                       post_data, auth="reviewer")
+        person_hs = rev_struct["db_obj"]
+        person_hs.refresh_from_db()
+        self.assertEqual(70, person_hs.level, "must calculate correct level")
+        post_data = {
+            "reviewer_id": str(self.reviewer_id2),
+            "value": 50,
+            "description": "some_descr"
+        }
+        self.post_item("/persons/%s/hard_skills/%s/reviews" %
+                       (rev_struct["parent_id"], rev_struct["subject_id"]),
+                       post_data, auth="reviewer2")
+        person_hs.refresh_from_db()
+        self.assertEqual(60, person_hs.level, "must calculate correct level")
+
 
     def test_organization_duplicate(self):
         self.post_duplicate_item("/organizations",

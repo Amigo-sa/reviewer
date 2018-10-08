@@ -11,6 +11,26 @@ from node.api.auth import hash_password, gen_session_id
 from datetime import datetime, timezone, timedelta, date
 from random import randint
 
+def prepare_subject(target_cls):
+    objects = {}
+    if target_cls == model.PersonHS:
+        person = model.Person(
+            "Иван",
+            "Иванович",
+            "Ленин",
+            date(1984, 2, 6),
+            "79001002030")
+        person.save()
+        objects.update({"parent_id" : str(person.pk)})
+        skill_type = model.SkillType("skill_type_1")
+        skill_type.save()
+        hs = model.HardSkill("hard_skill_1", skill_type.pk)
+        hs.save()
+        objects.update({"subject_id": str(hs.pk)})
+        person_hs = model.PersonHS(person.pk, hs.pk, 50)
+        person_hs.save()
+        objects.update({"db_obj" : person_hs})
+    return objects
 
 def prepare_org_structure():
     org_1 = model.Organization("МЭИ")
