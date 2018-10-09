@@ -77,8 +77,24 @@ def update_subject_level(review_cls, subj):
                  },
                 )
     result = list(review_cls.objects.aggregate(*pipeline))
-    subj.level = result[0]["value"] if result else 50.0
+    subj.level = result[0]["value"] if result else None
     subj.save()
+
+def update_person_subrating(skill_cls, person):
+    pipeline = ({"$match": {"person_id": person.pk}},
+                {"$group": {"_id": "null",
+                            "level": {"$avg": "$level"}
+                            }
+                 },
+                )
+    result = list(skill_cls.objects.aggregate(*pipeline))
+    if skill_cls == PersonSpecialization:
+        person.spec_rating = result[0]["level"] if result else None
+    if skill_cls == PersonHS:
+        person.hs_rating = result[0]["level"] if result else None
+    if skill_cls == PersonSS:
+        person.ss_rating = result[0]["level"] if result else None
+    person.save()
 
 class ValidatedReferenceField(fields.ReferenceField):
     def contribute_to_class(self, cls, name):
@@ -134,10 +150,10 @@ class Person(MongoModel):
     birth_date = fields.DateTimeField()
     phone_no = fields.CharField()
     photo = fields.BinaryField()
-    ss_rating = fields.FloatField(default=50, required=True)
-    hs_rating = fields.FloatField(default=50, required=True)
-    spec_rating = fields.FloatField(default=50, required=True)
-    rating = fields.FloatField(default=50, required=True)
+    ss_rating = fields.FloatField(default=None, blank=True)
+    hs_rating = fields.FloatField(default=None, blank=True)
+    spec_rating = fields.FloatField(default=None, blank=True)
+    rating = fields.FloatField(default=None, blank=True)
     # TODO нужно оставить либо поле rating, либо метод get_rating - смотреть по производиельности
     def get_rating(self):
         return (self.ss_rating + self.hs_rating + self.spec_rating)/3
@@ -206,7 +222,11 @@ class HardSkill(MongoModel):
 class PersonHS(MongoModel):
     person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     hs_id = ValidatedReferenceField(HardSkill, on_delete=ReferenceField.CASCADE)
-    level = fields.FloatField()
+    level = fields.FloatField(default=None, blank=True)
+
+    def save(self, cascade=None, full_clean=True, force_insert=False):
+        super().save(cascade, full_clean, force_insert)
+        update_person_subrating(PersonHS, self.person_id)
 
     class Meta:
         write_concern = WriteConcern(w=1)
@@ -234,7 +254,11 @@ class SoftSkill(MongoModel):
 class PersonSS(MongoModel):
     person_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     ss_id = ValidatedReferenceField(SoftSkill, on_delete=ReferenceField.CASCADE)
-    level = fields.FloatField()
+    level = fields.FloatField(default=None, blank=True)
+
+    def save(self, cascade=None, full_clean=True, force_insert=False):
+        super().save(cascade, full_clean, force_insert)
+        update_person_subrating(PersonSS, self.person_id)
 
     class Meta:
         write_concern = WriteConcern(w=1)
@@ -265,8 +289,11 @@ class PersonSpecialization(MongoModel):
     specialization_id = ValidatedReferenceField(Specialization, on_delete=ReferenceField.CASCADE)
     level = fields.FloatField(default=None, blank=True)
     details = fields.DictField()
-
     is_active = fields.BooleanField(required=True, default=True)
+
+    def save(self, cascade=None, full_clean=True, force_insert=False):
+        super().save(cascade, full_clean, force_insert)
+        update_person_subrating(PersonSpecialization, self.person_id)
 
     class Meta:
         write_concern = WriteConcern(w=1)

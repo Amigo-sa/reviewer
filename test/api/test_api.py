@@ -918,13 +918,14 @@ class TestApi(unittest.TestCase):
         rev_struct = hm.prepare_subject(model.PersonHS)
         self.setup_reviewer()
         self.setup_reviewer2()
+        person_id = str(rev_struct["person"].pk)
         post_data = {
             "reviewer_id" : str(self.reviewer_id),
             "value" : 70,
             "description" : "some_descr"
         }
         self.post_item("/persons/%s/hard_skills/%s/reviews"%
-                       (rev_struct["parent_id"], rev_struct["subject_id"]),
+                       (person_id, rev_struct["subject_id"]),
                        post_data, auth="reviewer")
         person_hs = rev_struct["db_obj"]
         person_hs.refresh_from_db()
@@ -935,7 +936,7 @@ class TestApi(unittest.TestCase):
             "description": "some_descr"
         }
         self.post_item("/persons/%s/hard_skills/%s/reviews" %
-                       (rev_struct["parent_id"], rev_struct["subject_id"]),
+                       (person_id, rev_struct["subject_id"]),
                        post_data, auth="reviewer2")
         person_hs.refresh_from_db()
         self.assertEqual(60, person_hs.level, "must calculate correct level")
@@ -944,13 +945,14 @@ class TestApi(unittest.TestCase):
         rev_struct = hm.prepare_subject(model.PersonSS)
         self.setup_reviewer()
         self.setup_reviewer2()
+        person_id = str(rev_struct["person"].pk)
         post_data = {
             "reviewer_id": str(self.reviewer_id),
             "value": 70,
             "description": "some_descr"
         }
         self.post_item("/persons/%s/soft_skills/%s/reviews" %
-                       (rev_struct["parent_id"], rev_struct["subject_id"]),
+                       (person_id, rev_struct["subject_id"]),
                        post_data, auth="reviewer")
         person_ss = rev_struct["db_obj"]
         person_ss.refresh_from_db()
@@ -961,7 +963,7 @@ class TestApi(unittest.TestCase):
             "description": "some_descr"
         }
         self.post_item("/persons/%s/soft_skills/%s/reviews" %
-                       (rev_struct["parent_id"], rev_struct["subject_id"]),
+                       (person_id, rev_struct["subject_id"]),
                        post_data, auth="reviewer2")
         person_ss.refresh_from_db()
         self.assertEqual(60, person_ss.level, "must calculate correct level")
@@ -970,6 +972,7 @@ class TestApi(unittest.TestCase):
         rev_struct = hm.prepare_subject(model.PersonSpecialization)
         self.setup_reviewer()
         self.setup_reviewer2()
+        person_id = str(rev_struct["person"].pk)
         post_data = {
             "reviewer_id": str(self.reviewer_id),
             "value": 70,

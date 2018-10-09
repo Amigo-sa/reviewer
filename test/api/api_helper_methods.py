@@ -20,10 +20,11 @@ def prepare_subject(target_cls):
         date(1984, 2, 6),
         "79001002030")
     person.save()
+    objects.update({"person": person})
     skill_type = model.SkillType("skill_type_1")
     skill_type.save()
+    objects.update({"skill_type": skill_type})
     if target_cls == model.PersonHS:
-        objects.update({"parent_id" : str(person.pk)})
         hs = model.HardSkill("hard_skill_1", skill_type.pk)
         hs.save()
         objects.update({"subject_id": str(hs.pk)})
@@ -31,7 +32,6 @@ def prepare_subject(target_cls):
         person_hs.save()
         objects.update({"db_obj" : person_hs})
     if target_cls == model.PersonSS:
-        objects.update({"parent_id" : str(person.pk)})
         ss = model.SoftSkill("soft_skill_1", skill_type.pk)
         ss.save()
         objects.update({"subject_id": str(ss.pk)})

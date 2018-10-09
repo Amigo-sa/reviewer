@@ -21,32 +21,7 @@ import re
 from pymodm.errors import ValidationError
 from pymongo.errors import DuplicateKeyError
 
-from data.reviewer_model import (Department,
-                                 Group,
-                                 GroupPermission,
-                                 GroupReview,
-                                 GroupRole,
-                                 GroupTest,
-                                 GroupTestReview,
-                                 HSReview,
-                                 HardSkill,
-                                 Organization,
-                                 Person,
-                                 PersonHS,
-                                 PersonSS,
-                                 GroupMember,
-                                 GroupMemberReview,
-                                 Specialization,
-                                 SSReview,
-                                 Service,
-                                 SoftSkill,
-                                 PersonSpecialization,
-                                 Survey,
-                                 SurveyResponse,
-                                 SpecializationReview,
-                                 TestResult,
-                                 get_dependent_list,
-                                 init_model)
+import data.reviewer_model as model
 
 test_version = "0.4"
 
@@ -65,26 +40,91 @@ class TestValidation(unittest.TestCase):
         for doc in collection_class.objects.all():
             doc.delete()
 
+    def test_person_rating_calculation(self):
+        # prepare
+        reviewer_1 = model.Person(phone_no="79001223234")
+        reviewer_1.save()
+        reviewer_2 = model.Person(phone_no="79001223235")
+        reviewer_2.save()
+        person = model.Person(
+            "Иван",
+            "Иванович",
+            "Ленин",
+            datetime.date(1984, 2, 6),
+            "79001002030")
+        person.save()
+        org = model.Organization("МЭИ")
+        org.save()
+        dep = model.Department("ИИТ", org.pk)
+        dep.save()
+        skill_type = model.SkillType("skill_type_1")
+        skill_type.save()
+        hs = model.HardSkill("hard_skill_1", skill_type.pk)
+        hs.save()
+        ss = model.SoftSkill("soft_skill_1", skill_type.pk)
+        ss.save()
+        spec = model.Specialization("Tutor", "TOE")
+        spec.save()
+        person_spec = model.PersonSpecialization(person.pk, dep.pk, spec.pk, None)
+        person_spec.save()
+        person_hs = model.PersonHS(person.pk, hs.pk, None)
+        person_hs.save()
+        person_ss = model.PersonSS(person.pk, ss.pk, None)
+        person_ss.save()
+        # verify initial values
+        person.refresh_from_db()
+        self.assertEqual((None,None,None),(person.ss_rating, person.hs_rating, person.spec_rating))
+        # post first review on hs
+        review = model.HSReview(reviewer_1.pk, person_hs.pk, 30, "some descr")
+        review.save()
+        person.refresh_from_db()
+        self.assertEqual((None, 30, None), (person.ss_rating, person.hs_rating, person.spec_rating))
+        # post second review on hs
+        review = model.HSReview(reviewer_2.pk, person_hs.pk, 40, "some descr")
+        review.save()
+        person.refresh_from_db()
+        self.assertEqual((None, 35, None), (person.ss_rating, person.hs_rating, person.spec_rating))
+        # post first review on ss
+        review = model.SSReview(reviewer_1.pk, person_ss.pk, 60, "some descr")
+        review.save()
+        person.refresh_from_db()
+        self.assertEqual((60, 35, None), (person.ss_rating, person.hs_rating, person.spec_rating))
+        # post second review on hs
+        review = model.SSReview(reviewer_2.pk, person_ss.pk, 90, "some descr")
+        review.save()
+        person.refresh_from_db()
+        self.assertEqual((75, 35, None), (person.ss_rating, person.hs_rating, person.spec_rating))
+        # post first review on spec
+        review = model.SpecializationReview(reviewer_1.pk, person_spec.pk, 10, "some descr")
+        review.save()
+        person.refresh_from_db()
+        self.assertEqual((75, 35, 10), (person.ss_rating, person.hs_rating, person.spec_rating))
+        # post first review on spec
+        review = model.SpecializationReview(reviewer_2.pk, person_spec.pk, 0, "some descr")
+        review.save()
+        person.refresh_from_db()
+        self.assertEqual((75, 35, 5), (person.ss_rating, person.hs_rating, person.spec_rating))
+
     def test_group_member_validation(self):
-        person = Person(
+        person = model.Person(
             "Леонид",
             "Александрович",
             "Дунаев",
             datetime.date(1986, 5, 1),
             "88005553535")
         person.save()
-        organization = Organization("МЭИ")
+        organization = model.Organization("МЭИ")
         organization.save()
-        department = Department("Кафедра ИИТ", organization)
+        department = model.Department("Кафедра ИИТ", organization)
         department.save()
-        member_role = GroupRole("member")
+        member_role = model.GroupRole("member")
         member_role.save()
-        read_permission = GroupPermission("read_info")
+        read_permission = model.GroupPermission("read_info")
         read_permission.save()
-        group = Group(department, "А-4-03", [member_role])
+        group = model.Group(department, "А-4-03", [member_role])
         group.save()
         # add person to group without group role and permissions
-        group_member = GroupMember()
+        group_member = model.GroupMember()
         group_member.group_id = group
         group_member.person_id = person
         group_member.role_id = None
@@ -132,13 +172,13 @@ class TestValidation(unittest.TestCase):
         self.assertDictEqual(ref_gm_data, gm_data)
         # try add duplicate group member
         with self.assertRaises(DuplicateKeyError):
-            dup_group_member = GroupMember()
+            dup_group_member = model.GroupMember()
             dup_group_member.group_id = group
             dup_group_member.person_id = person
             dup_group_member.set_role(member_role)
             dup_group_member.save()
         # add second permission
-        write_permission = GroupPermission("write_info")
+        write_permission = model.GroupPermission("write_info")
         write_permission.save()
         group_member.refresh_from_db()
         group_member.permissions.append(write_permission)
@@ -150,9 +190,9 @@ class TestValidation(unittest.TestCase):
         self.assertDictEqual(ref_gm_data, gm_data)
         # try add invalid role
 
-        inv_role = GroupRole("god-emperor")
+        inv_role = model.GroupRole("god-emperor")
         inv_role.save()
-        inv_group_member = GroupMember(person, group, None, [])
+        inv_group_member = model.GroupMember(person, group, None, [])
         with self.assertRaises(ValidationError):
             inv_group_member.set_role(inv_role)
             inv_group_member.save()
