@@ -105,6 +105,24 @@ class TestValidation(unittest.TestCase):
         person.refresh_from_db()
         self.assertEqual((75, 35, 5), (person.ss_rating, person.hs_rating, person.spec_rating))
 
+    def test_get_rating(self):
+        person = model.Person()
+        person.save()
+        rating = person.get_rating()
+        self.assertEqual(None, rating, "must return none if no ratings present")
+        person.ss_rating = 40
+        person.save()
+        rating = person.get_rating()
+        self.assertEqual(47.5, rating, "must calculate correct rating")
+        person.hs_rating = 80
+        person.save()
+        rating = person.get_rating()
+        self.assertEqual(55, rating, "must calculate correct rating")
+        person.spec_rating = 70
+        person.save()
+        rating = person.get_rating()
+        self.assertEqual(65, rating, "must calculate correct rating")
+
     def test_group_member_validation(self):
         person = model.Person(
             "Леонид",

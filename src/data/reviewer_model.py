@@ -153,10 +153,15 @@ class Person(MongoModel):
     ss_rating = fields.FloatField(default=None, blank=True)
     hs_rating = fields.FloatField(default=None, blank=True)
     spec_rating = fields.FloatField(default=None, blank=True)
-    rating = fields.FloatField(default=None, blank=True)
+    #rating = fields.FloatField(default=None, blank=True)
     # TODO нужно оставить либо поле rating, либо метод get_rating - смотреть по производиельности
     def get_rating(self):
-        return (self.ss_rating + self.hs_rating + self.spec_rating)/3
+        if (self.ss_rating == self.hs_rating == self.spec_rating == None):
+            return None
+        return (  (self.ss_rating or 50)
+                + (self.hs_rating or 50)
+                + (self.spec_rating or 50) * 2)\
+               / 4
 
     class Meta:
         write_concern = WriteConcern(w=1)
