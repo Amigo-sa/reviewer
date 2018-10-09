@@ -69,6 +69,16 @@ if len(sys.argv) > 1:
 print("Working with DB '%s' \n" % db_name)
 connect(constants.mongo_db + "/" + db_name, alias="reviewer")
 
+def update_subject_level(review_cls, subj):
+    pipeline = ({"$match": {"subject_id": subj.pk}},
+                {"$group": {"_id": "null",
+                            "value": {"$avg": "$value"}
+                            }
+                 },
+                )
+    result = list(review_cls.objects.aggregate(*pipeline))
+    subj.level = result[0]["value"] if result else 50.0
+    subj.save()
 
 class ValidatedReferenceField(fields.ReferenceField):
     def contribute_to_class(self, cls, name):
@@ -124,6 +134,13 @@ class Person(MongoModel):
     birth_date = fields.DateTimeField()
     phone_no = fields.CharField()
     photo = fields.BinaryField()
+    ss_rating = fields.FloatField(default=50, required=True)
+    hs_rating = fields.FloatField(default=50, required=True)
+    spec_rating = fields.FloatField(default=50, required=True)
+    rating = fields.FloatField(default=50, required=True)
+    # TODO нужно оставить либо поле rating, либо метод get_rating - смотреть по производиельности
+    def get_rating(self):
+        return (self.ss_rating + self.hs_rating + self.spec_rating)/3
 
     class Meta:
         write_concern = WriteConcern(w=1)
@@ -392,6 +409,10 @@ class SSReview(MongoModel):
     value = fields.FloatField()
     description = fields.CharField()
 
+    def save(self, cascade=None, full_clean=True, force_insert=False):
+        super().save(cascade, full_clean, force_insert)
+        update_subject_level(SSReview, self.subject_id)
+
     class Meta:
         write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
@@ -408,6 +429,10 @@ class HSReview(MongoModel):
     value = fields.FloatField()
     description = fields.CharField()
 
+    def save(self, cascade=None, full_clean=True, force_insert=False):
+        super().save(cascade, full_clean, force_insert)
+        update_subject_level(HSReview, self.subject_id)
+
     class Meta:
         write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
@@ -423,6 +448,10 @@ class SpecializationReview(MongoModel):
     subject_id = ValidatedReferenceField(PersonSpecialization, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
     description = fields.CharField()
+
+    def save(self, cascade=None, full_clean=True, force_insert=False):
+        super().save(cascade, full_clean, force_insert)
+        update_subject_level(SpecializationReview, self.subject_id)
 
     class Meta:
         write_concern = WriteConcern(w=1)

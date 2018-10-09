@@ -966,7 +966,6 @@ class TestApi(unittest.TestCase):
         person_ss.refresh_from_db()
         self.assertEqual(60, person_ss.level, "must calculate correct level")
 
-    @unittest.skip("not implemented in api")
     def test_update_specialization_level_with_review(self):
         rev_struct = hm.prepare_subject(model.PersonSpecialization)
         self.setup_reviewer()

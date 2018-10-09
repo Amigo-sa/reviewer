@@ -124,8 +124,6 @@ def post_person_skill_review(skill_review_cls, p_id, s_id):
         s_review = skill_review_cls(reviewer_id, person_s.pk, value, description)
         s_review.save()
 
-        update_subject_level(skill_review_cls, person_s)
-
         result = {"result": ERR.OK,
                   "id": str(s_review.pk)}
 
@@ -250,14 +248,3 @@ def find_reviews():
     return jsonify(result), 200
 
 
-def update_subject_level(review_cls, subj):
-    pipeline = ({"$match": {"subject_id": subj.pk}},
-                {"$group": {"_id": "null",
-                            "value": {"$avg": "$value"}
-                            }
-                 },
-                )
-
-    result = list(review_cls.objects.aggregate(*pipeline))
-    subj.level = result[0]["value"] if result else 50.0
-    subj.save()
