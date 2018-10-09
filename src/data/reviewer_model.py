@@ -77,6 +77,7 @@ def update_subject_level(review_cls, subj):
                  },
                 )
     result = list(review_cls.objects.aggregate(*pipeline))
+    subj.refresh_from_db()
     subj.level = result[0]["value"] if result else None
     subj.save()
 
@@ -88,6 +89,7 @@ def update_person_subrating(skill_cls, person):
                  },
                 )
     result = list(skill_cls.objects.aggregate(*pipeline))
+    person.refresh_from_db()
     if skill_cls == PersonSpecialization:
         person.spec_rating = result[0]["level"] if result else None
     if skill_cls == PersonHS:
