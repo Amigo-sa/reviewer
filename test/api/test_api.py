@@ -1416,7 +1416,6 @@ class TestApi(unittest.TestCase):
                             data=file_content)
         self.assertEqual(ERR.INPUT, resp.json()["result"], "must return ERR.INPUT for wrong content type")
 
-
     def test_get_photo(self):
         with open(r"../database/img/Leni4.jpg", mode='rb') as file:
             file_content = file.read()
@@ -1449,6 +1448,86 @@ class TestApi(unittest.TestCase):
         person.save()
         resp = requests.get(self.api_URL + "/persons/%s/photo" % str(person.pk))
         self.assertEqual(204, resp.status_code,"response code must be 204 when no photo present")
+
+    def test_review_data_corruption(self):
+        self.setup_reviewer()
+        self.setup_reviewer2()
+        person = model.Person(
+            "Иван",
+            "Иванович",
+            "Ленин",
+            datetime.date(1984, 2, 6),
+            "79001002030")
+        person.save()
+        person_ref = person.to_son().to_dict()
+        org = model.Organization("МЭИ")
+        org.save()
+        dep = model.Department("ИИТ", org.pk)
+        dep.save()
+        skill_type = model.SkillType("skill_type_1")
+        skill_type.save()
+        hs = model.HardSkill("hard_skill_1", skill_type.pk)
+        hs.save()
+        ss = model.SoftSkill("soft_skill_1", skill_type.pk)
+        ss.save()
+        spec = model.Specialization("Tutor", "TOE")
+        spec.save()
+        person_spec = model.PersonSpecialization(person.pk, dep.pk, spec.pk, None)
+        person_spec.save()
+        person_spec_ref = person_spec.to_son().to_dict()
+        # test person_spec review
+        spec_rev_id = self.post_item("/specializations/%s/reviews" % str(person_spec.pk), auth="reviewer", data={
+            "value": 10,
+            "description": "some_desc",
+            "reviewer_id": self.reviewer_id
+        })
+        person.refresh_from_db()
+        person_ref.update({"spec_rating": 10.0})
+        self.assertEqual(person_ref,person.to_son().to_dict(), "must not corrupt person data")
+        person_spec.refresh_from_db()
+        person_spec_ref.update({"level" : 10.0})
+        self.assertEqual(person_spec_ref, person_spec.to_son().to_dict(), "must not corrupt spec data")
+        # test ss review
+        ss_rev_id = self.post_item("/persons/%s/soft_skills/%s/reviews" % (str(person.pk), str(ss.pk))
+                       , auth="reviewer", data={
+                        "value": 20,
+                        "description": "some_desc",
+                        "reviewer_id": self.reviewer_id
+            })
+        person.refresh_from_db()
+        person_ref.update({"ss_rating": 20.0})
+        self.assertEqual(person_ref, person.to_son().to_dict(), "must not corrupt person data")
+        # test hs review
+        hs_rev_id = self.post_item("/persons/%s/hard_skills/%s/reviews" % (str(person.pk), str(hs.pk))
+                       , auth="reviewer", data={
+                        "value": 30,
+                        "description": "some_desc",
+                        "reviewer_id": self.reviewer_id
+            })
+        person.refresh_from_db()
+        person_ref.update({"hs_rating": 30.0})
+        self.assertEqual(person_ref, person.to_son().to_dict(), "must not corrupt person data")
+
+        # test person_spec review
+        self.delete_item("/reviews/%s"%spec_rev_id, auth="reviewer")
+        person.refresh_from_db()
+        person_ref.update({"spec_rating": None})
+        self.assertEqual(person_ref, person.to_son().to_dict(), "must not corrupt person data")
+        person_spec.refresh_from_db()
+        person_spec_ref.update({"level": None})
+        self.assertEqual(person_spec_ref, person_spec.to_son().to_dict(), "must not corrupt spec data")
+
+        # test ss review
+        self.delete_item("/reviews/%s" % ss_rev_id, auth="reviewer")
+        person.refresh_from_db()
+        person_ref.update({"ss_rating": None})
+        self.assertEqual(person_ref, person.to_son().to_dict(), "must not corrupt person data")
+        # test hs review
+        self.delete_item("/reviews/%s" % hs_rev_id, auth="reviewer")
+        person.refresh_from_db()
+        person_ref.update({"hs_rating": None})
+        self.assertEqual(person_ref, person.to_son().to_dict(), "must not corrupt person data")
+
 
     def pass_invalid_ref(self, url_post, auth="admin", **kwargs):
         data = self.generate_doc(kwargs.items())

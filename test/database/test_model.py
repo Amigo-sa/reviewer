@@ -99,11 +99,29 @@ class TestValidation(unittest.TestCase):
         review.save()
         person.refresh_from_db()
         self.assertEqual((75, 35, 10), (person.ss_rating, person.hs_rating, person.spec_rating))
-        # post first review on spec
+        # post second review on spec
         review = model.SpecializationReview(reviewer_2.pk, person_spec.pk, 0, "some descr")
         review.save()
         person.refresh_from_db()
         self.assertEqual((75, 35, 5), (person.ss_rating, person.hs_rating, person.spec_rating))
+        # delete reviews
+        review = model.HSReview.objects.get({"reviewer_id" : reviewer_1.pk,
+                                             "subject_id" : person_hs.pk})
+        review.delete()
+        person.refresh_from_db()
+        self.assertEqual((75, 40, 5), (person.ss_rating, person.hs_rating, person.spec_rating))
+
+        review = model.SSReview.objects.get({"reviewer_id": reviewer_1.pk,
+                                             "subject_id": person_ss.pk})
+        review.delete()
+        person.refresh_from_db()
+        self.assertEqual((90, 40, 5), (person.ss_rating, person.hs_rating, person.spec_rating))
+
+        review = model.SpecializationReview.objects.get({"reviewer_id": reviewer_1.pk,
+                                             "subject_id": person_spec.pk})
+        review.delete()
+        person.refresh_from_db()
+        self.assertEqual((90, 40, 0), (person.ss_rating, person.hs_rating, person.spec_rating))
 
     def test_get_rating(self):
         person = model.Person()

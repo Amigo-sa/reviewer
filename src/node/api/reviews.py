@@ -171,12 +171,12 @@ def delete_review(id):
             err = ERR.OK
             review = review_cls(_id=id)
             review.refresh_from_db()
-            review_cls(_id=id).delete()
-            update_subject_level(review_cls, review.subject_id)
+            review.delete()
 
         result = {"result": err}
-    except:
+    except Exception as e:
         result = {"result": ERR.DB}
+        print(e)
     return jsonify(result), 200
 
 

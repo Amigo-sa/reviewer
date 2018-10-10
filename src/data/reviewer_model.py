@@ -447,6 +447,10 @@ class SSReview(MongoModel):
         super().save(cascade, full_clean, force_insert)
         update_subject_level(SSReview, self.subject_id)
 
+    def delete(self):
+        super().delete()
+        update_subject_level(SSReview, self.subject_id)
+
     class Meta:
         write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
@@ -467,6 +471,10 @@ class HSReview(MongoModel):
         super().save(cascade, full_clean, force_insert)
         update_subject_level(HSReview, self.subject_id)
 
+    def delete(self):
+        super().delete()
+        update_subject_level(HSReview, self.subject_id)
+
     class Meta:
         write_concern = WriteConcern(w=1)
         connection_alias = "reviewer"
@@ -485,6 +493,10 @@ class SpecializationReview(MongoModel):
 
     def save(self, cascade=None, full_clean=True, force_insert=False):
         super().save(cascade, full_clean, force_insert)
+        update_subject_level(SpecializationReview, self.subject_id)
+
+    def delete(self):
+        super().delete()
         update_subject_level(SpecializationReview, self.subject_id)
 
     class Meta:
