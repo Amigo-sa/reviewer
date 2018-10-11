@@ -55,8 +55,9 @@ def post_review(review_type, subject_id):
                 result = {"result": ERR.NO_DATA}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
-    except:
-        result = {"result":ERR.DB}
+    except Exception as e:
+        result = {"result":ERR.DB,
+                  "error_message": str(e)}
 
     return jsonify(result), 200
 
@@ -175,8 +176,8 @@ def delete_review(id):
 
         result = {"result": err}
     except Exception as e:
-        result = {"result": ERR.DB}
-        print(e)
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
     return jsonify(result), 200
 
 

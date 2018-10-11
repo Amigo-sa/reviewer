@@ -216,6 +216,7 @@ class TestApi(unittest.TestCase):
         soft_skill = model.SoftSkill()
         soft_skill.name = "ss_name"
         soft_skill.skill_type_id = skill_type.pk
+        soft_skill.weight = 1
         soft_skill.save()
         return [str(soft_skill.pk), {
             "name": "ss_name",
@@ -1468,7 +1469,7 @@ class TestApi(unittest.TestCase):
         skill_type.save()
         hs = model.HardSkill("hard_skill_1", skill_type.pk)
         hs.save()
-        ss = model.SoftSkill("soft_skill_1", skill_type.pk)
+        ss = model.SoftSkill("soft_skill_1", skill_type.pk, 1)
         ss.save()
         spec = model.Specialization("Tutor", "TOE")
         spec.save()

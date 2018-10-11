@@ -83,11 +83,29 @@ def update_subject_level(review_cls, subj):
 
 def update_person_subrating(skill_cls, person):
     pipeline = ({"$match": {"person_id": person.pk}},
-                {"$group": {"_id": "null",
-                            "level": {"$avg": "$level"}
-                            }
-                 },
+                {"$match": {"level": {"$ne": None}}}
                 )
+    if skill_cls == PersonSS:
+        pipeline += (
+            {"$lookup":
+                 {"from": "soft_skill",
+                  "localField": "ss_id",
+                  "foreignField": "_id",
+                  "as": "soft_skill"}},
+            {"$project":
+                 {"level": 1,
+                  "soft_skill": {"$arrayElemAt": ["$soft_skill", 0]}}},
+            {"$group": {"_id": "null",
+                            "sum": {"$sum": {"$multiply" : ["$level", "$soft_skill.weight"]}},
+                            "count": {"$sum": "$soft_skill.weight"}
+                        }},
+        )
+    else:
+        pipeline += ({"$group": {"_id": "null",
+                                 "level": {"$avg": "$level"}
+                                }
+                      },)
+
     result = list(skill_cls.objects.aggregate(*pipeline))
     person.refresh_from_db()
     if skill_cls == PersonSpecialization:
@@ -95,7 +113,7 @@ def update_person_subrating(skill_cls, person):
     if skill_cls == PersonHS:
         person.hs_rating = result[0]["level"] if result else None
     if skill_cls == PersonSS:
-        person.ss_rating = result[0]["level"] if result else None
+        person.ss_rating = result[0]["sum"]/result[0]["count"] if result else None
     person.save()
 
 class ValidatedReferenceField(fields.ReferenceField):

@@ -300,6 +300,7 @@ class TestAuth(unittest.TestCase):
         soft_skill = model.SoftSkill()
         soft_skill.name = "ss_name"
         soft_skill.skill_type_id = skill_type.pk
+        soft_skill.weight = 1
         soft_skill.save()
 
         self.soft_skill_id = str(soft_skill.pk)

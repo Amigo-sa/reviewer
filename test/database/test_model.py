@@ -61,7 +61,7 @@ class TestValidation(unittest.TestCase):
         skill_type.save()
         hs = model.HardSkill("hard_skill_1", skill_type.pk)
         hs.save()
-        ss = model.SoftSkill("soft_skill_1", skill_type.pk)
+        ss = model.SoftSkill("soft_skill_1", skill_type.pk, 1)
         ss.save()
         spec = model.Specialization("Tutor", "TOE")
         spec.save()

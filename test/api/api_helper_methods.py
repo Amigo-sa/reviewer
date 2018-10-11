@@ -32,7 +32,7 @@ def prepare_subject(target_cls):
         person_hs.save()
         objects.update({"db_obj" : person_hs})
     if target_cls == model.PersonSS:
-        ss = model.SoftSkill("soft_skill_1", skill_type.pk)
+        ss = model.SoftSkill("soft_skill_1", skill_type.pk, 1)
         ss.save()
         objects.update({"subject_id": str(ss.pk)})
         person_ss = model.PersonSS(person.pk, ss.pk, 50)
