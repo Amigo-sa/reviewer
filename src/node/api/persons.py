@@ -219,7 +219,8 @@ def get_person_info(person_id):
                     "middle_name": person.middle_name,
                     "surname": person.surname,
                     "birth_date": birth_date_str,
-                    "phone_no": person.phone_no}
+                    "phone_no": person.phone_no,
+                    "rating": person.get_rating()}
             result = {"result": ERR.OK, "data": data}
         else:
             result = {"result": ERR.NO_DATA}
