@@ -213,7 +213,7 @@ def get_person_info(person_id):
         if Person(_id=person_id) in Person.objects.raw({"_id": ObjectId(person_id)}):
             person = Person(_id=person_id)
             person.refresh_from_db()
-            birth_date_str = person.birth_date.strftime("%Y-%m-%d")
+            birth_date_str = person.birth_date.strftime("%Y-%m-%d") if person.birth_date else None
             data = {"id": str(person.pk),
                     "first_name": person.first_name,
                     "middle_name": person.middle_name,

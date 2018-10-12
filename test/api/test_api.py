@@ -673,6 +673,24 @@ class TestApi(unittest.TestCase):
         p_spec_1.refresh_from_db()
         self.assertEqual(patch_data, p_spec_1.details, "details must be patched")
 
+    def test_get_person_rating(self):
+        person = model.Person()
+        person.save()
+        p_data = self.get_item_data("/persons/%s"%str(person.pk))
+        self.assertIsNone(p_data["rating"], "must return None if no rating present")
+        person.ss_rating = 40
+        person.save()
+        p_data = self.get_item_data("/persons/%s" % str(person.pk))
+        self.assertEqual(47.5, p_data["rating"], "must calculate correct rating")
+        person.hs_rating = 80
+        person.save()
+        p_data = self.get_item_data("/persons/%s" % str(person.pk))
+        self.assertEqual(55, p_data["rating"], "must calculate correct rating")
+        person.spec_rating = 70
+        person.save()
+        p_data = self.get_item_data("/persons/%s" % str(person.pk))
+        self.assertEqual(65, p_data["rating"], "must calculate correct rating")
+
     def test_find_persons_spec_filters(self):
         struct = hm.prepare_org_structure()
         p_spec_1 = model.PersonSpecialization(
