@@ -1270,13 +1270,25 @@ class TestApi(unittest.TestCase):
                               value="skill_level",
                               description="string"
                               )
-        self.pass_invalid_ref("/persons/%s/hard_skills/%s/reviews" % (p_id, p_id),
+        self.pass_invalid_ref("/persons/%s/hard_skills/%s/reviews" % (p_id, group_id),
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
                               value="skill_level",
                               description="string"
                               )
-        self.pass_invalid_ref("/persons/%s/soft_skills/%s/reviews" % (p_id, p_id),
+        self.pass_invalid_ref("/persons/%s/hard_skills/%s/reviews" % (group_id, hard_skill_id),
+                              auth="reviewer",
+                              reviewer_id=self.reviewer_id,
+                              value="skill_level",
+                              description="string"
+                              )
+        self.pass_invalid_ref("/persons/%s/soft_skills/%s/reviews" % (p_id, group_id),
+                              auth="reviewer",
+                              reviewer_id=self.reviewer_id,
+                              value="skill_level",
+                              description="string"
+                              )
+        self.pass_invalid_ref("/persons/%s/soft_skills/%s/reviews" % (group_id, soft_skill_id),
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
                               value="skill_level",

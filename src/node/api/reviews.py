@@ -4,6 +4,7 @@ import node.settings.errors as ERR
 import node.settings.constants as constants
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
+from pymodm.errors import DoesNotExist
 from node.api.auth import required_auth
 from node.api.base_functions import delete_resource, list_resources
 
@@ -89,48 +90,28 @@ def post_group_member_review(id):
 def post_person_skill_review(skill_review_cls, p_id, s_id):
     req = request.get_json()
     try:
+        if req["reviewer_id"] == p_id:
+            return jsonify({"result": ERR.AUTH}), 200
+        if skill_review_cls != SSReview and skill_review_cls != HSReview:
+            return jsonify({"result": ERR.INPUT}), 200
         reviewer_id = ObjectId(req['reviewer_id'])
         value = req['value']
         description = req['description']
-        if req["reviewer_id"] == p_id:
-            return jsonify({"result": ERR.AUTH}), 200
-        person_skill_cls = None
-        query = {}
-        query.update({"person_id": ObjectId(p_id)})
-        if skill_review_cls == HSReview:
-            person_skill_cls = PersonHS
-            skill_cls = HardSkill
-            query.update({"hs_id": ObjectId(s_id)})
-        elif skill_review_cls == SSReview:
-            person_skill_cls = PersonSS
-            skill_cls = SoftSkill
-            query.update({"ss_id": ObjectId(s_id)})
-        else:
-            raise Exception("post_person_skill_review() invalid args")
-        if not Person.objects.raw({"_id":reviewer_id}).count():
-            return jsonify({"result": ERR.NO_DATA}), 200
-        if not Person.objects.raw({"_id":ObjectId(p_id)}).count():
-            return jsonify({"result": ERR.NO_DATA}), 200
-        if not skill_cls.objects.raw({"_id":ObjectId(s_id)}).count():
-            return jsonify({"result": ERR.NO_DATA}), 200
-        person_s = person_skill_cls.objects.raw(query)
-        if person_s.count():
-            person_s = person_s.first()
-        else:
-            default_level = 50.0
-            person_s = person_skill_cls(Person(_id=p_id),
-                                        skill_cls(_id=s_id),
-                                        default_level)
-            person_s.save()
-        s_review = skill_review_cls(reviewer_id, person_s.pk, value, description)
-        s_review.save()
-
+        review_id = add_person_skill_review(skill_review_cls,
+                                             reviewer_id,
+                                             p_id,
+                                             s_id,
+                                             value,
+                                             description)
         result = {"result": ERR.OK,
-                  "id": str(s_review.pk)}
-
+                  "id": review_id}
+    except DoesNotExist as e:
+        return jsonify({"result": ERR.NO_DATA,
+                        "error_message": str(e)})
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
     except Exception as e:
+        print(e)
         result = {"result": ERR.DB,
                   "error_message": str(e)}
 

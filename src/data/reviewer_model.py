@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import sys
+
+from bson import ObjectId
 from pymodm import MongoModel, fields, ReferenceField
 from pymongo.write_concern import WriteConcern
-from pymodm.errors import ValidationError
+from pymodm.errors import ValidationError, DoesNotExist
 from pymongo.operations import IndexModel
 import pymongo
 from pymodm.connection import connect
@@ -116,6 +118,7 @@ def update_person_subrating(skill_cls, person):
         person.ss_rating = result[0]["sum"]/result[0]["count"] if result else None
     person.save()
 
+# TODO возможно, это лишнее. Сейчас валидация происходит, даже если запись была отредактирована и поле-ссылка не менялась
 class ValidatedReferenceField(fields.ReferenceField):
     def contribute_to_class(self, cls, name):
         super().contribute_to_class(cls, name)
@@ -126,10 +129,10 @@ class ValidatedReferenceField(fields.ReferenceField):
             ref_class = getattr(cls, name, None)
             if ref_field is None:
                 if not ref_class.blank:
-                    raise ValidationError("ссылка на _id несуществующего объекта")
+                    raise DoesNotExist("ссылка на _id несуществующего объекта")
             else:
                 if not self.related_model.objects.get({"_id": ref_field.pk}):
-                    raise ValidationError("ссылка на _id несуществующего объекта %s" % self.related_model.__name__)
+                    raise DoesNotExist("ссылка на _id несуществующего объекта %s" % self.related_model.__name__)
             old_clean(instance)
 
         setattr(cls, "clean", new_clean)
@@ -144,13 +147,33 @@ class ValidatedReferenceList(fields.ListField):
             ref_list = getattr(instance, name, None)
             for item in ref_list:
                 if item is None:
-                    raise ValidationError("ссылка на _id несуществующего объекта")
+                    raise DoesNotExist("ссылка на _id несуществующего объекта")
                 else:
                     if not self._field.related_model.objects.get({"_id": item.pk}):
-                        raise ValidationError("ссылка на _id несуществующего объекта")
+                        raise DoesNotExist("ссылка на _id несуществующего объекта")
             old_clean(instance)
 
         setattr(cls, "clean", new_clean)
+
+def add_person_skill_review(skill_review_cls, reviewer_id, person_id, skill_id, value, description):
+    #здесь намеренно не проверяем объекты, на которые ссылаемся. Проверки осуществляются методами ValidatedReferenceField
+    query = {}
+    query.update({"person_id": ObjectId(person_id)})
+    if skill_review_cls == HSReview:
+        person_skill_cls = PersonHS
+        query.update({"hs_id": ObjectId(skill_id)})
+    elif skill_review_cls == SSReview:
+        person_skill_cls = PersonSS
+        query.update({"ss_id": ObjectId(skill_id)})
+    person_skill = person_skill_cls.objects.raw(query)
+    if person_skill.count():
+        person_s = person_skill.first()
+    else:
+        person_s = person_skill_cls(person_id,skill_id,None)
+        person_s.save()
+    s_review = skill_review_cls(reviewer_id, person_s.pk, value, description)
+    s_review.save()
+    return str(s_review.pk)
 
 
 class Service(MongoModel):
