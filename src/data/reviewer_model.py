@@ -125,14 +125,11 @@ class ValidatedReferenceField(fields.ReferenceField):
         old_clean = getattr(cls, "clean", None)
 
         def new_clean(instance):
-            ref_field = getattr(instance, name, None)
+            ref_field = getattr(instance, name, None) # эта строчка делает запрос в базу (find по id)
             ref_class = getattr(cls, name, None)
             if ref_field is None:
                 if not ref_class.blank:
                     raise DoesNotExist("ссылка на _id несуществующего объекта")
-            else:
-                if not self.related_model.objects.get({"_id": ref_field.pk}):
-                    raise DoesNotExist("ссылка на _id несуществующего объекта %s" % self.related_model.__name__)
             old_clean(instance)
 
         setattr(cls, "clean", new_clean)
@@ -165,11 +162,10 @@ def add_person_skill_review(skill_review_cls, reviewer_id, person_id, skill_id, 
     elif skill_review_cls == SSReview:
         person_skill_cls = PersonSS
         query.update({"ss_id": ObjectId(skill_id)})
-    person_skill = person_skill_cls.objects.raw(query)
-    if person_skill.count():
-        person_s = person_skill.first()
-    else:
-        person_s = person_skill_cls(person_id,skill_id,None)
+    try:
+        person_s = person_skill_cls.objects.get(query)
+    except DoesNotExist:
+        person_s = person_skill_cls(person_id, skill_id, None)
         person_s.save()
     s_review = skill_review_cls(reviewer_id, person_s.pk, value, description)
     s_review.save()

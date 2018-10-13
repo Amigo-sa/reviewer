@@ -257,10 +257,9 @@ def required_auth(required_permissions="admin"):
         def decorated_function(*args, **kwargs):
             auth_token = request.cookies.get('session_id')
             try:
-                auth_info = AuthInfo.objects.raw({"session_id": auth_token})
-                if auth_info.count():
-                    auth_info = auth_info.first()
-                else:
+                try:
+                    auth_info = AuthInfo.objects.get({"session_id": auth_token})
+                except DoesNotExist:
                     return jsonify({"result": ERR.AUTH_NO_SESSION}), 200
                 if auth_info.permissions & 1 and required_permissions != "reviewer":
                     return f(*args, **kwargs)
