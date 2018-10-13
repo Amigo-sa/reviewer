@@ -294,18 +294,30 @@ def required_auth(required_permissions="admin"):
 
 
 def get_reviewer_id_by_review_id(_id):
-    if SpecializationReview.objects.raw({"_id": ObjectId(_id)}).count():
+    try:
         return SpecializationReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
-    if HSReview.objects.raw({"_id": ObjectId(_id)}).count():
+    except DoesNotExist:
+        pass
+    try:
         return HSReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
-    if SSReview.objects.raw({"_id": ObjectId(_id)}).count():
+    except DoesNotExist:
+        pass
+    try:
         return SSReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
-    if GroupReview.objects.raw({"_id": ObjectId(_id)}).count():
+    except DoesNotExist:
+        pass
+    try:
         return GroupReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
-    if GroupTestReview.objects.raw({"_id": ObjectId(_id)}).count():
+    except DoesNotExist:
+        pass
+    try:
         return GroupTestReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
-    if GroupMemberReview.objects.raw({"_id": ObjectId(_id)}).count():
+    except DoesNotExist:
+        pass
+    try:
         return GroupMemberReview.objects.get({"_id": ObjectId(_id)}).reviewer_id.pk
+    except DoesNotExist:
+        pass
     return None
 
 

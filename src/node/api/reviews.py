@@ -138,15 +138,15 @@ def delete_review(id):
         review_cls = None
         if SpecializationReview(_id=id) in SpecializationReview.objects.raw({"_id":ObjectId(id)}):
             review_cls = SpecializationReview
-        if HSReview(_id=id) in HSReview.objects.raw({"_id":ObjectId(id)}):
+        elif HSReview(_id=id) in HSReview.objects.raw({"_id":ObjectId(id)}):
             review_cls = HSReview
-        if SSReview(_id=id) in SSReview.objects.raw({"_id":ObjectId(id)}):
+        elif SSReview(_id=id) in SSReview.objects.raw({"_id":ObjectId(id)}):
             review_cls = SSReview
-        if GroupReview(_id=id) in GroupReview.objects.raw({"_id":ObjectId(id)}):
+        elif GroupReview(_id=id) in GroupReview.objects.raw({"_id":ObjectId(id)}):
             review_cls = GroupReview
-        if GroupTestReview(_id=id) in GroupTestReview.objects.raw({"_id":ObjectId(id)}):
+        elif GroupTestReview(_id=id) in GroupTestReview.objects.raw({"_id":ObjectId(id)}):
             review_cls = GroupTestReview
-        if GroupMemberReview(_id=id) in GroupMemberReview.objects.raw({"_id":ObjectId(id)}):
+        elif GroupMemberReview(_id=id) in GroupMemberReview.objects.raw({"_id":ObjectId(id)}):
             review_cls = GroupMemberReview
 
         if review_cls:
