@@ -10,9 +10,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import LoginPage from "./pages/LoginPage";
 import AuthorizationUIHelper from "./AuthorizationUIHelper";
 import authStore from "./stores/AuthStore";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import HeaderMenu from "./components/Menu";
 
 const authUIHelper = new AuthorizationUIHelper(authStore);
 
@@ -23,43 +21,30 @@ class App extends React.Component<any> {
                 container={true}
                 spacing={24}
             >
-                <Grid
-                    item={true}
-                    xs={12}
-                >
-                    <HeaderMenu />
-                </Grid>
-                <Grid
-                    item={true}
-                    xs={12}
-                >
-                    <Paper>
-                        <Switch>
-                            <Route exact={true} path="/" component={Main} />
-                            <Route path="/login" component={LoginPage} />
-                            <PrivateRoute
-                                path="/personal"
-                                component={PersonalPage}
-                                authHelper={authUIHelper}
-                            />
-                            <PrivateRoute
-                                path="/search-peoples"
-                                component={SearchPeoplesPage}
-                                authHelper={authUIHelper}
-                            />
-                            <PrivateRoute
-                                path="/search-structures"
-                                component={SearchStructuresPage}
-                                authHelper={authUIHelper}
-                            />
-                            <PrivateRoute
-                                path="/add-survey"
-                                component={AddSurveyPage}
-                                authHelper={authUIHelper}
-                            />
-                        </Switch>
-                    </Paper>
-                </Grid>
+                <Switch>
+                    <Route exact={true} path="/" component={Main} />
+                    <Route path="/login" component={LoginPage} />
+                    <PrivateRoute
+                        path="/personal"
+                        component={PersonalPage}
+                        authHelper={authUIHelper}
+                    />
+                    <PrivateRoute
+                        path="/search-peoples"
+                        component={SearchPeoplesPage}
+                        authHelper={authUIHelper}
+                    />
+                    <PrivateRoute
+                        path="/search-structures"
+                        component={SearchStructuresPage}
+                        authHelper={authUIHelper}
+                    />
+                    <PrivateRoute
+                        path="/add-survey"
+                        component={AddSurveyPage}
+                        authHelper={authUIHelper}
+                    />
+                </Switch>
             </Grid>
 
         );

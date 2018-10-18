@@ -6,7 +6,6 @@ import UserLoginResponse from "../server-api/registration/UserLoginResponse";
 
 export interface IUserData {
     phone: string;
-    session_id?: string;
     uid?: string;
     data?: object;
 }
@@ -17,7 +16,6 @@ export class AuthStore {
     @observable
     public user: IUserData = {
         phone: "",
-        session_id: undefined,
         uid: undefined,
         data: undefined,
     };
@@ -60,36 +58,31 @@ export class AuthStore {
     }
 
     @action public logout() {
-        this.setToken("");
         return Promise.resolve();
     }
 
     @action
     protected setUser(responce: UserLoginResponse) {
-        this.setToken(responce.session_id);
         this.user.uid = responce.person_id;
-    }
-
-    @action
-    protected setToken(token?: string) {
-        localStorage.setItem("Token", JSON.stringify(token));
-        this.user.session_id = token;
+        localStorage.setItem("User", JSON.stringify(this.user));
     }
 
     @action
     public tryAuthenticate() {
         return this.getCurrentUser()
             .then(action(() => { this.isAuth = true; }))
-            .catch((err: object) => { console.error("Authenticate false"); throw err; });
+            .catch((err: object) => { throw err; });
     }
 
     private getCurrentUser(force?: boolean): Promise<IUserData> {
         let resultPromise: Promise<IUserData>;
-
-        if (!force && this.user && this.isAuth && this.user.session_id) {
+        if (!force && this.user && this.isAuth) {
             resultPromise = Promise.resolve(this.user);
         }
         else {
+            if (!this.user.uid && localStorage.getItem("User") != null) {
+                this.user = JSON.parse(localStorage.getItem("User") || "");
+            }
             if (this.user.uid) {
                 resultPromise = new Promise<IUserData>((resolve, reject) => {
                     PersonsApi.getPersonInfo(this.user.uid!)

@@ -1,0 +1,26 @@
+
+.logo__link{
+    display: flex;
+    flex: 1 1 auto;
+}
+.logo__img{
+	height: auto;
+}
+/* Skill for life reviewer */
+
+.logo__title{
+	height: 64px;
+}
+.logo__title-main{
+    display: block;
+    font-size: 30px;
+    color: #000000;
+    font-size: 33px;
+}
+.logo__title-sec{
+    display: block;
+    font-size: 20px;
+    color: #02588A;
+}
+
+

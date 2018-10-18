@@ -1,11 +1,12 @@
 import * as React from "react";
-import { Button, TextField } from "@material-ui/core";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
+import { Button } from "@material-ui/core";
+import { Dialog } from "@material-ui/core";
 import { AuthStore } from "../stores/AuthStore";
 import { inject, observer } from "mobx-react";
 import { observable, action } from "mobx";
 import { Redirect } from "react-router-dom";
 import { REDIRECT_TO_AFTER_LOGIN } from "../constants";
+import LoginDialog from "../components/Header/elements/LoginDialog";
 
 interface IAuthProps {
     authStore: AuthStore;
@@ -22,8 +23,8 @@ interface IState {
 class LoginPage extends React.Component<IAuthProps, IState> {
     @observable
     public user: object = {
-        login: "",
-        password: "",
+        login: "78005553535",
+        password: "12345678",
     };
 
     get injected() {
@@ -93,47 +94,19 @@ class LoginPage extends React.Component<IAuthProps, IState> {
         }
 
         return (
-            <div>
+            <>
                 <Button onClick={this.handleClickOpen}>Войти</Button>
                 <Dialog
                     open={this.state.open}
                     onClose={this.handleClose}
                     aria-labelledby="form-dialog-title"
                 >
-                    <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Войдите для доступа к страницам.
-                        </DialogContentText>
-                        <TextField
-                            autoFocus={true}
-                            margin="normal"
-                            id="phone"
-                            label="Телефон"
-                            type="text"
-                            fullWidth={true}
-                            onChange={this.loginChangeHandler}
-                        />
-                        <TextField
-                            autoFocus={true}
-                            margin="normal"
-                            id="password"
-                            label="Пароль"
-                            type="password"
-                            fullWidth={true}
-                            onChange={this.passwordChangeHandler}
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleClose} color="primary">
-                            закрыть
-                        </Button>
-                        <Button onClick={this.handleAuth} color="primary">
-                            Войти
-                        </Button>
-                    </DialogActions>
+                    <LoginDialog
+                        handleAuth={this.handleAuth}
+                        handleClose={this.handleClose}
+                    />
                 </Dialog>
-            </div>
+            </>
         );
     }
 }
