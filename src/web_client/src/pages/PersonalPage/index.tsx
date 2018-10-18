@@ -1,38 +1,18 @@
 import * as React from "react";
 import { Grid } from "@material-ui/core";
-import { Link } from "react-router-dom";
 import PersonalInfo from "./PersonalInfo";
 import LeftMenu from "src/pages/LeftMenu";
+import Footer from "src/components/Footer";
+import Header from "src/components/Header";
 
 class PersonalPage extends React.Component {
     public render() {
         return (
             <Grid
                 container={true}>
-                {/* Header */}
-                <Grid
-                    item={true}
-                    xs={12}>
-                    {/* TODO: why when I setup spacing equels to 8 and greater, then line move to top */}
-                    {/* Links in center */}
-                    <Grid
-                        container={true}
-                        alignContent="center"
-                        spacing={0}
-                        justify="center">
-                        <Link to="">
-                            О проекте
-                    </Link>
-                        <Link to="">
-                            Участики
-                    </Link>
-                        <Link to="">
-                            Регистрация
-                    </Link>
-                    </Grid>
-                </Grid>
-
-                {/* Body */}
+                <Header
+                    title="Персональная страница"
+                    size="default" />
                 <Grid
                     container={true}
                     item={true}
@@ -53,13 +33,7 @@ class PersonalPage extends React.Component {
                     {/* My surveys */}
                     {/* My reviews */}
                 </Grid>
-
-                {/* Footer */}
-                <Grid
-                    item={true}
-                    xs={12}>
-                    Footer
-                </Grid>
+                <Footer />
             </Grid>
         );
     }
