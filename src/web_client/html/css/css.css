@@ -1,0 +1,724 @@
+/*wrapper*/
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+}
+#wrapper{
+	width: 100%;
+	height: auto;
+	background-color: #ffffff;
+}
+h4{
+	line-height: 38px;
+	font-size: 36px;
+	color: #333333;
+	display: block;
+}
+h5{
+	line-height: 27px;
+	font-size: 26px;
+	color: #000000;
+	margin-bottom: 22px;
+}
+h3{
+	margin-left: 30px;
+	font-size: 26px;
+	color: #008CDF;
+}
+/*header*/
+#header{
+	width: 1794px;
+	height: 271px;
+	margin: auto;
+	background-image: url(../img/triangle.png);
+	background-size: 2400px 271px;
+	background-repeat: no-repeat;
+	background-position: right;
+}
+.main_page_img_log{
+	width: 300px;
+	height: auto;
+	margin-left: 64px;
+	margin-top: 23px;
+}
+.log{
+	float: left;
+}
+.gadgets{
+	float: right;
+	width: 300px;
+	margin-top: -50px;
+	margin-right: 40px;
+	height: auto;
+}
+.gadgets img{
+	width: 65px;
+	height: auto;
+	margin: 5px;
+	cursor: pointer;
+}
+/*menu*/
+.head_menu{
+	width: 400px;
+	height: auto;
+	margin: auto;
+	padding-top: 40px;
+
+}
+.head_menu ul li{
+	list-style-type: none;
+	display: inline;
+	margin: 10px;
+}
+.head_menu ul li a{
+	text-decoration: none;
+	color: #00304D;
+	line-height: 21px;
+	font-size: 20px;
+}
+/*content*/
+/*block №1*/
+
+.block1{
+	width: 1794px;
+	height: 493px;
+	background-color: #017BC3;
+	margin: auto;
+}
+.slide{
+	width: 635px;
+	height: 438px;
+	margin: 55px 100px 0 100px;
+	float: left;
+}
+.registrations{
+	width: 568px;
+	height: 369px;
+	margin: 60px 80px 0 0;
+	float: right;
+	background-color: rgba(0, 0, 0, 0.16);
+	color: #ffffff;
+	padding: 28px 37px 0 32px;
+}
+.registrations h1{
+	font-style: normal;
+	font-weight: bold;
+	line-height: 25px;
+	font-size: 48px;
+	margin-bottom: 30px;
+}
+.registrations p{
+	font-style: normal;
+	line-height: 25px;
+	font-size: 24px;
+}
+.registrations button{
+	width: 199px;
+	height: 56px;
+	cursor: pointer;
+	font-weight: bold;
+	line-height: 25px;
+	font-size: 24px;
+	color: #ffffff;
+	margin-top: 50px;
+	border: 0;
+}
+button:active, button:focus {
+  outline: none;
+}
+button::-moz-focus-inner {
+  border: 0;
+}
+.go_into{
+	background-color: #008CDF;
+	margin-left: 110px;
+}
+.registr{
+	background-color: #DFA300;
+	margin-left: 36px;
+}
+/*block №2*/
+.block2{
+	width: 1920px;
+	height: 554px;
+	margin: auto;
+}
+.alignment1{
+	width: 1632px;
+	height: auto;
+	margin: auto;
+}
+.block2 h4{
+	margin-bottom: 31px; 
+	margin-top: 50px;
+	margin-left: 89px;
+}
+.profile{
+	width: 230px;
+	height: auto;
+	margin-left: 89px;
+	margin-right: 89px;
+	float: left;
+	text-align: center;
+	cursor: pointer;
+}
+.profile img{
+	width: 215px;
+	height: auto;
+	border-right: 50%;
+}
+.full_name{
+	margin: 7px 0 8px 0;
+}
+.full_name li{
+	text-align: left;
+	line-height: 25px;
+	font-size: 24px;
+	color: #000000;
+	display: block;
+}
+
+.rat{
+	text-align: left;
+}
+.property{
+	line-height: 25px;
+	font-size: 24px;
+	color: #767676;
+}
+.rating{
+	color: #000000;
+}
+/*block №3*/
+.block3{
+	width: 1920px;
+	height: 692px;
+	margin: auto;
+	position: relative;
+	background-color: #F9F9F9;
+}
+.block3 h4{
+	padding-top: 50px;
+}
+.alignment2{
+	width: 1432px;
+	height: 692px;
+	margin: auto;
+}
+.questions{
+	width: 1432px;
+	height: 222px;
+	margin-bottom: 30px;
+}
+.headings{
+	float: left;
+	width: 477px;
+	height: 200px;
+	margin-top: 30px;
+}
+.headings p{
+	display: block;
+	width: 330px;
+	height: 150px;
+	line-height: 25px;
+	font-size: 24px;
+	color: #767676;
+}
+
+.prog_green{
+	width: 340px;
+	height: 56px;
+	background: #009643;
+	margin-bottom: 29px;
+}
+.prog_orange{
+	width: 304px;
+	height: 56px;
+	background: #EAB600;
+}
+.show_more{
+	position: absolute;
+	width: 349px;
+	height: 68px;
+	background: #008CDF;
+	text-align: center;
+	left: 811px;
+	bottom: 42px;
+	cursor: pointer;
+}
+.show_more span{
+	display: block;
+	line-height: 30px;
+	font-size: 28px;
+	color: #FFFFFF;
+	margin-top: 15px;
+}
+/* block4 */
+.block4{
+	width: 1920px;
+	height: 306px;
+	margin: auto;
+}
+.block4 h4{
+	margin-left: 22px;
+	margin-top: 52px;
+}
+.alignment3{
+	width: 1432px;
+	height: 306px;
+	margin: auto;
+}
+.history{
+	margin-top: 112px;
+	width: 400px;
+	height: 93px;
+	float: left;
+	margin: 22px;
+}
+.history p{
+	line-height: 23px;
+	font-size: 22px;
+	color: #323232;
+}
+.number{
+	font-weight: bold;
+	line-height: 21px;
+	font-size: 20px;
+	margin-bottom: 20px;
+	color: #767676;
+	display: block;
+}
+/* footer */
+.footer{
+	width: 100%;
+	height: 102px;
+	float: left;
+	text-align: center;
+	background-color: #F9F9F9;
+}
+.footer span{
+	display: block;
+	margin-top: 39px;
+	line-height: 23px;
+	font-size: 22px;
+	color: #767676;
+}
+/*  стили для my-peronal-page.html*/
+.header{
+	width: 1441px;
+	height: 100px;
+	margin: auto;
+}
+.img_log{
+	width: 93px;
+	height: auto;
+	margin-left: 65px;
+	margin-top: 11px;
+}
+.menu{
+	margin-bottom: -30px;
+}
+.search{
+	float: right;
+	width: 335px;
+	margin-right: 75px;
+}
+.search input{
+	float: left;
+	width: 286px;
+	height: 44px;
+	background: #F6F6F6;
+	border: 1px solid #EAEAEA;
+	box-sizing: border-box;
+}
+.search button {
+	border: 0;
+	float: left;
+	width: 46px;
+	height: 44px;
+	background-color: #C4C4C4;
+}
+.search img{
+	cursor: pointer;
+}
+/*sidebar*/
+.sidebar {
+	margin-left: 64px;
+	margin-top: 5px;
+	width: 300px;
+	height: 581px;
+	float: left;
+	background-color: #FBFBFB;
+	text-align: center;
+	margin-right: 30px;
+}
+.ikon img{
+	width: 108px;
+	height: 108px;
+	margin-bottom: 15px;
+	background: url(img-2.png);
+	border: 1px solid #C9C9C9;
+	box-sizing: border-box;
+	border-radius: 107.5px;
+}
+.anastasia{
+	display: block;
+	margin: auto;
+	width: 239px;
+	height: 20px;
+	line-height: 21px;
+	font-size: 20px;
+	text-align: center;
+	color: #B2B2B2;
+}
+.ivanovna{
+	display: block;
+	margin: auto;
+	width: 239px;
+	height: 35px;
+	border-bottom: solid 1px #EBEBEB;
+	line-height: 21px;
+	font-size: 20px;
+	text-align: center;
+	color: #B2B2B2;
+}
+/* Мой профиль Опросы Сообщения Поиск Рейтинг Отзывы Настройки */
+.my_profile{
+	line-height: 35px;
+	font-size: 20px;
+	color: #008CDF;
+}
+.ikon ul{
+	list-style-type: none;
+	width: 237px;
+	height: 232px;
+	text-align: left;
+	margin-top: 15px;
+	margin-left: 31px;
+}
+.ikon ul li a{
+	line-height: 35px;
+	font-size: 20px;
+	color: #676767;
+	text-decoration: none;
+}
+/*content*/
+.align_profile{
+	width: 1441px;
+	height: 627px;
+	margin: auto;
+}
+.content{
+	width: 980px;
+	height: 627px;
+	margin-left: 385px;
+}
+.ava_big{
+	float: left;
+}
+.ava_big img{
+	width: 228px;
+	height: 287px;
+	border: 1px solid #EBEBEB;
+}
+.name{
+	width: 710px;
+	height: 32px;
+	float: left;
+	line-height: 32px;
+	font-size: 30px;
+	color: #676767;
+	margin-left: 15px;
+}
+.name h2{
+	display: block;
+	width: 430px;
+	font-size: 30px;
+	line-height: 32px;
+	color: #676767;
+	float: left;
+}
+/* online */
+.onli{
+	display: block;
+	float: left;
+	width: 49px;
+	height: 19px;
+	line-height: 19px;
+	font-size: 18px;
+	color: #C6C6C6;
+	margin-top: 10px;
+}
+/* Статус: Сотрудник Организация: ИТМО (Полное название организации) Направление: Экономика */
+.TTH{
+	width: 454px;
+	height: 70px;
+	float: left;
+	margin-left: 15px;
+	margin-top: 10px;
+}
+.TTH span{
+	line-height: 19px;
+	font-size: 18px;
+	color: #919191;
+	display: block;
+}
+/* Архив */
+.archive{
+	position: absolute;
+	top: 165px;
+	right: 75px;
+	font-weight: 300;
+	line-height: 17px;
+	font-size: 16px;
+	text-decoration-line: underline;
+	color: #37B9EC;
+}
+/* Архив анкеты */
+.archive img{
+	float: left;
+	width: 18px;
+}
+.archive a{
+	width: 102px;
+	height: 17px;
+	font-weight: 300;
+	line-height: 17px;
+	font-size: 16px;
+	text-decoration-line: underline;
+	color: #37B9EC;
+}
+/* Профессия */
+.profession{
+	width: 710px;
+	height: 160px;
+	float: left;
+	margin-left: 15px;
+}
+.profession h3{
+	line-height: 42px;
+	font-size: 24px;
+	color: #5A5A5A;
+}
+/* менеджер */
+.profession h6{
+	line-height: 32px;
+	font-size: 18px;
+	color: #B2B2B2;
+	float: left;
+}
+/* 8,5 7,2 */
+.level{
+	float: left;
+	width: 150px;
+	font-weight: 300;
+	line-height: 74px;
+	font-size: 42px;
+	color: #B5B4B4;
+}
+.level span{
+	display: block;
+}
+.level canvas{
+	width: 40px;
+	height: 40px;
+}
+.profile_bloc1{
+	width: 980px;
+	height: 300px;
+}
+.quality{
+	width: 980px;
+	height: auto;
+	margin-right: 75px;
+}
+/* целеустремленность стрессоустойчивость оперативность готовность изучать новое */
+.prof_quality{
+	float: left;
+	margin-top: 10px;
+}
+.prof_quality ul{
+	float: left;
+	list-style-type: none;
+	padding-left: 0;
+	line-height: 32px;
+	font-size: 18px;
+	color: #BFBFBF;
+}
+.person_quality{
+	margin-left: 60px;
+}
+/* heart */
+.person_quality ul li img{	
+	width: 23px;
+	height: 23px;
+}
+	/* 342 */
+.indicators{
+	line-height: 25px;
+	font-size: 14px;
+	color: #797979;
+}
+/* Опрос первокурсников */
+.prof_quality h5{
+	line-height: 42px;
+	font-size: 24px;
+
+	color: #5A5A5A;
+}
+
+/* Rectangle */
+
+.prof_quality ul li progress{
+	width: 204px;
+	height: 18.81px;
+	color: #008CDF;
+	margin-left: 30px;
+}
+
+/* Заметки о себе */
+
+.about_oneself{
+	float: left;
+	width: 1085px;
+	height: auto;
+	margin-right: 75px;
+}
+.about_oneself h5{
+	line-height: 25px;
+	font-size: 24px;
+	color: #000000;
+}
+/* Возможно размещение короткого пояснительного текста о себе с указанием личных достижений и значимых наград Характер: спокойный, усидчивый, умение ставить цели и достигать их */
+.about_oneself p{
+	font-weight: 300;
+	line-height: normal;
+	font-size: 16px;
+	color: #767676;
+}
+/*Мои опросы*/
+.ques{
+	width: 1400px;
+	height: 360px;
+	margin: auto;
+}
+.reviews_about_me{
+	width: 1400px;
+	height: 343px;
+	margin: auto;
+	background-color: #F2F2F2;
+}
+.headin{
+	float: left;
+	margin: 30px 30px 0px 30px;
+	width: 406px;
+	height: auto;
+}
+
+.headin h4{
+	margin-bottom: 20px;
+	line-height: 23px;
+	font-size: 22px;
+	color: #323232;
+}
+.text_survey{
+	margin-bottom: 50px;
+	font-weight: 300;
+	line-height: 17px;
+	font-size: 16px;
+	color: #767676;
+}
+.headin h6{
+	line-height: 19px;
+	font-size: 18px;
+}
+.headin span{
+	line-height: 19px;
+	font-size: 18px;
+	color: #4C4C4C;
+	margin-bottom: 10px;
+	display: block;
+}
+.headin a{
+	font-weight: 300;
+	line-height: 19px;
+	font-size: 18px;
+	text-decoration-line: underline;
+	color: #767676;
+	float: right;
+}
+.text_reviews{
+	margin-bottom: 0;
+	font-weight: 300;
+	line-height: 19px;
+	font-size: 18px;
+	color: #4C4C4C;
+}
+/* result-for */
+.prog_green{
+	width: 340px;
+	height: 42.1px;
+	background: #009643;
+	margin-bottom: 15px;
+}
+.prog_orange{
+	width: 340px;
+	height: 42.1px;
+	background: #EAB600;
+}
+.add_a_poll{
+	width: 226px;
+	height: 62px;
+	border: solid 2px #0FA5FE;
+	text-align: center;
+	margin: 10px auto;
+	font-weight: bold;
+	line-height: 21px;
+	font-size: 20px;
+	color: #0FA5FE;
+	cursor: pointer;
+}
+.add_a_poll:hover{
+	border: solid 1px #C9C9C9;
+}
+.add_a_poll span{
+	display: block;
+	margin-top: 8%;
+}
+.show_more_reviews{
+	width: 226px;
+	height: 62px;
+	border: solid 2px #0FA5FE;
+	text-align: center;
+	margin: 40px auto;
+	font-weight: bold;
+	line-height: 21px;
+	font-size: 20px;
+	color: #0FA5FE;
+	cursor: pointer;
+}
+.show_more_reviews:hover{
+	border: solid 1px #C9C9C9;
+}
+.show_more_reviews span{
+	display: block;
+	margin-top: 8%;
+}
+/* footer */
+.footer{
+	width: 100%;
+	height: 50px;
+	float: left;
+	text-align: center;
+	background: #FFFFFF;
+	line-height: 19px;
+	font-size: 18px;
+	color: #C9C9C9;
+}
+.footer span{
+	display: block;
+	margin-top: 15px;
+}
