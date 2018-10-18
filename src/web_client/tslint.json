@@ -27,6 +27,10 @@
         "jsx-no-lambda": false,
         "no-string-literal": false,
         "max-classes-per-file": false,
-        "jsx-alignment": false
+        "jsx-alignment": false,
+        "object-literal-key-quotes": [
+            true,
+            "as-needed"
+        ]
     }
 }
