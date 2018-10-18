@@ -1,13 +1,34 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { createStyles, Theme, withStyles, WithStyles } from "@material-ui/core";
 
-import "./Menu.css";
+const styles = (theme: Theme) =>
+    createStyles({
+        menu: {
+            display: "flex",
+            flex: "2 1 auto",
+            "& ul": {
+                listStyleType: "none",
+                display: "flex",
+                fles: "1 1 auto",
+                "& li": {
+                    display: "flex",
+                    flex: "1 1 auto",
+                    "& a": {
+                        fontSize: "20px",
+                        color: "#02588A",
+                        textDecoration: "none",
+                    },
+                },
+            },
+        },
+    });
 
-class HeaderMenu extends React.Component {
+class HeaderMenu extends React.Component<WithStyles<typeof styles>> {
     public render() {
-        console.log("render Menu");
+        const { classes } = this.props;
         return (
-            <div className={"header__menu"}>
+            <div className={classes.menu}>
                 <ul>
                     <li><Link to="/">О проекте</Link></li>
                     <li><Link to="/add-survey">Участники</Link></li>
@@ -17,4 +38,4 @@ class HeaderMenu extends React.Component {
         );
     }
 }
-export default HeaderMenu;
+export default withStyles(styles)(HeaderMenu);
