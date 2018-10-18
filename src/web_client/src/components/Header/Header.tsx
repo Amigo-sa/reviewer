@@ -47,15 +47,15 @@ const styles = (theme: Theme) => createStyles({
         },
     },
     search: {
-        "position": "relative",
-        "borderRadius": theme.shape.borderRadius,
-        "backgroundColor": fade(theme.palette.common.white, 0.15),
+        position: "relative",
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: fade(theme.palette.common.white, 0.15),
         "&:hover": {
             backgroundColor: fade(theme.palette.common.white, 0.25),
         },
-        "marginRight": theme.spacing.unit * 2,
-        "marginLeft": 0,
-        "width": "100%",
+        marginRight: theme.spacing.unit * 2,
+        marginLeft: 0,
+        width: "100%",
         [theme.breakpoints.up("sm")]: {
             marginLeft: theme.spacing.unit * 3,
             width: "auto",

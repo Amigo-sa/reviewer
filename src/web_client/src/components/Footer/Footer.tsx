@@ -21,8 +21,7 @@ class Footer extends React.Component<WithStyles<typeof styles>>{
             <Grid
                 item={true}
                 xs={12}
-                className={classes.root}
-            >
+                className={classes.root}>
                 <Typography variant="title" color="inherit" noWrap={true}>
                     Skill for life team {year}
                 </Typography>

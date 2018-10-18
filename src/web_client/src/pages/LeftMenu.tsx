@@ -22,17 +22,14 @@ class LeftMenu extends React.Component<WithStyles<typeof styles>> {
             <Paper
                 style={{
                     width: 300,
-                }}
-            >
+                }}>
                 <Grid
                     container={true}
-                    direction="column"
-                >
+                    direction="column">
                     <div
                         style={{
                             justifyContent: "center",
-                        }}
-                    >
+                        }}>
                         <Avatar
                             alt="icon"
                             src="/static/img/icon_min.png"
@@ -41,8 +38,7 @@ class LeftMenu extends React.Component<WithStyles<typeof styles>> {
                                 height: 108,
                                 marginTop: 20,
                                 marginBottom: 10,
-                            }}
-                        />
+                            }} />
                     </div>
                     <Typography
                         variant="h6"
@@ -50,8 +46,7 @@ class LeftMenu extends React.Component<WithStyles<typeof styles>> {
                             marginLeft: 50,
                             marginRight: 50,
                             alignContent: "center",
-                        }}
-                    >
+                        }}>
                         Иванова Анастасия Ивановна
                     </Typography>
                     <Divider className={this.props.classes.divider} />
@@ -82,8 +77,7 @@ class LeftMenu extends React.Component<WithStyles<typeof styles>> {
                         style={{
                             marginBottom: 83,
                         }}
-                        href="/"
-                    >
+                        href="/">
                         Выход
                     </Button>
                 </Grid>
