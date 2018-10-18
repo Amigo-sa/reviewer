@@ -21,7 +21,7 @@ import HeaderMenu from "./elements/Menu";
 import { observer, inject } from "mobx-react";
 import { AuthStore } from "../../stores/AuthStore";
 import { Button, Dialog } from "@material-ui/core";
-import LoginDialog from "./elements/LoginDialog";
+import LoginDialog from "src/components/LoginDialog";
 
 // #TODO определиться как лучше писать стили так или в css
 // такая струкутура позволяет обновлять тему

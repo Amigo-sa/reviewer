@@ -6,7 +6,7 @@ import { inject, observer } from "mobx-react";
 import { observable, action } from "mobx";
 import { Redirect } from "react-router-dom";
 import { REDIRECT_TO_AFTER_LOGIN } from "../constants";
-import LoginDialog from "../components/Header/elements/LoginDialog";
+import LoginDialog from "../components/LoginDialog";
 
 interface IAuthProps {
     authStore: AuthStore;
