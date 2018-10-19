@@ -16,10 +16,11 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "f025cbb2-f02c-47bf-977f-46cc3aa150cc",
-								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"phone_no\", \"72803334452\");"
-								]
+									"pm.environment.set(\"phone_no\", \"72803334452\");",
+									"pm.environment.set(\"auth_key\", \"FsfqhztZ\");"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -33,7 +34,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"phone_no\":\"{{phone_no}}\"\n}"
+							"raw": "{\n\t\"phone_no\":\"{{phone_no}}\",\n\t\"auth_key\": \"{{auth_key}}\"\n}"
 						},
 						"url": {
 							"raw": "{{server_url}}/confirm_phone_no",
@@ -4801,13 +4802,13 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "dfb8bd2e-741f-4842-9f0d-a906da6d01d2",
-								"type": "text/javascript",
 								"exec": [
 									"pm.environment.set(\"person_specialization_id\", \"5b82943b21313712e8ee61f1\");",
-									"pm.environment.set(\"reviewer_id\", \"5b82943a21313712e8ee61a7\");",
+									"pm.environment.set(\"reviewer_id\", \"5bbcef1821313716e057bd41\");",
 									"pm.environment.set(\"value\",90.0);",
 									"pm.environment.set(\"description\", \"Классный чел\");"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4912,12 +4913,12 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "740a7382-8e17-4ca3-81a4-23f0ec106abe",
+								"id": "df360155-aba1-4389-8db6-6aa23a2c1495",
 								"type": "text/javascript",
 								"exec": [
 									"pm.environment.set(\"person_id\", \"5b6f0e572131370e7888656d\");",
 									"pm.environment.set(\"hs_id\", \"5b6f0e572131370e7888657b\");",
-									"pm.environment.set(\"reviewer_id\", \"5b6f0e572131370e7888656d\");",
+									"pm.environment.set(\"reviewer_id\", \"5bbba7c921313703602b88b6\");",
 									"pm.environment.set(\"value\",90.0);",
 									"pm.environment.set(\"description\", \"Экспертный уровень\");"
 								]
@@ -5773,12 +5774,12 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "a4761cbf-841a-4727-80c2-f7bd99733d56",
-								"type": "text/javascript",
 								"exec": [
 									"pm.environment.set(\"group_id\", \"5b7c5e9f2131371aa8e1c6a9\");",
-									"pm.environment.set(\"department_id\", \"5b82943a21313712e8ee61af\");",
+									"pm.environment.set(\"department_id\", \"5bbf8a202131371808dcad57\");",
 									"pm.environment.set(\"organization_id\", \"5b82943a21313712e8ee61ae\");"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5790,7 +5791,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{server_url}}/persons?surname=Шат&first_name=ле&middle_name=МИ&specialization=Student&group_id={{group_id}}&department_id={{department_id}}&organization_id={{organization_id}}&query_limit=10&query_start=0",
+							"raw": "{{server_url}}/persons?department_id={{department_id}}",
 							"host": [
 								"{{server_url}}"
 							],
@@ -5800,23 +5801,28 @@
 							"query": [
 								{
 									"key": "surname",
-									"value": "Шат"
+									"value": "Шат",
+									"disabled": true
 								},
 								{
 									"key": "first_name",
-									"value": "ле"
+									"value": "ле",
+									"disabled": true
 								},
 								{
 									"key": "middle_name",
-									"value": "МИ"
+									"value": "МИ",
+									"disabled": true
 								},
 								{
 									"key": "specialization",
-									"value": "Student"
+									"value": "Student",
+									"disabled": true
 								},
 								{
 									"key": "group_id",
-									"value": "{{group_id}}"
+									"value": "{{group_id}}",
+									"disabled": true
 								},
 								{
 									"key": "department_id",
@@ -5824,15 +5830,18 @@
 								},
 								{
 									"key": "organization_id",
-									"value": "{{organization_id}}"
+									"value": "{{organization_id}}",
+									"disabled": true
 								},
 								{
 									"key": "query_limit",
-									"value": "10"
+									"value": "10",
+									"disabled": true
 								},
 								{
 									"key": "query_start",
-									"value": "0"
+									"value": "0",
+									"disabled": true
 								}
 							]
 						},
@@ -9143,7 +9152,7 @@
 	],
 	"variable": [
 		{
-			"id": "3ced25df-cf4a-4f11-b45c-660b69a24c0c",
+			"id": "add62975-ca5f-43cc-af3f-ad00f09a3c68",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"

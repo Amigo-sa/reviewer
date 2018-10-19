@@ -597,8 +597,9 @@ class TestAuth(unittest.TestCase):
 
     def test_registration_normal(self):
         phone_no = "79803322212"
+        auth_key = self.prepare_person()
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
-            "phone_no": phone_no,
+            "phone_no": phone_no, "auth_key": auth_key
         })
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.OK, resp.json()["result"])
@@ -614,41 +615,43 @@ class TestAuth(unittest.TestCase):
     def test_registration_already_confirmed(self):
         phone_no, password = self.prepare_confirmed_user()
         resp = requests.post(self.api_URL + "/confirm_phone_no",
-                             json={"phone_no": phone_no})
+                             json={"phone_no": phone_no, "auth_key": None})
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.AUTH, resp.json()["result"])
         self.assertFalse("session_id" in resp.json(), "must not return session_id")
 
     def test_wrong_phone_no_format(self):
         phone_no = "797803322212"
+        auth_key = self.prepare_person()
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
-            "phone_no": phone_no,
+            "phone_no": phone_no, "auth_key": auth_key
         })
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.AUTH_INVALID_PHONE, resp.json()["result"])
         phone_no = "99703322212"
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
-            "phone_no": phone_no,
+            "phone_no": phone_no, "auth_key": auth_key
         })
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.AUTH_INVALID_PHONE, resp.json()["result"])
         phone_no = "797033x2212"
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
-            "phone_no": phone_no,
+            "phone_no": phone_no, "auth_key": auth_key
         })
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.AUTH_INVALID_PHONE, resp.json()["result"])
         phone_no = "7970332"
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
-            "phone_no": phone_no,
+            "phone_no": phone_no, "auth_key": auth_key
         })
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.AUTH_INVALID_PHONE, resp.json()["result"])
 
     def test_wrong_sms_code(self):
         phone_no = "79803322212"
+        auth_key = self.prepare_person()
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
-            "phone_no": phone_no,
+            "phone_no": phone_no, "auth_key": auth_key
         })
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.OK, resp.json()["result"])
@@ -680,8 +683,9 @@ class TestAuth(unittest.TestCase):
 
     def test_sms_timeout(self):
         phone_no = "79803322212"
+        auth_key = self.prepare_person()
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
-            "phone_no": phone_no,
+            "phone_no": phone_no, "auth_key": auth_key,
         })
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.OK, resp.json()["result"])
@@ -698,19 +702,21 @@ class TestAuth(unittest.TestCase):
 
     def test_multiple_sms(self):
         phone_no = "79803322212"
-        resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
+        auth_key = self.prepare_person()
+        json_data = {"phone_no": phone_no, "auth_key": auth_key}
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json=json_data)
         self.assertEqual(ERR.OK, resp.json()["result"])
-        resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json=json_data)
         self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
-        resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json=json_data)
         self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
         hm.age_session(phone_no, 1)
-        resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json=json_data)
         self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
         hm.age_session(phone_no, 1)
-        resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json=json_data)
         self.assertEqual(ERR.OK, resp.json()["result"])
-        resp = requests.post(self.api_URL + "/confirm_phone_no", json={"phone_no": phone_no})
+        resp = requests.post(self.api_URL + "/confirm_phone_no", json=json_data)
         self.assertEqual(ERR.AUTH_SMS_TIMEOUT, resp.json()["result"])
 
     def test_login_normal(self):
@@ -741,11 +747,22 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(ERR.AUTH, resp.json()["result"])
         self.assertFalse("session_id" in resp.json(), "must not return session_id")
 
+    def prepare_person(self):
+        resp = requests.post(self.api_URL + "/persons", json={
+            "first_name": "Иван",
+            "middle_name": "Иванович",
+            "surname": "Иванов",
+            "birth_date": "2000-10-10"}, headers=self.admin_header)
+        auth_key = resp.json()["auth_key"]
+        return auth_key
+
     def prepare_confirmed_user(self):
         phone_no = "78007553535"
         password = "sa"
+        auth_key = self.prepare_person()
         resp = requests.post(self.api_URL + "/confirm_phone_no", json={
-            "phone_no": phone_no})
+            "phone_no": phone_no,
+            "auth_key": auth_key})
         self.assertEqual(ERR.OK, resp.json()["result"])
         cur_session.id = resp.json()["session_id"]
         resp = requests.post(self.api_URL + "/finish_phone_confirmation",

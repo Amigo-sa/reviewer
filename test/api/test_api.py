@@ -118,7 +118,6 @@ class TestApi(unittest.TestCase):
                 self.assertEqual(person["surname"], person_info["surname"])
                 self.assertEqual(person["first_name"], person_info["first_name"])
                 self.assertEqual(person["middle_name"], person_info["middle_name"])
-                self.assertEqual(person["phone_no"], person_info["phone_no"])
                 self.assertEqual(person["birth_date"], person_info["birth_date"])
         # delete items
         for item in add_list:
@@ -236,8 +235,7 @@ class TestApi(unittest.TestCase):
                              first_name="string",
                              middle_name="string",
                              surname="string",
-                             birth_date="date",
-                             phone_no="number_string"
+                             birth_date="date"
                              )
 
 
@@ -1021,6 +1019,7 @@ class TestApi(unittest.TestCase):
                                  "/organizations",
                                  name="String")
 
+    @unittest.skip("dont need anymore")
     def test_person_duplicate(self):
         self.post_duplicate_item("/persons",
                                  "/persons",

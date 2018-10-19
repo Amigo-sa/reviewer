@@ -192,6 +192,7 @@ class Person(MongoModel):
     ss_rating = fields.FloatField(default=None, blank=True)
     hs_rating = fields.FloatField(default=None, blank=True)
     spec_rating = fields.FloatField(default=None, blank=True)
+    auth_key = fields.CharField(blank=True)
     #rating = fields.FloatField(default=None, blank=True)
     # TODO нужно оставить либо поле rating, либо метод get_rating - смотреть по производиельности
     def get_rating(self):

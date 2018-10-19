@@ -99,6 +99,11 @@ def confirm_phone():
     sms_timeout = timedelta(minutes=constants.sms_timeout_minutes)
     try:
         phone_no = str(req["phone_no"])
+        auth_key = req["auth_key"]
+        try:
+            person = Person.objects.get({"auth_key": auth_key})
+        except DoesNotExist:
+            return jsonify({"result": ERR.AUTH_CODE_INCORRECT}), 200
         if not check_phone_format(phone_no):
             return jsonify({"result": ERR.AUTH_INVALID_PHONE}), 200
         auth_info = AuthInfo.objects.raw({"phone_no": phone_no})
@@ -122,6 +127,7 @@ def confirm_phone():
         new_auth_info.session_id = session_id
         new_auth_info.auth_code = code
         new_auth_info.attempts = 0
+        new_auth_info.person_id = person
         new_auth_info.save()
         try:
             send_sms(phone_no, code)
@@ -152,37 +158,41 @@ def finish_phone_confirmation():
     try:
         auth_code = req["auth_code"]
         session_id = str(req["session_id"])
-        auth_info = AuthInfo.objects.raw({"session_id": session_id})
-        if auth_info.count():
-            auth_info = auth_info.first()
-            sent_time = auth_info.last_send_time
-            if auth_info.is_approved:
-                result = {"result": ERR.OK}
-            elif sent_time < datetime.utcnow() - confirm_timeout:
-                err = ERR.AUTH_SESSION_EXPIRED
-                raise AuthError("session expired")
-            elif auth_info.auth_code == auth_code:
-                result = {"result": ERR.OK}
-                auth_info.is_approved = True
-                auth_info.auth_code = None
-                auth_info.save()
-            else:
-                auth_info.attempts += 1
-                attempts_remain = max_attempts - auth_info.attempts
-                if attempts_remain > 0:
-                    message = "wrong code, %s attempts remain"%attempts_remain
-                else:
-                    message = "out of attempts, auth code destroyed"
-                result = {"result": ERR.AUTH_CODE_INCORRECT,
-                          "error_message": message}
-                if auth_info.attempts == max_attempts:
-                    auth_info.auth_code = None
-                    auth_info.session_id = None
-                auth_info.save()
-        else:
+        try:
+            auth_info = AuthInfo.objects.get({"session_id": session_id})
+        except DoesNotExist:
             # выдаем ошибку аутентификации так как такой сессии не установлено
             result = {"result": ERR.AUTH_NO_SESSION,
                       "error_message": "no session found"}
+            return jsonify(result), 200
+        sent_time = auth_info.last_send_time
+        if auth_info.is_approved:
+            result = {"result": ERR.OK}
+        elif sent_time < datetime.utcnow() - confirm_timeout:
+            err = ERR.AUTH_SESSION_EXPIRED
+            raise AuthError("session expired")
+        elif auth_info.auth_code == auth_code:
+            result = {"result": ERR.OK}
+            auth_info.is_approved = True
+            auth_info.auth_code = None
+            person = Person.objects.get({"_id": auth_info.person_id.pk})
+            person.auth_key = None
+            person.phone_no = auth_info.phone_no
+            auth_info.save()
+            person.save()
+        else:
+            auth_info.attempts += 1
+            attempts_remain = max_attempts - auth_info.attempts
+            if attempts_remain > 0:
+                message = "wrong code, %s attempts remain"%attempts_remain
+            else:
+                message = "out of attempts, auth code destroyed"
+            result = {"result": ERR.AUTH_CODE_INCORRECT,
+                      "error_message": message}
+            if auth_info.attempts == max_attempts:
+                auth_info.auth_code = None
+                auth_info.session_id = None
+            auth_info.save()
     except KeyError as e:
         result = {"result": ERR.INPUT}
     except AuthError as e:
