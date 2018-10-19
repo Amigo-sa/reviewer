@@ -8,8 +8,7 @@ import Header from "src/components/Header";
 class PersonalPage extends React.Component {
     public render() {
         return (
-            <Grid
-                container={true}>
+            <>
                 <Header
                     title="Персональная страница"
                     size="default" />
@@ -21,12 +20,10 @@ class PersonalPage extends React.Component {
                     <Grid
                         container={true}
                         item={true}>
-                        <Grid
-                            item={true}>
+                        <Grid item={true} xs={2}>
                             <LeftMenu />
                         </Grid>
-                        <Grid
-                            item={true}>
+                        <Grid item={true} xs={10}>
                             <PersonalInfo />
                         </Grid>
                     </Grid>
@@ -34,7 +31,7 @@ class PersonalPage extends React.Component {
                     {/* My reviews */}
                 </Grid>
                 <Footer />
-            </Grid>
+            </>
         );
     }
 }
