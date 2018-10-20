@@ -2,7 +2,7 @@ import * as React from "react";
 import { Route, Switch } from "react-router";
 import "./App.css";
 import AddSurveyPage from "./pages/AddSurveyPage";
-import Main from "./pages/Main";
+import Main from "./pages/MainPage/Main";
 import PersonalPage from "./pages/PersonalPage";
 import SearchPeoplesPage from "./pages/SearchPeoplesPage";
 import SearchStructuresPage from "./pages/SearchStructuresPage";

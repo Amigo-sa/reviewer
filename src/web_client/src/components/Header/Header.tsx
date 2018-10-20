@@ -1,13 +1,16 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 // import Typography from "@material-ui/core/Typography";
-import Input from "@material-ui/core/Input";
-import Badge from "@material-ui/core/Badge";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
+import {
+    Input,
+    Badge,
+    Menu,
+    MenuItem,
+} from "@material-ui/core";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
@@ -163,7 +166,7 @@ class Header extends React.Component<IProps>{
                 open={isMenuOpen}
                 onClose={this.handleMenuClose}
             >
-                <MenuItem >Профиль</MenuItem>
+                <Link to={"/personal"}><MenuItem >Профиль</MenuItem></Link>
                 <MenuItem >Опросы</MenuItem>
                 <MenuItem >Выход</MenuItem>
             </Menu>

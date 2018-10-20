@@ -9,6 +9,7 @@ const styles = (theme: Theme) => createStyles({
     root: {
         width: "100%",
         alignContent: "center",
+        backgroundColor: "#ccc",
     },
 });
 
@@ -22,7 +23,7 @@ class Footer extends React.Component<WithStyles<typeof styles>>{
                 item={true}
                 xs={12}
                 className={classes.root}>
-                <Typography variant="title" color="inherit" noWrap={true}>
+                <Typography variant="title" color="inherit" noWrap={true} align="center">
                     Skill for life team {year}
                 </Typography>
             </Grid>

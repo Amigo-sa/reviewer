@@ -9,14 +9,16 @@ import {
     Button,
 } from "@material-ui/core";
 import { computed } from "mobx";
+import { observer, inject } from "mobx-react";
+import { AuthStore } from "../../stores/AuthStore";
 
 // #TODO перейти на другую схему, лишнее убрать
-interface ILoginDialog {
+interface IAuthProps {
+    authStore?: AuthStore;
     handleClose: (event: any) => void;
-    handleAuth?: (event: any) => void;
-    handleRegister?: (event: any) => void;
 }
 
+/* TODO временно упростим логику
 interface IField {
     value?: string;
     id: string;
@@ -28,33 +30,28 @@ interface IStep {
     field: IField;
     text: string;
 }
+*/
 
-// #TODO Плохое решение подумать может просто скрывать поля по шагам, ломается
-function _renderTextField(field: IField, callBack: (event: any) => void): JSX.Element {
-    return (
-        <TextField
-            autoFocus={true}
-            margin="normal"
-            id={field.id}
-            label={field.label}
-            type={field.type}
-            value={field.value}
-            fullWidth={true}
-            onChange={callBack}
-        />
-    );
-}
-class LoginDialog extends React.Component<ILoginDialog>{
+@inject("authStore")
+@observer
+class LoginDialog extends React.Component<IAuthProps>{
 
-    private steps: IStep[];
+    private steps: string[];
 
     public state = {
         step: 0,
+        login: "",
+        password: "",
+        isAuth: false,
+        error: "",
     };
 
-    private changeStepField = (e: any) => {
-        const { step } = this.state;
-        this.steps[step].field.value = e.target.value;
+    private changeStepLoginField = (e: any) => {
+        this.setState({ login: e.target.value });
+    }
+
+    private changeStepPasswordField = (e: any) => {
+        this.setState({ password: e.target.value });
     }
 
     private handleNextStep = () => {
@@ -77,25 +74,74 @@ class LoginDialog extends React.Component<ILoginDialog>{
         return (this.state.step + 1) === this.steps.length;
     }
 
+    get injected() {
+        return this.props as IAuthProps;
+    }
+
     public componentWillMount() {
         this.steps = [
-            { field: { id: "phone", label: "Телефон", type: "text" }, text: "Введите номер телефона" },
-            { field: { id: "password", label: "Пароль", type: "password" }, text: "Введите пароль" },
+            "Введите номер телефона",
+            "Введите пароль",
         ];
     }
+
+    public handleAuth = () => {
+        const { authStore } = this.injected;
+        const { login, password } = this.state;
+
+        if (authStore) {
+            authStore.authenticate(login.trim(), password.trim())
+                .then(() => { this.setState({ isAuth: true }); })
+                .catch((err: any) => { this.setState({ error: err }); });
+        }
+        // TODO: check why finally doesn't support.
+        // .finally(() => { this.pending = false; });
+    }
+
     public render() {
-        const { handleAuth } = this.props;
-        const { step } = this.state;
-        const { text, field } = this.steps[step];
+        const { step, error, isAuth } = this.state;
+        const text = this.steps[step];
         return (
             <>
                 <DialogTitle id="form-dialog-title">Вход в Skill for life review</DialogTitle>
                 <DialogContent>
                     <LinearProgress variant="determinate" value={this.completed} />
-                    <DialogContentText>
-                        Шаг {step + 1} из {this.steps.length}: {text}
-                    </DialogContentText>
-                    {_renderTextField(field, this.changeStepField)}
+                    {error &&
+                        <DialogContentText>{error}</DialogContentText>
+                    }
+                    {isAuth ?
+                        <DialogContentText>Вы успешно вошли в аккаунт</DialogContentText>
+                        :
+                        <>
+                            <DialogContentText>
+                                Шаг {step + 1} из {this.steps.length}: {text}
+                            </DialogContentText>
+                            {step === 0 &&
+                                <TextField
+                                    autoFocus={true}
+                                    margin="normal"
+                                    id={"login"}
+                                    label={"Телефон"}
+                                    type={"text"}
+                                    value={this.state.login}
+                                    fullWidth={true}
+                                    onChange={this.changeStepLoginField}
+                                />
+                            }
+                            {step === 1 &&
+                                <TextField
+                                    autoFocus={true}
+                                    margin="normal"
+                                    id={"password"}
+                                    label={"Пароль"}
+                                    type={"password"}
+                                    value={this.state.password}
+                                    fullWidth={true}
+                                    onChange={this.changeStepPasswordField}
+                                />
+                            }
+                        </>
+                    }
                 </DialogContent>
                 <DialogActions>
                     {step !== 0 ?
@@ -110,7 +156,7 @@ class LoginDialog extends React.Component<ILoginDialog>{
                             Далее
                         </Button>
                         :
-                        <Button onClick={handleAuth} color="primary">
+                        <Button onClick={() => this.handleAuth()} color="primary">
                             Войти
                         </Button>
                     }

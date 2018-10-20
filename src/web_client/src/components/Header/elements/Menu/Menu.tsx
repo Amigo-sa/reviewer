@@ -10,7 +10,7 @@ const styles = (theme: Theme) =>
             "& ul": {
                 listStyleType: "none",
                 display: "flex",
-                fles: "1 1 auto",
+                flex: "1 1 auto",
                 "& li": {
                     display: "flex",
                     flex: "1 1 auto",
