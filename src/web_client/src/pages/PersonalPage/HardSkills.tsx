@@ -1,20 +1,21 @@
 import * as React from "react";
 import HardSkill from "./HardSkill";
+import { Typography, Grid } from "@material-ui/core";
+import { HardSkillModel } from "./Model";
 
-class HardSkills extends React.Component {
+interface IProps {
+    hardSkills: HardSkillModel[];
+}
+
+class HardSkills extends React.Component<IProps> {
     public render() {
         return (
-            <div
-                style={{
-                    backgroundColor: "lawngreen",
-                    width: "466px",
-                    height: "177px",
-                }}
-            >
-                <HardSkill />
-                <HardSkill />
-                <HardSkill />
-            </div>
+            <Grid container={true} xs={12} direction="column">
+                <Typography variant="h5">Профессиональные качества</Typography>
+                {this.props.hardSkills.map((value: HardSkillModel, index: number, array: HardSkillModel[]) => {
+                    return (<HardSkill key={index} skillName={value.name} value={value.value} />);
+                })}
+            </Grid>
         );
     }
 }

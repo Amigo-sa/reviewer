@@ -1,26 +1,22 @@
 import * as React from "react";
 import SoftSkill from "./SoftSkill";
+import { Typography, Grid } from "@material-ui/core";
+import { SoftSkillModel } from "./Model";
 
-// TODO: input
-// - array of soft skill objects.
-// - or maybe user store?
+interface IProps {
+    softSkills: SoftSkillModel[];
+}
 
-class SoftSkills extends React.Component {
+class SoftSkills extends React.Component<IProps> {
     public render() {
         return (
-            <div
-                style={{
-                    backgroundColor: "yellow",
-                    width: "466px",
-                    height: "177px",
-                }}
-            >
-                <>
-                    <SoftSkill />
-                    <SoftSkill />
-                    <SoftSkill />
-                </>
-            </div>
+            <Grid container={true} xs={12} direction="column">
+                <Typography variant="h5">Личностные качества</Typography>
+                {this.props.softSkills.map((value: SoftSkillModel, index: number, array: SoftSkillModel[]) => {
+                    return (<SoftSkill key={index} skillName={value.name} likesCount={value.likesCount} />);
+                })}
+
+            </Grid>
         );
     }
 }

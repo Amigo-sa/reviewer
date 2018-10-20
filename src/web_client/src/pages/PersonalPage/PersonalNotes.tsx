@@ -1,18 +1,19 @@
 import * as React from "react";
+import Typography from "@material-ui/core/Typography";
+import { Grid } from "@material-ui/core";
 
-// TODO:
-// or use input string with info, either use user store to get needed data
+interface IProps {
+    notesText: string;
+}
 
-class PersonalNotes extends React.Component {
+class PersonalNotes extends React.Component<IProps> {
     public render() {
         return (
-            <div
-                style={{
-                    backgroundColor: "cyan",
-                }}
+            <Grid container={true} xs={12}
             >
-                Заметки о себе
-            </div>
+                <Typography variant="h5">Заметки о себе</Typography>
+                <Typography variant="body1">{this.props.notesText}</Typography>
+            </Grid>
         );
     }
 }

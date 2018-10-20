@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Grid } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 
 interface IProps {
     name: string;
@@ -9,12 +9,9 @@ interface IProps {
 class Profession extends React.Component<IProps> {
     public render() {
         return (
-            <Grid
-                container={true}
-                direction="column"
-                xs={12}>
-                {this.props.rate}
-                {this.props.name}
+            <Grid container={true} direction="column" xs={true}>
+                <Typography variant="h5">{this.props.rate}</Typography>
+                <Typography variant="h5">{this.props.name}</Typography>
             </Grid>
         );
     }
