@@ -13,3 +13,5 @@ export default class Person {
     public organization_name: string;
     public specialization: string;
 }
+
+export const urlPersonById = (id: string) => "/personal/" + id;

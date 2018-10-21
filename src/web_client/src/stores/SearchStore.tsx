@@ -1,14 +1,12 @@
 import { action, observable } from "mobx";
-
-export interface ISearchData {
-    fio: string;
-    img: string;
-    info: object;
-}
+import PersonsApi from "../server-api/persons/PersonsApi";
+import Person from "../server-api/persons/Person";
+import FindPersonsResponse from "../server-api/persons/FindPersonsResponse";
+import FindPersonsRequest from "../server-api/persons/FindPersonsRequest";
 
 export class SearchStore {
     @observable
-    public resultList: ISearchData[] = [];
+    public resultList: Person[] = [];
 
     constructor() {
         console.log("Construct SearchStore");
@@ -16,8 +14,14 @@ export class SearchStore {
 
     // #TODO - сделать полноценный поиск по параметрам
     @action
-    public sendSeacrhPeople(surname: string) {
+    public sendSeacrhPeople(findRequest: FindPersonsRequest) {
         // #TODO делаем запрос к серверу и получаем данные о пользователях и сохраняем в список
+        return PersonsApi.findPersons(findRequest)
+            .then(action((result: FindPersonsResponse) => {
+                console.log("Find res", result);
+                this.resultList = result.list || [];
+            }))
+            .catch((err: any) => console.log("Error Search", err));
     }
 
     @action public reset() {

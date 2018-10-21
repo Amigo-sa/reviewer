@@ -13,7 +13,7 @@ export default class FindPersonsRequest {
     // tslint:disable-next-line:variable-name
     public organization_id?: string;
     // tslint:disable-next-line:variable-name
-    public query_limit: number;
+    public query_limit?: number;
     // tslint:disable-next-line:variable-name
-    public query_start: number;
+    public query_start?: number;
 }

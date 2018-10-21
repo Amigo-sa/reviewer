@@ -8,7 +8,8 @@ import { SearchStore } from "../../stores/SearchStore";
 
 import SearchResult from "./SearchResult";
 import { observer, inject } from "mobx-react";
-import SearchForm, { ISearchFields } from "./SearchForm";
+import SearchForm from "./SearchForm";
+import FindPersonsRequest from "../../server-api/persons/FindPersonsRequest";
 
 interface ISearchPageProps extends WithStyles<typeof styles> {
     searchStore?: SearchStore;
@@ -24,13 +25,24 @@ const styles = (theme: Theme) => createStyles({
 @inject("searchStore")
 @observer
 class SearchPeople extends React.Component<ISearchPageProps> {
+
+    public state = {
+        loading: false,
+    };
+
     get injected() {
         return this.props as ISearchPageProps;
     }
 
-    public handleSearch = (fields: ISearchFields) => {
+    public handleSearch = (fields: FindPersonsRequest) => {
         // #TODO сделать поиск через searchStore
-        console.log("Ищем: ", fields);
+        const { searchStore } = this.injected;
+        this.setState({ loading: true });
+        return searchStore &&
+            searchStore.sendSeacrhPeople(fields)
+                .then(() => {
+                    this.setState({ loading: false });
+                });
     }
 
     public render() {
@@ -50,6 +62,7 @@ class SearchPeople extends React.Component<ISearchPageProps> {
                 />
                 <SearchResult
                     results={resultList}
+                    loading={this.state.loading}
                 />
                 <Footer />
             </>

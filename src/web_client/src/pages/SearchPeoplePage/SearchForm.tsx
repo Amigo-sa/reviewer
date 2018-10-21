@@ -12,6 +12,7 @@ import {
 
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
+import FindPersonsRequest from "../../server-api/persons/FindPersonsRequest";
 
 /*
 ** Component SearchForm
@@ -21,19 +22,26 @@ import { Theme } from "@material-ui/core/styles/createMuiTheme";
 
 // #TODO использовать функции реализованные сверху
 export interface ISearchFields {
-    surname: string;
-    name: string;
-    lastname: string;
-    category: string;
-    org: string;
+    surname?: string;
+    first_name?: string;
+    middle_name?: string;
+    department_id?: string;
+    organization_id?: string;
 }
+
 interface ISearchFormProps extends WithStyles<typeof styles> {
-    handleFind: (e: ISearchFields) => void;
+    handleFind: (e: FindPersonsRequest) => void;
 }
 
 const styles = (theme: Theme) => createStyles({
     root: {
         backgroundColor: "#017BC3",
+        padding: "55px 70px 46px",
+        color: "#FFF",
+        marginBottom: 35,
+    },
+    row: {
+        marginBottom: 35,
     },
 });
 
@@ -41,16 +49,34 @@ class SearchForm extends React.Component<ISearchFormProps> {
 
     public state = {
         surname: "",
-        name: "",
-        lastname: "",
-        category: "",
-        org: "",
+        first_name: "",
+        middle_name: "",
+        department_id: "",
+        organization_id: "",
     };
 
-    public handleFind() {
+    public handleFind = () => {
         const { handleFind } = this.props;
-        handleFind(this.state);
+        const { surname, first_name, middle_name, department_id, organization_id } = this.state;
+        const request = new FindPersonsRequest();
+        if (surname) {
+            request.surname = surname;
+        }
+        if (first_name) {
+            request.first_name = first_name;
+        }
+        if (middle_name) {
+            request.middle_name = middle_name;
+        }
+        if (department_id) {
+            request.department_id = department_id;
+        }
+        if (organization_id) {
+            request.organization_id = organization_id;
+        }
+        handleFind(request);
     }
+
     public handleChange = (name: string) => (event: any) => {
         this.setState({
             [name]: event.target.value,
@@ -59,7 +85,7 @@ class SearchForm extends React.Component<ISearchFormProps> {
 
     public render() {
         const { classes } = this.props;
-        const { surname, name, lastname, category, org } = this.state;
+        const { surname, first_name, middle_name, department_id, organization_id } = this.state;
         return (
             <Grid container={true} className={classes.root}>
                 <Grid item={true} xs={12}>
@@ -71,6 +97,7 @@ class SearchForm extends React.Component<ISearchFormProps> {
                     alignItems={"center"}
                     container={true}
                     item={true}
+                    className={classes.row}
                     md={12}
                     lg={12}
                 >
@@ -89,7 +116,7 @@ class SearchForm extends React.Component<ISearchFormProps> {
                             <TextField
                                 id="name"
                                 placeholder="Имя"
-                                value={name}
+                                value={first_name}
                                 onChange={this.handleChange("name")}
                             />
                         </FormControl>
@@ -99,7 +126,7 @@ class SearchForm extends React.Component<ISearchFormProps> {
                             <TextField
                                 id="lastname"
                                 placeholder="Отчество"
-                                value={lastname}
+                                value={middle_name}
                                 onChange={this.handleChange("lastname")}
                             />
                         </FormControl>
@@ -107,7 +134,7 @@ class SearchForm extends React.Component<ISearchFormProps> {
                     <Grid item={true} xs={12} md={3} lg={3}>
                         <FormControl>
                             <Select
-                                value={category}
+                                value={department_id}
                                 onChange={this.handleChange("category")}
                                 inputProps={{
                                     name: "category",
@@ -121,21 +148,32 @@ class SearchForm extends React.Component<ISearchFormProps> {
                         </FormControl>
                     </Grid>
                 </Grid>
-                <Grid container={true} item={true} xs={12} md={12} lg={12}>
+                <Grid
+                    container={true}
+                    item={true}
+                    className={classes.row}
+                    xs={12} md={12} lg={12}
+                >
                     <Grid item={true} xs={12} md={12} lg={6}>
                         <FormControl>
                             <TextField
                                 id="org"
                                 placeholder="Полное название организации"
-                                value={org}
+                                value={organization_id}
                                 onChange={this.handleChange("org")}
                             />
                         </FormControl>
                     </Grid>
                 </Grid>
-                <Grid container={true} item={true} xs={12} md={12} lg={12}>
+                <Grid
+                    container={true}
+                    item={true}
+                    alignContent={"center"}
+                    xs={12} md={12} lg={12}>
                     <Button
                         onClick={this.handleFind}
+                        color="primary"
+                        variant="contained"
                     >
                         Найти
                         </Button>

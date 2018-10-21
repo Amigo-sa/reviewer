@@ -3,7 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import TextInfo from "./TextInfo";
-import RatingItem from "../../elements/RatingItem";
+// import RatingItem from "../../elements/RatingItem";
 
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
@@ -59,7 +59,7 @@ class Main extends React.Component<WithStyles<typeof styles>> {
                         <Grid className={classes.slide}>
                             <h4>Рейтинг участников</h4>
                         </Grid>
-                        <Grid container={true} justify="center" spacing={16}>
+                        {/*<Grid container={true} justify="center" spacing={16}>
                             <RatingItem
                                 img={"static/img/img-1.png"}
                                 fullname={"Петров Иван Алексеевич"}
@@ -88,7 +88,7 @@ class Main extends React.Component<WithStyles<typeof styles>> {
                                 course={5}
                                 rating={"8,5"}
                             />
-                        </Grid>
+                        </Grid>*/}
                     </Grid>
                 </Grid>
                 <Footer />

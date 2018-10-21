@@ -128,7 +128,7 @@ export default class ServerApiHelper {
             // @ts-ignore compiler doesn't find that variable uses in template literal
             const variables: string = this._convertUrlVariablesToString(urlVariables);
             // @ts-ignore
-            result = "${url}?${variables}";
+            result = url + "?" + variables;
         }
 
         return result;
