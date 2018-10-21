@@ -3,7 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import TextInfo from "./TextInfo";
-import RatingItem from "./RatingItem";
+import RatingItem from "../../elements/RatingItem";
 
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";

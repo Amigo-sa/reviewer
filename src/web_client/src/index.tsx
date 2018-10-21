@@ -6,12 +6,14 @@ import App from "./App";
 import "./index.css";
 import registerServiceWorker from "./registerServiceWorker";
 import authStore from "./stores/AuthStore";
+import searchStore from "./stores/SearchStore";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import theme from "./Theme";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 const stores = {
     authStore,
+    searchStore,
 };
 
 ReactDOM.render(
