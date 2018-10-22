@@ -83,9 +83,9 @@ class SearchResult extends React.Component<ISearchProps> {
                                 <FoundPerson
                                     key={item.id}
                                     id={item.id}
-                                    first_name={item.first_name}
+                                    firstName={item.first_name}
                                     surname={item.surname}
-                                    middle_name={item.middle_name}
+                                    middleName={item.middle_name}
                                     university={item.organization_name}
                                     specialization={item.specialization}
                                     course={5}

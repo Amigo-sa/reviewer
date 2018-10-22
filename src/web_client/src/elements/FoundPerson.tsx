@@ -3,24 +3,9 @@ import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import classNames from "classnames";
 import { ButtonBase, Grid, Typography } from "@material-ui/core";
-import { SERVER_HOST } from "src/constants";
+import { personUrlById } from "src/constants";
 import { Link } from "react-router-dom";
-import { urlPersonById } from "src/server-api/persons/Person";
-
-// TODO:
-// props:
-// - add user info to props
-// - add mode identificator: for show in rating list, for show as found person in search page
-interface IProps extends WithStyles<typeof styles> {
-    id?: string;
-    first_name: string;
-    surname: string;
-    middle_name?: string;
-    university: string;
-    specialization: string;
-    course: number;
-    rating: string;
-}
+import PersonsApi from "src/server-api/persons/PersonsApi";
 
 const styles = (theme: Theme) => createStyles({
     profile: {
@@ -70,23 +55,29 @@ const styles = (theme: Theme) => createStyles({
     },
 });
 
+// TODO:
+// props:
+// - add user info to props
+// - add mode identificator: for show in rating list, for show as found person in search page
+interface IProps extends WithStyles<typeof styles> {
+    id?: string;
+    firstName: string;
+    surname: string;
+    middleName?: string;
+    university: string;
+    specialization: string;
+    course: number;
+    rating: string;
+}
+
 class FoundPerson extends React.Component<IProps>{
-
-    get firstInitial() {
-        return this.props.first_name[0];
-    }
-
-    get fio() {
-        const { first_name, surname, middle_name } = this.props;
-        return surname + " " + first_name + " " + middle_name;
-    }
 
     public render() {
         const {
             id,
-            first_name,
+            firstName,
             surname,
-            middle_name,
+            middleName,
             university,
             specialization,
             course,
@@ -98,19 +89,19 @@ class FoundPerson extends React.Component<IProps>{
         const linkId = id || "";
         return (
             <Grid item={true} justify="center" className={classes.profile}>
-                <Link to={urlPersonById(linkId)} className={classes.link}>
+                <Link to={personUrlById(linkId)} className={classes.link}>
                     <ButtonBase className={classes.image}>
-                        <img src={SERVER_HOST + "/persons/" + id + "/photo"}
+                        <img src={PersonsApi.personPhotoUrlById(id)}
                             className={classes.img}
-                            alt={this.firstInitial}
-                            title={this.fio}
+                            alt={this._firstInitial}
+                            title={this._fio}
                         />
                     </ButtonBase>
                     <ul className={classes.fullname}>
                         <li>{surname}</li>
-                        <li>{first_name}</li>
-                        {middle_name &&
-                            <li>{middle_name}</li>
+                        <li>{firstName}</li>
+                        {middleName &&
+                            <li>{middleName}</li>
                         }
                     </ul>
                     <div className={classes.rat}>
@@ -130,6 +121,18 @@ class FoundPerson extends React.Component<IProps>{
                 </Link>
             </Grid>
         );
+    }
+
+    // Private properties
+
+    private get _firstInitial() {
+        return this.props.firstName[0];
+    }
+
+    private get _fio() {
+        return this.props.surname + " "
+            + this.props.firstName + " "
+            + this.props.middleName;
     }
 }
 

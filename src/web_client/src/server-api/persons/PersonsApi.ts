@@ -12,6 +12,15 @@ import GetPersonInfoResponse from "./GetPersonInfoResponse";
 
 export default class PersonsApi {
 
+    public static personPhotoUrlById(id: string | undefined): string {
+        if (id) {
+            return SERVER_HOST + "/persons/" + id + "/photo";
+        }
+        else {
+            return "";
+        }
+    }
+
     public static addPerson(person: Person): Promise<AddPersonResponse> {
         return ServerApiHelper.makePostRequest<AddPersonResponse>(person, SERVER_HOST + "/persons", true);
     }
