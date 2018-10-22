@@ -125,9 +125,7 @@ export default class ServerApiHelper {
 
         // add url variables, if need
         if (urlVariables && Object.keys(urlVariables).length > 0) {
-            // @ts-ignore compiler doesn't find that variable uses in template literal
             const variables: string = this._convertUrlVariablesToString(urlVariables);
-            // @ts-ignore
             result = url + "?" + variables;
         }
 
