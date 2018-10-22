@@ -8,7 +8,7 @@ import {
     MenuItem,
     LinearProgress,
 } from "@material-ui/core";
-import RatingItem from "../../elements/RatingItem";
+import FoundPerson from "../../elements/FoundPerson";
 
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
@@ -80,7 +80,7 @@ class SearchResult extends React.Component<ISearchProps> {
                     {results &&
                         results.map((item) => {
                             return (
-                                <RatingItem
+                                <FoundPerson
                                     key={item.id}
                                     id={item.id}
                                     first_name={item.first_name}

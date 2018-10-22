@@ -3,7 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import TextInfo from "./TextInfo";
-// import RatingItem from "../../elements/RatingItem";
+// import FoundPerson from "../../elements/FoundPerson";
 
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
@@ -60,28 +60,28 @@ class Main extends React.Component<WithStyles<typeof styles>> {
                             <h4>Рейтинг участников</h4>
                         </Grid>
                         {/*<Grid container={true} justify="center" spacing={16}>
-                            <RatingItem
+                            <FoundPerson
                                 img={"static/img/img-1.png"}
                                 fullname={"Петров Иван Алексеевич"}
                                 university={"ITMO"}
                                 course={5}
                                 rating={"9,5"}
                             />
-                            <RatingItem
+                            <FoundPerson
                                 img={"static/img/img-2.png"}
                                 fullname={"Иванов Юрий Петрович"}
                                 university={"ITMO"}
                                 course={5}
                                 rating={"8,5"}
                             />
-                            <RatingItem
+                            <FoundPerson
                                 img={"static/img/img-3.png"}
                                 fullname={"Петров Иван Алексеевич"}
                                 university={"ITMO"}
                                 course={5}
                                 rating={"6,5"}
                             />
-                            <RatingItem
+                            <FoundPerson
                                 img={"static/img/img-1.png"}
                                 fullname={"Иванов Юрий Петрович"}
                                 university={"ITMO"}

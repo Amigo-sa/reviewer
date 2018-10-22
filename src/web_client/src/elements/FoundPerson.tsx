@@ -10,7 +10,8 @@ import { urlPersonById } from "src/server-api/persons/Person";
 // TODO:
 // props:
 // - add user info to props
-interface IRatingItem extends WithStyles<typeof styles> {
+// - add mode identificator: for show in rating list, for show as found person in search page
+interface IProps extends WithStyles<typeof styles> {
     id?: string;
     first_name: string;
     surname: string;
@@ -69,7 +70,7 @@ const styles = (theme: Theme) => createStyles({
     },
 });
 
-class RatingItem extends React.Component<IRatingItem>{
+class FoundPerson extends React.Component<IProps>{
 
     get firstInitial() {
         return this.props.first_name[0];
@@ -132,4 +133,4 @@ class RatingItem extends React.Component<IRatingItem>{
     }
 }
 
-export default withStyles(styles)(RatingItem);
+export default withStyles(styles)(FoundPerson);
