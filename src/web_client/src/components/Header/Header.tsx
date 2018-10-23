@@ -208,7 +208,7 @@ class Header extends React.Component<IProps>{
 
         return (
             <Grid
-                item={true}
+                item
                 xs={12}
                 className={classes.root}
             >

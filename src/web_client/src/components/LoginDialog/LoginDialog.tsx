@@ -118,25 +118,25 @@ class LoginDialog extends React.Component<IAuthProps>{
                             </DialogContentText>
                             {step === 0 &&
                                 <TextField
-                                    autoFocus={true}
+                                    autoFocus
                                     margin="normal"
                                     id={"login"}
                                     label={"Телефон"}
                                     type={"text"}
                                     value={this.state.login}
-                                    fullWidth={true}
+                                    fullWidth
                                     onChange={this.changeStepLoginField}
                                 />
                             }
                             {step === 1 &&
                                 <TextField
-                                    autoFocus={true}
+                                    autoFocus
                                     margin="normal"
                                     id={"password"}
                                     label={"Пароль"}
                                     type={"password"}
                                     value={this.state.password}
-                                    fullWidth={true}
+                                    fullWidth
                                     onChange={this.changeStepPasswordField}
                                 />
                             }

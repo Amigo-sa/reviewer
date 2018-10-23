@@ -21,7 +21,7 @@ class LeftMenu extends React.Component<WithStyles<typeof styles>> {
         return (
             <Paper>
                 <Grid
-                    container={true}
+                    container
                     direction="column">
                     <div
                         style={{

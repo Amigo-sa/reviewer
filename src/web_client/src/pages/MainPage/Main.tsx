@@ -38,8 +38,8 @@ class Main extends React.Component<WithStyles<typeof styles>> {
                     title={"Главная"}
                     size={"big"}
                 />
-                <Grid container={true}>
-                    <Grid item={true} xs={12} className={classes.block1}>
+                <Grid container>
+                    <Grid item xs={12} className={classes.block1}>
                         <Grid className={classes.slide}>
                             <img src="static/img/skills-color.png" alt="skills-color" />
                         </Grid>
@@ -54,12 +54,12 @@ class Main extends React.Component<WithStyles<typeof styles>> {
                         </TextInfo>
                     </Grid>
                 </Grid>
-                <Grid container={true}>
-                    <Grid item={true} xs={12} className={classes.block2}>
+                <Grid container>
+                    <Grid item xs={12} className={classes.block2}>
                         <Grid className={classes.slide}>
                             <h4>Рейтинг участников</h4>
                         </Grid>
-                        {/*<Grid container={true} justify="center" spacing={16}>
+                        {/*<Grid container justify="center" spacing={16}>
                             <FoundPerson
                                 img={"static/img/img-1.png"}
                                 fullname={"Петров Иван Алексеевич"}

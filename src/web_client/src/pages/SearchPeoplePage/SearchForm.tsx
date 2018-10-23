@@ -87,21 +87,21 @@ class SearchForm extends React.Component<ISearchFormProps> {
         const { classes } = this.props;
         const { surname, first_name, middle_name, department_id, organization_id } = this.state;
         return (
-            <Grid container={true} className={classes.root}>
-                <Grid item={true} xs={12}>
-                    <Typography component="h1" color="textPrimary" align="center" variant="h2" gutterBottom={true}>
+            <Grid container className={classes.root}>
+                <Grid item xs={12}>
+                    <Typography component="h1" color="textPrimary" align="center" variant="h2" gutterBottom>
                         Поиск по персоналиям
                     </Typography>
                 </Grid>
                 <Grid
                     alignItems={"center"}
-                    container={true}
-                    item={true}
+                    container
+                    item
                     className={classes.row}
                     md={12}
                     lg={12}
                 >
-                    <Grid item={true} xs={12} md={3} lg={3}>
+                    <Grid item xs={12} md={3} lg={3}>
                         <FormControl>
                             <TextField
                                 id="surname"
@@ -111,7 +111,7 @@ class SearchForm extends React.Component<ISearchFormProps> {
                             />
                         </FormControl>
                     </Grid>
-                    <Grid item={true} xs={12} md={3} lg={3}>
+                    <Grid item xs={12} md={3} lg={3}>
                         <FormControl>
                             <TextField
                                 id="name"
@@ -121,7 +121,7 @@ class SearchForm extends React.Component<ISearchFormProps> {
                             />
                         </FormControl>
                     </Grid>
-                    <Grid item={true} xs={12} md={3} lg={3}>
+                    <Grid item xs={12} md={3} lg={3}>
                         <FormControl>
                             <TextField
                                 id="lastname"
@@ -131,7 +131,7 @@ class SearchForm extends React.Component<ISearchFormProps> {
                             />
                         </FormControl>
                     </Grid>
-                    <Grid item={true} xs={12} md={3} lg={3}>
+                    <Grid item xs={12} md={3} lg={3}>
                         <FormControl>
                             <Select
                                 value={department_id}
@@ -149,12 +149,12 @@ class SearchForm extends React.Component<ISearchFormProps> {
                     </Grid>
                 </Grid>
                 <Grid
-                    container={true}
-                    item={true}
+                    container
+                    item
                     className={classes.row}
                     xs={12} md={12} lg={12}
                 >
-                    <Grid item={true} xs={12} md={12} lg={6}>
+                    <Grid item xs={12} md={12} lg={6}>
                         <FormControl>
                             <TextField
                                 id="org"
@@ -166,8 +166,8 @@ class SearchForm extends React.Component<ISearchFormProps> {
                     </Grid>
                 </Grid>
                 <Grid
-                    container={true}
-                    item={true}
+                    container
+                    item
                     alignContent={"center"}
                     xs={12} md={12} lg={12}>
                     <Button

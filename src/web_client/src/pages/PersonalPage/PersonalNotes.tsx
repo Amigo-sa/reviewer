@@ -9,8 +9,7 @@ interface IProps {
 class PersonalNotes extends React.Component<IProps> {
     public render() {
         return (
-            <Grid container={true} xs={12}
-            >
+            <Grid container xs={12} >
                 <Typography variant="h5">Заметки о себе</Typography>
                 <Typography variant="body1">{this.props.notesText}</Typography>
             </Grid>

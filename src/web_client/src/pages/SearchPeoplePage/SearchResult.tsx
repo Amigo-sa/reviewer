@@ -46,19 +46,19 @@ class SearchResult extends React.Component<ISearchProps> {
         const { classes, sort, handleSort, results, loading } = this.props;
         console.log("Results ", results);
         return (
-            <Grid container={true} className={classes.block1}>
-                <Grid container={true} item={true} alignItems="center">
-                    <Grid item={true} xs={12} md={4}>
-                        <Typography component="h4" variant="headline" gutterBottom={true}>
+            <Grid container className={classes.block1}>
+                <Grid container item alignItems="center">
+                    <Grid item xs={12} md={4}>
+                        <Typography component="h4" variant="headline" gutterBottom>
                             Результаты поиска
                             </Typography>
                     </Grid>
-                    <Grid item={true} xs={12} md={4}>
+                    <Grid item xs={12} md={4}>
                         <Typography variant="title">
                             Найдено совпадений: {results.length}
                         </Typography>
                     </Grid>
-                    <Grid item={true} xs={12} md={4}>
+                    <Grid item xs={12} md={4}>
                         <InputLabel htmlFor="sort">Сортировать по</InputLabel>
                         <Select
                             value={sort || "rating"}
@@ -73,7 +73,7 @@ class SearchResult extends React.Component<ISearchProps> {
                         </Select>
                     </Grid>
                 </Grid>
-                <Grid container={true} item={true} alignItems="center" justify="space-between">
+                <Grid container item alignItems="center" justify="space-between">
                     {loading &&
                         <LinearProgress className={classes.fullWidth} />
                     }

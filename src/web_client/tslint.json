@@ -28,6 +28,9 @@
         "no-string-literal": false,
         "max-classes-per-file": false,
         "jsx-alignment": false,
+        "jsx-boolean-value": [
+            false
+        ],
         "object-literal-key-quotes": [
             true,
             "as-needed"

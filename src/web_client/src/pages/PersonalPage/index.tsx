@@ -12,13 +12,13 @@ class PersonalPage extends React.Component {
                 <Header
                     title="Персональная страница"
                     size="default" />
-                <Grid container={true} item={true} xs={12}>
+                <Grid container item xs={12}>
                     {/* Left menu + personal info */}
-                    <Grid container={true} item={true} spacing={24}>
-                        <Grid item={true} xs={2}>
+                    <Grid container item spacing={24}>
+                        <Grid item xs={2}>
                             <LeftMenu />
                         </Grid>
-                        <Grid item={true} xs={10}>
+                        <Grid item xs={10}>
                             <PersonalInfo />
                         </Grid>
                     </Grid>

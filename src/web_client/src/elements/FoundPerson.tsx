@@ -88,7 +88,7 @@ class FoundPerson extends React.Component<IProps>{
         const ratingClasses = classNames(classes.property, classes.rating);
         const linkId = id || "";
         return (
-            <Grid item={true} justify="center" className={classes.profile}>
+            <Grid item justify="center" className={classes.profile}>
                 <Link to={personUrlById(linkId)} className={classes.link}>
                     <ButtonBase className={classes.image}>
                         <img src={PersonsApi.personPhotoUrlById(id)}

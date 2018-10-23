@@ -10,7 +10,7 @@ interface IProps {
 class HardSkills extends React.Component<IProps> {
     public render() {
         return (
-            <Grid container={true} xs={12} direction="column">
+            <Grid container xs={12} direction="column">
                 <Typography variant="h5">Профессиональные качества</Typography>
                 {this.props.hardSkills.map((value: HardSkillModel, index: number, array: HardSkillModel[]) => {
                     return (<HardSkill key={index} skillName={value.name} value={value.value} />);

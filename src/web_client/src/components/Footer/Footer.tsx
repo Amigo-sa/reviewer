@@ -20,10 +20,10 @@ class Footer extends React.Component<WithStyles<typeof styles>>{
         const year = new Date().getFullYear();
         return (
             <Grid
-                item={true}
+                item
                 xs={12}
                 className={classes.root}>
-                <Typography variant="title" color="inherit" noWrap={true} align="center">
+                <Typography variant="title" color="inherit" noWrap align="center">
                     Skill for life team {year}
                 </Typography>
             </Grid>

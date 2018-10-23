@@ -14,11 +14,11 @@ interface IProps {
 class HardSkill extends React.Component<IProps> {
     public render() {
         return (
-            <Grid container={true} xs={12}>
-                <Grid item={true} xs={6}>
+            <Grid container xs={12}>
+                <Grid item xs={6}>
                     <span>{this.props.skillName}</span>
                 </Grid>
-                <Grid item={true} xs={6}>
+                <Grid item xs={6}>
                     <progress value={this.props.value} max="100" />
                 </Grid>
             </Grid>

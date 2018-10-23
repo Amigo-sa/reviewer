@@ -14,7 +14,7 @@ interface IProps {
 class SoftSkill extends React.Component<IProps> {
     public render() {
         return (
-            <Grid container={true} xs={12}>
+            <Grid container xs={12}>
                 <span>{this.props.skillName}</span>
                 <img
                     src="static/img/heart.png"

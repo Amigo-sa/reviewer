@@ -24,9 +24,9 @@ class App extends React.Component<any> {
                     margin: "0px auto",
                 }}
             >
-                <Grid container={true}>
+                <Grid container>
                     <Switch>
-                        <Route exact={true} path="/" component={Main} />
+                        <Route exact path="/" component={Main} />
                         <Route path="/login" component={LoginPage} />
                         <PrivateRoute
                             path="/personal"
