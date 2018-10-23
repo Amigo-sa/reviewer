@@ -519,6 +519,7 @@ class TestAuth(unittest.TestCase):
         self.prepare_lists()
         review_data = {"reviewer_id": self.user_person_id,
                        "value": "50.0",
+                       "topic": "some_topic",
                        "description": "string"}
         rev_ids = []
         for url in self.review_valid_post:
@@ -538,6 +539,7 @@ class TestAuth(unittest.TestCase):
         self.prepare_lists()
         review_data = {"reviewer_id": self.user_person_id,
                        "value": "50.0",
+                       "topic": "some_topic",
                        "description": "string"}
         rev_ids = []
         for url in self.review_valid_post:
@@ -557,6 +559,7 @@ class TestAuth(unittest.TestCase):
         self.prepare_lists()
         review_data = {"reviewer_id": self.user_person_id,
                        "value": "50.0",
+                       "topic": "some_topic",
                        "description": "string"}
         rev_ids = []
         person = model.Person(_id= self.user_person_id)
@@ -588,6 +591,7 @@ class TestAuth(unittest.TestCase):
         self.prepare_lists()
         review_data = {"reviewer_id": self.user_person_id,
                        "value": "50.0",
+                       "topic": "some_topic",
                        "description": "string"}
         for url in self.review_invalid_post:
             resp_json = hm.try_post_item(self, self.api_URL + url,

@@ -152,7 +152,7 @@ class ValidatedReferenceList(fields.ListField):
 
         setattr(cls, "clean", new_clean)
 
-def add_person_skill_review(skill_review_cls, reviewer_id, person_id, skill_id, value, description):
+def add_person_skill_review(skill_review_cls, reviewer_id, person_id, skill_id, value, topic, description):
     #здесь намеренно не проверяем объекты, на которые ссылаемся. Проверки осуществляются методами ValidatedReferenceField
     query = {}
     query.update({"person_id": ObjectId(person_id)})
@@ -167,7 +167,7 @@ def add_person_skill_review(skill_review_cls, reviewer_id, person_id, skill_id, 
     except DoesNotExist:
         person_s = person_skill_cls(person_id, skill_id, None)
         person_s.save()
-    s_review = skill_review_cls(reviewer_id, person_s.pk, value, description)
+    s_review = skill_review_cls(reviewer_id, person_s.pk, value, topic, description)
     s_review.save()
     return str(s_review.pk)
 
@@ -479,6 +479,7 @@ class SSReview(MongoModel):
     reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     subject_id = ValidatedReferenceField(PersonSS, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
+    topic = fields.CharField()
     description = fields.CharField()
 
     def save(self, cascade=None, full_clean=True, force_insert=False):
@@ -503,6 +504,7 @@ class HSReview(MongoModel):
     reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     subject_id = ValidatedReferenceField(PersonHS, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
+    topic = fields.CharField()
     description = fields.CharField()
 
     def save(self, cascade=None, full_clean=True, force_insert=False):
@@ -527,6 +529,7 @@ class SpecializationReview(MongoModel):
     reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     subject_id = ValidatedReferenceField(PersonSpecialization, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
+    topic = fields.CharField()
     description = fields.CharField()
 
     def save(self, cascade=None, full_clean=True, force_insert=False):
@@ -551,6 +554,7 @@ class GroupReview(MongoModel):
     reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     subject_id = ValidatedReferenceField(Group, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
+    topic = fields.CharField()
     description = fields.CharField()
 
     class Meta:
@@ -567,6 +571,7 @@ class GroupMemberReview(MongoModel):
     reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     subject_id = ValidatedReferenceField(GroupMember, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
+    topic = fields.CharField()
     description = fields.CharField()
 
     class Meta:
@@ -583,6 +588,7 @@ class GroupTestReview(MongoModel):
     reviewer_id = ValidatedReferenceField(Person, on_delete=ReferenceField.CASCADE)
     subject_id = ValidatedReferenceField(GroupTest, on_delete=ReferenceField.CASCADE)
     value = fields.FloatField()
+    topic = fields.CharField()
     description = fields.CharField()
 
     class Meta:

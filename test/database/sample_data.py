@@ -368,6 +368,7 @@ def fill_db():
                 persons["Shatokhin"],
                 person_specializations["Pashka"],
                 50.0,
+                "Тема",
                 "Часто появляется с перегаром"
             ),
         "Anisimov_Bogi_sr":
@@ -375,6 +376,7 @@ def fill_db():
                 persons["Anisimov"],
                 person_specializations["Bogi"],
                 20.0,
+                "Тема",
                 "Боится ТОЭ"
             ),
         "Pashka_Shatokhin_MCU":
@@ -382,6 +384,7 @@ def fill_db():
                 persons["Pashka"],
                 person_specializations["Shatokhin_MCU"],
                 50.0,
+                "Тема",
                 "Не знает современную элементную базу"
             ),
         "Leni4_Anisimov_rel":
@@ -389,6 +392,7 @@ def fill_db():
                 persons["Leni4"],
                 person_specializations["Anisimov_TOE"],
                 100.0,
+                "Тема",
                 "Это просто чудо какое-то!"
             )
     }
@@ -560,6 +564,7 @@ def fill_db():
         hs_review.reviewer_id = reviewer.pk
         hs_review.subject_id = reviewed.pk
         hs_review.value = random.random() * 100
+        hs_review.topic = "Тема отзыва"
         hs_review.description = "Описание отзыва %s на %s пользователя %s"%(reviewer.surname, reviewed.hs_id.name,
                                     reviewed.person_id.surname)
         try:

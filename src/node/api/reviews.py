@@ -17,16 +17,17 @@ def post_review(review_type, subject_id):
         reviewer_id = ObjectId(req['reviewer_id'])
         subject_id = ObjectId(subject_id)
         value = req['value']
+        topic = req['topic']
         description = req['description']
         obj = {
             "SpecializationReview":
-                SpecializationReview(reviewer_id, subject_id, value, description),
+                SpecializationReview(reviewer_id, subject_id, value, topic, description),
             "Group":
-                GroupReview(reviewer_id, subject_id, value, description),
+                GroupReview(reviewer_id, subject_id, value, topic, description),
             "GroupTest":
-                GroupTestReview(reviewer_id, subject_id, value, description),
+                GroupTestReview(reviewer_id, subject_id, value, topic, description),
             "GroupMember":
-                GroupMemberReview(reviewer_id, subject_id, value, description)
+                GroupMemberReview(reviewer_id, subject_id, value, topic, description)
         }
         subj_class = {
             "SpecializationReview":
@@ -96,12 +97,14 @@ def post_person_skill_review(skill_review_cls, p_id, s_id):
             return jsonify({"result": ERR.INPUT}), 200
         reviewer_id = ObjectId(req['reviewer_id'])
         value = req['value']
+        topic = req['topic']
         description = req['description']
         review_id = add_person_skill_review(skill_review_cls,
                                              reviewer_id,
                                              p_id,
                                              s_id,
                                              value,
+                                             topic,
                                              description)
         result = {"result": ERR.OK,
                   "id": review_id}
@@ -184,6 +187,7 @@ def get_review_info(id):
         data = {"reviewer_id" : str(subject.reviewer_id.pk),
                 "subject_id" : str(subject.subject_id.pk),
                 "value" : subject.value,
+                "topic" : subject.topic,
                 "description" : subject.description}
         result = {"result": ERR.OK, "data": data}
     except Exception as e:

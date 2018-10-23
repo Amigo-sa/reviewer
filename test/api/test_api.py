@@ -875,6 +875,7 @@ class TestApi(unittest.TestCase):
         for subj_type, subj_url in subject_urls.items():
             review_data = {"reviewer_id": self.reviewer_id,
                            "value": "60.0",
+                           "topic": "some_topic",
                            "description": "sample_descr"}
             cur_id = self.post_item(subj_url, review_data, auth="reviewer")
             rev_ids.update({subj_type: cur_id})
@@ -904,6 +905,7 @@ class TestApi(unittest.TestCase):
             ref_data = {"reviewer_id": self.reviewer_id,
                         "subject_id": subj_ids[subj_type],
                         "value": 60.0,
+                        "topic": "some_topic",
                         "description": "sample_descr"}
             self.assertDictEqual(ref_data, review_data)
         # verify with review from person2
@@ -911,6 +913,7 @@ class TestApi(unittest.TestCase):
             "reviewer_id": self.reviewer_id2,
             "subject_id": p_spec_id,
             "value": "80.0",
+            "topic": "some_topic",
             "description": "sample_descr2"}
         rev2_id = self.post_item("/specializations/%s/reviews" % (p_spec_id),
                                  review_data,
@@ -939,6 +942,7 @@ class TestApi(unittest.TestCase):
         post_data = {
             "reviewer_id" : str(self.reviewer_id),
             "value" : 70,
+            "topic": "some_topic",
             "description" : "some_descr"
         }
         self.post_item("/persons/%s/hard_skills/%s/reviews"%
@@ -950,6 +954,7 @@ class TestApi(unittest.TestCase):
         post_data = {
             "reviewer_id": str(self.reviewer_id2),
             "value": 50,
+            "topic": "some_topic",
             "description": "some_descr"
         }
         self.post_item("/persons/%s/hard_skills/%s/reviews" %
@@ -966,6 +971,7 @@ class TestApi(unittest.TestCase):
         post_data = {
             "reviewer_id": str(self.reviewer_id),
             "value": 70,
+            "topic": "some_topic",
             "description": "some_descr"
         }
         self.post_item("/persons/%s/soft_skills/%s/reviews" %
@@ -977,6 +983,7 @@ class TestApi(unittest.TestCase):
         post_data = {
             "reviewer_id": str(self.reviewer_id2),
             "value": 50,
+            "topic": "some_topic",
             "description": "some_descr"
         }
         self.post_item("/persons/%s/soft_skills/%s/reviews" %
@@ -993,6 +1000,7 @@ class TestApi(unittest.TestCase):
         post_data = {
             "reviewer_id": str(self.reviewer_id),
             "value": 70,
+            "topic": "some_topic",
             "description": "some_descr"
         }
         self.post_item("/specializations/%s/reviews" %
@@ -1004,6 +1012,7 @@ class TestApi(unittest.TestCase):
         post_data = {
             "reviewer_id": str(self.reviewer_id2),
             "value": 50,
+            "topic": "some_topic",
             "description": "some_descr"
         }
         self.post_item("/specializations/%s/reviews" %
@@ -1107,6 +1116,7 @@ class TestApi(unittest.TestCase):
         for subj_type, subj_url in subject_urls.items():
             review_data = {"reviewer_id": self.reviewer_id,
                            "value": "60.0",
+                           "topic": "some_topic",
                            "description": "sample_descr"}
             cur_id = self.post_item(subj_url, review_data, auth="reviewer")
             resp = requests.post(url=self.api_URL + subj_url, json=review_data,
@@ -1249,48 +1259,56 @@ class TestApi(unittest.TestCase):
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
                               value="skill_level",
+                              topic= "string",
                               description="string"
                               )
         self.pass_invalid_ref("/groups/%s/reviews" % hard_skill_id,
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
                               value="skill_level",
+                              topic="string",
                               description="string"
                               )
         self.pass_invalid_ref("/group_members/%s/reviews" % hard_skill_id,
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
                               value="skill_level",
+                              topic="string",
                               description="string"
                               )
         self.pass_invalid_ref("/tests/%s/reviews" % hard_skill_id,
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
                               value="skill_level",
+                              topic="string",
                               description="string"
                               )
         self.pass_invalid_ref("/persons/%s/hard_skills/%s/reviews" % (p_id, group_id),
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
                               value="skill_level",
+                              topic="string",
                               description="string"
                               )
         self.pass_invalid_ref("/persons/%s/hard_skills/%s/reviews" % (group_id, hard_skill_id),
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
                               value="skill_level",
+                              topic="string",
                               description="string"
                               )
         self.pass_invalid_ref("/persons/%s/soft_skills/%s/reviews" % (p_id, group_id),
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
                               value="skill_level",
+                              topic="string",
                               description="string"
                               )
         self.pass_invalid_ref("/persons/%s/soft_skills/%s/reviews" % (group_id, soft_skill_id),
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
                               value="skill_level",
+                              topic="string",
                               description="string"
                               )
 
@@ -1509,6 +1527,7 @@ class TestApi(unittest.TestCase):
         spec_rev_id = self.post_item("/specializations/%s/reviews" % str(person_spec.pk), auth="reviewer", data={
             "value": 10,
             "description": "some_desc",
+            "topic": "some_topic",
             "reviewer_id": self.reviewer_id
         })
         person.refresh_from_db()
@@ -1522,6 +1541,7 @@ class TestApi(unittest.TestCase):
                        , auth="reviewer", data={
                         "value": 20,
                         "description": "some_desc",
+                        "topic": "some_topic",
                         "reviewer_id": self.reviewer_id
             })
         person.refresh_from_db()
@@ -1532,6 +1552,7 @@ class TestApi(unittest.TestCase):
                        , auth="reviewer", data={
                         "value": 30,
                         "description": "some_desc",
+                        "topic": "some_topic",
                         "reviewer_id": self.reviewer_id
             })
         person.refresh_from_db()
