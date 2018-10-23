@@ -327,7 +327,9 @@ def find_person_skills(skill_cls):
     try:
         if err == ERR.OK:
             person_skill_qs = person_skill_cls.objects.raw(query)
-            person_skills = list({"id": str(key["_id"])} for key in person_skill_qs.values())
+            person_skills = list({"id": str(key["_id"]),
+                                  "level": str(key["level"]),
+                                  tag: str(key[tag])} for key in person_skill_qs.values())
             result = {"result": ERR.OK, "list": person_skills}
         else:
             result = {"result": ERR.NO_DATA}
