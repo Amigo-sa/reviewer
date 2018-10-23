@@ -708,6 +708,8 @@ class TestApi(unittest.TestCase):
         p_1_ref_dict.pop("birth_date")
         p_1_ref_dict.update({"specialization": struct["spec_1"]["type"]})
         p_1_ref_dict.update({"organization_name": struct["org_1"]["name"]})
+        p_1_ref_dict.update({"department_name": struct["dep_1"]["name"]})
+        p_1_ref_dict.update({"photo": False})
         self.assertIn(p_1_ref_dict, p_list, "must return correct person info")
         # test if org and spec are not returned when absent
         p_2_ref_dict = struct["person_2"]
@@ -716,6 +718,8 @@ class TestApi(unittest.TestCase):
         # TODO внести единство в эти None и "None"
         p_2_ref_dict.update({"specialization": None})
         p_2_ref_dict.update({"organization_name": "None"})
+        p_2_ref_dict.update({"department_name": "None"})
+        p_2_ref_dict.update({"photo": False})
         self.assertIn(p_2_ref_dict, p_list, "must return correct person info")
 
         p_list = self.get_item_list("/persons?specialization=Tutor")

@@ -54,31 +54,6 @@ def find_persons():
     person_spec_project_filter = 1
     err = ERR.OK
 
-    group_debug = False
-    if "group_id_mod" in request.args:
-        group_debug = True
-        group_id = request.args['group_id_mod']
-        group_qs = Group.objects.raw({"_id": ObjectId(group_id)})
-        if group_qs.count():
-            pipeline += ({"$match": {"group_id": ObjectId(group_id)}},)
-            pipeline += ({"$lookup":
-                              {"from": "person"
-                              ,"localField": "person_id"
-                              ,"foreignField": "_id"
-                              ,"as": "person_member"}
-                          },)
-
-            pipeline += ({"$project":
-                              {
-                                  # TODO это вообще нормально, что приходится брать 1-й элемент массива?
-                                  # по идее, должно возвращаться просто значение, а не как массив
-                                  "first_name": {"$arrayElemAt":["$person_member.first_name", 0]},
-                                  "middle_name": {"$arrayElemAt":["$person_member.middle_name",0]},
-                                  "surname": {"$arrayElemAt":["$person_member.surname",0]},
-                                  "_id" : {"$arrayElemAt":["$person_member._id",0]}
-                              }},)
-        else:
-            err = ERR.NO_DATA
 
     if "specialization" in request.args:
         spec_type = request.args["specialization"]
@@ -160,6 +135,7 @@ def find_persons():
         pipeline += ({"$match":
                           {"middle_name": {"$regex": request.args['middle_name'], "$options": "i"}}},
                      )
+    total_count = len(list(Person.objects.aggregate(*pipeline))) #TODO это снижает быстродействие, подумать как улучшить
     pipeline += ({"$skip": skip},
                  {"$limit": limit})
     pipeline += ({"$lookup":
@@ -171,12 +147,10 @@ def find_persons():
                       {"first_name": 1,
                        "middle_name": 1,
                        "surname": 1,
+                       "photo" : 1, #TODO возможно это излишне нагружает последующие стадии (выяснить)
                        "person_specialization": person_spec_project_filter}},
-                 {"$project":
-                      {"first_name": 1,
-                       "middle_name": 1,
-                       "surname": 1,
-                       "person_specialization": { "$arrayElemAt":["$person_specialization", 0]}}},
+                 {"$addFields":
+                      {"person_specialization": { "$arrayElemAt":["$person_specialization", 0]}}},
                  {"$lookup":
                       {"from": "specialization",
                        "localField": "person_specialization.specialization_id",
@@ -197,22 +171,25 @@ def find_persons():
         return jsonify({"result": ERR.NO_DATA}), 200
     try:
         lst = []
-        target_cls = Person if not group_debug else GroupMember
-        for person in target_cls.objects.aggregate(*pipeline):
+        for person in Person.objects.aggregate(*pipeline):
             if "person_specialization" in person and person["person_specialization"]:
                 specialization = person["specialization"][0]["type"]
+                dep_name = person["department"][0]["name"]
                 org_name = person["organization"][0]["name"]
             else:
                 specialization = None
+                dep_name = "None"
                 org_name = "None"
             lst.append({"id": str(person["_id"]),
                         "first_name": person["first_name"],
                         "middle_name": person["middle_name"],
                         "surname": person["surname"],
                         "specialization": specialization,
-                        "organization_name": org_name})
+                        "department_name": dep_name,
+                        "organization_name": org_name,
+                        "photo": "photo" in person})
 
-        result = {"result": ERR.OK, "list": lst}
+        result = {"result": ERR.OK, "list": lst, "length": total_count}
     except Exception as e:
         result = {"result": ERR.DB,
                   "error_message": str(e)}
