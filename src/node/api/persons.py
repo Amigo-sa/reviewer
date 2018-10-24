@@ -206,20 +206,20 @@ def delete_person(person_id):
 @required_auth("user")
 def get_person_info(person_id):
     try:
-        if Person(_id=person_id) in Person.objects.raw({"_id": ObjectId(person_id)}):
-            person = Person(_id=person_id)
-            person.refresh_from_db()
-            birth_date_str = person.birth_date.strftime("%Y-%m-%d") if person.birth_date else None
-            data = {"id": str(person.pk),
-                    "first_name": person.first_name,
-                    "middle_name": person.middle_name,
-                    "surname": person.surname,
-                    "birth_date": birth_date_str,
-                    "phone_no": person.phone_no,
-                    "rating": person.get_rating()}
-            result = {"result": ERR.OK, "data": data}
-        else:
-            result = {"result": ERR.NO_DATA}
+        person = Person.objects.get({"_id": ObjectId(person_id)})
+        birth_date_str = person.birth_date.strftime("%Y-%m-%d") if person.birth_date else None
+        data = {"id": str(person.pk),
+                "first_name": person.first_name,
+                "middle_name": person.middle_name,
+                "surname": person.surname,
+                "birth_date": birth_date_str,
+                "phone_no": person.phone_no,
+                "rating": person.get_rating(),
+                "photo": bool(person.photo)}
+        result = {"result": ERR.OK, "data": data}
+
+    except DoesNotExist:
+        result = {"result": ERR.NO_DATA}
     except:
         result = {"result": ERR.DB}
     return jsonify(result), 200
