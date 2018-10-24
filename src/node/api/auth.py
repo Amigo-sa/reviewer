@@ -289,8 +289,8 @@ def required_auth(required_permissions="admin"):
                                 return f(*args, **kwargs)
                 if required_permissions == "reviewer" and auth_info.person_id:
                     if request.method == "POST":
-                        if str(auth_info.person_id.pk) == request.get_json()['reviewer_id']:
-                            return f(*args, **kwargs)
+                        kwargs["reviewer_id"] = str(auth_info.person_id.pk)
+                        return f(*args, **kwargs)
                     if request.method == "DELETE":
                         if auth_info.person_id.pk == get_reviewer_id_by_review_id(kwargs["id"]):
                             return f(*args, **kwargs)

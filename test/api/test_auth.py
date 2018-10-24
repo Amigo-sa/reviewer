@@ -493,7 +493,7 @@ class TestAuth(unittest.TestCase):
     def test_review_post_normal(self):
         self.prepare_docs()
         self.prepare_lists()
-        review_data = {"reviewer_id": self.user_person_id,
+        review_data = {
                        "value": "50.0",
                        "description": "string"}
         for url in self.review_valid_post:
@@ -502,22 +502,10 @@ class TestAuth(unittest.TestCase):
             self.assertNotEqual(ERR.AUTH, resp_json["result"],
                                 "%s must not return ERR.AUTH for user %s" % (url, self.user_person_id))
 
-    def test_review_wrong_reviewer_id(self):
-        self.prepare_docs()
-        self.prepare_lists()
-        review_data = {"reviewer_id": self.other_person_id,
-                       "value": "50.0",
-                       "description": "string"}
-        for url in self.review_valid_post:
-            resp_json = hm.try_post_item(self, self.api_URL + url,
-                                         review_data, self.user_header)
-            self.assertEqual(ERR.AUTH_NO_PERMISSIONS, resp_json["result"],
-                             "%s must return ERR.AUTH_NO_PERMISSIONS for user %s" % (url, self.user_person_id))
-
     def test_review_delete_normal(self):
         self.prepare_docs()
         self.prepare_lists()
-        review_data = {"reviewer_id": self.user_person_id,
+        review_data = {
                        "value": "50.0",
                        "topic": "some_topic",
                        "description": "string"}
@@ -537,7 +525,7 @@ class TestAuth(unittest.TestCase):
     def test_review_delete_unauth(self):
         self.prepare_docs()
         self.prepare_lists()
-        review_data = {"reviewer_id": self.user_person_id,
+        review_data = {
                        "value": "50.0",
                        "topic": "some_topic",
                        "description": "string"}
@@ -557,7 +545,7 @@ class TestAuth(unittest.TestCase):
     def test_get_unauth(self):
         self.prepare_docs()
         self.prepare_lists()
-        review_data = {"reviewer_id": self.user_person_id,
+        review_data = {
                        "value": "50.0",
                        "topic": "some_topic",
                        "description": "string"}
@@ -589,7 +577,7 @@ class TestAuth(unittest.TestCase):
     def test_review_post_on_self(self):
         self.prepare_docs()
         self.prepare_lists()
-        review_data = {"reviewer_id": self.user_person_id,
+        review_data = {
                        "value": "50.0",
                        "topic": "some_topic",
                        "description": "string"}
