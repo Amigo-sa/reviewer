@@ -45,7 +45,7 @@ def find_persons():
     if 'query_limit' in request.args:
         limit = int(request.args['query_limit'])
     else:
-        limit = 100
+        limit = 20
     if 'query_start' in request.args:
         skip = int(request.args['query_start'])
     else:

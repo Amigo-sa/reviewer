@@ -199,6 +199,14 @@ def find_reviews():
     query = {}
     try:
         err = ERR.OK
+        if 'query_start' in request.args:
+            start = int(request.args['query_start'])
+        else:
+            start = 0
+        if 'query_limit' in request.args:
+            limit = int(request.args['query_limit'])
+        else:
+            limit = 20
         if 'reviewer_id' in request.args:
             reviewer_id = request.args['reviewer_id']
             if Person.objects.raw({"_id":ObjectId(reviewer_id)}).count():
@@ -221,7 +229,7 @@ def find_reviews():
                 lst.append({"id": str(review.pk)})
             for review in GroupMemberReview.objects.raw(query):
                 lst.append({"id": str(review.pk)})
-            result = {"result": ERR.OK, "list": lst}
+            result = {"result": ERR.OK, "list": lst[start:limit:1], "length": len(lst)}
         else:
             result = {"result": ERR.NO_DATA}
     except KeyError:
