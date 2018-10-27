@@ -75,8 +75,10 @@ def get_person_specializations(id):
     try:
         if Person.objects.raw({"_id": ObjectId(id)}).count():
             for p_spec in PersonSpecialization.objects.raw({"person_id": ObjectId(id)}):
+                department = Department.objects.get({"_id": ObjectId(p_spec.department_id.pk)})
                 d = {"id": str(p_spec.pk),
                      "department_id": str(p_spec.department_id.pk),
+                     "department_name": department.name,
                      "level": p_spec.level,
                      "specialization_type": p_spec.specialization_id.type,
                      "is_active": str(p_spec.is_active)

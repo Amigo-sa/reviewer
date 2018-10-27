@@ -631,6 +631,7 @@ class TestApi(unittest.TestCase):
         self.assertEqual(2, len(person_1_spec_list))
         self.assertIn({"id": str(p_spec_1.pk),
                        "department_id": struct["dep_1"]["id"],
+                       "department_name": struct["dep_1"]["name"],
                        "level": 50.0,
                        "specialization_type": struct["spec_1"]["type"],
                        "is_active": "True",
@@ -640,6 +641,7 @@ class TestApi(unittest.TestCase):
                       "p_spec info must present")
         self.assertIn({"id": str(p_spec_2.pk),
                        "department_id": struct["dep_2"]["id"],
+                       "department_name": struct["dep_2"]["name"],
                        "level": 40.0,
                        "specialization_type": struct["spec_2"]["type"],
                        "is_active": "False",
