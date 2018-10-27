@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "f8904cac-8738-4b1e-9ef4-f9f466dfa0c9",
 		"name": "client api",
-		"description": "Вызовы функций клиентского api для node server  \n\nДля запросов требующих авторизации надо добавлять хедер вида:  \nAuthorization: Bearer {{auth_token}}  \nгде auth\\_token - это токен авторизации, получаемый в функции /user\\_login по ключу session_id  \n\nВ настоящий момент все функции возвращают HTTP код 200   \nКоды ошибок передаются в каждом ответе под ключом \"result\"  \nСписок возможных значений поля \"result\":  \n0 - операция выполнена успешно (ошибок нет)  \n1 - ошибка связанная с не верным форматом входных данных  \n2 - ошибка обращения к базе данных (возможна по разным причинам)  \n3 - отсутствие каких-либо записей из запроса в базе данных (например передан ip человека, которого нет в базе)  \n4 - ошибка авторизации общего типа  \n5 - ошибка авторизации: сессия (токен) не существует  \n6 - ошибка авторизации: не верный формат номера телефона  \n7 - ошибка авторизации: слишком частые попытки отправить смс при аутентификации  \n8 - ошибка авторизации: не корректный код авторизации  \n9 - ошибка авторизации: время жизни сессии(токена) истекло  \n10 - ошибка авторизации: недостаточный уровень разрешений\n\nВ некоторых ответах вместе с кодом ошибки добавлен ключ \"error_message\", значение которого является техническим текстом и не предназначено для отображения пользователю",
+		"description": "Вызовы функций клиентского api для node server  \n\nВ настоящий момент авторизация работает через cookie по ключу session_id, который устанавливается в функции /user\\_login\n\nАвторизация прошлой версии (к ней возможно придется вернуться для мобильных приложений):  \nДля запросов требующих авторизации надо добавлять хедер вида:  \nAuthorization: Bearer {{auth_token}}  \nгде auth\\_token - это токен авторизации, получаемый в функции /user\\_login по ключу session_id  \n\nВ настоящий момент все функции возвращают HTTP код 200   \nКоды ошибок передаются в каждом ответе под ключом \"result\"  \nСписок возможных значений поля \"result\":  \n0 - операция выполнена успешно (ошибок нет)  \n1 - ошибка связанная с не верным форматом входных данных  \n2 - ошибка обращения к базе данных (возможна по разным причинам)  \n3 - отсутствие каких-либо записей из запроса в базе данных (например передан ip человека, которого нет в базе)  \n4 - ошибка авторизации общего типа  \n5 - ошибка авторизации: сессия (токен) не существует  \n6 - ошибка авторизации: не верный формат номера телефона  \n7 - ошибка авторизации: слишком частые попытки отправить смс при аутентификации  \n8 - ошибка авторизации: не корректный код авторизации  \n9 - ошибка авторизации: время жизни сессии(токена) истекло  \n10 - ошибка авторизации: недостаточный уровень разрешений\n\nВ некоторых ответах вместе с кодом ошибки добавлен ключ \"error_message\", значение которого является техническим текстом и не предназначено для отображения пользователю",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -5543,7 +5543,7 @@
 					]
 				},
 				{
-					"name": "find_reviews",
+					"name": "find_specialization_reviews",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -5551,7 +5551,7 @@
 								"id": "0b17b63d-3462-4083-93e9-ae62ad2e9332",
 								"exec": [
 									"pm.environment.set(\"reviewer_id\", \"5bd35f4721313701fc099a10\");",
-									"pm.environment.set(\"subject_id\", \"5b82c44a2131372220cbd6de\");"
+									"pm.environment.set(\"person_id\", \"5bd4732f21313712d86e6392\");"
 								],
 								"type": "text/javascript"
 							}
@@ -5565,12 +5565,12 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{server_url}}/reviews?reviewer_id={{reviewer_id}}&subject_id={{subject_id}}&query_start=0&query_limit=10",
+							"raw": "{{server_url}}/specialization_reviews?reviewer_id={{reviewer_id}}&person_id={{person_id}}&query_start=0&query_limit=10",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
-								"reviews"
+								"specialization_reviews"
 							],
 							"query": [
 								{
@@ -5578,8 +5578,8 @@
 									"value": "{{reviewer_id}}"
 								},
 								{
-									"key": "subject_id",
-									"value": "{{subject_id}}"
+									"key": "person_id",
+									"value": "{{person_id}}"
 								},
 								{
 									"key": "query_start",
@@ -5591,11 +5591,11 @@
 								}
 							]
 						},
-						"description": "Ищет отзывы по по объекту отзыва, лицу оставившему отзыв или по обоим сразу\n\nНеобходимая авторизация - не требуется"
+						"description": "Ищет отзывы на специальность объекта отзыва по по объекту отзыва, лицу оставившему отзыв или по обоим сразу\n\nНеобходимая авторизация - не требуется"
 					},
 					"response": [
 						{
-							"name": "find_reviews",
+							"name": "find_specialization_reviews",
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
@@ -5604,22 +5604,137 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{server_url}}/reviews?reviewer_id=5bd35f4721313701fc099a10&query_start=0&query_limit=10",
+									"raw": "{{server_url}}/specialization_reviews?reviewer_id=5bd4732f21313712d86e6394&person_id=5bd4732f21313712d86e6392&query_start=0&query_limit=10",
 									"host": [
 										"{{server_url}}"
 									],
 									"path": [
-										"reviews"
+										"specialization_reviews"
 									],
 									"query": [
 										{
 											"key": "reviewer_id",
-											"value": "5bd35f4721313701fc099a10"
+											"value": "5bd4732f21313712d86e6394"
 										},
 										{
-											"key": "subject_id",
-											"value": "{{subject_id}}",
+											"key": "person_id",
+											"value": "5bd4732f21313712d86e6392"
+										},
+										{
+											"key": "query_start",
+											"value": "0"
+										},
+										{
+											"key": "query_limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "67"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 27 Oct 2018 14:55:51 GMT"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"length\": 1,\n    \"list\": [\n        {\n            \"id\": \"5bd4733421313712d86e6531\"\n        }\n    ],\n    \"result\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "find_hard_skill_reviews",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0b17b63d-3462-4083-93e9-ae62ad2e9332",
+								"exec": [
+									"pm.environment.set(\"reviewer_id\", \"5bd35f4721313701fc099a10\");",
+									"pm.environment.set(\"person_id\", \"5bd4732f21313712d86e638e\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/hard_skill_reviews?reviewer_id={{reviewer_id}}&person_id={{person_id}}&query_start=0&query_limit=10",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"hard_skill_reviews"
+							],
+							"query": [
+								{
+									"key": "reviewer_id",
+									"value": "{{reviewer_id}}"
+								},
+								{
+									"key": "person_id",
+									"value": "{{person_id}}"
+								},
+								{
+									"key": "query_start",
+									"value": "0"
+								},
+								{
+									"key": "query_limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Ищет отзывы на профессиональный навык объекта отзыва по по объекту отзыва, лицу оставившему отзыв или по обоим сразу\n\nНеобходимая авторизация - не требуется"
+					},
+					"response": [
+						{
+							"name": "find_hard_skill_reviews",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{server_url}}/hard_skill_reviews?person_id=5bd4732f21313712d86e638e&query_start=0&query_limit=10",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"hard_skill_reviews"
+									],
+									"query": [
+										{
+											"key": "reviewer_id",
+											"value": "{{reviewer_id}}",
 											"disabled": true
+										},
+										{
+											"key": "person_id",
+											"value": "5bd4732f21313712d86e638e"
 										},
 										{
 											"key": "query_start",
@@ -5650,11 +5765,127 @@
 								},
 								{
 									"key": "Date",
-									"value": "Fri, 26 Oct 2018 19:25:46 GMT"
+									"value": "Sat, 27 Oct 2018 15:00:47 GMT"
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"length\": 22,\n    \"list\": [\n        {\n            \"id\": \"5bd35f4d21313701fc099bb8\"\n        },\n        {\n            \"id\": \"5bd35f4b21313701fc099b4e\"\n        },\n        {\n            \"id\": \"5bd35f4b21313701fc099b50\"\n        },\n        {\n            \"id\": \"5bd35f4a21313701fc099af4\"\n        },\n        {\n            \"id\": \"5bd35f4c21313701fc099b60\"\n        },\n        {\n            \"id\": \"5bd35f4921313701fc099ad2\"\n        },\n        {\n            \"id\": \"5bd35f4921313701fc099adc\"\n        },\n        {\n            \"id\": \"5bd35f4c21313701fc099b5e\"\n        },\n        {\n            \"id\": \"5bd35f4d21313701fc099b92\"\n        },\n        {\n            \"id\": \"5bd35f4c21313701fc099b87\"\n        }\n    ],\n    \"result\": 0\n}"
+							"body": "{\n    \"length\": 13,\n    \"list\": [\n        {\n            \"id\": \"5bd4733121313712d86e646f\"\n        },\n        {\n            \"id\": \"5bd4733321313712d86e64f7\"\n        },\n        {\n            \"id\": \"5bd4733121313712d86e6465\"\n        },\n        {\n            \"id\": \"5bd4733321313712d86e64f3\"\n        },\n        {\n            \"id\": \"5bd4733221313712d86e64b3\"\n        },\n        {\n            \"id\": \"5bd4733221313712d86e6489\"\n        },\n        {\n            \"id\": \"5bd4733221313712d86e648f\"\n        },\n        {\n            \"id\": \"5bd4733321313712d86e64e9\"\n        },\n        {\n            \"id\": \"5bd4733121313712d86e6471\"\n        },\n        {\n            \"id\": \"5bd4733221313712d86e64b7\"\n        }\n    ],\n    \"result\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "find_soft_skill_reviews",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0b17b63d-3462-4083-93e9-ae62ad2e9332",
+								"exec": [
+									"pm.environment.set(\"reviewer_id\", \"5bd35f4721313701fc099a10\");",
+									"pm.environment.set(\"person_id\", \"5bd4732f21313712d86e638e\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/soft_skill_reviews?reviewer_id={{reviewer_id}}&person_id={{person_id}}&query_start=0&query_limit=2",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"soft_skill_reviews"
+							],
+							"query": [
+								{
+									"key": "reviewer_id",
+									"value": "{{reviewer_id}}"
+								},
+								{
+									"key": "person_id",
+									"value": "{{person_id}}"
+								},
+								{
+									"key": "query_start",
+									"value": "0"
+								},
+								{
+									"key": "query_limit",
+									"value": "2"
+								}
+							]
+						},
+						"description": "Ищет отзывы на личные качества объекта отзыва по по объекту отзыва, лицу оставившему отзыв или по обоим сразу\n\nНеобходимая авторизация - не требуется"
+					},
+					"response": [
+						{
+							"name": "find_hard_skill_reviews",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{server_url}}/hard_skill_reviews?person_id=5bd4732f21313712d86e638e&query_start=0&query_limit=10",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"hard_skill_reviews"
+									],
+									"query": [
+										{
+											"key": "reviewer_id",
+											"value": "{{reviewer_id}}",
+											"disabled": true
+										},
+										{
+											"key": "person_id",
+											"value": "5bd4732f21313712d86e638e"
+										},
+										{
+											"key": "query_start",
+											"value": "0"
+										},
+										{
+											"key": "query_limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "374"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 27 Oct 2018 15:00:47 GMT"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"length\": 13,\n    \"list\": [\n        {\n            \"id\": \"5bd4733121313712d86e646f\"\n        },\n        {\n            \"id\": \"5bd4733321313712d86e64f7\"\n        },\n        {\n            \"id\": \"5bd4733121313712d86e6465\"\n        },\n        {\n            \"id\": \"5bd4733321313712d86e64f3\"\n        },\n        {\n            \"id\": \"5bd4733221313712d86e64b3\"\n        },\n        {\n            \"id\": \"5bd4733221313712d86e6489\"\n        },\n        {\n            \"id\": \"5bd4733221313712d86e648f\"\n        },\n        {\n            \"id\": \"5bd4733321313712d86e64e9\"\n        },\n        {\n            \"id\": \"5bd4733121313712d86e6471\"\n        },\n        {\n            \"id\": \"5bd4733221313712d86e64b7\"\n        }\n    ],\n    \"result\": 0\n}"
 						}
 					]
 				}
@@ -9021,7 +9252,7 @@
 	],
 	"variable": [
 		{
-			"id": "e922045e-2ebb-483e-98ee-a0baa8dbf433",
+			"id": "aa082426-963f-49cc-8f4e-1128fb918aa5",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"

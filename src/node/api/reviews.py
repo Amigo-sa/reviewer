@@ -193,9 +193,7 @@ def get_review_info(id):
     return jsonify(result), 200
 
 
-@bp.route("/reviews", methods=['GET'])
-def find_reviews():
-    lst = []
+def find_reviews(subj_cls):
     query = {}
     try:
         err = ERR.OK
@@ -209,29 +207,25 @@ def find_reviews():
             limit = 20
         if 'reviewer_id' in request.args:
             reviewer_id = request.args['reviewer_id']
-            if Person.objects.raw({"_id":ObjectId(reviewer_id)}).count():
+            if Person.objects.raw({"_id": ObjectId(reviewer_id)}).count():
                 query.update({"reviewer_id": ObjectId(reviewer_id)})
             else:
                 err = ERR.NO_DATA
-        if 'subject_id' in request.args:
-            subject_id = request.args['subject_id']
-            query.update({"subject_id": ObjectId(subject_id)})
+        if 'person_id' in request.args:
+            person_id = request.args['person_id']
+            subjects_qs = subj_cls.objects.raw({"person_id": ObjectId(person_id)})
+            subjects = list(ObjectId(key["_id"]) for key in subjects_qs.values())
+            query.update({"subject_id": {"$in": subjects}})
         if err == ERR.OK:
-            for review in SpecializationReview.objects.raw(query):
-                lst.append({"id": str(review.pk)})
-            for review in HSReview.objects.raw(query):
-                lst.append({"id": str(review.pk)})
-            for review in SSReview.objects.raw(query):
-                lst.append({"id": str(review.pk)})
-            for review in GroupReview.objects.raw(query):
-                lst.append({"id": str(review.pk)})
-            for review in GroupTestReview.objects.raw(query):
-                lst.append({"id": str(review.pk)})
-            for review in GroupMemberReview.objects.raw(query):
-                lst.append({"id": str(review.pk)})
-            result = {"result": ERR.OK, "list": lst[start:limit:1], "length": len(lst)}
+            review_classes = {"PersonSpecialization": SpecializationReview,
+                              "PersonHS": HSReview,
+                              "PersonSS": SSReview}
+            review_cls = review_classes[subj_cls.__name__]
+            review_qs = review_cls.objects.raw(query)
+            reviews = list({"id": str(key["_id"])} for key in review_qs.values())
+            result = {"result": ERR.OK, "list": reviews[start:limit:1], "length": len(reviews)}
         else:
-            result = {"result": ERR.NO_DATA}
+            result = {"result": err}
     except KeyError:
         result = {"result": ERR.INPUT}
     except Exception as ex:
@@ -240,3 +234,16 @@ def find_reviews():
     return jsonify(result), 200
 
 
+@bp.route("/specialization_reviews", methods=['GET'])
+def find_specialization_reviews():
+    return find_reviews(PersonSpecialization)
+
+
+@bp.route("/hard_skill_reviews", methods=['GET'])
+def find_hard_skill_reviews():
+    return find_reviews(PersonHS)
+
+
+@bp.route("/soft_skill_reviews", methods=['GET'])
+def find_soft_skill_reviews():
+    return find_reviews(PersonSS)
