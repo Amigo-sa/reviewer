@@ -9,6 +9,7 @@ import FindPersonsRequest from "./FindPersonsRequest";
 import FindPersonsResponse from "./FindPersonsResponse";
 import Response from "../Response";
 import GetPersonInfoResponse from "./GetPersonInfoResponse";
+import GetPersonsSpecializationsResponse from "./GetPersonSpecializationsResponce";
 
 export default class PersonsApi {
 
@@ -37,5 +38,10 @@ export default class PersonsApi {
     public static getPersonInfo(personId: string): Promise<GetPersonInfoResponse> {
         const url = SERVER_HOST + "/persons/" + personId;
         return ServerApiHelper.makeGetRequest<GetPersonInfoResponse>(null, url);
+    }
+
+    public static getPersonSpecializations(personId: string): Promise<GetPersonsSpecializationsResponse> {
+        const url = SERVER_HOST + "/persons/" + personId + "/specializations";
+        return ServerApiHelper.makeGetRequest<GetPersonsSpecializationsResponse>(null, url);
     }
 }

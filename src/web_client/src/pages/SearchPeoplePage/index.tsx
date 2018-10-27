@@ -34,7 +34,7 @@ class SearchPeople extends React.Component<ISearchPageProps> {
         return this.props as ISearchPageProps;
     }
 
-    public handleSearch = (fields: FindPersonsRequest) => {
+    public handleSearchPeolple = (fields: FindPersonsRequest) => {
         // #TODO сделать поиск через searchStore
         const { searchStore } = this.injected;
         this.setState({ loading: true });
@@ -58,7 +58,7 @@ class SearchPeople extends React.Component<ISearchPageProps> {
                     size={"big"}
                 />
                 <SearchForm
-                    handleFind={this.handleSearch}
+                    handleSearchPeolple={this.handleSearchPeolple}
                 />
                 <SearchResult
                     results={resultList}

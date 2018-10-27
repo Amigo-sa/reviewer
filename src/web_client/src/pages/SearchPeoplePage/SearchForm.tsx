@@ -30,7 +30,7 @@ export interface ISearchFields {
 }
 
 interface ISearchFormProps extends WithStyles<typeof styles> {
-    handleFind: (e: FindPersonsRequest) => void;
+    handleSearchPeolple: (e: FindPersonsRequest) => void;
 }
 
 const styles = (theme: Theme) => createStyles({
@@ -55,8 +55,8 @@ class SearchForm extends React.Component<ISearchFormProps> {
         organization_id: "",
     };
 
-    public handleFind = () => {
-        const { handleFind } = this.props;
+    public handleSearchPeolple = () => {
+        const { handleSearchPeolple } = this.props;
         const { surname, first_name, middle_name, department_id, organization_id } = this.state;
         const request = new FindPersonsRequest();
         if (surname) {
@@ -74,7 +74,7 @@ class SearchForm extends React.Component<ISearchFormProps> {
         if (organization_id) {
             request.organization_id = organization_id;
         }
-        handleFind(request);
+        handleSearchPeolple(request);
     }
 
     public handleChange = (name: string) => (event: any) => {
@@ -171,7 +171,7 @@ class SearchForm extends React.Component<ISearchFormProps> {
                     alignContent={"center"}
                     xs={12} md={12} lg={12}>
                     <Button
-                        onClick={this.handleFind}
+                        onClick={this.handleSearchPeolple}
                         color="primary"
                         variant="contained"
                     >

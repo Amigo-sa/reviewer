@@ -9,7 +9,7 @@ export class SearchStore {
     public resultList: Person[] = [];
 
     constructor() {
-        console.log("Construct SearchStore");
+        console.debug("Construct SearchStore");
     }
 
     // #TODO - сделать полноценный поиск по параметрам
@@ -18,7 +18,6 @@ export class SearchStore {
         // #TODO делаем запрос к серверу и получаем данные о пользователях и сохраняем в список
         return PersonsApi.findPersons(findRequest)
             .then(action((result: FindPersonsResponse) => {
-                console.log("Find res", result);
                 this.resultList = result.list || [];
             }))
             .catch((err: any) => console.log("Error Search", err));
