@@ -11,10 +11,18 @@ import LoginPage from "./pages/LoginPage";
 import AuthorizationUIHelper from "./AuthorizationUIHelper";
 import authStore from "./stores/AuthStore";
 import Grid from "@material-ui/core/Grid";
+import commonStore from "./stores/CommonStore";
+import CommonUIHelper from "./CommonUIHelper";
 
 const authUIHelper = new AuthorizationUIHelper(authStore);
+const commonUIHelper = new CommonUIHelper(commonStore);
 
 class App extends React.Component<any> {
+
+    public componentWillMount() {
+        commonUIHelper.tryLoadData();
+    }
+
     public render() {
         return (
             <div
