@@ -6,7 +6,7 @@ import PostReviewRequest from "./PostReviewRequest";
 import FindReviewRequest from "./FindReviewsRequest";
 import FindReviewResponce from "./FindReviewResponce";
 
-export default class SkillsApi {
+export default class ReviewsApi {
 
     public static addReview(personSpecializationId: string, review: PostReviewRequest): Promise<PostReviewResponce> {
         const url = SERVER_HOST + "specializations/" + personSpecializationId + "/reviews";
@@ -19,9 +19,9 @@ export default class SkillsApi {
         return ServerApiHelper.makeGetRequest<GetReviewInfoResponce>(null, url);
     }
 
-    public static findReview(reviewId: FindReviewRequest): Promise<FindReviewResponce> {
-        const url = SERVER_HOST + "reviews/" + reviewId;
-        return ServerApiHelper.makeGetRequest<FindReviewResponce>(null, url);
+    public static findSpecializationReview(review: FindReviewRequest): Promise<FindReviewResponce> {
+        const url = SERVER_HOST + "specialization_reviews";
+        return ServerApiHelper.makeGetRequest<FindReviewResponce>(review, url);
     }
 
 }

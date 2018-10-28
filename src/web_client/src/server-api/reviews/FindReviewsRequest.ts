@@ -10,7 +10,7 @@ export default class FindReviewRequest {
     // tslint:disable-next-line:variable-name
     public reviewer_id?: string;
     // tslint:disable-next-line:variable-name
-    public subject_id?: string;
+    public person_id?: string;
     // tslint:disable-next-line:variable-name
     public query_start?: number;
     // tslint:disable-next-line:variable-name

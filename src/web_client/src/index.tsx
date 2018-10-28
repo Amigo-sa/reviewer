@@ -8,6 +8,8 @@ import registerServiceWorker from "./registerServiceWorker";
 import authStore from "./stores/AuthStore";
 import searchStore from "./stores/SearchStore";
 import commonStore from "./stores/CommonStore";
+import usersStore from "./stores/UsersStore";
+import reviewsStore from "./stores/ReviewsStore";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import theme from "./Theme";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -16,6 +18,8 @@ const stores = {
     authStore,
     searchStore,
     commonStore,
+    usersStore,
+    reviewsStore,
 };
 
 ReactDOM.render(

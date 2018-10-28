@@ -10,9 +10,11 @@ import SearchResult from "./SearchResult";
 import { observer, inject } from "mobx-react";
 import SearchForm from "./SearchForm";
 import FindPersonsRequest from "../../server-api/persons/FindPersonsRequest";
+import { SpecializationsStore } from "src/stores/SpecializationsStore";
 
 interface ISearchPageProps extends WithStyles<typeof styles> {
     searchStore?: SearchStore;
+    specializationsStore?: SpecializationsStore;
 }
 
 const styles = (theme: Theme) => createStyles({
@@ -42,7 +44,8 @@ class SearchPeople extends React.Component<ISearchPageProps> {
             searchStore.sendSeacrhPeople(fields)
                 .then(() => {
                     this.setState({ loading: false });
-                });
+                })
+                .then(() => searchStore.getPeopleSpecializations());
     }
 
     public render() {

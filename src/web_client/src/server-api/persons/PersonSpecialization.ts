@@ -1,3 +1,7 @@
+export class PersonSpecializationList {
+    public list: PersonSpecialization[];
+}
+
 export default class PersonSpecialization {
     public id: string;
     // tslint:disable-next-line:variable-name

@@ -3,6 +3,7 @@ import PersonsApi from "../server-api/persons/PersonsApi";
 import Person from "../server-api/persons/Person";
 import FindPersonsResponse from "../server-api/persons/FindPersonsResponse";
 import FindPersonsRequest from "../server-api/persons/FindPersonsRequest";
+import specializationsStore from "./SpecializationsStore";
 
 export class SearchStore {
     @observable
@@ -21,6 +22,20 @@ export class SearchStore {
                 this.resultList = result.list || [];
             }))
             .catch((err: any) => console.log("Error Search", err));
+    }
+
+    // #TODO - получение специализаций пользователей при поиске(выпилить потом)
+    public getPeopleSpecializations(): void {
+        if (this.resultList) {
+            this.resultList.forEach((el) => {
+                const { id } = el;
+                if (id) {
+                    specializationsStore.get(id)
+                        .then((list) => console.debug("Ok Search Spec", id, list))
+                        .catch((err: any) => console.debug("Error Search Spec", err));
+                }
+            });
+        }
     }
 
     @action public reset() {

@@ -3,7 +3,7 @@ import Specialization from "../server-api/specializations/Specialization";
 import SpecializationsApi from "../server-api/specializations/SpecializationsApi";
 import GetSpecializationsListResponce from "../server-api/specializations/GetSpecializationsListResponce";
 import Skill from "../server-api/skills/Skill";
-import SkillsApi from "..//server-api/skills/SkillsApi";
+import SkillsApi from "../server-api/skills/SkillsApi";
 import GetSkillsListResponce from "src/server-api/skills/GetSkillsListResponce";
 
 /*

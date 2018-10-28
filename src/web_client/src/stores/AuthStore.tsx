@@ -88,6 +88,7 @@ export class AuthStore {
                     PersonsApi.getPersonInfo(this.user.uid!)
                         .then((data) => {
                             console.log("Person", data);
+                            this.user.data = data;
                             resolve(this.user);
                         })
                         .catch((err) => {
