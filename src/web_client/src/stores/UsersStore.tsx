@@ -1,6 +1,7 @@
 import { action, observable } from "mobx";
 import PersonsApi from "src/server-api/persons/PersonsApi";
 import Person from "src/server-api/persons/Person";
+import GetPersonInfoResponse from "src/server-api/persons/GetPersonInfoResponse";
 
 export class UsersStore {
     @observable
@@ -13,11 +14,9 @@ export class UsersStore {
             return Promise.resolve(user);
         }
         return PersonsApi.getPersonInfo(id)
-            .then((a) => {
-                if (a.result === 0) {
-                    // tslint:disable-next-line:no-shadowed-variable
-                    const user = a.data;
-                    this.users[id] = user;
+            .then((response: GetPersonInfoResponse) => {
+                if (response.result === 0) {
+                    this.users[id] = response.data;
                     return user;
                 }
                 return undefined;

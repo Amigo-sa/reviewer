@@ -36,18 +36,6 @@ class SearchPeople extends React.Component<ISearchPageProps> {
         return this.props as ISearchPageProps;
     }
 
-    public handleSearchPeolple = (fields: FindPersonsRequest) => {
-        // #TODO сделать поиск через searchStore
-        const { searchStore } = this.injected;
-        this.setState({ loading: true });
-        return searchStore &&
-            searchStore.sendSeacrhPeople(fields)
-                .then(() => {
-                    this.setState({ loading: false });
-                })
-                .then(() => searchStore.getPeopleSpecializations());
-    }
-
     public render() {
         // #TODO вставить стили когда понадобяться
         // const { classes } = this.props;
@@ -61,7 +49,7 @@ class SearchPeople extends React.Component<ISearchPageProps> {
                     size={"big"}
                 />
                 <SearchForm
-                    handleSearchPeolple={this.handleSearchPeolple}
+                    handleSearchPeople={this._handleSearchPeople}
                 />
                 <SearchResult
                     results={resultList}
@@ -70,6 +58,20 @@ class SearchPeople extends React.Component<ISearchPageProps> {
                 <Footer />
             </>
         );
+    }
+
+    // Private methods
+
+    private _handleSearchPeople = (fields: FindPersonsRequest) => {
+        // #TODO сделать поиск через searchStore
+        const { searchStore } = this.injected;
+        this.setState({ loading: true });
+        return searchStore &&
+            searchStore.sendSeacrhPeople(fields)
+                .then(() => {
+                    this.setState({ loading: false });
+                })
+                .then(() => searchStore.getPeopleSpecializations());
     }
 }
 

@@ -1,6 +1,7 @@
 import { action, observable } from "mobx";
 import PersonsApi from "src/server-api/persons/PersonsApi";
 import { PersonSpecializationList } from "src/server-api/persons/PersonSpecialization";
+import GetPersonsSpecializationsResponse from "src/server-api/persons/GetPersonSpecializationsResponce";
 
 export class SpecializationsStore {
     @observable
@@ -13,11 +14,10 @@ export class SpecializationsStore {
             return Promise.resolve(user);
         }
         return PersonsApi.getPersonSpecializations(id)
-            .then((a) => {
-                if (a.result === 0 && a.list) {
-                    // tslint:disable-next-line:no-shadowed-variable
+            .then((response: GetPersonsSpecializationsResponse) => {
+                if (response.result === 0 && response.list) {
                     const specializationList = new PersonSpecializationList();
-                    specializationList.list = a.list;
+                    specializationList.list = response.list;
                     this.specializations[id] = specializationList;
                     return specializationList;
                 }

@@ -67,13 +67,100 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
         this._loadPerson(personId);
     }
 
-    public handleChange = (name: string) => (event: any) => {
+    public render() {
+
+        const { classes } = this.props;
+        const { person, review, loading, loadingError, submitInProgress } = this.state;
+        return (
+            <Grid container className={classes.root}>
+                {loading ? <LinearProgress /> : null}
+                {loadingError ? { loadingError } : null}
+                <Grid item className={classes.row} xs={12}>
+                    <Typography component="h4" color="textPrimary" align="left" variant="h4" gutterBottom>
+                        Отзыв на пользователя {person.surname} {person.first_name} {person.middle_name}
+                    </Typography>
+                </Grid>
+                <Grid item className={classes.row} xs={12}>
+                    <FormControl>
+                        <TextField
+                            id="topic"
+                            placeholder="Заголовок"
+                            value={review.topic}
+                            onChange={this._handleChange("topic")}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item className={classes.row} xs={12}>
+                    <FormControl>
+                        <TextField
+                            id="description"
+                            placeholder="Описание"
+                            value={review.description}
+                            onChange={this._handleChange("description")}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item className={classes.row} xs={12}>
+                    <FormControl>
+                        <Select
+                            id="value"
+                            value={review.value}
+                            onChange={this._handleChange("value")}
+                        >
+                            <MenuItem value="">Выберите оценку</MenuItem>
+                            <MenuItem value="0">0</MenuItem>
+                            <MenuItem value="20">1</MenuItem>
+                            <MenuItem value="40">2</MenuItem>
+                            <MenuItem value="60">3</MenuItem>
+                            <MenuItem value="80">4</MenuItem>
+                            <MenuItem value="100">5</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item className={classes.row} xs={12}>
+                    {submitInProgress ?
+                        <CircularProgress />
+                        :
+                        <Button
+                            onClick={this._submitReview}
+                            color="primary"
+                            variant="contained"
+                        >
+                            Добавить отзыв
+                        </Button>
+                    }
+                </Grid>
+            </Grid>
+        );
+    }
+
+    // Private methods
+
+    // Получение информации о пользователе по ID
+    private _loadPerson(id: string): void {
+        const { usersStore } = this.injected;
+        if (usersStore) {
+            usersStore.get(id)
+                .then((user) => {
+                    this.setState({ person: user, loading: false });
+                })
+                .catch(() => this.setState({ loading: false, loadingError: "Не загружен пользователь" }));
+        }
+    }
+
+    // #TODO check fields error before submit
+    private _checkErrors(): boolean {
+        // const { review } = this.state;
+        return true;
+    }
+
+    private _handleChange = (name: string) => (event: any) => {
         const { review } = this.state;
         review[name] = event.target.value;
         this.setState({ review });
     }
 
-    public submitReview(): boolean {
+    private _submitReview(): boolean {
         const { review, specializationId } = this.state;
 
         if (this._checkErrors() !== false) {
@@ -99,90 +186,6 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
         return true;
     }
 
-    public render() {
-
-        const { classes } = this.props;
-        const { person, review, loading, loadingError, submitInProgress } = this.state;
-        return (
-            <Grid container className={classes.root}>
-                {loading ? <LinearProgress /> : null}
-                {loadingError ? { loadingError } : null}
-                <Grid item className={classes.row} xs={12}>
-                    <Typography component="h4" color="textPrimary" align="left" variant="h4" gutterBottom>
-                        Отзыв на пользователя {person.surname} {person.first_name} {person.middle_name}
-                    </Typography>
-                </Grid>
-                <Grid item className={classes.row} xs={12}>
-                    <FormControl>
-                        <TextField
-                            id="topic"
-                            placeholder="Заголовок"
-                            value={review.topic}
-                            onChange={this.handleChange("topic")}
-                        />
-                    </FormControl>
-                </Grid>
-                <Grid item className={classes.row} xs={12}>
-                    <FormControl>
-                        <TextField
-                            id="description"
-                            placeholder="Описание"
-                            value={review.description}
-                            onChange={this.handleChange("description")}
-                        />
-                    </FormControl>
-                </Grid>
-                <Grid item className={classes.row} xs={12}>
-                    <FormControl>
-                        <Select
-                            id="value"
-                            value={review.value}
-                            onChange={this.handleChange("value")}
-                        >
-                            <MenuItem value="">Выберите оценку</MenuItem>
-                            <MenuItem value="0">0</MenuItem>
-                            <MenuItem value="20">1</MenuItem>
-                            <MenuItem value="40">2</MenuItem>
-                            <MenuItem value="60">3</MenuItem>
-                            <MenuItem value="80">4</MenuItem>
-                            <MenuItem value="100">5</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item className={classes.row} xs={12}>
-                    {submitInProgress ?
-                        <CircularProgress />
-                        :
-                        <Button
-                            onClick={this.submitReview}
-                            color="primary"
-                            variant="contained"
-                        >
-                            Добавить отзыв
-                        </Button>
-                    }
-                </Grid>
-            </Grid>
-        );
-    }
-
-    // Получение информации о пользователе по ID
-    private _loadPerson(id: string): void {
-        const { usersStore } = this.injected;
-        if (usersStore) {
-            usersStore.get(id)
-                .then((user) => {
-                    this.setState({ person: user, loading: false });
-                })
-                .catch(() => this.setState({ loading: false, loadingError: "Не загружен пользователь" }));
-        }
-    }
-
-    // #TODO check fields error before submit
-    private _checkErrors(): boolean {
-        // const { review } = this.state;
-        return true;
-    }
 }
 
 export default withStyles(styles)(withRouter(CreateReview));

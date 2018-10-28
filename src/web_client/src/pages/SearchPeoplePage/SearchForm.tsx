@@ -30,7 +30,7 @@ export interface ISearchFields {
 }
 
 interface ISearchFormProps extends WithStyles<typeof styles> {
-    handleSearchPeolple: (e: FindPersonsRequest) => void;
+    handleSearchPeople: (e: FindPersonsRequest) => void;
 }
 
 const styles = (theme: Theme) => createStyles({
@@ -49,43 +49,15 @@ class SearchForm extends React.Component<ISearchFormProps> {
 
     public state = {
         surname: "",
-        first_name: "",
-        middle_name: "",
-        department_id: "",
-        organization_id: "",
+        firstName: "",
+        middleName: "",
+        departmentId: "",
+        organizationId: "",
     };
-
-    public handleSearchPeolple = () => {
-        const { handleSearchPeolple } = this.props;
-        const { surname, first_name, middle_name, department_id, organization_id } = this.state;
-        const request = new FindPersonsRequest();
-        if (surname) {
-            request.surname = surname;
-        }
-        if (first_name) {
-            request.first_name = first_name;
-        }
-        if (middle_name) {
-            request.middle_name = middle_name;
-        }
-        if (department_id) {
-            request.department_id = department_id;
-        }
-        if (organization_id) {
-            request.organization_id = organization_id;
-        }
-        handleSearchPeolple(request);
-    }
-
-    public handleChange = (name: string) => (event: any) => {
-        this.setState({
-            [name]: event.target.value,
-        });
-    }
 
     public render() {
         const { classes } = this.props;
-        const { surname, first_name, middle_name, department_id, organization_id } = this.state;
+        const { surname, firstName, middleName, departmentId, organizationId } = this.state;
         return (
             <Grid container className={classes.root}>
                 <Grid item xs={12}>
@@ -107,7 +79,7 @@ class SearchForm extends React.Component<ISearchFormProps> {
                                 id="surname"
                                 placeholder="Фамилия"
                                 value={surname}
-                                onChange={this.handleChange("surname")}
+                                onChange={this._handleChange("surname")}
                             />
                         </FormControl>
                     </Grid>
@@ -116,8 +88,8 @@ class SearchForm extends React.Component<ISearchFormProps> {
                             <TextField
                                 id="name"
                                 placeholder="Имя"
-                                value={first_name}
-                                onChange={this.handleChange("name")}
+                                value={firstName}
+                                onChange={this._handleChange("name")}
                             />
                         </FormControl>
                     </Grid>
@@ -126,16 +98,16 @@ class SearchForm extends React.Component<ISearchFormProps> {
                             <TextField
                                 id="lastname"
                                 placeholder="Отчество"
-                                value={middle_name}
-                                onChange={this.handleChange("lastname")}
+                                value={middleName}
+                                onChange={this._handleChange("lastname")}
                             />
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={3} lg={3}>
                         <FormControl>
                             <Select
-                                value={department_id}
-                                onChange={this.handleChange("category")}
+                                value={departmentId}
+                                onChange={this._handleChange("category")}
                                 inputProps={{
                                     name: "category",
                                     id: "category",
@@ -159,8 +131,8 @@ class SearchForm extends React.Component<ISearchFormProps> {
                             <TextField
                                 id="org"
                                 placeholder="Полное название организации"
-                                value={organization_id}
-                                onChange={this.handleChange("org")}
+                                value={organizationId}
+                                onChange={this._handleChange("org")}
                             />
                         </FormControl>
                     </Grid>
@@ -171,7 +143,7 @@ class SearchForm extends React.Component<ISearchFormProps> {
                     alignContent={"center"}
                     xs={12} md={12} lg={12}>
                     <Button
-                        onClick={this.handleSearchPeolple}
+                        onClick={this._handleSearchPeolple}
                         color="primary"
                         variant="contained"
                     >
@@ -180,6 +152,35 @@ class SearchForm extends React.Component<ISearchFormProps> {
                 </Grid>
             </Grid>
         );
+    }
+
+    // Private methods
+
+    private _handleChange = (name: string) => (event: any) => {
+        this.setState({
+            [name]: event.target.value,
+        });
+    }
+
+    private _handleSearchPeolple = () => {
+        const { surname, firstName, middleName, departmentId, organizationId } = this.state;
+        const request = new FindPersonsRequest();
+        if (surname) {
+            request.surname = surname;
+        }
+        if (firstName) {
+            request.first_name = firstName;
+        }
+        if (middleName) {
+            request.middle_name = middleName;
+        }
+        if (departmentId) {
+            request.department_id = departmentId;
+        }
+        if (organizationId) {
+            request.organization_id = organizationId;
+        }
+        this.props.handleSearchPeople(request);
     }
 }
 
