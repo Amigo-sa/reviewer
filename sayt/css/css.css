@@ -1,10 +1,323 @@
-body{
-	
+/*wrapper*/
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
 }
-#con{
+#wrapper{
+	display: flex;
+	flex-flow: column;
 	width: 100%;
 	height: auto;
 	background-color: #ffffff;
+}
+h4{
+	line-height: 38px;
+	font-size: 36px;
+	color: #333333;
+	display: block;
+}
+h5{
+	line-height: 27px;
+	font-size: 26px;
+	color: #000000;
+	margin-bottom: 22px;
+}
+h3{
+	margin-left: 30px;
+	font-size: 26px;
+	color: #008CDF;
+}
+ul li{
+	list-style: none;
+}
+/*header*/
+#header{
+	display: flex;
+	justify-content: space-between;
+	width: 85%;
+	height: 271px;
+	margin: auto;
+	background-image: url(../img/triangle.png);
+	background-size: 130% 271px;
+	background-repeat: no-repeat;
+	background-position: right;
+}
+.main_page_img_log{
+	width: 50%;
+	height: auto;
+	margin-left: 64px;
+	margin-top: 23px;
+}
+.log{
+	flex: 1;
+}
+.gadgets{
+	flex: 1;
+	display: flex;
+	margin-right: 40px;
+	height: auto;
+}
+.gadgets img{
+	width: 65px;
+	height: auto;
+	margin: 5px;
+	cursor: pointer;
+}
+/*menu*/
+.head_menu{
+	flex: 1;
+	height: auto;
+	padding-top: 2%;
+
+}
+.head_menu ul li{
+	list-style-type: none;
+	display: inline;
+	margin: 10px;
+}
+.head_menu ul li a{
+	text-decoration: none;
+	color: #00304D;
+	line-height: 21px;
+	font-size: 20px;
+}
+/*content*/
+/*block №1*/
+
+.block1{
+	display: flex;
+	width: 1794px;
+	height: 493px;
+	background-color: #017BC3;
+	margin: auto;
+}
+.slide{
+	width: 635px;
+	height: 438px;
+	margin: 55px 100px 0 100px;
+	float: left;
+}
+.registrations{
+	width: 568px;
+	height: 369px;
+	margin: 3% 1% 0 0;
+	background-color: rgba(0, 0, 0, 0.16);
+	color: #ffffff;
+	padding: 2% 3% 0 3%;
+}
+.registrations h1{
+	font-style: normal;
+	font-weight: bold;
+	line-height: 25px;
+	font-size: 48px;
+	margin-bottom: 30px;
+}
+.registrations p{
+	font-style: normal;
+	line-height: 25px;
+	font-size: 24px;
+}
+.registrations button{
+	width: 199px;
+	height: 56px;
+	cursor: pointer;
+	font-weight: bold;
+	line-height: 25px;
+	font-size: 24px;
+	color: #ffffff;
+	margin-top: 50px;
+	border: 0;
+}
+button:active, button:focus {
+  outline: none;
+}
+button::-moz-focus-inner {
+  border: 0;
+}
+.go_into{
+	background-color: #008CDF;
+	margin-left: 110px;
+}
+.registr{
+	background-color: #DFA300;
+	margin-left: 36px;
+}
+/*block №2*/
+.block2{
+	width: 1920px;
+	height: 554px;
+	margin: auto;
+}
+.alignment1{
+	width: 1632px;
+	height: auto;
+	margin: auto;
+}
+.participants{
+	display: flex;
+}
+.block2 h4{
+	margin-bottom: 31px; 
+	margin-top: 50px;
+	margin-left: 89px;
+}
+.profile{
+	width: 19%;
+	height: auto;
+	margin-left: 3%;
+	margin-right: 3%;
+	text-align: center;
+	cursor: pointer;
+}
+.profile img{
+	width: 215px;
+	height: auto;
+	border-right: 50%;
+}
+.full_name{
+	margin: 7px 0 8px 0;
+}
+.full_name li{
+	text-align: left;
+	line-height: 25px;
+	font-size: 24px;
+	color: #000000;
+	display: block;
+}
+
+.rat{
+	text-align: left;
+}
+.property{
+	line-height: 25px;
+	font-size: 24px;
+	color: #767676;
+}
+.rating{
+	color: #000000;
+}
+/*block №3*/
+.block3{
+	width: 1920px;
+	height: 692px;
+	margin: auto;
+	position: relative;
+	background-color: #F9F9F9;
+}
+.block3 h4{
+	padding-top: 50px;
+}
+.alignment2{
+	width: 1432px;
+	height: 692px;
+	margin: auto;
+}
+.questions{
+	width: 1432px;
+	height: 222px;
+	margin-bottom: 30px;
+	display: flex;
+}
+.headings{
+	width: 477px;
+	height: 200px;
+	margin-top: 30px;
+}
+.headings p{
+	display: block;
+	width: 330px;
+	height: 150px;
+	line-height: 25px;
+	font-size: 24px;
+	color: #767676;
+}
+
+.prog_green{
+	width: 340px;
+	height: 56px;
+	background: #009643;
+	margin-bottom: 29px;
+}
+.prog_orange{
+	width: 304px;
+	height: 56px;
+	background: #EAB600;
+}
+.show_more{
+	position: absolute;
+	width: 349px;
+	height: 68px;
+	background: #008CDF;
+	text-align: center;
+	left: 811px;
+	bottom: 42px;
+	cursor: pointer;
+}
+.show_more span{
+	display: block;
+	line-height: 30px;
+	font-size: 28px;
+	color: #FFFFFF;
+	margin-top: 15px;
+}
+/* block4 */
+.block4{
+	display: flex;
+	width: 1920px;
+	height: 306px;
+	margin: auto;
+}
+.block4 h4{
+	margin-left: 22px;
+	margin-top: 52px;
+}
+.alignment3{
+	width: 1432px;
+	height: 306px;
+	margin: auto;
+}
+.history{
+	margin-top: 112px;
+	width: 400px;
+	height: 93px;
+	float: left;
+	margin: 22px;
+}
+.history p{
+	line-height: 23px;
+	font-size: 22px;
+	color: #323232;
+}
+.number{
+	font-weight: bold;
+	line-height: 21px;
+	font-size: 20px;
+	margin-bottom: 20px;
+	color: #767676;
+	display: block;
+}
+/* footer */
+.footer{
+	width: 100%;
+	height: 102px;
+	text-align: center;
+	background-color: #F9F9F9;
+}
+.footer span{
+	display: block;
+	margin-top: 39px;
+	line-height: 23px;
+	font-size: 22px;
+	color: #767676;
+}
+/*  стили для my-peronal-page.html*/
+.header{
+	width: 1441px;
+	height: 100px;
+	margin: auto;
 }
 .img_log{
 	width: 93px;
@@ -12,74 +325,13 @@ body{
 	margin-left: 65px;
 	margin-top: 11px;
 }
-/* Skill for life reviewer */
-
-.s_f_l{
-	position: absolute;
-	width: 281px;
-	height: 64px;
-	left: 100px;
-	top: 28px;
+.menu{
+	margin-bottom: -30px;
 }
-.sfl{
-	display: block;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: bold;
-	line-height: normal;
-	font-size: 30px;
-	color: #000000;
-	font-size: 33px;
-}
-.rev{
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: bold;
-	line-height: normal;
-	font-size: 20px;
-	color: #02588A;
-}
-
-
-/* О проекте Участники Регистрация */
-
-.head_menu{
-	float: left;
-}
-.head_menu ul{
-	list-style-type: none;
-	position: absolute;
-	height: 22px;
-	left: 539px;
-	top: 38px;
-}
-.head_menu ul li{
-	display: inline;
-	margin: 10px;
-}
-.head_menu ul li a{
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
-	line-height: 21px;
-	font-size: 20px;
-	color: #02588A;
-	text-decoration: none;
-}
-
-.cont{
-	margin-left: 385px;
-	margin-top: 114px;
-	width: 980px;
-	height: 627px;
-}
-
-/* Rectangle */
 .search{
 	float: right;
 	width: 335px;
 	margin-right: 75px;
-	margin-top: 30px;
 }
 .search input{
 	float: left;
@@ -96,32 +348,35 @@ body{
 	height: 44px;
 	background-color: #C4C4C4;
 }
-
+.search img{
+	cursor: pointer;
+}
+/*sidebar*/
+.sidebar {
+	margin-left: 64px;
+	margin-top: 5px;
+	flex: 0 0 auto;
+	background-color: #FBFBFB;
+	text-align: center;
+	margin-right: 30px;
+}
 .ikon img{
 	width: 108px;
 	height: 108px;
 	margin-bottom: 15px;
-
 	background: url(img-2.png);
 	border: 1px solid #C9C9C9;
 	box-sizing: border-box;
 	border-radius: 107.5px;
 }
-
-/* Иванова Анастасия Ивановна */
-
 .anastasia{
 	display: block;
 	margin: auto;
 	width: 239px;
 	height: 20px;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 21px;
 	font-size: 20px;
 	text-align: center;
-
 	color: #B2B2B2;
 }
 .ivanovna{
@@ -130,22 +385,13 @@ body{
 	width: 239px;
 	height: 35px;
 	border-bottom: solid 1px #EBEBEB;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 21px;
 	font-size: 20px;
 	text-align: center;
-
 	color: #B2B2B2;
 }
-
-
 /* Мой профиль Опросы Сообщения Поиск Рейтинг Отзывы Настройки */
 .my_profile{
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 35px;
 	font-size: 20px;
 	color: #008CDF;
@@ -156,69 +402,56 @@ body{
 	height: 232px;
 	text-align: left;
 	margin-top: 15px;
+	margin-left: 31px;
 }
 .ikon ul li a{
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 35px;
 	font-size: 20px;
-
 	color: #676767;
 	text-decoration: none;
 }
-
-.sidebar {
-	margin-left: 64px;
-	margin-top: 5px;
-	width: 300px;
-	height: 581px;
-	float: left;
-	background-color: #FBFBFB;
-	text-align: center;
-	margin-right: 30px;
+/*content*/
+.align_profile{
+	display: flex;
+	width: 1441px;
+	margin: auto;
 }
-
-
-
-/* Иванова Анастасия Ивановна */
+.content{
+	flex: 1 1 auto;
+}
+.ava_big{
+	float: left;
+}
+.ava_big img{
+	width: 228px;
+	height: 287px;
+	border: 1px solid #EBEBEB;
+}
 .name{
 	width: 710px;
 	height: 32px;
 	float: left;
-
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 32px;
 	font-size: 30px;
-
 	color: #676767;
 	margin-left: 15px;
 }
 .name h2{
 	display: block;
 	width: 430px;
-	font-family: Roboto;
 	font-size: 30px;
 	line-height: 32px;
 	color: #676767;
 	float: left;
 }
 /* online */
-
 .onli{
 	display: block;
 	float: left;
 	width: 49px;
 	height: 19px;
-
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 19px;
 	font-size: 18px;
-
 	color: #C6C6C6;
 	margin-top: 10px;
 }
@@ -231,38 +464,22 @@ body{
 	margin-top: 10px;
 }
 .TTH span{
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 19px;
 	font-size: 18px;
 	color: #919191;
 	display: block;
 }
-
 /* Архив */
 .archive{
 	position: absolute;
 	top: 165px;
 	right: 75px;
-	font-family: Roboto;
-	font-style: normal;
 	font-weight: 300;
 	line-height: 17px;
 	font-size: 16px;
 	text-decoration-line: underline;
 	color: #37B9EC;
 }
-/* ivaniva */
-.ava_big{
-	float: left;
-}
-.ava_big img{
-	width: 228px;
-	height: 287px;
-	border: 1px solid #EBEBEB;
-}
-
 /* Архив анкеты */
 .archive img{
 	float: left;
@@ -271,17 +488,12 @@ body{
 .archive a{
 	width: 102px;
 	height: 17px;
-
-	font-family: Roboto;
-	font-style: normal;
 	font-weight: 300;
 	line-height: 17px;
 	font-size: 16px;
 	text-decoration-line: underline;
-
 	color: #37B9EC;
 }
-
 /* Профессия */
 .profession{
 	width: 710px;
@@ -290,19 +502,12 @@ body{
 	margin-left: 15px;
 }
 .profession h3{
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 42px;
 	font-size: 24px;
-
 	color: #5A5A5A;
 }
 /* менеджер */
 .profession h6{
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 32px;
 	font-size: 18px;
 	color: #B2B2B2;
@@ -312,12 +517,9 @@ body{
 .level{
 	float: left;
 	width: 150px;
-	font-family: Roboto;
-	font-style: normal;
 	font-weight: 300;
 	line-height: 74px;
 	font-size: 42px;
-
 	color: #B5B4B4;
 }
 .level span{
@@ -326,6 +528,15 @@ body{
 .level canvas{
 	width: 40px;
 	height: 40px;
+}
+.profile_bloc1{
+	width: 980px;
+	height: 300px;
+}
+.quality{
+	width: 980px;
+	height: auto;
+	margin-right: 75px;
 }
 /* целеустремленность стрессоустойчивость оперативность готовность изучать новое */
 .prof_quality{
@@ -336,9 +547,6 @@ body{
 	float: left;
 	list-style-type: none;
 	padding-left: 0;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 32px;
 	font-size: 18px;
 	color: #BFBFBF;
@@ -353,20 +561,12 @@ body{
 }
 	/* 342 */
 .indicators{
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 25px;
 	font-size: 14px;
-
 	color: #797979;
 }
 /* Опрос первокурсников */
-
 .prof_quality h5{
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 42px;
 	font-size: 24px;
 
@@ -381,12 +581,6 @@ body{
 	color: #008CDF;
 	margin-left: 30px;
 }
-.quality{
-	float: left;
-	width: 1085px;
-	height: auto;
-	margin-right: 75px;
-}
 
 /* Заметки о себе */
 
@@ -397,72 +591,74 @@ body{
 	margin-right: 75px;
 }
 .about_oneself h5{
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 25px;
 	font-size: 24px;
 	color: #000000;
 }
-	/* Возможно размещение короткого пояснительного текста о себе с указанием личных достижений и значимых наград Характер: спокойный, усидчивый, умение ставить цели и достигать их */
-
+/* Возможно размещение короткого пояснительного текста о себе с указанием личных достижений и значимых наград Характер: спокойный, усидчивый, умение ставить цели и достигать их */
 .about_oneself p{
-	font-family: Roboto;
-	font-style: normal;
 	font-weight: 300;
 	line-height: normal;
 	font-size: 16px;
 	color: #767676;
 }
 /*Мои опросы*/
-.questions{
-	float: left;
+.ques{
 	width: 1400px;
-	height: auto;
-	margin-left: 60px;
-	margin-top: 30px;
+	height: 360px;
+	margin: auto;
 }
-.questions h3{
-	margin-bottom: 30px;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
-	line-height: 27px;
-	font-size: 26px;
-	color: #008CDF;
-}
-.quest{
-	width: 100%;
-	height: auto;
+.reviews_about_me{
+	width: 1400px;
+	height: 343px;
+	margin: auto;
 	background-color: #F2F2F2;
-	float: left;
 }
-.headings{
+.headin{
 	float: left;
-	margin: 2%;
-	width: 29%;
+	margin: 30px 30px 0px 30px;
+	width: 406px;
 	height: auto;
 }
-.headings h4{
+
+.headin h4{
 	margin-bottom: 20px;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 23px;
 	font-size: 22px;
 	color: #323232;
 }
-.headings p{
+.text_survey{
 	margin-bottom: 50px;
-	font-family: Roboto;
-	font-style: normal;
 	font-weight: 300;
 	line-height: 17px;
 	font-size: 16px;
 	color: #767676;
 }
-.headings_rigt{
-	
+.headin h6{
+	line-height: 19px;
+	font-size: 18px;
+}
+.headin span{
+	line-height: 19px;
+	font-size: 18px;
+	color: #4C4C4C;
+	margin-bottom: 10px;
+	display: block;
+}
+.headin a{
+	font-weight: 300;
+	line-height: 19px;
+	font-size: 18px;
+	text-decoration-line: underline;
+	color: #767676;
+	float: right;
+}
+.text_reviews{
+	margin-bottom: 0;
+	font-weight: 300;
+	line-height: 19px;
+	font-size: 18px;
+	color: #4C4C4C;
 }
 /* result-for */
 .prog_green{
@@ -476,15 +672,12 @@ body{
 	height: 42.1px;
 	background: #EAB600;
 }
-	/* Показать еще */
 .add_a_poll{
 	width: 226px;
 	height: 62px;
 	border: solid 2px #0FA5FE;
 	text-align: center;
 	margin: 10px auto;
-	font-family: Roboto;
-	font-style: normal;
 	font-weight: bold;
 	line-height: 21px;
 	font-size: 20px;
@@ -496,24 +689,154 @@ body{
 }
 .add_a_poll span{
 	display: block;
-	margin-top: 7%;
+	margin-top: 8%;
 }
-/* Подвал */
-
-.foot{
+.show_more_reviews{
+	width: 226px;
+	height: 62px;
+	border: solid 2px #0FA5FE;
+	text-align: center;
+	margin: 40px auto;
+	font-weight: bold;
+	line-height: 21px;
+	font-size: 20px;
+	color: #0FA5FE;
+	cursor: pointer;
+}
+.show_more_reviews:hover{
+	border: solid 1px #C9C9C9;
+}
+.show_more_reviews span{
+	display: block;
+	margin-top: 8%;
+}
+/* footer */
+.footer{
 	width: 100%;
 	height: 50px;
 	float: left;
 	text-align: center;
 	background: #FFFFFF;
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: normal;
 	line-height: 19px;
 	font-size: 18px;
 	color: #C9C9C9;
 }
-.foot span{
+.footer span{
 	display: block;
 	margin-top: 15px;
 }
+
+/* add-poii */
+.flexbox{
+	display: flex;
+	flex-flow: column;
+}
+.title_new_poll{
+	flex: 0 1 auto;
+	margin-bottom: 14px;
+}
+.topic{
+	display: flex;
+	flex: 0 1 auto;
+	margin-bottom: 26px;
+}
+#topic{
+	flex: 1 1 auto;
+	margin-left: 2%;
+}
+.description{
+	margin-top: 15px;
+	display: flex;
+	flex: 0 1 auto;
+	margin-bottom: 28px;
+}
+.description label{
+	line-height: 42px;
+	font-size: 24px;
+	color: #3C3C3C;
+}
+#description{
+	flex: 1 1 auto;
+	resize: none;
+	margin-left: 2%;
+}
+.access_point{
+	display: flex;
+	flex: 0 1 auto;
+}
+.select_access{
+	display: flex;
+	width: 100%;
+	height: 40px;
+}
+#access{
+	width: 100%;
+	margin-left: 2%;
+}
+.topic label{
+	line-height: 42px;
+	font-size: 24px;
+	color: #3C3C3C;
+}
+#survey input textarea{
+	border: 1px solid #C4C4C4;
+	outline: none;
+	-moz-appearance: none;
+}
+.institute label{
+	line-height: 28px;
+	font-size: 16px;
+	color: #000000;
+}
+/* Сам опрос */
+.the_survy_itself{
+	display: flex;
+	flex-flow: column;
+}
+.the_survy_itself{
+
+}
+.answers{
+	display: flex;
+}
+.add_question{
+	width: 25%;
+	height: 5%;
+}
+.add_question span{
+	margin-top: 3%;
+}
+/* Предпросмотр, публикация */
+#publication{
+	display: flex;
+	flex-direction: row-reverse;
+}
+.publication{
+	display: flex;
+}
+.previe{
+	margin: 5px;
+	line-height: 32px;
+	font-size: 18px;
+	text-decoration-line: underline;
+	color: #B2B2B2;
+	cursor: pointer;
+}
+.eye{
+	margin-top: 1%;
+	width: 30px;
+	height: 15px;
+}
+.publish{
+	background-color: #008CDF;
+	margin: 5px;
+	width: 280px;
+	height: 28px;
+	text-align: center;
+}
+.publish span{
+	line-height: 32px;
+	font-size: 18px;
+	color: #FFFFFF;
+}
+
