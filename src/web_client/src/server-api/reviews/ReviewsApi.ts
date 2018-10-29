@@ -1,27 +1,27 @@
 import { SERVER_HOST } from "src/constants";
 import ServerApiHelper from "../ServerApiHelper";
-import GetReviewInfoResponce from "./GetReviewInfoResponce";
-import PostReviewResponce from "./PostReviewResponce";
+import GetReviewInfoResponse from "./GetReviewInfoResponse";
+import PostReviewResponse from "./PostReviewResponse";
 import PostReviewRequest from "./PostReviewRequest";
 import FindReviewRequest from "./FindReviewsRequest";
-import FindReviewResponce from "./FindReviewResponce";
+import FindReviewResponse from "./FindReviewResponse";
 
 export default class ReviewsApi {
 
-    public static addReview(personSpecializationId: string, review: PostReviewRequest): Promise<PostReviewResponce> {
+    public static addReview(personSpecializationId: string, review: PostReviewRequest): Promise<PostReviewResponse> {
         const url = SERVER_HOST + "specializations/" + personSpecializationId + "/reviews";
         // необходима авторизация добавляем true 3 параметром
-        return ServerApiHelper.makePostRequest<PostReviewResponce>(review, url, true);
+        return ServerApiHelper.makePostRequest<PostReviewResponse>(review, url, true);
     }
 
-    public static getReview(reviewId: string): Promise<GetReviewInfoResponce> {
+    public static getReview(reviewId: string): Promise<GetReviewInfoResponse> {
         const url = SERVER_HOST + "reviews/" + reviewId;
-        return ServerApiHelper.makeGetRequest<GetReviewInfoResponce>(null, url);
+        return ServerApiHelper.makeGetRequest<GetReviewInfoResponse>(null, url);
     }
 
-    public static findSpecializationReview(review: FindReviewRequest): Promise<FindReviewResponce> {
+    public static findSpecializationReview(review: FindReviewRequest): Promise<FindReviewResponse> {
         const url = SERVER_HOST + "specialization_reviews";
-        return ServerApiHelper.makeGetRequest<FindReviewResponce>(review, url);
+        return ServerApiHelper.makeGetRequest<FindReviewResponse>(review, url);
     }
 
 }

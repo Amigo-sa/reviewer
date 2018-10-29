@@ -13,6 +13,7 @@ export class SearchStore {
         console.debug("Construct SearchStore");
     }
 
+    // #TODO парсер данных с сервера в клиентскую модель
     // #TODO - сделать полноценный поиск по параметрам
     @action
     public sendSeacrhPeople(findRequest: FindPersonsRequest) {

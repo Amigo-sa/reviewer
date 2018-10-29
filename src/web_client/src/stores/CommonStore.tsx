@@ -1,10 +1,10 @@
 import { observable, action } from "mobx";
 import Specialization from "../server-api/specializations/Specialization";
 import SpecializationsApi from "../server-api/specializations/SpecializationsApi";
-import GetSpecializationsListResponce from "../server-api/specializations/GetSpecializationsListResponce";
+import GetSpecializationsListResponse from "../server-api/specializations/GetSpecializationsListResponse";
 import Skill from "../server-api/skills/Skill";
 import SkillsApi from "../server-api/skills/SkillsApi";
-import GetSkillsListResponce from "src/server-api/skills/GetSkillsListResponce";
+import GetSkillsListResponse from "src/server-api/skills/GetSkillsListResponse";
 
 /*
 ** CommonStore
@@ -27,19 +27,19 @@ export class CommonStore {
     public loadData() {
         // Загрузка всех специализаций
         SpecializationsApi.loadList()
-            .then(action((result: GetSpecializationsListResponce) => {
+            .then(action((result: GetSpecializationsListResponse) => {
                 this.specializationList = result.list || [];
             }));
 
         // Загрузка всех личностных характеристик
         SkillsApi.loadSoftSkillsList()
-            .then(action((result: GetSkillsListResponce) => {
+            .then(action((result: GetSkillsListResponse) => {
                 this.softSkillList = result.list || [];
             }));
 
         // Загрузка всех профессиональных навыков
         SkillsApi.loadHardSkillsList()
-            .then(action((result: GetSkillsListResponce) => {
+            .then(action((result: GetSkillsListResponse) => {
                 this.hardSkillList = result.list || [];
             }));
     }

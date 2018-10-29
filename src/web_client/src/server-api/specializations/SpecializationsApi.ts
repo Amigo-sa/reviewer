@@ -1,11 +1,11 @@
 import { SERVER_HOST } from "src/constants";
 import ServerApiHelper from "../ServerApiHelper";
-import GetSpecializationsListResponce from "./GetSpecializationsListResponce";
+import GetSpecializationsListResponse from "./GetSpecializationsListResponse";
 
 export default class SpecializationsApi {
 
-    public static loadList(): Promise<GetSpecializationsListResponce> {
-        return ServerApiHelper.makeGetRequest<GetSpecializationsListResponce>(null, SERVER_HOST + "/specializations");
+    public static loadList(): Promise<GetSpecializationsListResponse> {
+        return ServerApiHelper.makeGetRequest<GetSpecializationsListResponse>(null, SERVER_HOST + "/specializations");
     }
 
 }

@@ -14,7 +14,7 @@ import { ReviewsStore } from "src/stores/ReviewsStore";
 
 import ReviewsApi from "src/server-api/reviews/ReviewsApi";
 import FindReviewRequest from "src/server-api/reviews/FindReviewsRequest";
-import FindReviewResponce from "src/server-api/reviews/FindReviewResponce";
+import FindReviewResponse from "src/server-api/reviews/FindReviewResponse";
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -126,7 +126,7 @@ class ViewReviews extends React.Component<IReviewsPageProps & RouteComponentProp
     }
     */
 
-    private _loadReviews(id: string): Promise<FindReviewResponce | null> {
+    private _loadReviews(id: string): Promise<FindReviewResponse | null> {
         const findRequest = new FindReviewRequest();
         findRequest.person_id = id;
         return ReviewsApi.findSpecializationReview(findRequest)

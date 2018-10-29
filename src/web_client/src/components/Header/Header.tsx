@@ -6,7 +6,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 // import Typography from "@material-ui/core/Typography";
 import {
-    Input,
     Badge,
     Menu,
     MenuItem,
@@ -222,17 +221,20 @@ class Header extends React.Component<IProps>{
                         */}
                         <HeaderMenu />
                         <div className={classes.search}>
-                            <div className={classes.searchIcon}>
+                            {/*<div className={classes.searchIcon}>
                                 <SearchIcon />
-                            </div>
-                            <Input
+                            </div>*/}
+                            <Link to="/search-peoples">
+                                <IconButton><SearchIcon /></IconButton>
+                            </Link>
+                            {/*<Input
                                 placeholder="Search…"
                                 disableUnderline={true}
                                 classes={{
                                     root: classes.inputRoot,
                                     input: classes.inputInput,
                                 }}
-                            />
+                            />*/}
                         </div>
                         <div className={classes.grow} />
                         {authStore && authStore.isAuth ?

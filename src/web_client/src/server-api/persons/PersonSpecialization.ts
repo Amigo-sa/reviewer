@@ -1,3 +1,4 @@
+// #TODO время изменения объекта
 export class PersonSpecializationList {
     public list: PersonSpecialization[];
 }

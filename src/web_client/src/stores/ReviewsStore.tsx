@@ -1,7 +1,7 @@
 import { action, observable } from "mobx";
 import ReviewsApi from "src/server-api/reviews/ReviewsApi";
 import Review from "src/server-api/reviews/Review";
-import GetReviewInfoResponce from "src/server-api/reviews/GetReviewInfoResponce";
+import GetReviewInfoResponse from "src/server-api/reviews/GetReviewInfoResponse";
 
 export class ReviewsStore {
     @observable
@@ -9,15 +9,16 @@ export class ReviewsStore {
 
     @action
     public get(id: string, force = false): Promise<Review | undefined> {
+        // #TODO продумать необходимость кэширования запросов
         const review = this._peak(id);
         if (review && !force) {
             return Promise.resolve(review);
         }
 
-        return ReviewsApi.getReview(id).then((response: GetReviewInfoResponce) => {
+        return ReviewsApi.getReview(id).then((response: GetReviewInfoResponse) => {
             if (response.result === 0) {
                 this.reviews[id] = response.data;
-                return review;
+                return response.data;
             }
             return undefined;
         });

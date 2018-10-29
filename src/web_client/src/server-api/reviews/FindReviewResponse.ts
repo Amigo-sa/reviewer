@@ -4,7 +4,7 @@ interface ItemList {
     id: string;
 }
 
-export default class FindReviewResponce extends Response {
+export default class FindReviewResponse extends Response {
     public length: number;
     public list?: ItemList[];
 }

@@ -9,7 +9,7 @@ import FindPersonsRequest from "./FindPersonsRequest";
 import FindPersonsResponse from "./FindPersonsResponse";
 import Response from "../Response";
 import GetPersonInfoResponse from "./GetPersonInfoResponse";
-import GetPersonsSpecializationsResponse from "./GetPersonSpecializationsResponce";
+import GetPersonsSpecializationsResponse from "./GetPersonSpecializationsResponse";
 
 export default class PersonsApi {
 

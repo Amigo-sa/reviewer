@@ -1,7 +1,7 @@
 import { action, observable } from "mobx";
 import PersonsApi from "src/server-api/persons/PersonsApi";
 import { PersonSpecializationList } from "src/server-api/persons/PersonSpecialization";
-import GetPersonsSpecializationsResponse from "src/server-api/persons/GetPersonSpecializationsResponce";
+import GetPersonsSpecializationsResponse from "src/server-api/persons/GetPersonSpecializationsResponse";
 
 export class SpecializationsStore {
     @observable

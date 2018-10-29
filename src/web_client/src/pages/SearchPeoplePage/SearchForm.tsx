@@ -33,6 +33,14 @@ interface ISearchFormProps extends WithStyles<typeof styles> {
     handleSearchPeople: (e: FindPersonsRequest) => void;
 }
 
+interface IState {
+    surname: string;
+    firstName: string;
+    middleName: string;
+    departmentId: string;
+    organizationId: string;
+}
+
 const styles = (theme: Theme) => createStyles({
     root: {
         backgroundColor: "#017BC3",
@@ -45,9 +53,9 @@ const styles = (theme: Theme) => createStyles({
     },
 });
 
-class SearchForm extends React.Component<ISearchFormProps> {
+class SearchForm extends React.Component<ISearchFormProps, IState> {
 
-    public state = {
+    public state: IState = {
         surname: "",
         firstName: "",
         middleName: "",
@@ -79,7 +87,9 @@ class SearchForm extends React.Component<ISearchFormProps> {
                                 id="surname"
                                 placeholder="Фамилия"
                                 value={surname}
-                                onChange={this._handleChange("surname")}
+                                onChange={(event: any) =>
+                                    this.setState({ surname: event.target.value })
+                                }
                             />
                         </FormControl>
                     </Grid>
@@ -89,7 +99,9 @@ class SearchForm extends React.Component<ISearchFormProps> {
                                 id="name"
                                 placeholder="Имя"
                                 value={firstName}
-                                onChange={this._handleChange("name")}
+                                onChange={(event: any) =>
+                                    this.setState({ firstName: event.target.value })
+                                }
                             />
                         </FormControl>
                     </Grid>
@@ -99,7 +111,9 @@ class SearchForm extends React.Component<ISearchFormProps> {
                                 id="lastname"
                                 placeholder="Отчество"
                                 value={middleName}
-                                onChange={this._handleChange("lastname")}
+                                onChange={(event: any) =>
+                                    this.setState({ middleName: event.target.value })
+                                }
                             />
                         </FormControl>
                     </Grid>
@@ -107,7 +121,9 @@ class SearchForm extends React.Component<ISearchFormProps> {
                         <FormControl>
                             <Select
                                 value={departmentId}
-                                onChange={this._handleChange("category")}
+                                onChange={(event: any) =>
+                                    this.setState({ departmentId: event.target.value })
+                                }
                                 inputProps={{
                                     name: "category",
                                     id: "category",
@@ -132,7 +148,9 @@ class SearchForm extends React.Component<ISearchFormProps> {
                                 id="org"
                                 placeholder="Полное название организации"
                                 value={organizationId}
-                                onChange={this._handleChange("org")}
+                                onChange={(event: any) =>
+                                    this.setState({ organizationId: event.target.value })
+                                }
                             />
                         </FormControl>
                     </Grid>
@@ -152,14 +170,6 @@ class SearchForm extends React.Component<ISearchFormProps> {
                 </Grid>
             </Grid>
         );
-    }
-
-    // Private methods
-
-    private _handleChange = (name: string) => (event: any) => {
-        this.setState({
-            [name]: event.target.value,
-        });
     }
 
     private _handleSearchPeolple = () => {

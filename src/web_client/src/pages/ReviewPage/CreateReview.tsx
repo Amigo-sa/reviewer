@@ -20,7 +20,7 @@ import { inject, observer } from "mobx-react";
 import { UsersStore } from "src/stores/UsersStore";
 import ReviewsApi from "src/server-api/reviews/ReviewsApi";
 import PostReviewRequest from "src/server-api/reviews/PostReviewRequest";
-import PostReviewResponce from "src/server-api/reviews/PostReviewResponce";
+import PostReviewResponse from "src/server-api/reviews/PostReviewResponse";
 import { withRouter, RouteComponentProps } from "react-router";
 
 const styles = (theme: Theme) => createStyles({
@@ -171,7 +171,7 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
         this.setState({ submitInProgress: true, loadingError: "" });
 
         ReviewsApi.addReview(specializationId, review)
-            .then((res: PostReviewResponce) => {
+            .then((res: PostReviewResponse) => {
                 console.log(`Create new review with id ${res.id}`);
                 if (res.id) {
                     this.props.history.replace(`/reviews/view?id=${res.id}`);

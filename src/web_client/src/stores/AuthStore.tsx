@@ -62,7 +62,7 @@ export class AuthStore {
     }
 
     @action
-    protected setUser(responce: UserLoginResponse) {
+    private setUser(responce: UserLoginResponse) {
         this.user.uid = responce.person_id;
         localStorage.setItem("User", JSON.stringify(this.user));
     }

@@ -6,7 +6,6 @@
  * - description: Сообщение
  * - value: float Оценка от 0 до 100
  */
-
 export default class Review {
     // tslint:disable-next-line:variable-name
     public reviewer_id: string;
