@@ -4,9 +4,28 @@ import PersonalInfo from "./PersonalInfo";
 import LeftMenu from "src/pages/LeftMenu";
 import Footer from "src/components/Footer";
 import Header from "src/components/Header";
+import { match } from "react-router-dom";
 
-class PersonalPage extends React.Component {
+interface IDetailParams {
+    id: string;
+}
+
+interface IProps {
+    match?: match<IDetailParams>;
+}
+
+class PersonalPage extends React.Component<IProps> {
     public render() {
+
+        if (this.props.match) {
+            // it is parameterized case
+            console.log(this.props.match.params.id);
+        }
+        else {
+            // there is not parameters info, so show personal info for current user
+            console.log("current user");
+        }
+
         return (
             <>
                 <Header

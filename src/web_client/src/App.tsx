@@ -20,6 +20,7 @@ const commonUIHelper = new CommonUIHelper(commonStore);
 class App extends React.Component<any> {
 
     public componentWillMount() {
+        // TODO: а если это займет много времени, как пользователя будет оповещать об этом?
         commonUIHelper.tryLoadData();
     }
 
@@ -36,8 +37,15 @@ class App extends React.Component<any> {
                     <Switch>
                         <Route exact path="/" component={Main} />
                         <Route path="/login" component={LoginPage} />
-                        <PrivateRoute
+                        {/* Change to private router */}
+                        <Route
+                            exact
                             path="/personal"
+                            component={PersonalPage}
+                            authHelper={authUIHelper}
+                        />
+                        <Route
+                            path="/personal/:id"
                             component={PersonalPage}
                             authHelper={authUIHelper}
                         />
