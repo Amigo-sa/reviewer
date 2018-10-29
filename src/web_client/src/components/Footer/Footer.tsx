@@ -23,7 +23,7 @@ class Footer extends React.Component<WithStyles<typeof styles>>{
                 item
                 xs={12}
                 className={classes.root}>
-                <Typography variant="title" color="inherit" noWrap align="center">
+                <Typography variant="h6" color="inherit" noWrap align="center">
                     Skill for life team {year}
                 </Typography>
             </Grid>

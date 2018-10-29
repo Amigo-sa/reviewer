@@ -49,12 +49,12 @@ class SearchResult extends React.Component<ISearchProps> {
             <Grid container className={classes.block1}>
                 <Grid container item alignItems="center">
                     <Grid item xs={12} md={4}>
-                        <Typography component="h4" variant="headline" gutterBottom>
+                        <Typography component="h4" variant="h5" gutterBottom>
                             Результаты поиска
                             </Typography>
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <Typography variant="title">
+                        <Typography variant="h6">
                             Найдено совпадений: {results.length}
                         </Typography>
                     </Grid>

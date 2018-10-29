@@ -215,7 +215,7 @@ class Header extends React.Component<IProps>{
                     <Toolbar>
                         <Logo title={title} />
                         {/* #TODO определение страницы на которой находишься в title
-                        <Typography className={classes.title} variant="title" color="inherit" noWrap={true}>
+                        <Typography className={classes.title} variant="h6" color="inherit" noWrap={true}>
                             {title}
                         </Typography>
                         */}

@@ -49,15 +49,15 @@ class Main extends React.Component<WithStyles<typeof styles>, IState> {
                         <DialogContentText>1-2-3-4-5</DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                <Button color="primary" onClick={this.handleClose}>
+                        <Button color="primary" onClick={this.handleClose}>
                             OK
                 </Button>
                     </DialogActions>
                 </Dialog>
-                <Typography variant="display1" gutterBottom={true}>
+                <Typography variant="h4" gutterBottom={true}>
                     Main material UI
         </Typography>
-                <Typography variant="subheading" gutterBottom={true}>
+                <Typography variant="subtitle1" gutterBottom={true}>
                     example project
         </Typography>
                 <Button variant="raised" color="secondary" onClick={this.handleClick}>
