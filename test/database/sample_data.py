@@ -577,6 +577,7 @@ def fill_db():
         ss_review.reviewer_id = reviewer.pk
         ss_review.subject_id = reviewed.pk
         ss_review.value = random.choice([0,100])
+        ss_review.topic = "Тема отзыва"
         ss_review.description = "Описание %s %s на %s пользователя %s" % (
                                 ("лайка" if ss_review.value == 100 else "дизлайка"),
                                 reviewer.surname, reviewed.ss_id.name,
