@@ -20,7 +20,7 @@
 <body>
 
 <div id="wrapper">
-  <div id="header">
+  <div id="header" class="block_size">
     <div class="log">
       <a href="index.html">
         <img src="img/logo.png" alt="logo" class="main_page_img_log">
@@ -34,27 +34,37 @@
         </ul>
       </nav>
       <div class="gadgets">
-        <img src="img/magnifying-glass.png" alt="magnifying-glass">
-        <img src="img/smartphone.png" alt="smartphone">
-        <img src="img/person.png" alt="person">
+        <div class="gadgets_img">
+          <img src="img/magnifying-glass.png" alt="magnifying-glass">
+        </div>
+        <div class="gadgets_img">
+          <img src="img/smartphone.png" alt="smartphone">
+        </div>
+        <div class="gadgets_img">
+          <img src="img/person.png" alt="person">
+        </div>
       </div>
   </div>  
   <!-- content -->
   <!-- block №1 -->
-<div class="block1">
+<div class="block1 block_size">
   <div class="slide">
     <img src="img/skills-color.png" alt="skills-color"></div>
   <div class="registrations">
     <h1>Skill for life reviewer</h1>
     <p>предназначен для сбора отзывов, проведения опросов и тестирования студентов и сотрудников образовательного учреждения, в частности, применение проекта планируется в университете ИТМО. Проект призван продемонстрировать подход и перспективы развития платформы Skill for life.</p>
-    <button class="go_into">Войти</button>
-    <button class="registr">Регистрация</button>
+    <div class="but_int_registr">
+      <button class="go_into">Войти</button>
+      <button class="registr">Регистрация</button>
+    </div>  
   </div>
 </div>
 <!-- block №2 -->
-<div class="block2">
+<div class="block2 block_size">
+  <div class="topic">
+    <h4>Рейтинг участников</h4>
+  </div>
     <div class="alignment1">
-      <h4>Рейтинг участников</h4>
       <div class="participants">
         <div class="profile">
           <img src="img/img-1.png" alt="">
@@ -125,9 +135,11 @@
   </div>
 </div>
   <!-- block №4 -->
-<div class="block3">
-  <div class="alignment2">
+<div class="block3 block_size">
+  <div class="topic">
     <h4>Активные опросы</h4>
+  </div>
+  <div class="alignment2">
     <div class="questions">
       <div class="headings">
         <h5>Новый учебный курс</h5>
@@ -163,9 +175,11 @@
       <div class="show_more"><span>Показать еще</span></div>
   </div>
 </div>
-<div class="block4">
+<div class="block4 block_size">
+  <div class="topic">
+      <h4>История</h4>
+    </div>
   <div class="alignment3">
-    <h4>История</h4>
       <div class="history">
       <span class="number">28.06.2018</span>
     <p>По результатам опроса студентов второго курса внесены изменения в расписание: первая пара физкультуры в понедельник.</p>
@@ -180,7 +194,7 @@
     </div>
     </div>
   </div>
-<footer class="footer"><span>Skill for life team, 2018 г.</span></footer>
+<footer class="footer block_size"><span>Skill for life team, 2018 г.</span></footer>
 </div>
 
 
