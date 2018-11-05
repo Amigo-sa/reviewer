@@ -10,6 +10,8 @@ import searchStore from "./stores/SearchStore";
 import commonStore from "./stores/CommonStore";
 import usersStore from "./stores/UsersStore";
 import reviewsStore from "./stores/ReviewsStore";
+import specializationsStore from "./stores/SpecializationsStore";
+
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import theme from "./Theme";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -20,6 +22,7 @@ const stores = {
     commonStore,
     usersStore,
     reviewsStore,
+    specializationsStore,
 };
 
 ReactDOM.render(

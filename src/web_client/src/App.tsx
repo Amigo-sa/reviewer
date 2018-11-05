@@ -13,6 +13,8 @@ import authStore from "./stores/AuthStore";
 import Grid from "@material-ui/core/Grid";
 import commonStore from "./stores/CommonStore";
 import CommonUIHelper from "./CommonUIHelper";
+import Reviews from "./pages/ReviewPage";
+import CreateReviewPage from "./pages/ReviewPage/CreateReviewPage";
 
 const authUIHelper = new AuthorizationUIHelper(authStore);
 const commonUIHelper = new CommonUIHelper(commonStore);
@@ -45,8 +47,24 @@ class App extends React.Component<any> {
                             authHelper={authUIHelper}
                         />
                         <Route
+                            exact
+                            path="/personal/:id/review"
+                            component={CreateReviewPage}
+                            authHelper={authUIHelper}
+                        />
+                        <Route
+                            path="/personal/:id/review/:specid"
+                            component={CreateReviewPage}
+                            authHelper={authUIHelper}
+                        />
+                        <Route
                             path="/personal/:id"
                             component={PersonalPage}
+                            authHelper={authUIHelper}
+                        />
+                        <Route
+                            path="/reviews"
+                            component={Reviews}
                             authHelper={authUIHelper}
                         />
                         <Route

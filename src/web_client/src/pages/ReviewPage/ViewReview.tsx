@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as qs from "qs";
 import {
     Grid,
     Typography,
@@ -46,10 +45,8 @@ class ViewReview extends React.Component<IReviewPageProps & RouteComponentProps<
 
     public componentDidMount() {
 
-        const query = qs.parse(this.props.location.search, {
-            ignoreQueryPrefix: true,
-        });
-        const reviewId = query["id"];
+        const { match } = this.props;
+        const reviewId = match.params.id;
 
         this._loadReview(reviewId)
             .then((review) => {
@@ -94,7 +91,6 @@ class ViewReview extends React.Component<IReviewPageProps & RouteComponentProps<
     }
 
     // #TODO Получение информации о пользователе оставившем отзыв по ID
-    /*
     private _loadPerson(id: string): void {
         const { usersStore } = this.injected;
         if (usersStore) {
@@ -105,11 +101,13 @@ class ViewReview extends React.Component<IReviewPageProps & RouteComponentProps<
                 .catch(() => this.setState({ loading: false, loadingError: "Не загружен пользователь" }));
         }
     }
-    */
 
     private _loadReview(id: string): Promise<Review> {
-        return ReviewsApi.getReview(id).then((review) => {
-            return review.data;
+        return ReviewsApi.getReview(id).then((reviewRes) => {
+            return reviewRes.data;
+        }).then((review) => {
+            this._loadPerson(review.reviewer_id);
+            return review;
         });
     }
 }

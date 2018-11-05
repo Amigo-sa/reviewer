@@ -3,7 +3,6 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 
 import { Switch, Route } from "react-router-dom";
-import CreateReview from "./CreateReview";
 import ViewReviews from "./ViewReviews";
 import ViewReview from "./ViewReview";
 
@@ -16,9 +15,9 @@ class Reviews extends React.Component<any> {
                     size={"big"}
                 />
                 <Switch>
-                    <Route path="/reviews/list" component={ViewReviews} />
-                    <Route path="/reviews/view" component={ViewReview} />
-                    <Route path="/reviews/new" component={CreateReview} />
+                    <Route exact path="/reviews/list" component={ViewReviews} />
+                    <Route path="/reviews/list/:id" component={ViewReviews} />
+                    <Route path="/reviews/view/:id" component={ViewReview} />
                 </Switch>
                 <Footer />
             </>
@@ -27,8 +26,8 @@ class Reviews extends React.Component<any> {
 }
 
 export const urlReviewNew =
-    (personalId: string, specializationId: string) => `/reviews/new?id=${personalId}&specid=${specializationId}`;
-export const urlReviewView = (reviewId: string) => `/reviews/view?id=${reviewId}`;
-export const urlReviewList = (personalId: string) => `/reviews/list?id=${personalId}`;
+    (personalId: string, specializationId?: string) => `/personal/${personalId}/review/${specializationId || ""}`;
+export const urlReviewView = (reviewId: string) => `/reviews/view/${reviewId}`;
+export const urlReviewList = (personalId: string) => `/reviews/list/${personalId}`;
 
 export default Reviews;

@@ -1,3 +1,4 @@
+
 export default class FindReviewRequest {
     /**
      * id пользователя который оставил отзыв
@@ -10,6 +11,11 @@ export default class FindReviewRequest {
      */
     // tslint:disable-next-line:variable-name
     public person_id?: string;
+
+    /**
+     * Тип отзыва по специализации/скиллам
+     */
+    public type?: string;
 
     /**
      * offset при поиске

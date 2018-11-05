@@ -5,22 +5,21 @@ import GetPersonInfoResponse from "src/server-api/persons/GetPersonInfoResponse"
 
 export class UsersStore {
     @observable
-    public users: Person[] = [];
+    public users: { [key: string]: Person } = {};
 
-    @action
     public get(id: string, force = false): Promise<Person | undefined> {
         const user = this._peak(id);
         if (user && !force) {
             return Promise.resolve(user);
         }
         return PersonsApi.getPersonInfo(id)
-            .then((response: GetPersonInfoResponse) => {
-                if (response.result === 0) {
+            .then(action((response: GetPersonInfoResponse) => {
+                if (response.result === 0 && response.data) {
                     this.users[id] = response.data;
-                    return user;
+                    return response.data;
                 }
                 return undefined;
-            });
+            }));
     }
 
     private _peak(id: string): Person | undefined {

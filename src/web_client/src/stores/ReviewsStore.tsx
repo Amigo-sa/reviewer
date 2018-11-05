@@ -5,7 +5,7 @@ import GetReviewInfoResponse from "src/server-api/reviews/GetReviewInfoResponse"
 
 export class ReviewsStore {
     @observable
-    public reviews: Review[] = [];
+    public reviews: { [key: string]: Review } = {};
 
     @action
     public get(id: string, force = false): Promise<Review | undefined> {

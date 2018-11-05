@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as qs from "qs";
 import {
     Grid,
     Typography,
@@ -15,6 +14,7 @@ import { ReviewsStore } from "src/stores/ReviewsStore";
 import ReviewsApi from "src/server-api/reviews/ReviewsApi";
 import FindReviewRequest from "src/server-api/reviews/FindReviewsRequest";
 import FindReviewResponse from "src/server-api/reviews/FindReviewResponse";
+import Person from "src/server-api/persons/Person";
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -32,11 +32,27 @@ interface IReviewsPageProps extends WithStyles<typeof styles> {
     reviewsStore?: ReviewsStore;
 }
 
+interface IReviewItemList {
+    id: string;
+    topic: string;
+    description: string;
+    value: string;
+    reviewer: Person;
+}
+interface IState {
+    reviews: IReviewItemList[];
+    length: number;
+    loading: boolean;
+    loadingError: string;
+}
+
 @inject("reviewsStore")
 @observer
 class ViewReviews extends React.Component<IReviewsPageProps & RouteComponentProps<any>, any> {
 
-    public state = {
+    public state: IState = {
+        reviews: [],
+        length: 0,
         loading: false,
         loadingError: "",
     };
@@ -47,17 +63,17 @@ class ViewReviews extends React.Component<IReviewsPageProps & RouteComponentProp
 
     public componentDidMount() {
 
-        const query = qs.parse(this.props.location.search, {
-            ignoreQueryPrefix: true,
-        });
-        const personId = query["id"];
-        const { reviewsStore } = this.injected;
+        const { match } = this.props;
+        const personId = match.params.id;
+        this.setState({ loading: true });
+
         this._loadReviews(personId)
             .then((reviews) => {
-                if (reviewsStore && reviews && reviews.list) {
-                    reviews.list.forEach((el) => reviewsStore.get(el.id));
+                if (reviews) {
+                    this.setState({ loading: false, reviews: reviews.list, length: reviews.length });
+                } else {
+                    this.setState({ loading: false });
                 }
-                this.setState({ loading: true });
             })
             .catch((err: any) => console.error("Ошибка загрузки отзывов", err));
     }
@@ -65,22 +81,22 @@ class ViewReviews extends React.Component<IReviewsPageProps & RouteComponentProp
     public render() {
 
         const { classes } = this.props;
-        const { reviewsStore } = this.injected;
-        const { loading, loadingError } = this.state;
+        const { loading, loadingError, reviews, length } = this.state;
+
         return (
             <Grid container className={classes.root}>
                 {loadingError ? { loadingError } : null}
                 {loading ? <LinearProgress />
                     :
-                    reviewsStore &&
-                    reviewsStore.reviews.map((review, index) => {
+                    length &&
+                    reviews.map((review, index) => {
                         return (
                             <Grid key={index} item container className={classes.root}>
                                 <Grid item className={classes.row} xs={12}>
                                     <Typography
                                         component="h4" color="textPrimary" align="left" variant="h4" gutterBottom
                                     >
-                                        Отзыв от {review.reviewer_id} по {review.subject_id}
+                                        Отзыв от {this._fio(review.reviewer)} по {review.id}
                                     </Typography>
                                 </Grid>
                                 <Grid item className={classes.row} xs={12}>
@@ -112,6 +128,12 @@ class ViewReviews extends React.Component<IReviewsPageProps & RouteComponentProp
         );
     }
 
+    private _fio(reviewer: Person) {
+        return reviewer.surname + " "
+            + reviewer.first_name + " "
+            + reviewer.middle_name;
+    }
+
     // #TODO Получение информации о пользователе оставившем отзыв по ID
     /*
     private _loadPerson(id: string): void {
@@ -129,6 +151,7 @@ class ViewReviews extends React.Component<IReviewsPageProps & RouteComponentProp
     private _loadReviews(id: string): Promise<FindReviewResponse | null> {
         const findRequest = new FindReviewRequest();
         findRequest.person_id = id;
+        findRequest.type = "specialization";
         return ReviewsApi.findSpecializationReview(findRequest)
             .then((reviews) => {
                 if (reviews.length) {

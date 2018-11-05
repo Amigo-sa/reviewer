@@ -1,10 +1,8 @@
 
 import * as React from "react";
-import * as qs from "qs";
 import {
     Grid,
     Typography,
-    FormControl,
     Select,
     MenuItem,
     Button,
@@ -16,12 +14,16 @@ import {
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import Person from "src/server-api/persons/Person";
+
 import { inject, observer } from "mobx-react";
 import { UsersStore } from "src/stores/UsersStore";
+import { SpecializationsStore } from "src/stores/SpecializationsStore";
+
 import ReviewsApi from "src/server-api/reviews/ReviewsApi";
 import PostReviewRequest from "src/server-api/reviews/PostReviewRequest";
 import PostReviewResponse from "src/server-api/reviews/PostReviewResponse";
 import { withRouter, RouteComponentProps } from "react-router";
+import PersonSpecialization, { PersonSpecializationList } from "src/server-api/persons/PersonSpecialization";
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -37,9 +39,10 @@ const styles = (theme: Theme) => createStyles({
 
 interface IReviewPageProps extends WithStyles<typeof styles> {
     usersStore?: UsersStore;
+    specializationsStore?: SpecializationsStore;
 }
 
-@inject("usersStore")
+@inject("usersStore", "specializationsStore")
 @observer
 class CreateReview extends React.Component<IReviewPageProps & RouteComponentProps<any>, any> {
 
@@ -50,6 +53,7 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
         loadingError: "",
         specializationId: "",
         review: new PostReviewRequest(),
+        specializations: new PersonSpecializationList(),
     };
 
     get injected() {
@@ -57,12 +61,12 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
     }
 
     public componentDidMount() {
+        // Получение данных из строки бразуера
+        // /personal/:id/review/:specid
 
-        const query = qs.parse(this.props.location.search, {
-            ignoreQueryPrefix: true,
-        });
-        const personId = query["id"];
-        const specializationId = query["specid"];
+        const { match } = this.props;
+        const personId = match.params.id;
+        const specializationId = match.params.specid;
         this.setState({ loading: true, specializationId });
         this._loadPerson(personId);
     }
@@ -70,52 +74,78 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
     public render() {
 
         const { classes } = this.props;
-        const { person, review, loading, loadingError, submitInProgress } = this.state;
+        const {
+            person,
+            review,
+            specializationId,
+            specializations,
+            loading,
+            loadingError,
+            submitInProgress,
+        } = this.state;
         return (
             <Grid container className={classes.root}>
                 {loading ? <LinearProgress /> : null}
                 {loadingError ? { loadingError } : null}
                 <Grid item className={classes.row} xs={12}>
                     <Typography component="h4" color="textPrimary" align="left" variant="h4" gutterBottom>
-                        Отзыв на пользователя {person.surname} {person.first_name} {person.middle_name}
+                        Отзыв на пользователя {person && this._fio(person)}
                     </Typography>
                 </Grid>
                 <Grid item className={classes.row} xs={12}>
-                    <FormControl>
-                        <TextField
-                            id="topic"
-                            placeholder="Заголовок"
-                            value={review.topic}
-                            onChange={this._handleChange("topic")}
-                        />
-                    </FormControl>
+                    <TextField
+                        id="topic"
+                        placeholder="Заголовок"
+                        required={true}
+                        value={review.topic}
+                        onChange={this._handleChange("topic")}
+                    />
                 </Grid>
                 <Grid item className={classes.row} xs={12}>
-                    <FormControl>
-                        <TextField
-                            id="description"
-                            placeholder="Описание"
-                            value={review.description}
-                            onChange={this._handleChange("description")}
-                        />
-                    </FormControl>
-                </Grid>
-                <Grid item className={classes.row} xs={12}>
-                    <FormControl>
+                    {specializations && specializations.list &&
                         <Select
-                            id="value"
-                            value={review.value}
-                            onChange={this._handleChange("value")}
+                            id="specializationId"
+                            value={specializationId || specializations.list[0].id}
+                            onChange={(event: any) =>
+                                this.setState({ specializationId: event.target.value })
+                            }
                         >
-                            <MenuItem value="">Выберите оценку</MenuItem>
-                            <MenuItem value="0">0</MenuItem>
-                            <MenuItem value="20">1</MenuItem>
-                            <MenuItem value="40">2</MenuItem>
-                            <MenuItem value="60">3</MenuItem>
-                            <MenuItem value="80">4</MenuItem>
-                            <MenuItem value="100">5</MenuItem>
+                            {specializations.list.map((item: PersonSpecialization) => {
+                                return (
+                                    <MenuItem
+                                        key={item.id}
+                                        value={item.id}>
+                                        {item.specialization_type}({item.department_name})
+                                </MenuItem>
+                                );
+                            })}
                         </Select>
-                    </FormControl>
+                    }
+                </Grid>
+                <Grid item className={classes.row} xs={12}>
+                    <TextField
+                        id="description"
+                        placeholder="Описание"
+                        value={review.description}
+                        required={true}
+                        onChange={this._handleChange("description")}
+                    />
+                </Grid>
+                <Grid item className={classes.row} xs={12}>
+                    <Select
+                        id="value"
+                        value={review.value || false}
+                        required={true}
+                        onChange={this._handleChange("value")}
+                    >
+                        <MenuItem value="">Выберите оценку</MenuItem>
+                        <MenuItem value="0">0</MenuItem>
+                        <MenuItem value="20">1</MenuItem>
+                        <MenuItem value="40">2</MenuItem>
+                        <MenuItem value="60">3</MenuItem>
+                        <MenuItem value="80">4</MenuItem>
+                        <MenuItem value="100">5</MenuItem>
+                    </Select>
                 </Grid>
                 <Grid item className={classes.row} xs={12}>
                     {submitInProgress ?
@@ -135,10 +165,17 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
     }
 
     // Private methods
+    private _fio(reviewer: Person) {
+        return reviewer.surname + " "
+            + reviewer.first_name + " "
+            + reviewer.middle_name;
+    }
 
     // Получение информации о пользователе по ID
     private _loadPerson(id: string): void {
-        const { usersStore } = this.injected;
+        const { usersStore, specializationsStore } = this.injected;
+
+        // загрузка пользователя на которого оставляют отзыв
         if (usersStore) {
             usersStore.get(id)
                 .then((user) => {
@@ -146,12 +183,24 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
                 })
                 .catch(() => this.setState({ loading: false, loadingError: "Не загружен пользователь" }));
         }
+
+        // загрузка списка специализаций по которым можно оставить отзыв
+        if (specializationsStore) {
+            specializationsStore.get(id)
+                .then((res) => this.setState({
+                    specializations: res,
+                    loadingSpecialization: true,
+                }));
+        }
     }
 
     // #TODO check fields error before submit
     private _checkErrors(): boolean {
-        // const { review } = this.state;
-        return true;
+        const { review } = this.state;
+        if (!review.topic || !review.description || !review.value) {
+            return true;
+        }
+        return false;
     }
 
     private _handleChange = (name: string) => (event: any) => {
@@ -160,24 +209,25 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
         this.setState({ review });
     }
 
-    private _submitReview(): boolean {
+    private _submitReview = (): boolean => {
         const { review, specializationId } = this.state;
 
         if (this._checkErrors() !== false) {
+            // #TODO подсветка полей с ошибками
             alert("Ошибки при запонлении отзыва");
             return false;
         }
 
         this.setState({ submitInProgress: true, loadingError: "" });
-
+        // #TODO переделать на вызов ReviewsStore add review
         ReviewsApi.addReview(specializationId, review)
             .then((res: PostReviewResponse) => {
                 console.log(`Create new review with id ${res.id}`);
-                if (res.id) {
-                    this.props.history.replace(`/reviews/view?id=${res.id}`);
+                /*if (res.id) {
+                    this.props.history.replace(`/reviews/view/${res.id}`);
                 } else {
                     this.props.history.goBack();
-                }
+                }*/
             })
             .catch((err: any) => {
                 console.log(`Something go wrong!`, err);

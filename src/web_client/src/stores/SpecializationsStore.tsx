@@ -5,7 +5,7 @@ import GetPersonsSpecializationsResponse from "src/server-api/persons/GetPersonS
 
 export class SpecializationsStore {
     @observable
-    public specializations: PersonSpecializationList[] = [];
+    public specializations: { [key: string]: PersonSpecializationList } = {};
 
     @action
     public get(id: string, force = false): Promise<PersonSpecializationList | undefined> {
