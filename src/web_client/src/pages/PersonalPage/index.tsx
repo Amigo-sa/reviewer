@@ -18,7 +18,7 @@ interface IDetailParams {
 }
 
 interface IProps {
-    match?: match<IDetailParams>;
+    match: match<IDetailParams>;
     usersStore: UsersStore;
     authStore?: AuthStore;
     specializationsStore: SpecializationsStore;
@@ -45,7 +45,7 @@ class PersonalPage extends React.Component<IProps> {
         const { match } = this.props;
         const { usersStore, specializationsStore, authStore } = this.injected;
         let personId;
-        if (match) {
+        if (match.params.id) {
             // it is parameterized case
             console.log("ID", match.params.id);
             personId = match.params.id;
@@ -55,6 +55,7 @@ class PersonalPage extends React.Component<IProps> {
             console.log("current user");
             personId = authStore && authStore.user.uid;
         }
+
         if (personId) {
             usersStore.get(personId).then((res) => {
                 this.person = res || new Person();

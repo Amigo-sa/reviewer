@@ -37,14 +37,20 @@ const styles = (theme: Theme) => createStyles({
     },
 });
 
+interface IDetailParams {
+    id: string;
+    specid: string;
+}
+
 interface IReviewPageProps extends WithStyles<typeof styles> {
     usersStore?: UsersStore;
     specializationsStore?: SpecializationsStore;
 }
 
+// TODO: add state interface
 @inject("usersStore", "specializationsStore")
 @observer
-class CreateReview extends React.Component<IReviewPageProps & RouteComponentProps<any>, any> {
+class CreateReview extends React.Component<IReviewPageProps & RouteComponentProps<IDetailParams>, any> {
 
     public state = {
         person: new Person(),

@@ -28,6 +28,10 @@ const styles = (theme: Theme) => createStyles({
     },
 });
 
+interface IDetailParams {
+    id: string;
+}
+
 interface IReviewsPageProps extends WithStyles<typeof styles> {
     reviewsStore?: ReviewsStore;
 }
@@ -48,7 +52,7 @@ interface IState {
 
 @inject("reviewsStore")
 @observer
-class ViewReviews extends React.Component<IReviewsPageProps & RouteComponentProps<any>, any> {
+class ViewReviews extends React.Component<IReviewsPageProps & RouteComponentProps<IDetailParams>, any> {
 
     public state: IState = {
         reviews: [],

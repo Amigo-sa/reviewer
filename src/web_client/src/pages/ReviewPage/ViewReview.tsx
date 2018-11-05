@@ -25,13 +25,17 @@ const styles = (theme: Theme) => createStyles({
     },
 });
 
+interface IDetailParams {
+    id: string;
+}
+
 interface IReviewPageProps extends WithStyles<typeof styles> {
     usersStore?: UsersStore;
 }
 
 @inject("usersStore")
 @observer
-class ViewReview extends React.Component<IReviewPageProps & RouteComponentProps<any>, any> {
+class ViewReview extends React.Component<IReviewPageProps & RouteComponentProps<IDetailParams>, any> {
 
     public state = {
         review: new Review(),
