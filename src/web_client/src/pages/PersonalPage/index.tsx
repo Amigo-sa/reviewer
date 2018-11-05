@@ -20,18 +20,25 @@ interface IDetailParams {
 interface IProps {
     match: match<IDetailParams>;
     usersStore: UsersStore;
-    authStore?: AuthStore;
+    authStore: AuthStore;
     specializationsStore: SpecializationsStore;
+}
+
+interface IState {
+    personalId: string;
+    isCurrentUser: boolean; // TODO: we can make checking by auth store in render method
+    loadingPerson: boolean;
+    loadingSpecialization: boolean;
 }
 
 @inject("usersStore", "authStore", "specializationsStore")
 @observer
-class PersonalPage extends React.Component<IProps> {
+class PersonalPage extends React.Component<IProps, IState> {
 
-    public person: Person;
-    public specializations: PersonSpecializationList;
-
+    // TODO: we can use _person ans specialization instead of it
     public state = {
+        personalId: "",
+        isCurrentUser: true,
         loadingPerson: false,
         loadingSpecialization: false,
     };
@@ -41,32 +48,25 @@ class PersonalPage extends React.Component<IProps> {
     }
 
     public componentDidMount() {
-        // tslint:disable-next-line:no-shadowed-variable
-        const { match } = this.props;
-        const { usersStore, specializationsStore, authStore } = this.injected;
-        let personId;
-        if (match.params.id) {
-            // it is parameterized case
-            console.log("ID", match.params.id);
-            personId = match.params.id;
-        }
-        else {
-            // there is not parameters info, so show personal info for current user
-            console.log("current user");
-            personId = authStore && authStore.user.uid;
-        }
+        this._updatePerson();
+    }
 
-        if (personId) {
-            usersStore.get(personId).then((res) => {
-                this.person = res || new Person();
-            }).then(() => this.setState({ loadingPerson: true }));
-            specializationsStore.get(personId).then((res) => {
-                this.specializations = res || new PersonSpecializationList();
-            }).then(() => this.setState({ loadingSpecialization: true }));
+    public componentDidUpdate(prevProps: IProps) {
+        if (prevProps.match.params.id !== this.props.match.params.id) {
+            this._updatePerson();
         }
     }
 
     public render() {
+        if (this.props.match.params.id) {
+            // it is parameterized case
+            console.log(this.props.match.params.id);
+        }
+        else {
+            // there is not parameters info, so show personal info for current user
+            console.log("current user");
+        }
+
         return (
             <>
                 <Header
@@ -79,10 +79,11 @@ class PersonalPage extends React.Component<IProps> {
                             <LeftMenu />
                         </Grid>
                         <Grid item xs={10}>
-                            {this.person && this.specializations ?
+                            {this._person && this._specializations ?
                                 <PersonalInfo
-                                    person={this.person}
-                                    specializations={this.specializations}
+                                    isPersonalPage={this._isPersonalPage}
+                                    person={this._person}
+                                    specializations={this._specializations}
                                 />
                                 :
                                 <LinearProgress />
@@ -96,6 +97,50 @@ class PersonalPage extends React.Component<IProps> {
             </>
         );
     }
+
+    // Private methods
+
+    private _updatePerson() {
+        // tslint:disable-next-line:no-shadowed-variable
+        const { match } = this.props;
+        const { usersStore, specializationsStore, authStore } = this.injected;
+
+        let personId: string = "";
+        let isCurrentUser: boolean = false;
+        if (match.params.id) {
+            // it is parameterized case
+            personId = match.params.id;
+            isCurrentUser = false;
+        }
+        else {
+            // there is not parameters info, so show personal info for current user
+            personId = authStore!.user.uid!;
+            isCurrentUser = true;
+        }
+
+        this.setState({
+            personalId: personId,
+            isCurrentUser,
+        });
+
+        usersStore.get(personId).then((res) => {
+            this._person = res || new Person();
+        }).then(() => this.setState({ loadingPerson: true }));
+
+        specializationsStore.get(personId).then((res) => {
+            this._specializations = res || new PersonSpecializationList();
+        }).then(() => this.setState({ loadingSpecialization: true }));
+    }
+
+    // Private fields
+
+    private _person: Person;
+    private _specializations: PersonSpecializationList;
+
+    /**
+     * Indicates if we show page for current user.
+     */
+    private _isPersonalPage: boolean = true;
 }
 
 export default PersonalPage;

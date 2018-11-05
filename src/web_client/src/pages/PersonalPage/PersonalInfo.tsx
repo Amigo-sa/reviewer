@@ -9,24 +9,30 @@ import Person from "src/server-api/persons/Person";
 import { PersonSpecializationList } from "src/server-api/persons/PersonSpecialization";
 import { urlReviewNew } from "../ReviewPage";
 import { Link } from "react-router-dom";
+import PersonsApi from "src/server-api/persons/PersonsApi";
 
 const personalInfoModel = new PersonalInfoModel();
 interface IProps {
+    isPersonalPage: boolean;
     person: Person;
     specializations: PersonSpecializationList;
 }
 class PersonalInfo extends React.Component<IProps> {
     public render() {
+
+        const { person } = this.props;
+
         return (
             <Grid container xs={12}>
                 {/* Avatar + full name, info, professions */}
                 <Grid container item xs={12}>
                     <Grid item xs={3}>
-                        <img src="static/img/icon_big.png" alt="" />
+                        <img src={PersonsApi.personPhotoUrlById(person.id)} alt="" />
                     </Grid>
                     <Grid container item xs={9}>
                         <Grid container item xs={12}>
-                            <Typography variant="h4">Иванова Анастасия Ивановна</Typography>
+                            <Typography variant="h4">{person.surname + " "
+                                + person.first_name + " " + person.middle_name}</Typography>
                             online
                         </Grid>
                         <Grid item container direction="column">
@@ -35,7 +41,7 @@ class PersonalInfo extends React.Component<IProps> {
                             <span>Направление: Экономика</span>
                         </Grid>
                         <Grid item container direction="column">
-                            {this._renderReviewLink()}
+                            {this._renderReviewLink(this.props.isPersonalPage)}
                         </Grid>
                         <Divider />
                         <Grid item xs={12}>
@@ -56,7 +62,7 @@ class PersonalInfo extends React.Component<IProps> {
         );
     }
 
-    private _renderReviewLink() {
+    private _renderReviewLink(isCurrentUser: boolean) {
         const { person, specializations } = this.props;
 
         if (specializations.list && specializations.list.length > 1) {
@@ -64,11 +70,11 @@ class PersonalInfo extends React.Component<IProps> {
             return specializations.list.map((specialization) => (
                 <Grid item>
                     <b>{specialization.specialization_type}({specialization.department_name})</b>
-                    <Link to={urlReviewNew(person.id, specialization.id)}>Оставить отзыв</Link>
+                    {!isCurrentUser && <Link to={urlReviewNew(person.id, specialization.id)}>Оставить отзыв</Link>}
                 </Grid>
             ));
         }
-        return (<Link to={urlReviewNew(person.id)}>Оставить отзыв</Link>);
+        return (<></>); // (<Link to={urlReviewNew(person.id)}>Оставить отзыв</Link>);
     }
 }
 
