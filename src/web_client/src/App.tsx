@@ -46,6 +46,7 @@ class App extends React.Component<any> {
                             component={PersonalPage}
                             authHelper={authUIHelper}
                         />
+                        {/* TODO необходимо переносить роуты внутрь управляющих страниц! */}
                         <Route
                             exact
                             path="/personal/:id/review"
