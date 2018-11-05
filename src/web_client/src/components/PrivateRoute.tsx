@@ -46,10 +46,19 @@ export default class PrivateRoute extends React.Component<IPrivateRouteProps, IP
     }
 
     public render() {
+        const routeProps = {
+            location: this.props.location,
+            children: this.props.children,
+            path: this.props.path,
+            exact: this.props.exact,
+            sensitive: this.props.sensitive,
+            strict: this.props.strict,
+        };
+
         const Component: any = this.props.component;
         return (
             <Route
-                {...this.props}
+                {...routeProps}
                 render={(props) => {
                     if (this.state.pending) {
                         return (
