@@ -48,7 +48,7 @@ class LoginPage extends React.Component<IAuthProps, IState> {
         this.user["password"] = event.target.value;
     }
 
-    public state = {
+    public state: IState = {
         open: false,
         login: "",
         password: "",

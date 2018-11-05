@@ -32,9 +32,17 @@ interface IStep {
 }
 */
 
+interface IState {
+    step: number;
+    login: string;
+    password: string;
+    isAuth: boolean;
+    error: string;
+}
+
 @inject("authStore")
 @observer
-class LoginDialog extends React.Component<IAuthProps>{
+class LoginDialog extends React.Component<IAuthProps, IState>{
 
     private steps: string[];
 

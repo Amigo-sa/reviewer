@@ -12,6 +12,7 @@ import { UsersStore } from "src/stores/UsersStore";
 
 import ReviewsApi from "src/server-api/reviews/ReviewsApi";
 import Review from "src/server-api/reviews/Review";
+import Person from "src/server-api/persons/Person";
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -33,11 +34,18 @@ interface IReviewPageProps extends WithStyles<typeof styles> {
     usersStore?: UsersStore;
 }
 
+interface IState {
+    review: Review;
+    loading: boolean;
+    loadingError: string;
+    reviewer?: Person;
+}
+
 @inject("usersStore")
 @observer
-class ViewReview extends React.Component<IReviewPageProps & RouteComponentProps<IDetailParams>, any> {
+class ViewReview extends React.Component<IReviewPageProps & RouteComponentProps<IDetailParams>, IState> {
 
-    public state = {
+    public state: IState = {
         review: new Review(),
         loading: false,
         loadingError: "",

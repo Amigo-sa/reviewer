@@ -110,13 +110,20 @@ interface IProps extends WithStyles<typeof styles>, IAuthProps {
     size: string;
 }
 
+// TODO: use specific types for state properties
+interface IState {
+    anchorEl: any;
+    mobileMoreAnchorEl: any;
+    isLoginAnchorEl: boolean;
+}
+
 @inject("authStore")
 @observer
-class Header extends React.Component<IProps>{
+class Header extends React.Component<IProps, IState>{
     public state = {
         anchorEl: null,
         mobileMoreAnchorEl: null,
-        isLoginAnchorEl: null,
+        isLoginAnchorEl: false,
     };
 
     get injected() {
@@ -141,11 +148,11 @@ class Header extends React.Component<IProps>{
     }
 
     private handleLoginClickOpen = (event: any) => {
-        this.setState({ isLoginAnchorEl: event.currentTarget });
+        this.setState({ isLoginAnchorEl: true });
     }
 
     private handleLoginClickClose = () => {
-        this.setState({ isLoginAnchorEl: null });
+        this.setState({ isLoginAnchorEl: false });
     }
 
     public render() {
@@ -154,7 +161,7 @@ class Header extends React.Component<IProps>{
         const { authStore } = this.injected;
         const isMenuOpen = Boolean(anchorEl);
         const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-        const isLoginOpen = Boolean(isLoginAnchorEl);
+        const isLoginOpen = isLoginAnchorEl;
 
         // #TODO менюшка у пользователя
         const renderMenu = (

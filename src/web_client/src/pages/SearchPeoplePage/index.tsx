@@ -24,11 +24,15 @@ const styles = (theme: Theme) => createStyles({
     },
 });
 
+interface IState {
+    loading: boolean;
+}
+
 @inject("searchStore")
 @observer
-class SearchPeople extends React.Component<ISearchPageProps> {
+class SearchPeople extends React.Component<ISearchPageProps, IState> {
 
-    public state = {
+    public state: IState = {
         loading: false,
     };
 

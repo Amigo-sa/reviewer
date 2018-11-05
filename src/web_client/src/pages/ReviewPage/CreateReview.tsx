@@ -47,19 +47,29 @@ interface IReviewPageProps extends WithStyles<typeof styles> {
     specializationsStore?: SpecializationsStore;
 }
 
+interface IState {
+    person?: Person;
+    loading: boolean;
+    submitInProgress: boolean;
+    loadingError: string;
+    specializationId: string;
+    review: PostReviewRequest;
+    specializations?: PersonSpecializationList;
+    loadingSpecialization: boolean;
+}
+
 // TODO: add state interface
 @inject("usersStore", "specializationsStore")
 @observer
-class CreateReview extends React.Component<IReviewPageProps & RouteComponentProps<IDetailParams>, any> {
+class CreateReview extends React.Component<IReviewPageProps & RouteComponentProps<IDetailParams>, IState> {
 
-    public state = {
-        person: new Person(),
+    public state: IState = {
         loading: false,
         submitInProgress: false,
         loadingError: "",
         specializationId: "",
         review: new PostReviewRequest(),
-        specializations: new PersonSpecializationList(),
+        loadingSpecialization: false,
     };
 
     get injected() {
