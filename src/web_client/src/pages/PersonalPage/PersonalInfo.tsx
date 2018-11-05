@@ -59,7 +59,7 @@ class PersonalInfo extends React.Component<IProps> {
     private _renderReviewLink() {
         const { person, specializations } = this.props;
 
-        if (specializations.list.length > 1) {
+        if (specializations.list && specializations.list.length > 1) {
             // const specialization = specializations.list[0];
             return specializations.list.map((specialization) => (
                 <Grid item>

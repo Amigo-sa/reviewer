@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import ErrorCodes from "./ErrorCodes";
 
 /**
  * Enumeration defining HTTP request methods.
@@ -96,7 +97,11 @@ export default class ServerApiHelper {
                 timeout,
                 headers,
             }).then((response: AxiosResponse<any>) => {
-                resolve(response.data);
+                if (response.data.result === ErrorCodes.SUCCESS) {
+                    resolve(response.data);
+                } else {
+                    reject(response.data);
+                }
             }, (reason: any) => {
                 reject(reason);
             });

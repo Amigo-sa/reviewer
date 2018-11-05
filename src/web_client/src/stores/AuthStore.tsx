@@ -49,7 +49,7 @@ export class AuthStore {
                 this.isAuth = true;
             }))
             .catch((err) => {
-                console.error("Authenticate", err);
+                throw err;
             });
     }
 

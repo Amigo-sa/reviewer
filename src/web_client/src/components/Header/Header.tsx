@@ -166,7 +166,6 @@ class Header extends React.Component<IProps>{
                 onClose={this.handleMenuClose}
             >
                 <Link to={"/personal"}><MenuItem >Профиль</MenuItem></Link>
-                <MenuItem >Опросы</MenuItem>
                 <MenuItem >Выход</MenuItem>
             </Menu>
         );

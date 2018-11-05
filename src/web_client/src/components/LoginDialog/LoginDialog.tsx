@@ -92,7 +92,10 @@ class LoginDialog extends React.Component<IAuthProps>{
         if (authStore) {
             authStore.authenticate(login.trim(), password.trim())
                 .then(() => { this.setState({ isAuth: true }); })
-                .catch((err: any) => { this.setState({ error: err }); });
+                .catch((err: any) => {
+                    console.log("Error", err);
+                    this.setState({ error: "Неверный вход, попробуйте еще ращз" });
+                });
         }
         // TODO: check why finally doesn't support.
         // .finally(() => { this.pending = false; });

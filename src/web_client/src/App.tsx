@@ -40,35 +40,35 @@ class App extends React.Component<any> {
                         <Route exact path="/" component={Main} />
                         <Route path="/login" component={LoginPage} />
                         {/* Change to private router */}
-                        <Route
+                        <PrivateRoute
                             exact
                             path="/personal"
                             component={PersonalPage}
                             authHelper={authUIHelper}
                         />
                         {/* TODO необходимо переносить роуты внутрь управляющих страниц! */}
-                        <Route
+                        <PrivateRoute
                             exact
                             path="/personal/:id/review"
                             component={CreateReviewPage}
                             authHelper={authUIHelper}
                         />
-                        <Route
+                        <PrivateRoute
                             path="/personal/:id/review/:specid"
                             component={CreateReviewPage}
                             authHelper={authUIHelper}
                         />
-                        <Route
+                        <PrivateRoute
                             path="/personal/:id"
                             component={PersonalPage}
                             authHelper={authUIHelper}
                         />
-                        <Route
+                        <PrivateRoute
                             path="/reviews"
                             component={Reviews}
                             authHelper={authUIHelper}
                         />
-                        <Route
+                        <PrivateRoute
                             path="/search-peoples"
                             component={SearchPeoplePage}
                             authHelper={authUIHelper}
