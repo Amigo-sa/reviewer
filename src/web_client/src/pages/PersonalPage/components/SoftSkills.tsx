@@ -1,7 +1,7 @@
 import * as React from "react";
 import SoftSkill from "./SoftSkill";
 import { Typography, Grid } from "@material-ui/core";
-import { SoftSkillModel } from "./PersonalInfoVM";
+import { SoftSkillModel } from "src/pages/PersonalPage/viewmodel/PersonalInfoVM";
 
 interface IProps {
     softSkills: SoftSkillModel[];

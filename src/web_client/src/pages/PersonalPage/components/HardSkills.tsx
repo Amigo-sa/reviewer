@@ -1,7 +1,7 @@
 import * as React from "react";
 import HardSkill from "./HardSkill";
 import { Typography, Grid } from "@material-ui/core";
-import { HardSkillModel } from "./PersonalInfoVM";
+import { HardSkillModel } from "src/pages/PersonalPage/viewmodel/PersonalInfoVM";
 
 interface IProps {
     hardSkills: HardSkillModel[];

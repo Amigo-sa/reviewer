@@ -2,7 +2,7 @@ import * as React from "react";
 import { Grid, Typography } from "@material-ui/core";
 import Profession from "./Profession";
 import { Link } from "react-router-dom";
-import { urlReviewNew } from "../ReviewPage";
+import { urlReviewNew } from "../../ReviewPage";
 
 interface IProps {
     personId: string;

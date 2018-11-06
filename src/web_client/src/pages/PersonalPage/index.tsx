@@ -1,13 +1,13 @@
 import * as React from "react";
 import { Grid, LinearProgress } from "@material-ui/core";
-import PersonalInfo from "./PersonalInfo";
+import PersonalInfo from "./components/PersonalInfo";
 import LeftMenu from "src/pages/LeftMenu";
 import Footer from "src/components/Footer";
 import Header from "src/components/Header";
 import { match } from "react-router-dom";
 
 import { observer } from "mobx-react";
-import PersonalPageVM from "./PersonalPageVM";
+import PersonalPageVM from "./viewmodel/PersonalPageVM";
 
 interface IDetailParams {
     id: string;

@@ -7,7 +7,7 @@ import ProfessionsRating from "./ProfessionsRating";
 // import { urlReviewNew } from "../ReviewPage";
 // import { Link } from "react-router-dom";
 import PersonsApi from "src/server-api/persons/PersonsApi";
-import PersonalInfoVM from "./PersonalInfoVM";
+import PersonalInfoVM from "src/pages/PersonalPage/viewmodel/PersonalInfoVM";
 import { observer } from "mobx-react";
 
 interface IProps {
