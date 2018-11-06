@@ -46,6 +46,7 @@ class PersonalInfo extends React.Component<IProps> {
                         <Divider />
                         <Grid item xs={12}>
                             <ProfessionsRating
+                                isCurrentPerson={this.props.isCurrentPerson}
                                 personId={viewModel.personId}
                                 professionList={viewModel.professionLists} />
                         </Grid>

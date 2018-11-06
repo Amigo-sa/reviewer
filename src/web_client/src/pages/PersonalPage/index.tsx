@@ -8,6 +8,7 @@ import { match } from "react-router-dom";
 
 import { observer } from "mobx-react";
 import PersonalPageVM from "./viewmodel/PersonalPageVM";
+import ReviewsComponent from "./components/ReviewsComponent";
 
 interface IDetailParams {
     id: string;
@@ -54,8 +55,9 @@ class PersonalPage extends React.Component<IProps> {
                             }
                         </Grid>
                     </Grid>
-                    {/* My surveys */}
-                    {/* My reviews */}
+                    <ReviewsComponent
+                        isCurrentPerson={this._personalPageVM.isCurrentPerson}
+                        viewModel={this._personalPageVM.reviewsVM} />
                 </Grid>
                 <Footer />
             </>

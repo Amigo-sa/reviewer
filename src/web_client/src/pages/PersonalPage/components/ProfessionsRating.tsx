@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { urlReviewNew } from "../../ReviewPage";
 
 interface IProps {
+    isCurrentPerson: boolean;
     personId: string;
     professionList: Array<[string, number]>;
 }
@@ -17,7 +18,8 @@ class ProfessionsRating extends React.Component<IProps> {
                     direction="row"
                     alignItems="baseline">
                     <Typography variant="h5">Профессия</Typography>
-                    <Link to={urlReviewNew(this.props.personId)}>Оставить отзыв</Link>
+                    {this.props.isCurrentPerson ? null :
+                        <Link to={urlReviewNew(this.props.personId)}>Оставить отзыв</Link>}
                 </Grid>
                 <Grid container item>
                     {this.props.professionList.map(

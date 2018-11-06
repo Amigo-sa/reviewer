@@ -1,6 +1,7 @@
 import PersonalInfoVM from "./PersonalInfoVM";
 import authStore from "src/stores/AuthStore"; // TODO: get auth store from constructor
 import { observable, computed, action } from "mobx";
+import { ReviewsVM } from "./ReviewsVM";
 
 /**
  * Personal page view model.
@@ -13,6 +14,7 @@ export default class PersonalPageVM {
     public constructor() {
         // accept abstractions which help to get needed data for UI
         this._personalInfoVM = new PersonalInfoVM();
+        this._reviewsVM = new ReviewsVM();
     }
 
     // Public properties
@@ -23,6 +25,10 @@ export default class PersonalPageVM {
 
     public get personalInfoVM() {
         return this._personalInfoVM;
+    }
+
+    public get reviewsVM() {
+        return this._reviewsVM;
     }
 
     /**
@@ -47,7 +53,7 @@ export default class PersonalPageVM {
         else {
             // id is null, so we would like to show personal page for current user
             this._personId = authStore.user.uid!;
-            this.isCurrentPerson = false;
+            this.isCurrentPerson = true;
         }
         this._personalInfoVM.setupPerson(this._personId);
     }
@@ -56,4 +62,5 @@ export default class PersonalPageVM {
 
     private _personalInfoVM: PersonalInfoVM;
     private _personId: string;
+    private _reviewsVM: ReviewsVM;
 }
