@@ -57,8 +57,7 @@ ul li{
 	flex: 1;
 }
 .log a {
-	display: flex;
-	margin-left: 64px;
+	margin-left: 10%;
 }
 .main_page_img_log{
 	width: 90%;
@@ -82,11 +81,9 @@ ul li{
 	flex: 2;
 	height: auto;
 	padding-top: 2%;
-
 }
 .head_menu ul li{
 	list-style-type: none;
-	display: inline;
 	margin: 10px;
 }
 .head_menu ul li a{
@@ -94,6 +91,10 @@ ul li{
 	color: #00304D;
 	line-height: 21px;
 	font-size: 20px;
+}
+.menu_items{
+	display: flex;
+	justify-content: center;
 }
 /*content*/
 /*block №1*/
@@ -338,23 +339,18 @@ button::-moz-focus-inner {
 /*  стили для my-peronal-page.html*/
 .header{
 	display: flex;
+	align-items: center;
 	width: 1441px;
 	height: 100px;
 	margin: auto;
 }
 .img_log{
-	width: 20%;
+	width: 45%;
 	height: auto;
-	margin-left: 65px;
 	margin-top: 11px;
 }
-.menu{
-	margin-bottom: -30px;
-}
 .search{
-	float: right;
 	width: 335px;
-	margin-right: 75px;
 }
 .search input{
 	float: left;
