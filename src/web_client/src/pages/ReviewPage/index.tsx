@@ -5,6 +5,8 @@ import Footer from "../../components/Footer";
 import { Switch, Route } from "react-router-dom";
 import ViewReviews from "./ViewReviews";
 import ViewReview from "./ViewReview";
+import { Grid } from "@material-ui/core";
+import LeftMenu from "../LeftMenu";
 
 class Reviews extends React.Component<any> {
     public render() {
@@ -14,11 +16,18 @@ class Reviews extends React.Component<any> {
                     title={"Главная"}
                     size={"big"}
                 />
-                <Switch>
-                    <Route exact path="/reviews/list" component={ViewReviews} />
-                    <Route path="/reviews/list/:id" component={ViewReviews} />
-                    <Route path="/reviews/view/:id" component={ViewReview} />
-                </Switch>
+                <Grid container item spacing={24}>
+                    <Grid item xs={2}>
+                        <LeftMenu />
+                    </Grid>
+                    <Grid item xs={10}>
+                        <Switch>
+                            <Route exact path="/reviews/list" component={ViewReviews} />
+                            <Route path="/reviews/list/:id" component={ViewReviews} />
+                            <Route path="/reviews/view/:id" component={ViewReview} />
+                        </Switch>
+                    </Grid>
+                </Grid>
                 <Footer />
             </>
         );

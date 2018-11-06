@@ -4,6 +4,8 @@ import {
     Button, createStyles, WithStyles, Theme, withStyles,
 } from "@material-ui/core";
 import "typeface-roboto";
+import { Link } from "react-router-dom";
+import Person from "src/server-api/persons/Person";
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -15,9 +17,14 @@ const styles = (theme: Theme) =>
         },
     });
 
-class LeftMenu extends React.Component<WithStyles<typeof styles>> {
+interface IProps extends WithStyles<typeof styles> {
+    user?: Person;
+}
+
+class LeftMenu extends React.Component<IProps> {
 
     public render() {
+        const { user } = this.props;
         return (
             <Paper>
                 <Grid
@@ -44,28 +51,32 @@ class LeftMenu extends React.Component<WithStyles<typeof styles>> {
                             marginRight: 50,
                             alignContent: "center",
                         }}>
-                        Иванова Анастасия Ивановна
+                        {user && user.fio}
                     </Typography>
                     <Divider className={this.props.classes.divider} />
-                    <Button className={this.props.classes.buttonLink} href="/">
-                        Мой профиль
+                    <Button className={this.props.classes.buttonLink}>
+                        <Link to={"/personal"}>
+                            Мой профиль
+                        </Link>
                     </Button>
-                    <Button className={this.props.classes.buttonLink} href="/">
+                    <Button className={this.props.classes.buttonLink}>
                         Опросы
                     </Button>
-                    <Button className={this.props.classes.buttonLink} href="/">
+                    <Button className={this.props.classes.buttonLink}>
                         Сообщения
                     </Button>
-                    <Button className={this.props.classes.buttonLink} href="/">
+                    <Button className={this.props.classes.buttonLink}>
                         Поиск
                     </Button>
-                    <Button className={this.props.classes.buttonLink} href="/">
+                    <Button className={this.props.classes.buttonLink}>
                         Рейтинг
                     </Button>
-                    <Button className={this.props.classes.buttonLink} href="/">
-                        Отзывы
+                    <Button className={this.props.classes.buttonLink}>
+                        <Link to={"/reviews"}>
+                            Отзывы
+                        </Link>
                     </Button>
-                    <Button className={this.props.classes.buttonLink} href="/">
+                    <Button className={this.props.classes.buttonLink}>
                         Настройки
                     </Button>
                     <Divider className={this.props.classes.divider} />

@@ -1,3 +1,5 @@
+import { computed } from "mobx";
+
 export default class Person {
     public id: string;
     // tslint:disable-next-line:variable-name
@@ -12,4 +14,12 @@ export default class Person {
     // tslint:disable-next-line:variable-name
     public organization_name: string;
     public specialization: string;
+
+    @computed
+    get fio() {
+        if (this.surname && this.first_name && this.middle_name) {
+            return this.surname + " " + this.first_name + " " + this.middle_name;
+        }
+        return "";
+    }
 }

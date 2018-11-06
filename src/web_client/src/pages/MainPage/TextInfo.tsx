@@ -56,8 +56,10 @@ class TextInfo extends React.Component<ITextInfo>{
             <div className={classes.registrations}>
                 <h1>{title}</h1>
                 {children}
+                {/*
                 <button className={classes.go_into}>Войти</button>
                 <button className={classes.registr}>Регистрация</button>
+                */}
             </div>
         );
     }

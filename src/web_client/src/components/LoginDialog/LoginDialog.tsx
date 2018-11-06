@@ -102,7 +102,7 @@ class LoginDialog extends React.Component<IAuthProps, IState>{
                 .then(() => { this.setState({ isAuth: true }); })
                 .catch((err: any) => {
                     console.log("Error", err);
-                    this.setState({ error: "Неверный вход, попробуйте еще ращз" });
+                    this.setState({ error: "Неверный вход, попробуйте еще раз" });
                 });
         }
         // TODO: check why finally doesn't support.
@@ -118,7 +118,7 @@ class LoginDialog extends React.Component<IAuthProps, IState>{
                 <DialogContent>
                     <LinearProgress variant="determinate" value={this.completed} />
                     {error &&
-                        <DialogContentText>{error}</DialogContentText>
+                        <DialogContentText color="error">{error}</DialogContentText>
                     }
                     {isAuth ?
                         <DialogContentText>Вы успешно вошли в аккаунт</DialogContentText>
