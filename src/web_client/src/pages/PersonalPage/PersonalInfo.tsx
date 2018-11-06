@@ -4,78 +4,82 @@ import SoftSkills from "./SoftSkills";
 import { Grid, Typography, Divider } from "@material-ui/core";
 import PersonalNotes from "./PersonalNotes";
 import ProfessionsRating from "./ProfessionsRating";
-import { PersonalInfoModel } from "./Model";
-import Person from "src/server-api/persons/Person";
-import { PersonSpecializationList } from "src/server-api/persons/PersonSpecialization";
-import { urlReviewNew } from "../ReviewPage";
-import { Link } from "react-router-dom";
+// import { urlReviewNew } from "../ReviewPage";
+// import { Link } from "react-router-dom";
 import PersonsApi from "src/server-api/persons/PersonsApi";
+import PersonalInfoVM from "./PersonalInfoVM";
+import { observer } from "mobx-react";
 
-const personalInfoModel = new PersonalInfoModel();
 interface IProps {
-    isPersonalPage: boolean;
-    person: Person;
-    specializations: PersonSpecializationList;
+    viewModel: PersonalInfoVM;
+    isCurrentPerson: boolean;
 }
+
+@observer
 class PersonalInfo extends React.Component<IProps> {
     public render() {
 
-        const { person } = this.props;
+        const { viewModel } = this.props;
 
         return (
             <Grid container xs={12}>
                 {/* Avatar + full name, info, professions */}
                 <Grid container item xs={12}>
                     <Grid item xs={3}>
-                        <img src={PersonsApi.personPhotoUrlById(person.id)} alt="" />
+                        <img
+                            src={PersonsApi.personPhotoUrlById(viewModel.personId)}
+                            alt=""
+                            width="100%"
+                            height="100%" />
                     </Grid>
                     <Grid container item xs={9}>
                         <Grid container item xs={12}>
-                            <Typography variant="h4">{person.surname + " "
-                                + person.first_name + " " + person.middle_name}</Typography>
-                            online
+                            <Typography variant="h4">{viewModel.fullName}</Typography>
                         </Grid>
                         <Grid item container direction="column">
-                            <span>Статус: Сотрудник</span>
-                            <span>Организация: ИТМО (Полное название организации)</span>
-                            <span>Направление: Экономика</span>
+                            <span>Статус: {viewModel.status}</span>
+                            <span>Организация: {viewModel.organizationName}</span>
                         </Grid>
-                        <Grid item container direction="column">
-                            {this._renderReviewLink(this.props.isPersonalPage)}
-                        </Grid>
+                        {/* <Grid item container direction="column">
+                            {this._renderReviewLink(this.props.isCurrentPerson)}
+                        </Grid> */}
                         <Divider />
                         <Grid item xs={12}>
-                            <ProfessionsRating />
+                            <ProfessionsRating
+                                personId={viewModel.personId}
+                                professionList={viewModel.professionLists} />
                         </Grid>
                     </Grid>
                 </Grid>
                 <Grid container xs={12}>
                     <Grid item xs={6}>
-                        <HardSkills hardSkills={personalInfoModel.hardSkills} />
+                        <HardSkills hardSkills={viewModel.hardSkills} />
                     </Grid>
                     <Grid item xs={6}>
-                        <SoftSkills softSkills={personalInfoModel.softSkills} />
+                        <SoftSkills softSkills={viewModel.softSkills} />
                     </Grid>
                 </Grid>
-                <PersonalNotes notesText={personalInfoModel.personalNotes} />
+                <PersonalNotes notesText={viewModel.personalNotes} />
             </Grid>
         );
     }
 
-    private _renderReviewLink(isCurrentUser: boolean) {
-        const { person, specializations } = this.props;
+    // private _renderReviewLink(isCurrentUser: boolean) {
+    //     const specializations = this.props.viewModel.specializationList;
 
-        if (specializations.list && specializations.list.length > 1) {
-            // const specialization = specializations.list[0];
-            return specializations.list.map((specialization) => (
-                <Grid item>
-                    <b>{specialization.specialization_type}({specialization.department_name})</b>
-                    {!isCurrentUser && <Link to={urlReviewNew(person.id, specialization.id)}>Оставить отзыв</Link>}
-                </Grid>
-            ));
-        }
-        return (<></>); // (<Link to={urlReviewNew(person.id)}>Оставить отзыв</Link>);
-    }
+    //     if (specializations.list && specializations.list.length > 1) {
+    //         // const specialization = specializations.list[0];
+    //         return specializations.list.map((specialization) => (
+    //             <Grid item>
+    //                 <b>{specialization.specialization_type}({specialization.department_name})</b>
+    //                 {!isCurrentUser &&
+    //                     <Link to={urlReviewNew(this.props.viewModel.personId,
+    // specialization.id)}>Оставить отзыв</Link>}
+    //             </Grid>
+    //         ));
+    //     }
+    //     return (<></>); // (<Link to={urlReviewNew(person.id)}>Оставить отзыв</Link>);
+    // }
 }
 
 export default PersonalInfo;

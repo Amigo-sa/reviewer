@@ -6,12 +6,8 @@ import Footer from "src/components/Footer";
 import Header from "src/components/Header";
 import { match } from "react-router-dom";
 
-import { inject, observer } from "mobx-react";
-import { UsersStore } from "src/stores/UsersStore";
-import { AuthStore } from "src/stores/AuthStore";
-import { SpecializationsStore } from "src/stores/SpecializationsStore";
-import Person from "src/server-api/persons/Person";
-import { PersonSpecializationList } from "src/server-api/persons/PersonSpecialization";
+import { observer } from "mobx-react";
+import PersonalPageVM from "./PersonalPageVM";
 
 interface IDetailParams {
     id: string;
@@ -19,33 +15,10 @@ interface IDetailParams {
 
 interface IProps {
     match: match<IDetailParams>;
-    usersStore: UsersStore;
-    authStore: AuthStore;
-    specializationsStore: SpecializationsStore;
 }
 
-interface IState {
-    personalId: string;
-    isCurrentUser: boolean; // TODO: we can make checking by auth store in render method
-    loadingPerson: boolean;
-    loadingSpecialization: boolean;
-}
-
-@inject("usersStore", "authStore", "specializationsStore")
 @observer
-class PersonalPage extends React.Component<IProps, IState> {
-
-    // TODO: we can use _person ans specialization instead of it
-    public state = {
-        personalId: "",
-        isCurrentUser: true,
-        loadingPerson: false,
-        loadingSpecialization: false,
-    };
-
-    get injected() {
-        return this.props as IProps;
-    }
+class PersonalPage extends React.Component<IProps> {
 
     public componentDidMount() {
         this._updatePerson();
@@ -58,15 +31,6 @@ class PersonalPage extends React.Component<IProps, IState> {
     }
 
     public render() {
-        if (this.props.match.params.id) {
-            // it is parameterized case
-            console.log(this.props.match.params.id);
-        }
-        else {
-            // there is not parameters info, so show personal info for current user
-            console.log("current user");
-        }
-
         return (
             <>
                 <Header
@@ -79,11 +43,11 @@ class PersonalPage extends React.Component<IProps, IState> {
                             <LeftMenu />
                         </Grid>
                         <Grid item xs={10}>
-                            {this._person && this._specializations ?
+                            {this._personalPageVM.loaded
+                                ?
                                 <PersonalInfo
-                                    isPersonalPage={this._isPersonalPage}
-                                    person={this._person}
-                                    specializations={this._specializations}
+                                    viewModel={this._personalPageVM.personalInfoVM}
+                                    isCurrentPerson={this._personalPageVM.isCurrentPerson}
                                 />
                                 :
                                 <LinearProgress />
@@ -101,46 +65,15 @@ class PersonalPage extends React.Component<IProps, IState> {
     // Private methods
 
     private _updatePerson() {
-        // tslint:disable-next-line:no-shadowed-variable
-        const { match } = this.props;
-        const { usersStore, specializationsStore, authStore } = this.injected;
-
-        let personId: string = "";
-        let isCurrentUser: boolean = false;
-        if (match.params.id) {
-            // it is parameterized case
-            personId = match.params.id;
-            isCurrentUser = false;
-        }
-        else {
-            // there is not parameters info, so show personal info for current user
-            personId = authStore!.user.uid!;
-            isCurrentUser = true;
-        }
-
-        this.setState({
-            personalId: personId,
-            isCurrentUser,
-        });
-
-        usersStore.get(personId).then((res) => {
-            this._person = res || new Person();
-        }).then(() => this.setState({ loadingPerson: true }));
-
-        specializationsStore.get(personId).then((res) => {
-            this._specializations = res || new PersonSpecializationList();
-        }).then(() => this.setState({ loadingSpecialization: true }));
+        this._personalPageVM.setupPerson(this.props.match.params.id);
     }
 
     // Private fields
 
-    private _person: Person;
-    private _specializations: PersonSpecializationList;
-
     /**
-     * Indicates if we show page for current user.
+     * View model of page.
      */
-    private _isPersonalPage: boolean = true;
+    private _personalPageVM: PersonalPageVM = new PersonalPageVM();
 }
 
 export default PersonalPage;

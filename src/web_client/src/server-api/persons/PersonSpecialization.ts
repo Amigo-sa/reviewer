@@ -11,7 +11,7 @@ export default class PersonSpecialization {
     public department_name: string;
     // tslint:disable-next-line:variable-name
     public is_active: boolean;
-    public level: string;
+    public level: number;
     // tslint:disable-next-line:variable-name
     public specialization_type: string;
     // tslint:disable-next-line:variable-name
