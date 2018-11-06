@@ -6,6 +6,9 @@ import {
 import "typeface-roboto";
 import { Link } from "react-router-dom";
 import Person from "src/server-api/persons/Person";
+import { inject, observer } from "mobx-react";
+import { UsersStore } from "src/stores/UsersStore";
+import { AuthStore } from "src/stores/AuthStore";
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -18,13 +21,35 @@ const styles = (theme: Theme) =>
     });
 
 interface IProps extends WithStyles<typeof styles> {
-    user?: Person;
+    authStore?: AuthStore;
+    usersStore?: UsersStore;
 }
 
+@inject("authStore", "usersStore")
+@observer
 class LeftMenu extends React.Component<IProps> {
 
+    public state = {
+        user: null,
+    };
+
+    get inject() {
+        return this.props as IProps;
+    }
+
+    public componentDidMount() {
+        const {
+            authStore,
+            usersStore,
+        } = this.inject;
+
+        if (authStore && authStore.user.uid && usersStore) {
+            usersStore.get(authStore.user.uid)
+                .then((user) => this.setState({ user }));
+        }
+    }
+
     public render() {
-        const { user } = this.props;
         return (
             <Paper>
                 <Grid
@@ -51,7 +76,7 @@ class LeftMenu extends React.Component<IProps> {
                             marginRight: 50,
                             alignContent: "center",
                         }}>
-                        {user && user.fio}
+                        {this._renderFio()}
                     </Typography>
                     <Divider className={this.props.classes.divider} />
                     <Button className={this.props.classes.buttonLink}>
@@ -93,13 +118,20 @@ class LeftMenu extends React.Component<IProps> {
         );
     }
 
+    public _renderFio() {
+        const { user } = this.state;
+        if (user) {
+            const uInfo = user as Person;
+            return uInfo.surname + " " + uInfo.first_name + " " + uInfo.middle_name;
+        }
+        return;
+    }
     // TODO:
     // handle buttons click and go to needed page
     // use the same technic as in Link component in ReactRouter,
     // but with Materail UI appearence
     // https://stackoverflow.com/questions/29244731/react-router-how-to-manually-invoke-link
     // https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/modules/Link.js
-
 }
 
 export default withStyles(styles)(LeftMenu);

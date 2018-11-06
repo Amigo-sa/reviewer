@@ -24,6 +24,7 @@ class App extends React.Component<any> {
     public componentWillMount() {
         // TODO: а если это займет много времени, как пользователя будет оповещать об этом?
         commonUIHelper.tryLoadData();
+        authUIHelper.tryAuthenticate();
     }
 
     public render() {

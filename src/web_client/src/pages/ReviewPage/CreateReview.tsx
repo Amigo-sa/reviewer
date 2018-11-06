@@ -190,6 +190,7 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
     // Получение информации о пользователе по ID
     private _loadPerson(id: string): void {
         const { usersStore, specializationsStore } = this.injected;
+        let { specializationId } = this.state;
 
         // загрузка пользователя на которого оставляют отзыв
         if (usersStore) {
@@ -203,10 +204,16 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
         // загрузка списка специализаций по которым можно оставить отзыв
         if (specializationsStore) {
             specializationsStore.get(id)
-                .then((res) => this.setState({
-                    specializations: res,
-                    loadingSpecialization: true,
-                }));
+                .then((res) => {
+                    if (!specializationId) {
+                        specializationId = res && res.list[0].id || "";
+                    }
+                    this.setState({
+                        specializations: res,
+                        loadingSpecialization: true,
+                        specializationId,
+                    });
+                });
         }
     }
 
@@ -227,7 +234,6 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
 
     private _submitReview = (): boolean => {
         const { review, specializationId } = this.state;
-
         if (this._checkErrors() !== false) {
             // #TODO подсветка полей с ошибками
             alert("Ошибки при запонлении отзыва");

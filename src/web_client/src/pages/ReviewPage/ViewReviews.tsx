@@ -15,6 +15,7 @@ import ReviewsApi from "src/server-api/reviews/ReviewsApi";
 import FindReviewRequest from "src/server-api/reviews/FindReviewsRequest";
 import FindReviewResponse from "src/server-api/reviews/FindReviewResponse";
 import Person from "src/server-api/persons/Person";
+import { AuthStore } from "src/stores/AuthStore";
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -34,6 +35,7 @@ interface IDetailParams {
 
 interface IReviewsPageProps extends WithStyles<typeof styles> {
     reviewsStore?: ReviewsStore;
+    authStore?: AuthStore;
 }
 
 interface IReviewItemList {
@@ -50,7 +52,7 @@ interface IState {
     loadingError: string;
 }
 
-@inject("reviewsStore")
+@inject("authStore", "reviewsStore")
 @observer
 class ViewReviews extends React.Component<IReviewsPageProps & RouteComponentProps<IDetailParams>, any> {
 
@@ -66,9 +68,12 @@ class ViewReviews extends React.Component<IReviewsPageProps & RouteComponentProp
     }
 
     public componentDidMount() {
-
+        const { authStore } = this.injected;
         const { match } = this.props;
-        const personId = match.params.id;
+        let personId = match.params.id;
+        if (!personId && authStore) {
+            personId = authStore.user.uid || "";
+        }
         this.setState({ loading: true });
 
         this._loadReviews(personId)

@@ -22,8 +22,8 @@ class Reviews extends React.Component<any> {
                     </Grid>
                     <Grid item xs={10}>
                         <Switch>
-                            <Route exact path="/reviews/list" component={ViewReviews} />
-                            <Route path="/reviews/list/:id" component={ViewReviews} />
+                            <Route exact path="/reviews" component={ViewReviews} />
+                            <Route path="/reviews/:id" component={ViewReviews} />
                             <Route path="/reviews/view/:id" component={ViewReview} />
                         </Switch>
                     </Grid>

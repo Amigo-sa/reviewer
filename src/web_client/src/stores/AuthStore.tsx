@@ -93,7 +93,7 @@ export class AuthStore {
                         })
                         .catch((err) => {
                             // process error from server
-                            resolve(err);
+                            reject(err);
                         });
                 });
             }
