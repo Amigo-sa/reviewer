@@ -63,86 +63,30 @@
     <form action="" method="" id="survey">
       <ul class="flexbox">
         <li class="title_new_poll">
-          <h1>Новый опрос</h1>
-        </li>
-        <li class="topic">
-          <label for="topic">Тема</label>
-          <input type="text" name="topic" id="topic">
+          <h1>Отзывы на пользователя Иванов Иван Иванович</h1>
         </li>
         <li class="description">
-          <label for="description">Описание</label>
-          <textarea name="description" id="description"></textarea>
+          <label for="topic" class="form_htader">Тема</label>
+          <input type="text" name="topic" id="topic" class="access_point">
+        </li>
+        <li class="description">
+          <label for="description" class="form_htader">Текст отзыва</label>
+          <textarea name="description" id="description" class="access_point"></textarea>
         </li>
         <li>
-          <fieldset class="access_point">
-            <div class="select_access">
-              <label for="access">
-              Доступ
-              </label>
-              <select name="" id="access">
-                <option value="">ИТМО, факультет ИТ, каф. ММ, группы К-04-05, К-05-05, К-06-06</option>
-                <option value=""></option>
-                <option value=""></option>
-                <option value=""></option>
-                <option value=""></option>
-              </select>
-            </div>
-        
-          <ul class="institute">
-            <li><label for="">Институт полное название (ИТМО)<input type="checkbox"></label></li>
-            <li>
-              <ul class="faculty">
-                <li><label for="">Факультет информационных технологий (ИТ)<input type="checkbox"></label></li>
-                <li>
-                  <ul class="department">
-                    <li><label for="">Кафедра математического моделирования(ММ)<input type="checkbox"></label></li>
-                    <li>
-                      <ul class="group">
-                        <li><label for="">группа К-04-05<input type="checkbox"></label></li>
-                        <li><label for="">группа К-04-06<input type="checkbox"></label></li>
-                        <li><label for="">группа К-05-05<input type="checkbox"></label></li>
-                        <li><label for="">группа К-06-06<input type="checkbox"></label></li>
-                        <li><label for="">группа И-06-07<input type="checkbox"></label></li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          <li class="department"><label for="">Кафедра математического моделирования(ММ)<input type="checkbox"></label></li>
-        </ul>
-      </fieldset>
+          <div class="add_a_poll add_question">
+            <span>Добавить фото</span>
+          </div>
+        </li>
+        <li>
+          <span class="form_htader">Оценка</span>
+          <img src="" alt="" class="access_point">
+        </li>
+        <li>
+          <button class="publish">Опубликовать</button>
         </li>
       </ul>
 </form>
-    <form action="" class="the_survy_itself">
-      <input type="text">
-      <div class="answers">
-        <ul class="add_options">
-          <li class="option"><label for=""><input type="radio"></label>Вариант 1</label></li>
-          <li class="option"><label for=""><input type="radio"></label>Вариант 2</label></li>
-          <li class="options">Добавить вариант</li>
-        </ul>
-        <ul class="response_types">
-          <li>Типы ответа</li>
-          <li><label for=""><input type="checkbox"></label>Варианты ответа</label></li>
-          <li><label for=""><input type="checkbox"></label>Множественный выбор</label></li>
-          <li><label for=""><input type="checkbox"></label>Краткий ответ</label></li>
-          <li><label for=""><input type="checkbox"></label>Развернутый ответ</label></li>
-          <li><label for=""><input type="checkbox"></label>Раскрывающийся список</label></li>
-        </ul>
-      </div>
-    </form>
-    <div class="add_a_poll add_question"><span>Добавить вопрос</span></div>
-    <div id="publication">
-        <div class="publish">
-          <span>Опубликовать</span>
-        </div>
-        <div class="publication">
-        <img src="../img/eye.png" alt="" class="eye">
-        <span class="previe">Предпросмотр</span>
-      </div>
-    </div>
   </div>
 </div>
 

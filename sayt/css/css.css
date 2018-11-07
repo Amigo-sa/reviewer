@@ -24,11 +24,16 @@ h4{
 	color: #333333;
 	display: block;
 }
-h5{
+/*h5{
 	line-height: 27px;
 	font-size: 26px;
 	color: #000000;
 	margin-bottom: 22px;
+}*/
+h5{
+	line-height: 42px;
+	font-size: 24px;
+	color: #5A5A5A;
 }
 h3{
 	margin-left: 30px;
@@ -436,6 +441,8 @@ button::-moz-focus-inner {
 	margin: auto;
 }
 .content{
+	display: flex;
+	flex-direction: column;
 	flex: 1 1 auto;
 }
 .ava_big{
@@ -515,9 +522,10 @@ button::-moz-focus-inner {
 }
 /* Профессия */
 .profession{
+	display: flex;
+	flex-direction: column;
 	width: 710px;
 	height: 160px;
-	float: left;
 	margin-left: 15px;
 }
 .profession h3{
@@ -559,22 +567,18 @@ button::-moz-focus-inner {
 }
 /* целеустремленность стрессоустойчивость оперативность готовность изучать новое */
 .prof_quality{
-	float: left;
+	display: flex;
 	margin-top: 10px;
 }
 .prof_quality ul{
-	float: left;
 	list-style-type: none;
 	padding-left: 0;
 	line-height: 32px;
 	font-size: 18px;
 	color: #BFBFBF;
 }
-.person_quality{
-	margin-left: 60px;
-}
 /* heart */
-.person_quality ul li img{	
+.person_quality li img{	
 	width: 23px;
 	height: 23px;
 }
@@ -584,23 +588,19 @@ button::-moz-focus-inner {
 	font-size: 14px;
 	color: #797979;
 }
-/* Опрос первокурсников */
-.prof_quality h5{
-	line-height: 42px;
-	font-size: 24px;
-
-	color: #5A5A5A;
-}
-
 /* Rectangle */
-
 .prof_quality ul li progress{
 	width: 204px;
 	height: 18.81px;
 	color: #008CDF;
 	margin-left: 30px;
 }
-
+.qualities{
+	display: flex;
+}
+.qualities span{
+	flex: 1;
+}
 /* Заметки о себе */
 
 .about_oneself{
@@ -692,8 +692,7 @@ button::-moz-focus-inner {
 	background: #EAB600;
 }
 .add_a_poll{
-	width: 226px;
-	height: 62px;
+	width: 10%;
 	border: solid 2px #0FA5FE;
 	text-align: center;
 	margin: 10px auto;
@@ -708,7 +707,6 @@ button::-moz-focus-inner {
 }
 .add_a_poll span{
 	display: block;
-	margin-top: 8%;
 }
 .show_more_reviews{
 	width: 226px;
@@ -756,11 +754,8 @@ button::-moz-focus-inner {
 }
 .topic{
 	display: flex;
-	flex: 0 1 auto;
-	margin-bottom: 26px;
 }
 #topic{
-	flex: 1 1 auto;
 	margin-left: 2%;
 }
 .description{
@@ -769,19 +764,14 @@ button::-moz-focus-inner {
 	flex: 0 1 auto;
 	margin-bottom: 28px;
 }
-.description label{
-	line-height: 42px;
-	font-size: 24px;
-	color: #3C3C3C;
-}
+
 #description{
-	flex: 1 1 auto;
 	resize: none;
-	margin-left: 2%;
 }
 .access_point{
 	display: flex;
-	flex: 0 1 auto;
+	flex: 2 1 auto;
+	margin-left: 2%;
 }
 .select_access{
 	display: flex;
@@ -792,7 +782,8 @@ button::-moz-focus-inner {
 	width: 100%;
 	margin-left: 2%;
 }
-.topic label{
+.form_htader{
+	display: 1 1 auto;
 	line-height: 42px;
 	font-size: 24px;
 	color: #3C3C3C;
@@ -836,10 +827,9 @@ button::-moz-focus-inner {
 }
 .add_question{
 	width: 25%;
-	height: 5%;
 }
 .add_question span{
-	margin-top: 3%;
+	padding: 3%;
 }
 /* Предпросмотр, публикация */
 #publication{
@@ -865,9 +855,8 @@ button::-moz-focus-inner {
 }
 .publish{
 	background-color: #008CDF;
+	border: none;
 	width: 25%;
-}
-.publish span{
 	line-height: 32px;
 	font-size: 18px;
 	color: #FFFFFF;

@@ -66,19 +66,19 @@
           <h1>Новый опрос</h1>
         </li>
         <li class="topic">
-          <label for="topic">Тема</label>
-          <input type="text" name="topic" id="topic">
+          <label for="topic" class="form_htader">Тема</label>
+          <input type="text" name="topic" id="topic" class="access_point">
         </li>
         <li class="description">
-          <label for="description">Описание</label>
-          <textarea name="description" id="description"></textarea>
+          <label for="description" class="form_htader">Описание</label>
+          <textarea name="description" id="description" class="access_point"></textarea>
         </li>
-        <li>
-          <fieldset class="access_point">
-            <div class="select_access">
-              <label for="access">
+        <li class="description">
+          <label for="access" class="form_htader">
               Доступ
               </label>
+          <fieldset class="access_point">
+            <div class="select_access">
               <select name="" id="access">
                 <option value="">ИТМО, факультет ИТ, каф. ММ, группы К-04-05, К-05-05, К-06-06</option>
                 <option value=""></option>
@@ -87,7 +87,6 @@
                 <option value=""></option>
               </select>
             </div>
-        
           <ul class="institute">
             <li><label for="">Институт полное название (ИТМО)<input type="checkbox"></label></li>
             <li>
@@ -135,9 +134,7 @@
     </form>
     <div class="add_a_poll add_question"><span>Добавить вопрос</span></div>
     <div id="publication">
-        <div class="publish">
-          <span>Опубликовать</span>
-        </div>
+          <button class="publish">Опубликовать</button>
         <div class="publication">
         <img src="../img/eye.png" alt="" class="eye">
         <span class="previe">Предпросмотр</span>
