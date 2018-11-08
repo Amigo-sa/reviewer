@@ -132,8 +132,8 @@ class TestAuth(unittest.TestCase):
         hm.wipe_db()
         cur_session.id = None
         cur_session.received_code = None
-        self.admin_header = {"Cookie":
-                                 "session_id=" + hm.prepare_first_admin()}
+        self.admin_header = {"Authorization":
+                                 "Bearer " + hm.prepare_first_admin()}
 
     def prepare_lists(self):
         # admin only routes
@@ -256,8 +256,8 @@ class TestAuth(unittest.TestCase):
         auth_user = hm.prepare_logged_in_person(self.user_phone)
         self.user_person_id = auth_user["person_id"]
         self.user_session_id = auth_user["session_id"]
-        self.user_header = {"Cookie":
-                                "session_id=" + self.user_session_id}
+        self.user_header = {"Authorization":
+                                "Bearer " + self.user_session_id}
         # prepare data
 
         self.org_id = hm.post_item(self, self.api_URL + "/organizations", {"name": "sample_org"})
@@ -339,8 +339,8 @@ class TestAuth(unittest.TestCase):
         auth_user = hm.prepare_logged_in_person("78001112234")
         self.other_person_id = auth_user["person_id"]
         self.other_user_session_id = auth_user["session_id"]
-        self.other_user_header = {"Cookie":
-                                      "session_id=" + self.other_user_session_id}
+        self.other_user_header = {"Authorization":
+                                      "Bearer " + self.other_user_session_id}
         self.other_spec_id = hm.post_item(self, self.api_URL + "/persons/%s/specializations" % self.other_person_id,
                                           {"department_id": self.dep_id,
                                            "specialization_id": self.spec_id
@@ -718,8 +718,7 @@ class TestAuth(unittest.TestCase):
             "password": password})
         self.assertEqual(200, resp.status_code)
         self.assertEqual(ERR.OK, resp.json()["result"])
-        self.assertTrue(resp.cookies["session_id"], "must return session_id")
-
+        self.assertTrue(resp.json()["session_id"], "must return session_id")
 
     def test_login_wrong_pass(self):
         phone_no, password = self.prepare_confirmed_user()
