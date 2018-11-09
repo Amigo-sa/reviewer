@@ -182,15 +182,42 @@ def get_review_info(id):
             result = {"result": ERR.NO_DATA}
             return jsonify(result), 200
         subject.refresh_from_db()
-        data = {"reviewer_id" : str(subject.reviewer_id.pk),
-                "subject_id" : str(subject.subject_id.pk),
-                "value" : subject.value,
-                "topic" : subject.topic,
-                "description" : subject.description}
+        data = get_review_info_dict(subject)
         result = {"result": ERR.OK, "data": data}
     except Exception as e:
         result = {"result": ERR.DB, "error_message" : str(e)}
     return jsonify(result), 200
+
+
+def get_subject_name(subj_cls, subj_id):
+    subject = subj_cls.objects.get({"_id": ObjectId(subj_id)})
+    parent_fields = {"PersonSpecialization": "specialization_id",
+                     "PersonSS": "ss_id",
+                     "PersonHS": "hs_id"}
+    parent_id = getattr(subject, parent_fields[subj_cls.__name__])
+    parent_cls = parent_id.__class__
+    parent_obj = parent_cls.objects.get({"_id": ObjectId(parent_id.pk)})
+    if parent_cls == Specialization:
+        return parent_obj.type
+    else:
+        return parent_obj.name
+
+
+def get_review_info_dict(review):
+    subj_cls = review.subject_id.__class__
+    reviewer = Person.objects.get({"_id": ObjectId(review.reviewer_id.pk)})
+    d = {"id": str(review.pk),
+         "reviewer": {"id": str(reviewer.pk),
+                      "first_name": reviewer.first_name,
+                      "surname": reviewer.surname,
+                      "middle_name": reviewer.middle_name},
+         "subject": {"id": str(review.subject_id.pk),
+                     "name": get_subject_name(subj_cls, review.subject_id.pk),
+                     "display_text": "Здесь будет читабельное название объекта отзыва"},
+         "topic": review.topic,
+         "value": review.value,
+         "description": review.description}
+    return d
 
 
 def get_find_reviews_query(subj_cls):
@@ -240,16 +267,7 @@ def find_reviews():
             lst = []
             for cls, rev_id in reviews[start:start+limit:1]:
                 review = cls.objects.get({"_id": ObjectId(rev_id)})
-                reviewer = Person.objects.get({"_id": ObjectId(review.reviewer_id.pk)})
-                d = {"id": str(review.pk),
-                     "reviewer": {"id": str(reviewer.pk),
-                                  "first_name": reviewer.first_name,
-                                  "surname": reviewer.surname,
-                                  "middle_name": reviewer.middle_name},
-                     "topic": review.topic,
-                     "value": review.value,
-                     "description": review.description}
-                lst.append(d)
+                lst.append(get_review_info_dict(review))
             result = {"result": ERR.OK, "list": lst, "length": len(reviews)}
         else:
             result = {"result": err}

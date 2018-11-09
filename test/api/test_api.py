@@ -900,6 +900,19 @@ class TestApi(unittest.TestCase):
         subj_ids["PersonSS"] = p_ss_id
         subj_ids["PersonHS"] = p_hs_id
 
+        display_names = {"Specialization": "Tutor",
+                         "PersonHS": "hs_name",
+                         "PersonSS": "ss_name"}
+
+        for subj_type, review_data in rev_refs.items():
+            review_data.update({
+                "subject": {
+                    "display_text": "Здесь будет читабельное название объекта отзыва",
+                    "id": subj_ids[subj_type],
+                    "name": display_names[subj_type]
+                }
+            })
+
         # verify reviews
         review_list = self.get_item_list("/reviews")
         ref_review_list = [rev_data for subj_id, rev_data in rev_refs.items()]
@@ -921,12 +934,7 @@ class TestApi(unittest.TestCase):
         # get review info
         for subj_type, rev_data in rev_refs.items():
             review_data = self.get_item_data("/reviews/" + rev_data["id"])
-            ref_data = {"reviewer_id": self.reviewer_id,
-                        "subject_id": subj_ids[subj_type],
-                        "value": 60.0,
-                        "topic": "some_topic",
-                        "description": "sample_descr"}
-            self.assertDictEqual(ref_data, review_data)
+            self.assertDictEqual(rev_data, review_data)
         # verify with review from person2
         review_data = {
             "reviewer_id": self.reviewer_id2,
@@ -944,7 +952,13 @@ class TestApi(unittest.TestCase):
                                 "first_name": reviewer2.first_name,
                                 "middle_name": reviewer2.middle_name,
                                 "surname": reviewer2.surname
-                            }})
+                            },
+                            "subject": {
+                                "display_text": "Здесь будет читабельное название объекта отзыва",
+                                "id": p_spec_id,
+                                "name": "Tutor"
+                            }
+                            })
         review_data.pop("reviewer_id")
         review_data.pop("subject_id")
         review_list = self.get_item_list("/reviews?type=specialization&person_id=" + person_id)
