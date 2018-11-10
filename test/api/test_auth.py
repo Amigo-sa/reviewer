@@ -494,7 +494,7 @@ class TestAuth(unittest.TestCase):
         self.prepare_docs()
         self.prepare_lists()
         review_data = {
-                       "value": "50.0",
+                       "value": 5,
                        "description": "string"}
         for url in self.review_valid_post:
             resp_json = hm.try_post_item(self, self.api_URL + url,
@@ -506,7 +506,7 @@ class TestAuth(unittest.TestCase):
         self.prepare_docs()
         self.prepare_lists()
         review_data = {
-                       "value": "50.0",
+                       "value": 5,
                        "topic": "some_topic",
                        "description": "string"}
         rev_ids = []
@@ -526,7 +526,7 @@ class TestAuth(unittest.TestCase):
         self.prepare_docs()
         self.prepare_lists()
         review_data = {
-                       "value": "50.0",
+                       "value": 5,
                        "topic": "some_topic",
                        "description": "string"}
         rev_ids = []
@@ -546,7 +546,7 @@ class TestAuth(unittest.TestCase):
         self.prepare_docs()
         self.prepare_lists()
         review_data = {
-                       "value": "50.0",
+                       "value": 5,
                        "topic": "some_topic",
                        "description": "string"}
         rev_ids = []
@@ -578,7 +578,7 @@ class TestAuth(unittest.TestCase):
         self.prepare_docs()
         self.prepare_lists()
         review_data = {
-                       "value": "50.0",
+                       "value": 5,
                        "topic": "some_topic",
                        "description": "string"}
         for url in self.review_invalid_post:

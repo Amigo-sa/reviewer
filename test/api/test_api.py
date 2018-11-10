@@ -881,7 +881,7 @@ class TestApi(unittest.TestCase):
 
         for subj_type, subj_url in subject_urls.items():
             review_data = {"reviewer_id": self.reviewer_id,
-                           "value": 60.0,
+                           "value": 6,
                            "topic": "some_topic",
                            "description": "sample_descr"}
             cur_id = self.post_item(subj_url, review_data, auth="reviewer")
@@ -939,7 +939,7 @@ class TestApi(unittest.TestCase):
         review_data = {
             "reviewer_id": self.reviewer_id2,
             "subject_id": p_spec_id,
-            "value": 80.0,
+            "value": 8,
             "topic": "some_topic",
             "description": "sample_descr2"}
         rev2_id = self.post_item("/specializations/%s/reviews" % (p_spec_id),
@@ -984,7 +984,7 @@ class TestApi(unittest.TestCase):
         person_id = str(rev_struct["person"].pk)
         post_data = {
             "reviewer_id" : str(self.reviewer_id),
-            "value" : 70,
+            "value" : 7,
             "topic": "some_topic",
             "description" : "some_descr"
         }
@@ -993,10 +993,10 @@ class TestApi(unittest.TestCase):
                        post_data, auth="reviewer")
         person_hs = rev_struct["db_obj"]
         person_hs.refresh_from_db()
-        self.assertEqual(70, person_hs.level, "must calculate correct level")
+        self.assertEqual(7, person_hs.level, "must calculate correct level")
         post_data = {
             "reviewer_id": str(self.reviewer_id2),
-            "value": 50,
+            "value": 5,
             "topic": "some_topic",
             "description": "some_descr"
         }
@@ -1004,7 +1004,7 @@ class TestApi(unittest.TestCase):
                        (person_id, rev_struct["subject_id"]),
                        post_data, auth="reviewer2")
         person_hs.refresh_from_db()
-        self.assertEqual(60, person_hs.level, "must calculate correct level")
+        self.assertEqual(6, person_hs.level, "must calculate correct level")
 
     def test_update_soft_skill_level_with_review(self):
         rev_struct = hm.prepare_subject(model.PersonSS)
@@ -1013,7 +1013,7 @@ class TestApi(unittest.TestCase):
         person_id = str(rev_struct["person"].pk)
         post_data = {
             "reviewer_id": str(self.reviewer_id),
-            "value": 70,
+            "value": 7,
             "topic": "some_topic",
             "description": "some_descr"
         }
@@ -1022,10 +1022,10 @@ class TestApi(unittest.TestCase):
                        post_data, auth="reviewer")
         person_ss = rev_struct["db_obj"]
         person_ss.refresh_from_db()
-        self.assertEqual(70, person_ss.level, "must calculate correct level")
+        self.assertEqual(7, person_ss.level, "must calculate correct level")
         post_data = {
             "reviewer_id": str(self.reviewer_id2),
-            "value": 50,
+            "value": 5,
             "topic": "some_topic",
             "description": "some_descr"
         }
@@ -1033,7 +1033,7 @@ class TestApi(unittest.TestCase):
                        (person_id, rev_struct["subject_id"]),
                        post_data, auth="reviewer2")
         person_ss.refresh_from_db()
-        self.assertEqual(60, person_ss.level, "must calculate correct level")
+        self.assertEqual(6, person_ss.level, "must calculate correct level")
 
     def test_update_specialization_level_with_review(self):
         rev_struct = hm.prepare_subject(model.PersonSpecialization)
@@ -1042,7 +1042,7 @@ class TestApi(unittest.TestCase):
         person_id = str(rev_struct["person"].pk)
         post_data = {
             "reviewer_id": str(self.reviewer_id),
-            "value": 70,
+            "value": 7,
             "topic": "some_topic",
             "description": "some_descr"
         }
@@ -1051,10 +1051,10 @@ class TestApi(unittest.TestCase):
                        post_data, auth="reviewer")
         p_spec = rev_struct["db_obj"]
         p_spec.refresh_from_db()
-        self.assertEqual(70, p_spec.level, "must calculate correct level")
+        self.assertEqual(7, p_spec.level, "must calculate correct level")
         post_data = {
             "reviewer_id": str(self.reviewer_id2),
-            "value": 50,
+            "value": 5,
             "topic": "some_topic",
             "description": "some_descr"
         }
@@ -1063,7 +1063,7 @@ class TestApi(unittest.TestCase):
                        post_data, auth="reviewer2")
         p_spec = rev_struct["db_obj"]
         p_spec.refresh_from_db()
-        self.assertEqual(60, p_spec.level, "must calculate correct level")
+        self.assertEqual(6, p_spec.level, "must calculate correct level")
 
 
     def test_organization_duplicate(self):
@@ -1158,7 +1158,7 @@ class TestApi(unittest.TestCase):
         self.setup_reviewer()
         for subj_type, subj_url in subject_urls.items():
             review_data = {"reviewer_id": self.reviewer_id,
-                           "value": "60.0",
+                           "value": 6,
                            "topic": "some_topic",
                            "description": "sample_descr"}
             cur_id = self.post_item(subj_url, review_data, auth="reviewer")
@@ -1301,56 +1301,56 @@ class TestApi(unittest.TestCase):
         self.pass_invalid_ref("/specializations/%s/reviews" % group_id,
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
-                              value="skill_level",
+                              value=4,
                               topic= "string",
                               description="string"
                               )
         self.pass_invalid_ref("/groups/%s/reviews" % hard_skill_id,
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
-                              value="skill_level",
+                              value=4,
                               topic="string",
                               description="string"
                               )
         self.pass_invalid_ref("/group_members/%s/reviews" % hard_skill_id,
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
-                              value="skill_level",
+                              value=4,
                               topic="string",
                               description="string"
                               )
         self.pass_invalid_ref("/tests/%s/reviews" % hard_skill_id,
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
-                              value="skill_level",
+                              value=4,
                               topic="string",
                               description="string"
                               )
         self.pass_invalid_ref("/persons/%s/hard_skills/%s/reviews" % (p_id, group_id),
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
-                              value="skill_level",
+                              value=4,
                               topic="string",
                               description="string"
                               )
         self.pass_invalid_ref("/persons/%s/hard_skills/%s/reviews" % (group_id, hard_skill_id),
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
-                              value="skill_level",
+                              value=4,
                               topic="string",
                               description="string"
                               )
         self.pass_invalid_ref("/persons/%s/soft_skills/%s/reviews" % (p_id, group_id),
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
-                              value="skill_level",
+                              value=4,
                               topic="string",
                               description="string"
                               )
         self.pass_invalid_ref("/persons/%s/soft_skills/%s/reviews" % (group_id, soft_skill_id),
                               auth="reviewer",
                               reviewer_id=self.reviewer_id,
-                              value="skill_level",
+                              value=4,
                               topic="string",
                               description="string"
                               )
@@ -1568,38 +1568,38 @@ class TestApi(unittest.TestCase):
         person_spec_ref = person_spec.to_son().to_dict()
         # test person_spec review
         spec_rev_id = self.post_item("/specializations/%s/reviews" % str(person_spec.pk), auth="reviewer", data={
-            "value": 10,
+            "value": 1,
             "description": "some_desc",
             "topic": "some_topic",
             "reviewer_id": self.reviewer_id
         })
         person.refresh_from_db()
-        person_ref.update({"spec_rating": 10.0})
+        person_ref.update({"spec_rating": 1.0})
         self.assertEqual(person_ref,person.to_son().to_dict(), "must not corrupt person data")
         person_spec.refresh_from_db()
-        person_spec_ref.update({"level" : 10.0})
+        person_spec_ref.update({"level" : 1.0})
         self.assertEqual(person_spec_ref, person_spec.to_son().to_dict(), "must not corrupt spec data")
         # test ss review
         ss_rev_id = self.post_item("/persons/%s/soft_skills/%s/reviews" % (str(person.pk), str(ss.pk))
                        , auth="reviewer", data={
-                        "value": 20,
+                        "value": 2,
                         "description": "some_desc",
                         "topic": "some_topic",
                         "reviewer_id": self.reviewer_id
             })
         person.refresh_from_db()
-        person_ref.update({"ss_rating": 20.0})
+        person_ref.update({"ss_rating": 2.0})
         self.assertEqual(person_ref, person.to_son().to_dict(), "must not corrupt person data")
         # test hs review
         hs_rev_id = self.post_item("/persons/%s/hard_skills/%s/reviews" % (str(person.pk), str(hs.pk))
                        , auth="reviewer", data={
-                        "value": 30,
+                        "value": 3,
                         "description": "some_desc",
                         "topic": "some_topic",
                         "reviewer_id": self.reviewer_id
             })
         person.refresh_from_db()
-        person_ref.update({"hs_rating": 30.0})
+        person_ref.update({"hs_rating": 3.0})
         self.assertEqual(person_ref, person.to_son().to_dict(), "must not corrupt person data")
 
         # test person_spec review

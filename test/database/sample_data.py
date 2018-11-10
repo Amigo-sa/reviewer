@@ -538,7 +538,7 @@ def fill_db():
         for i in range(10):
             p_ss = PersonSS()
             p_ss.person_id = item.pk
-            p_ss.level = random.random() * 100
+            p_ss.level = random.random() * 10
             p_ss.ss_id = random.choice(random.choice(soft_skill_list))
             try:
                 p_ss.save()
@@ -548,7 +548,7 @@ def fill_db():
                 pass
             p_hs = PersonHS()
             p_hs.person_id = item.pk
-            p_hs.level = random.random() * 100
+            p_hs.level = random.random() * 10
             p_hs.hs_id = random.choice(random.choice(hard_skill_list))
             try:
                 p_hs.save()
@@ -563,7 +563,7 @@ def fill_db():
         hs_review = HSReview()
         hs_review.reviewer_id = reviewer.pk
         hs_review.subject_id = reviewed.pk
-        hs_review.value = random.random() * 100
+        hs_review.value = random.random() * 10
         hs_review.topic = "Тема отзыва"
         hs_review.description = "Описание отзыва %s на %s пользователя %s"%(reviewer.surname, reviewed.hs_id.name,
                                     reviewed.person_id.surname)
@@ -576,10 +576,10 @@ def fill_db():
         ss_review = SSReview()
         ss_review.reviewer_id = reviewer.pk
         ss_review.subject_id = reviewed.pk
-        ss_review.value = random.choice([0,100])
+        ss_review.value = random.choice([0,10])
         ss_review.topic = "Тема отзыва"
         ss_review.description = "Описание %s %s на %s пользователя %s" % (
-                                ("лайка" if ss_review.value == 100 else "дизлайка"),
+                                ("лайка" if ss_review.value == 10 else "дизлайка"),
                                 reviewer.surname, reviewed.ss_id.name,
                                 reviewed.person_id.surname)
         try:

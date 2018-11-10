@@ -16,6 +16,8 @@ def post_review(review_type, subject_id, reviewer_id):
     try:
         subject_id = ObjectId(subject_id)
         value = req['value']
+        if not isinstance(value, int) or value < 1 or value > 10:
+            return jsonify({"result": ERR.INPUT}), 200
         topic = req['topic']
         description = req['description']
         obj = {
@@ -95,6 +97,8 @@ def post_person_skill_review(skill_review_cls, p_id, s_id, reviewer_id):
         if skill_review_cls != SSReview and skill_review_cls != HSReview:
             return jsonify({"result": ERR.INPUT}), 200
         value = req['value']
+        if not isinstance(value, int) or value < 1 or value > 10:
+            return jsonify({"result": ERR.INPUT}), 200
         topic = req['topic']
         description = req['description']
         review_id = add_person_skill_review(skill_review_cls,
@@ -215,7 +219,7 @@ def get_review_info_dict(review):
                      "name": get_subject_name(subj_cls, review.subject_id.pk),
                      "display_text": "Здесь будет читабельное название объекта отзыва"},
          "topic": review.topic,
-         "value": review.value,
+         "value": round(review.value,1),
          "description": review.description}
     return d
 

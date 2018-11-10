@@ -79,7 +79,7 @@ def get_person_specializations(id):
                 d = {"id": str(p_spec.pk),
                      "department_id": str(p_spec.department_id.pk),
                      "department_name": department.name,
-                     "level": p_spec.level,
+                     "level": round(p_spec.level,1) if p_spec.level else None,
                      "specialization_type": p_spec.specialization_id.type,
                      "is_active": str(p_spec.is_active)
                      }

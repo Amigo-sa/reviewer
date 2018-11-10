@@ -208,13 +208,14 @@ def get_person_info(person_id):
     try:
         person = Person.objects.get({"_id": ObjectId(person_id)})
         birth_date_str = person.birth_date.strftime("%Y-%m-%d") if person.birth_date else None
+        rating = person.get_rating()
         data = {"id": str(person.pk),
                 "first_name": person.first_name,
                 "middle_name": person.middle_name,
                 "surname": person.surname,
                 "birth_date": birth_date_str,
                 "phone_no": person.phone_no,
-                "rating": person.get_rating(),
+                "rating": round(rating,1) if rating else None,
                 "photo": bool(person.photo),
                 "notes": person.notes}
         result = {"result": ERR.OK, "data": data}
@@ -329,7 +330,7 @@ def find_person_skills(skill_cls):
         if err == ERR.OK:
             person_skill_qs = person_skill_cls.objects.raw(query)
             person_skills = list({"id": str(key["_id"]),
-                                  "level": str(key["level"]),
+                                  "level": round(key["level"],1) if key["level"] else None,
                                   tag: str(key[tag])} for key in person_skill_qs.values())
             result = {"result": ERR.OK, "list": person_skills}
         else:
@@ -371,7 +372,7 @@ def get_person_skill_info(skill_cls, id):
                 raise Exception("bad func usage")
             data = {"person_id": str(person_s.person_id.pk),
                     tag: str(person_skill_id.pk),
-                    "level": str(person_s.level)}
+                    "level": round(person_s.level,1) if person_s.level else None}
             result = {"result": ERR.OK, "data": data}
         else:
             result = {"result": ERR.NO_DATA}
