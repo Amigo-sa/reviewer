@@ -215,7 +215,8 @@ def get_person_info(person_id):
                 "birth_date": birth_date_str,
                 "phone_no": person.phone_no,
                 "rating": person.get_rating(),
-                "photo": bool(person.photo)}
+                "photo": bool(person.photo),
+                "notes": person.notes}
         result = {"result": ERR.OK, "data": data}
 
     except DoesNotExist:
@@ -234,6 +235,7 @@ def post_person_photo(person_id):
             return jsonify({"result": ERR.INPUT}), 200
         if Person(_id=person_id) in Person.objects.raw({"_id": ObjectId(person_id)}):
             person = Person(_id=person_id)
+            person.refresh_from_db()
             person.photo = request.get_data()
             person.save()
             result = {"result": ERR.OK}
@@ -265,6 +267,28 @@ def get_person_photo(person_id):
             result = {"result": ERR.NO_DATA}
     except:
         result = {"result": ERR.DB}
+    return jsonify(result), 200
+
+
+@bp.route("/persons/<string:person_id>/notes", methods=['PUT'])
+@required_auth("user")
+def post_person_notes(person_id):
+    try:
+        req = request.get_json()
+        notes = req["notes"]
+        if Person(_id=person_id) in Person.objects.raw({"_id": ObjectId(person_id)}):
+            person = Person(_id=person_id)
+            person.refresh_from_db()
+            person.notes = notes
+            person.save()
+            result = {"result": ERR.OK}
+        else:
+            result = {"result": ERR.NO_DATA}
+    except KeyError:
+        result = {"result": ERR.INPUT}
+    except Exception as e:
+        result = {"result": ERR.DB,
+                  "error_message": str(e)}
     return jsonify(result), 200
 
 

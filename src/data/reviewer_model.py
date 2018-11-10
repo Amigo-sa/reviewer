@@ -189,6 +189,7 @@ class Person(MongoModel):
     birth_date = fields.DateTimeField()
     phone_no = fields.CharField()
     photo = fields.BinaryField()
+    notes = fields.CharField()
     ss_rating = fields.FloatField(default=None, blank=True)
     hs_rating = fields.FloatField(default=None, blank=True)
     spec_rating = fields.FloatField(default=None, blank=True)
