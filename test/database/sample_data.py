@@ -369,7 +369,8 @@ def fill_db():
                 person_specializations["Pashka"],
                 50.0,
                 "Тема",
-                "Часто появляется с перегаром"
+                "Часто появляется с перегаром",
+                datetime.date(2001, 5, 1)
             ),
         "Anisimov_Bogi_sr":
             SpecializationReview(
@@ -377,7 +378,8 @@ def fill_db():
                 person_specializations["Bogi"],
                 20.0,
                 "Тема",
-                "Боится ТОЭ"
+                "Боится ТОЭ",
+                datetime.date(2001, 5, 1)
             ),
         "Pashka_Shatokhin_MCU":
             SpecializationReview(
@@ -385,7 +387,8 @@ def fill_db():
                 person_specializations["Shatokhin_MCU"],
                 50.0,
                 "Тема",
-                "Не знает современную элементную базу"
+                "Не знает современную элементную базу",
+                datetime.date(2001, 5, 1)
             ),
         "Leni4_Anisimov_rel":
             SpecializationReview(
@@ -393,7 +396,8 @@ def fill_db():
                 person_specializations["Anisimov_TOE"],
                 100.0,
                 "Тема",
-                "Это просто чудо какое-то!"
+                "Это просто чудо какое-то!",
+                datetime.date(2001, 5, 1)
             )
     }
 
@@ -567,6 +571,7 @@ def fill_db():
         hs_review.topic = "Тема отзыва"
         hs_review.description = "Описание отзыва %s на %s пользователя %s"%(reviewer.surname, reviewed.hs_id.name,
                                     reviewed.person_id.surname)
+        hs_review.date = datetime.date(2000, 5, 1)
         try:
             hs_review.save()
         except:
@@ -582,6 +587,7 @@ def fill_db():
                                 ("лайка" if ss_review.value == 10 else "дизлайка"),
                                 reviewer.surname, reviewed.ss_id.name,
                                 reviewed.person_id.surname)
+        ss_review.date = datetime.date(2000, 5, 1)
         try:
             ss_review.save()
         except:

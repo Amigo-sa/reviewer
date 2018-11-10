@@ -910,7 +910,8 @@ class TestApi(unittest.TestCase):
                     "display_text": "Здесь будет читабельное название объекта отзыва",
                     "id": subj_ids[subj_type],
                     "name": display_names[subj_type]
-                }
+                },
+                "date": datetime.datetime.utcnow().date().isoformat()
             })
 
         # verify reviews
@@ -957,7 +958,8 @@ class TestApi(unittest.TestCase):
                                 "display_text": "Здесь будет читабельное название объекта отзыва",
                                 "id": p_spec_id,
                                 "name": "Tutor"
-                            }
+                            },
+                            "date": datetime.datetime.utcnow().date().isoformat()
                             })
         review_data.pop("reviewer_id")
         review_data.pop("subject_id")

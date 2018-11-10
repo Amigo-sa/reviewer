@@ -152,7 +152,7 @@ class ValidatedReferenceList(fields.ListField):
 
         setattr(cls, "clean", new_clean)
 
-def add_person_skill_review(skill_review_cls, reviewer_id, person_id, skill_id, value, topic, description):
+def add_person_skill_review(skill_review_cls, reviewer_id, person_id, skill_id, value, topic, description, date):
     #здесь намеренно не проверяем объекты, на которые ссылаемся. Проверки осуществляются методами ValidatedReferenceField
     query = {}
     query.update({"person_id": ObjectId(person_id)})
@@ -167,7 +167,7 @@ def add_person_skill_review(skill_review_cls, reviewer_id, person_id, skill_id, 
     except DoesNotExist:
         person_s = person_skill_cls(person_id, skill_id, None)
         person_s.save()
-    s_review = skill_review_cls(reviewer_id, person_s.pk, value, topic, description)
+    s_review = skill_review_cls(reviewer_id, person_s.pk, value, topic, description, date)
     s_review.save()
     return str(s_review.pk)
 
@@ -482,6 +482,7 @@ class SSReview(MongoModel):
     value = fields.FloatField()
     topic = fields.CharField()
     description = fields.CharField()
+    date = fields.DateTimeField()
 
     def save(self, cascade=None, full_clean=True, force_insert=False):
         super().save(cascade, full_clean, force_insert)
@@ -507,6 +508,7 @@ class HSReview(MongoModel):
     value = fields.FloatField()
     topic = fields.CharField()
     description = fields.CharField()
+    date = fields.DateTimeField()
 
     def save(self, cascade=None, full_clean=True, force_insert=False):
         super().save(cascade, full_clean, force_insert)
@@ -532,6 +534,7 @@ class SpecializationReview(MongoModel):
     value = fields.FloatField()
     topic = fields.CharField()
     description = fields.CharField()
+    date = fields.DateTimeField()
 
     def save(self, cascade=None, full_clean=True, force_insert=False):
         super().save(cascade, full_clean, force_insert)
@@ -557,6 +560,7 @@ class GroupReview(MongoModel):
     value = fields.FloatField()
     topic = fields.CharField()
     description = fields.CharField()
+    date = fields.DateTimeField()
 
     class Meta:
         write_concern = WriteConcern(w=1)
@@ -574,6 +578,7 @@ class GroupMemberReview(MongoModel):
     value = fields.FloatField()
     topic = fields.CharField()
     description = fields.CharField()
+    date = fields.DateTimeField()
 
     class Meta:
         write_concern = WriteConcern(w=1)
@@ -591,6 +596,7 @@ class GroupTestReview(MongoModel):
     value = fields.FloatField()
     topic = fields.CharField()
     description = fields.CharField()
+    date = fields.DateTimeField()
 
     class Meta:
         write_concern = WriteConcern(w=1)

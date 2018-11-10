@@ -7,6 +7,7 @@ from data.reviewer_model import *
 from pymodm.errors import DoesNotExist
 from node.api.auth import required_auth
 from node.api.base_functions import delete_resource, list_resources
+from datetime import datetime
 
 bp = Blueprint('reviews', __name__)
 
@@ -20,15 +21,16 @@ def post_review(review_type, subject_id, reviewer_id):
             return jsonify({"result": ERR.INPUT}), 200
         topic = req['topic']
         description = req['description']
+        date = datetime.utcnow()
         obj = {
             "SpecializationReview":
-                SpecializationReview(reviewer_id, subject_id, value, topic, description),
+                SpecializationReview(reviewer_id, subject_id, value, topic, description, date),
             "Group":
-                GroupReview(reviewer_id, subject_id, value, topic, description),
+                GroupReview(reviewer_id, subject_id, value, topic, description, date),
             "GroupTest":
-                GroupTestReview(reviewer_id, subject_id, value, topic, description),
+                GroupTestReview(reviewer_id, subject_id, value, topic, description, date),
             "GroupMember":
-                GroupMemberReview(reviewer_id, subject_id, value, topic, description)
+                GroupMemberReview(reviewer_id, subject_id, value, topic, description, date)
         }
         subj_class = {
             "SpecializationReview":
@@ -101,13 +103,15 @@ def post_person_skill_review(skill_review_cls, p_id, s_id, reviewer_id):
             return jsonify({"result": ERR.INPUT}), 200
         topic = req['topic']
         description = req['description']
+        date = datetime.utcnow()
         review_id = add_person_skill_review(skill_review_cls,
-                                             reviewer_id,
-                                             p_id,
-                                             s_id,
-                                             value,
-                                             topic,
-                                             description)
+                                            reviewer_id,
+                                            p_id,
+                                            s_id,
+                                            value,
+                                            topic,
+                                            description,
+                                            date)
         result = {"result": ERR.OK,
                   "id": review_id}
     except DoesNotExist as e:
@@ -220,7 +224,8 @@ def get_review_info_dict(review):
                      "display_text": "Здесь будет читабельное название объекта отзыва"},
          "topic": review.topic,
          "value": round(review.value,1),
-         "description": review.description}
+         "description": review.description,
+         "date": review.date.strftime("%Y-%m-%d")}
     return d
 
 
