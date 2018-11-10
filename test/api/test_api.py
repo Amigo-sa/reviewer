@@ -724,7 +724,7 @@ class TestApi(unittest.TestCase):
         p_2_ref_dict.update({"photo": False})
         self.assertIn(p_2_ref_dict, p_list, "must return correct person info")
 
-        p_list = self.get_item_list("/persons?specialization=Tutor")
+        p_list = self.get_item_list("/persons?specialization_id=%s" % struct["spec_1"]["id"])
         self.assertIn(p_1_ref_dict, p_list, "must return correct person info")
         self.assertNotIn(p_2_ref_dict, p_list, "must not return non-matching persons info")
 
@@ -745,12 +745,12 @@ class TestApi(unittest.TestCase):
             True
         )
         p_spec_3.save()
-        p_list = self.get_item_list("/persons?specialization=Tutor")
+        p_list = self.get_item_list("/persons?specialization_id=%s" % struct["spec_1"]["id"])
         p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
         self.assertTrue(p1_id)
         p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
         self.assertFalse(p2_id)
-        p_list = self.get_item_list("/persons?specialization=Student")
+        p_list = self.get_item_list("/persons?specialization_id=%s" % struct["spec_2"]["id"])
         p1_id = [item for item in p_list if item["id"] == p_1_ref_dict["id"]]
         self.assertTrue(p1_id)
         p2_id = [item for item in p_list if item["id"] == p_2_ref_dict["id"]]
