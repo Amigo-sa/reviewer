@@ -147,25 +147,21 @@ def fill_db():
         "TOE_Tutor":
             Specialization(
                 "Tutor",
-                "Преподаватель ТОЭ",
                 "ТОЭ"
             ),
         "MCU_Tutor":
             Specialization(
                 "Tutor",
-                "Преподаватель курса 'Микропроцессорные системы'",
                 "Микропросессорные системы"
             ),
         "Metr_Assistant":
             Specialization(
                 "Lab assistant",
-                "Ассистент лабораторных работ по курсу 'Метрология'",
                 "Метрология"
             ),
         "Student":
             Specialization(
                 "Student",
-                "Студент"
             ),
     }
 
@@ -598,6 +594,18 @@ def fill_db():
             pass
 
     for key, item in specializations.items():
+        if item.type == "Student":
+            item_type = "Студент"
+        elif item.type == "Tutor":
+            item_type = "Преподаватель"
+        elif item.type == "Lab assistant":
+            item_type = "Лаборант"
+        else:
+            item_type = item.type
+        display_text = item_type
+        if (item.detail):
+            display_text += ", " + item.detail
+        item.display_text = display_text
         item.save()
     for key, item in person_specializations.items():
         item.save()

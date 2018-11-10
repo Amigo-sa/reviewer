@@ -40,7 +40,8 @@ def prepare_hard_skills(hs_path):
     hard_skills = read_skill_list(hs_path+".csv")
     hard_skill_display = read_skill_list(hs_path+"_display.csv")
     for i, skill_sub in enumerate(hard_skills):
-        skill_type = model.SkillType(skill_sub[0], hard_skill_display[i][0])
+        type_name = hard_skill_display[i][0]
+        skill_type = model.SkillType(skill_sub[0], type_name)
         skill_type.save()
         #hard_skill_list.append([skill_type.pk])
         hard_skill_list.append([])
@@ -49,7 +50,7 @@ def prepare_hard_skills(hs_path):
         for j, skill in enumerate(skill_sub):
             hard_skill = model.HardSkill()
             hard_skill.name = skill
-            hard_skill.display_text = hard_skill_display[i][j]
+            hard_skill.display_text = type_name + " - " + hard_skill_display[i][j]
             hard_skill.skill_type_id = skill_type.pk
             hard_skill.save()
             hard_skill_list[i].append(hard_skill.pk)
@@ -58,7 +59,8 @@ def prepare_soft_skills(ss_path):
     soft_skills = read_skill_list(ss_path+".csv", weights=True)
     soft_skill_display = read_skill_list(ss_path+"_display.csv", weights=True)
     for i, skill_sub in enumerate(soft_skills):
-        skill_type = model.SkillType(skill_sub[0],soft_skill_display[i][0])
+        type_name = soft_skill_display[i][0]
+        skill_type = model.SkillType(skill_sub[0],type_name)
         skill_type.save()
         soft_skill_list.append([skill_type.pk])
         skill_sub.pop(0)
@@ -67,7 +69,7 @@ def prepare_soft_skills(ss_path):
             soft_skill = model.SoftSkill()
             soft_skill.name = skill[0]
             soft_skill.weight = int(skill[1])
-            soft_skill.display_text = soft_skill_display[i][j][0]
+            soft_skill.display_text = type_name + " - " + soft_skill_display[i][j][0]
             soft_skill.skill_type_id = skill_type.pk
             soft_skill.save()
             soft_skill_list[i].append(soft_skill.pk)

@@ -322,8 +322,8 @@ class Specialization(MongoModel):
     # type подразумевает "преподаватель", "лаборант", "студент" и т.п.
     # при этом поле detail можно сделать недоступным для заполнения если type=="студент"
     type = fields.CharField(required=True)
-    display_text = fields.CharField()
     detail = fields.CharField()
+    display_text = fields.CharField()
 
 
     class Meta:
