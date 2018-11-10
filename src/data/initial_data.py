@@ -126,13 +126,13 @@ def read_skill_list(filename, weights=False):
     #print(type_count)
     #print(skill_types)
     lines = file.readlines()
-    for line in lines:
+    for i, line in enumerate(lines):
         line = line.splitlines()[0]
         skill_names = line.split(";")
         if weights:
             skill_names = list(zip(skill_names[::2], skill_names[1::2]))
         if len(skill_names) != type_count:
-            raise SyntaxError("Ошибка парсинга %s"% filename)
+            raise SyntaxError("Ошибка парсинга %s, строка %d, %d категорий и %d столбцов"% (filename, i + 2, type_count, len(skill_names)))
         for index, name in enumerate(skill_names):
             if len(name[0]) if weights else len(name) > 0:
                 skill_list[index].append(name)
