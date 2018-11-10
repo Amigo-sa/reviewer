@@ -147,21 +147,25 @@ def fill_db():
         "TOE_Tutor":
             Specialization(
                 "Tutor",
+                "Преподаватель ТОЭ",
                 "ТОЭ"
             ),
         "MCU_Tutor":
             Specialization(
                 "Tutor",
+                "Преподаватель курса 'Микропроцессорные системы'",
                 "Микропросессорные системы"
             ),
         "Metr_Assistant":
             Specialization(
                 "Lab assistant",
+                "Ассистент лабораторных работ по курсу 'Метрология'",
                 "Метрология"
             ),
         "Student":
             Specialization(
-                "Student"
+                "Student",
+                "Студент"
             ),
     }
 
@@ -832,7 +836,7 @@ if __name__ == "__main__":
     """
     #connect(constants.mongo_db + "/" + db_name, alias="reviewer")
     #wipe_db("reviewer")
-    fill_initial_data("..//..//src//data//hard_skills.csv",
-                      "..//..//src//data//soft_skills.csv")
+    fill_initial_data("..//..//src//data//hard_skills",
+                      "..//..//src//data//soft_skills")
     fill_db()
     #display_data()
