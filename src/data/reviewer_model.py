@@ -243,6 +243,7 @@ class Department(MongoModel):
 
 class SkillType(MongoModel):
     name = fields.CharField()
+    display_text = fields.CharField()
 
     class Meta:
         write_concern = WriteConcern(w=1)
@@ -255,6 +256,7 @@ class SkillType(MongoModel):
 class HardSkill(MongoModel):
     name = fields.CharField()
     skill_type_id = ValidatedReferenceField(SkillType, on_delete=ReferenceField.CASCADE)
+    display_text = fields.CharField()
 
     class Meta:
         write_concern = WriteConcern(w=1)
@@ -287,6 +289,7 @@ class SoftSkill(MongoModel):
     name = fields.CharField()
     skill_type_id = ValidatedReferenceField(SkillType, on_delete=ReferenceField.CASCADE)
     weight = fields.IntegerField()
+    display_text = fields.CharField()
 
     class Meta:
         write_concern = WriteConcern(w=1)
