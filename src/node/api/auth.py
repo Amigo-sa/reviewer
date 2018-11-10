@@ -129,8 +129,9 @@ def confirm_phone():
         try:
             send_sms(phone_no, code)
         except:
-            raise AuthError("не удалось отправить смс")
+            raise AuthError("не удалось отправить смс " + phone_no + " " + code)
         result = {"result": ERR.OK,
+                  "auth_code": code, # TODO это дыра в безопасности - убрать
                   "session_id": session_id}
 
     except KeyError as e:
@@ -244,10 +245,11 @@ def hash_password(password):
 
 # TODO смски работают, но я пока закомментил блок потому что не знаю как тестировать
 def send_sms(phone_no, message):
-    requests.post(constants.mock_smsc_url + "/send_sms",json={
-        "auth_code" : message,
-        "phone_no" : phone_no
-    })
+    if db_name == constants.db_name_test:
+        requests.post(constants.mock_smsc_url + "/send_sms",json={
+            "auth_code" : message,
+            "phone_no" : phone_no
+        })
     # smsc = smsc_api.SMSC()
     # smsc.send_sms(phone_no, message)
     # print(smsc.get_balance())
