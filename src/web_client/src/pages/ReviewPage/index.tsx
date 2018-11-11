@@ -1,12 +1,12 @@
 import * as React from "react";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
+import Header from "src/components/Header";
+import Footer from "src/components/Footer";
 
 import { Switch, Route } from "react-router-dom";
 import ViewReviews from "./ViewReviews";
 import ViewReview from "./ViewReview";
 import { Grid } from "@material-ui/core";
-import LeftMenu from "../LeftMenu";
+import LeftMenu from "src/elements/LeftMenu";
 
 class Reviews extends React.Component<any> {
     public render() {

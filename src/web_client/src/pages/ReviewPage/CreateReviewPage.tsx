@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Grid } from "@material-ui/core";
-import LeftMenu from "src/pages/LeftMenu";
+import LeftMenu from "src/elements/LeftMenu";
 import Footer from "src/components/Footer";
 import Header from "src/components/Header";
 
