@@ -11,7 +11,7 @@ interface IProps {
     value: number;
 }
 
-class HardSkill extends React.Component<IProps> {
+class HardSkillComponent extends React.Component<IProps> {
     public render() {
         return (
             <Grid container xs={12}>
@@ -26,4 +26,4 @@ class HardSkill extends React.Component<IProps> {
     }
 }
 
-export default HardSkill;
+export default HardSkillComponent;

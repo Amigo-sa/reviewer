@@ -11,13 +11,13 @@ interface IProps {
     likesCount: number;
 }
 
-class SoftSkill extends React.Component<IProps> {
+class SoftSkillComponent extends React.Component<IProps> {
     public render() {
         return (
             <Grid container xs={12}>
                 <span>{this.props.skillName}</span>
                 <img
-                    src="static/img/heart.png"
+                    src="/static/img/heart.png"
                     style={{
                         width: "23px",
                         height: "23px",
@@ -29,4 +29,4 @@ class SoftSkill extends React.Component<IProps> {
     }
 }
 
-export default SoftSkill;
+export default SoftSkillComponent;

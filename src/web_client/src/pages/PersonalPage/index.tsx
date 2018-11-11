@@ -67,7 +67,7 @@ class PersonalPage extends React.Component<IProps> {
     // Private methods
 
     private _updatePerson() {
-        this._personalPageVM.setupPerson(this.props.match.params.id);
+        this._personalPageVM.loadPersonInfo(this.props.match.params.id);
     }
 
     // Private fields

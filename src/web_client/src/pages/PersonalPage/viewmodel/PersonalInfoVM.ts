@@ -1,15 +1,19 @@
 import { observable, action, computed } from "mobx";
 import Person from "src/server-api/persons/Person";
 import { PersonSpecializationList } from "src/server-api/persons/PersonSpecialization";
-import specializationsStore from "src/stores/SpecializationsStore";
 import usersStore from "src/stores/UsersStore";
+import PersonsApi from "src/server-api/persons/PersonsApi";
+import FindPersonSoftSkillInfoResponse from "src/server-api/persons/FindPersonSoftSkillInfoResponse";
+import FindPersonHardSkillInfoResponse from "src/server-api/persons/FindPersonHardSkillInfoResponse";
+import HardSkill from "src/server-api/persons/HardSkill";
+import commonStore from "src/stores/CommonStore";
+import SoftSkill from "src/server-api/persons/SoftSkill";
 
 export default class PersonalInfoVM {
 
     // Constructor
 
     public constructor() {
-        this.fullName = "Пример";
         this.status = "Сотрудник";
         this.organizationName = "ИТМО";
 
@@ -17,22 +21,13 @@ export default class PersonalInfoVM {
 
         // tslint:disable-next-line:max-line-length
         this.personalNotes = "Возможно размещение короткого пояснительного текста о себе с указанием личных достижений и значимых наград Характер: спокойный, усидчивый, умение ставить цели и достигать их";
-
-        this.hardSkills = [new HardSkillModel("целеустремленность", 90),
-        new HardSkillModel("стрессоустойчивость", 79),
-        new HardSkillModel("оперативность", 85),
-        new HardSkillModel("готовность изучать новое", 60)];
-
-        this.softSkills = [new SoftSkillModel("ответственность", 156),
-        new SoftSkillModel("аккуратность", 85),
-        new SoftSkillModel("организованость", 342)];
     }
 
     // Public properties
 
     @computed
-    public get load(): boolean {
-        return this._loadingPersonFinish && this._loadingSpecializationFinish;
+    public get loaded(): boolean {
+        return this._loaded;
     }
 
     public get specializationList(): PersonSpecializationList {
@@ -52,36 +47,82 @@ export default class PersonalInfoVM {
     public organizationName: string;
 
     @observable
+    public hardSkills: HardSkillModel[];
+
+    @observable
+    public softSkills: SoftSkillModel[];
+
+    @observable
     public professionLists: Array<[string, number]>;
+
+    public personalNotes: string;
 
     // Public methods
 
     @action
-    public setupPerson(id: string): void {
-        this._loadingPersonFinish = false;
-        this._loadingSpecializationFinish = false;
+    public loadPersonInfo(id: string): void {
 
-        usersStore.get(id).then((result: Person) => {
-            this._updatePerson(result);
-            this._loadingPersonFinish = true;
+        this._loaded = false;
+
+        // Finds hard skills
+        const findHardSkills = PersonsApi.findPersonHardSkills(id).then((result: FindPersonHardSkillInfoResponse) => {
+
+            // Sort skills by rates
+            const skills = result.list.sort((a: HardSkill, b: HardSkill) => {
+                return b.level - a.level;
+            });
+
+            // Gets only needed piece of data
+            this.hardSkills = new Array();
+            skills.slice(0, PersonalInfoVM.SKILLS_COUNT_ON_PAGE).map((value) => {
+                const skillName: string = commonStore.findHardSkillName(value.hs_id);
+                this.hardSkills.push(new HardSkillModel(skillName, value.level));
+            });
         });
 
-        specializationsStore.get(id).then((result: PersonSpecializationList) => {
-            this._specializations = result;
-            this._loadingSpecializationFinish = true;
+        // Finds soft skills
+        const findSoftSkills = PersonsApi.findPersonSoftSkills(id).then((result: FindPersonSoftSkillInfoResponse) => {
 
-            // // update profession list
-            // const professionLists = new Array(this._specializations.list.length);
-            // for (let index = 0; index < professionLists.length; index++) {
-            //     // const specialization = this._specializations.list[index];
-            //     // const professionName = specialization.specialization_type;
-            //     // const professionRate = specialization.level ? specialization.level : 100;
+            // Sort skills by rates
+            const skills = result.list.sort((a: SoftSkill, b: SoftSkill) => {
+                return b.level - a.level;
+            });
 
-            //     // professionLists[index] = [professionName, professionRate];
-            //     professionLists[index] = ["менеджер", 8.5];
-            // }
+            // Gets only needed piece of data
+            this.softSkills = new Array();
+            skills.slice(0, PersonalInfoVM.SKILLS_COUNT_ON_PAGE).map((value) => {
+                const skillName: string = commonStore.findSoftSkillName(value.ss_id);
+                this.softSkills.push(new SoftSkillModel(skillName, value.level));
+            });
+        });
 
-            // this.professionLists = professionLists;
+        // Load personal info
+        const loadPersonInfo = usersStore.get(id).then((result: Person) => {
+            this._updatePerson(result);
+        });
+
+        // TODO: test code for getting specializations
+        // specializationsStore.get(id).then((result: PersonSpecializationList) => {
+        //     this._specializations = result;
+        //     this._loadingSpecializationFinish = true;
+
+        //     // // update profession list
+        //     // const professionLists = new Array(this._specializations.list.length);
+        //     // for (let index = 0; index < professionLists.length; index++) {
+        //     //     // const specialization = this._specializations.list[index];
+        //     //     // const professionName = specialization.specialization_type;
+        //     //     // const professionRate = specialization.level ? specialization.level : 100;
+
+        //     //     // professionLists[index] = [professionName, professionRate];
+        //     //     professionLists[index] = ["менеджер", 8.5];
+        //     // }
+
+        //     // this.professionLists = professionLists;
+        // });
+
+        // Wait all parallel tasks
+        Promise.all([loadPersonInfo, findHardSkills, findSoftSkills]).then(() => {
+            this._loaded = true;
         });
     }
 
@@ -96,21 +137,16 @@ export default class PersonalInfoVM {
             " " + person.middle_name;
     }
 
+    // Private constants
+
+    private static SKILLS_COUNT_ON_PAGE: number = 4;
+
     // Private fields
 
     private _person: Person;
 
-    public personalNotes: string;
-    public hardSkills: HardSkillModel[];
-    public softSkills: SoftSkillModel[];
-
-    // DTO objects?
-
     @observable
-    private _loadingPersonFinish: boolean;
-
-    @observable
-    private _loadingSpecializationFinish: boolean;
+    private _loaded: boolean;
 
     private _specializations: PersonSpecializationList;
 }

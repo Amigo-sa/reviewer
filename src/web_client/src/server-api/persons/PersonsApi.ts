@@ -10,6 +10,8 @@ import FindPersonsResponse from "./FindPersonsResponse";
 import Response from "../Response";
 import GetPersonInfoResponse from "./GetPersonInfoResponse";
 import GetPersonsSpecializationsResponse from "./GetPersonSpecializationsResponse";
+import FindPersonHardSkillInfoResponse from "./FindPersonHardSkillInfoResponse";
+import FindPersonSoftSkillInfoResponse from "./FindPersonSoftSkillInfoResponse";
 
 export default class PersonsApi {
 
@@ -43,5 +45,15 @@ export default class PersonsApi {
     public static getPersonSpecializations(personId: string): Promise<GetPersonsSpecializationsResponse> {
         const url = SERVER_HOST + "/persons/" + personId + "/specializations";
         return ServerApiHelper.makeGetRequest<GetPersonsSpecializationsResponse>(null, url);
+    }
+
+    public static findPersonSoftSkills(personId: string): Promise<FindPersonSoftSkillInfoResponse> {
+        const url = SERVER_HOST + "/persons/soft_skills";
+        return ServerApiHelper.makeGetRequest<FindPersonSoftSkillInfoResponse>({ person_id: personId }, url);
+    }
+
+    public static findPersonHardSkills(personId: string): Promise<FindPersonHardSkillInfoResponse> {
+        const url = SERVER_HOST + "/persons/hard_skills";
+        return ServerApiHelper.makeGetRequest<FindPersonHardSkillInfoResponse>({ person_id: personId }, url);
     }
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
-import HardSkills from "./HardSkills";
-import SoftSkills from "./SoftSkills";
+import HardSkills from "./HardSkillsComponent";
+import SoftSkills from "./SoftSkillsComponent";
 import { Grid, Typography, Divider } from "@material-ui/core";
 import PersonalNotes from "./PersonalNotes";
 import ProfessionsRating from "./ProfessionsRating";

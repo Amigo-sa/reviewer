@@ -1,5 +1,5 @@
 import * as React from "react";
-import SoftSkill from "./SoftSkill";
+import SoftSkillComponent from "./SoftSkillComponent";
 import { Typography, Grid } from "@material-ui/core";
 import { SoftSkillModel } from "src/pages/PersonalPage/viewmodel/PersonalInfoVM";
 
@@ -7,13 +7,13 @@ interface IProps {
     softSkills: SoftSkillModel[];
 }
 
-class SoftSkills extends React.Component<IProps> {
+class SoftSkillsComponent extends React.Component<IProps> {
     public render() {
         return (
             <Grid container xs={12} direction="column">
                 <Typography variant="h5">Личностные качества</Typography>
                 {this.props.softSkills.map((value: SoftSkillModel, index: number, array: SoftSkillModel[]) => {
-                    return (<SoftSkill key={index} skillName={value.name} likesCount={value.likesCount} />);
+                    return (<SoftSkillComponent key={index} skillName={value.name} likesCount={value.likesCount} />);
                 })}
 
             </Grid>
@@ -21,4 +21,4 @@ class SoftSkills extends React.Component<IProps> {
     }
 }
 
-export default SoftSkills;
+export default SoftSkillsComponent;

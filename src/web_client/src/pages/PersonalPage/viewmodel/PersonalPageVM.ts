@@ -36,7 +36,7 @@ export default class PersonalPageVM {
      */
     @computed
     public get loaded(): boolean {
-        return this._personalInfoVM.load;
+        return this._personalInfoVM.loaded;
     }
 
     @observable
@@ -45,7 +45,7 @@ export default class PersonalPageVM {
     // Public methods
 
     @action
-    public setupPerson(id: string | null): void {
+    public loadPersonInfo(id: string | null): void {
         if (id) {
             this._personId = id;
             this.isCurrentPerson = false;
@@ -55,7 +55,7 @@ export default class PersonalPageVM {
             this._personId = authStore.user.uid!;
             this.isCurrentPerson = true;
         }
-        this._personalInfoVM.setupPerson(this._personId);
+        this._personalInfoVM.loadPersonInfo(this._personId);
     }
 
     // Private fields
