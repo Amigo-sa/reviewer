@@ -420,7 +420,7 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(200, resp.status_code, "resp status must be 200")
         self.assertEqual(ERR.INPUT, resp.json()["result"], "must return ERR_INPUT on invalid input")
 
-
+    @unittest.skip("temporarily disabled")
     def test_user_restricted_access(self):
 
         self.prepare_docs()

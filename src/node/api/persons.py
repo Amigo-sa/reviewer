@@ -202,7 +202,7 @@ def delete_person(person_id):
 
 
 @bp.route("/persons/<string:person_id>", methods=['GET'])
-@required_auth("user")
+#@required_auth("user")
 def get_person_info(person_id):
     try:
         person = Person.objects.get({"_id": ObjectId(person_id)})
