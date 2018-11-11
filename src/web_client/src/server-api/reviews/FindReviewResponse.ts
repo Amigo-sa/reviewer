@@ -1,15 +1,7 @@
 import Response from "../Response";
-import Person from "../persons/Person";
+import Review from "./Review";
 
-interface IReviewItemList {
-    id: string;
-    topic: string;
-    description: string;
-    value: string;
-    reviewer: Person;
-}
-
-export default class FindReviewResponse extends Response {
+export default class FindReviewsResponse extends Response {
     public length: number;
-    public list?: IReviewItemList[];
+    public list?: Review[];
 }

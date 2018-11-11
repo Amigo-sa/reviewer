@@ -57,6 +57,7 @@ class PersonalPage extends React.Component<IProps> {
                     </Grid>
                     <ReviewsComponent
                         isCurrentPerson={this._personalPageVM.isCurrentPerson}
+                        personId={this._personalPageVM.personId}
                         viewModel={this._personalPageVM.reviewsVM} />
                 </Grid>
                 <Footer />

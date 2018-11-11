@@ -1,5 +1,6 @@
-
 import * as React from "react";
+import { withRouter, RouteComponentProps } from "react-router";
+
 import {
     Grid,
     Typography,
@@ -16,14 +17,13 @@ import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import Person from "src/server-api/persons/Person";
 
 import { inject, observer } from "mobx-react";
+
 import { UsersStore } from "src/stores/UsersStore";
 import { SpecializationsStore } from "src/stores/SpecializationsStore";
+import { ReviewsStore } from "src/stores/ReviewsStore";
 
-import ReviewsApi from "src/server-api/reviews/ReviewsApi";
-import PostReviewRequest from "src/server-api/reviews/PostReviewRequest";
-import PostReviewResponse from "src/server-api/reviews/PostReviewResponse";
-import { withRouter, RouteComponentProps } from "react-router";
 import PersonSpecialization, { PersonSpecializationList } from "src/server-api/persons/PersonSpecialization";
+import { urlReviewList } from ".";
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -45,6 +45,7 @@ interface IDetailParams {
 interface IReviewPageProps extends WithStyles<typeof styles> {
     usersStore?: UsersStore;
     specializationsStore?: SpecializationsStore;
+    reviewsStore?: ReviewsStore;
 }
 
 interface IState {
@@ -53,13 +54,16 @@ interface IState {
     submitInProgress: boolean;
     loadingError: string;
     specializationId: string;
-    review: PostReviewRequest;
     specializations?: PersonSpecializationList;
     loadingSpecialization: boolean;
+
+    topic: string;
+    description: string;
+    value: string;
 }
 
 // TODO: add state interface
-@inject("usersStore", "specializationsStore")
+@inject("usersStore", "specializationsStore", "reviewsStore")
 @observer
 class CreateReview extends React.Component<IReviewPageProps & RouteComponentProps<IDetailParams>, IState> {
 
@@ -68,8 +72,10 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
         submitInProgress: false,
         loadingError: "",
         specializationId: "",
-        review: new PostReviewRequest(),
         loadingSpecialization: false,
+        topic: "",
+        description: "",
+        value: "",
     };
 
     get injected() {
@@ -92,7 +98,9 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
         const { classes } = this.props;
         const {
             person,
-            review,
+            topic,
+            description,
+            value,
             specializationId,
             specializations,
             loading,
@@ -113,8 +121,8 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
                         id="topic"
                         placeholder="Заголовок"
                         required={true}
-                        value={review.topic}
-                        onChange={this._handleChange("topic")}
+                        value={topic}
+                        onChange={(event) => this.setState({ topic: event.target.value })}
                     />
                 </Grid>
                 <Grid item className={classes.row} xs={12}>
@@ -142,25 +150,31 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
                     <TextField
                         id="description"
                         placeholder="Описание"
-                        value={review.description}
+                        value={description}
                         required={true}
-                        onChange={this._handleChange("description")}
+                        onChange={(event) => this.setState({ description: event.target.value })}
                     />
                 </Grid>
                 <Grid item className={classes.row} xs={12}>
                     <Select
                         id="value"
-                        value={review.value || false}
+                        value={value || false}
                         required={true}
-                        onChange={this._handleChange("value")}
+                        onChange={(event) => {
+                            this.setState({ value: event.target.value });
+                        }}
                     >
                         <MenuItem value="">Выберите оценку</MenuItem>
-                        <MenuItem value="0">0</MenuItem>
-                        <MenuItem value="20">1</MenuItem>
-                        <MenuItem value="40">2</MenuItem>
-                        <MenuItem value="60">3</MenuItem>
-                        <MenuItem value="80">4</MenuItem>
-                        <MenuItem value="100">5</MenuItem>
+                        <MenuItem value="1">1</MenuItem>
+                        <MenuItem value="2">2</MenuItem>
+                        <MenuItem value="3">3</MenuItem>
+                        <MenuItem value="4">4</MenuItem>
+                        <MenuItem value="5">5</MenuItem>
+                        <MenuItem value="6">6</MenuItem>
+                        <MenuItem value="7">7</MenuItem>
+                        <MenuItem value="8">8</MenuItem>
+                        <MenuItem value="9">9</MenuItem>
+                        <MenuItem value="10">10</MenuItem>
                     </Select>
                 </Grid>
                 <Grid item className={classes.row} xs={12}>
@@ -219,43 +233,41 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
 
     // #TODO check fields error before submit
     private _checkErrors(): boolean {
-        const { review } = this.state;
-        if (!review.topic || !review.description || !review.value) {
+        const { topic, description, value } = this.state;
+        if (!topic || !description || !value) {
             return true;
         }
         return false;
     }
 
-    private _handleChange = (name: string) => (event: any) => {
-        const { review } = this.state;
-        review[name] = event.target.value;
-        this.setState({ review });
-    }
-
-    private _submitReview = (): boolean => {
-        const { review, specializationId } = this.state;
+    private _submitReview = (): void => {
+        const { topic, description, value, specializationId } = this.state;
+        const { reviewsStore } = this.injected;
         if (this._checkErrors() !== false) {
             // #TODO подсветка полей с ошибками
             alert("Ошибки при запонлении отзыва");
-            return false;
         }
 
         this.setState({ submitInProgress: true, loadingError: "" });
         // #TODO переделать на вызов ReviewsStore add review
-        ReviewsApi.addReview(specializationId, review)
-            .then((res: PostReviewResponse) => {
-                console.log(`Create new review with id ${res.id}`);
-                /*if (res.id) {
-                    this.props.history.replace(`/reviews/view/${res.id}`);
-                } else {
-                    this.props.history.goBack();
-                }*/
-            })
-            .catch((err: any) => {
-                console.log(`Something go wrong!`, err);
-                this.setState({ submitInProgress: false, loadingError: err });
-            });
-        return true;
+        if (reviewsStore) {
+
+            reviewsStore.addReview(specializationId, topic, description, parseInt(value, 10))
+                .then((id: string) => {
+                    console.log("Успешно оставлен отзыв", id);
+                    const { person } = this.state;
+                    if (person) {
+                        this.props.history.push(urlReviewList(person.id));
+                    }
+                    this.setState({ submitInProgress: false });
+                })
+                .catch((err: any) => {
+                    console.log(`Something go wrong!`, err);
+                    this.setState({ submitInProgress: false, loadingError: err });
+                });
+        } else {
+            this.setState({ submitInProgress: false, loadingError: "невозможно отправить отзыв" });
+        }
     }
 
 }

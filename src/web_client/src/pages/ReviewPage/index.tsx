@@ -23,7 +23,7 @@ class Reviews extends React.Component<any> {
                     <Grid item xs={10}>
                         <Switch>
                             <Route exact path="/reviews" component={ViewReviews} />
-                            <Route path="/reviews/:id" component={ViewReviews} />
+                            <Route exact path="/reviews/:id" component={ViewReviews} />
                             <Route path="/reviews/view/:id" component={ViewReview} />
                         </Switch>
                     </Grid>
@@ -37,6 +37,6 @@ class Reviews extends React.Component<any> {
 export const urlReviewNew =
     (personalId: string, specializationId?: string) => `/personal/${personalId}/review/${specializationId || ""}`;
 export const urlReviewView = (reviewId: string) => `/reviews/view/${reviewId}`;
-export const urlReviewList = (personalId: string) => `/reviews/list/${personalId}`;
+export const urlReviewList = (personalId?: string) => `/reviews/${personalId || ""}`;
 
 export default Reviews;

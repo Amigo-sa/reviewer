@@ -4,7 +4,7 @@ import GetReviewInfoResponse from "./GetReviewInfoResponse";
 import PostReviewResponse from "./PostReviewResponse";
 import PostReviewRequest from "./PostReviewRequest";
 import FindReviewRequest from "./FindReviewsRequest";
-import FindReviewResponse from "./FindReviewResponse";
+import FindReviewsResponse from "./FindReviewResponse";
 
 export default class ReviewsApi {
 
@@ -19,9 +19,9 @@ export default class ReviewsApi {
         return ServerApiHelper.makeGetRequest<GetReviewInfoResponse>(null, url);
     }
 
-    public static findSpecializationReview(review: FindReviewRequest): Promise<FindReviewResponse> {
+    public static findSpecializationReview(review: FindReviewRequest): Promise<FindReviewsResponse> {
         const url = SERVER_HOST + "/reviews";
-        return ServerApiHelper.makeGetRequest<FindReviewResponse>(review, url);
+        return ServerApiHelper.makeGetRequest<FindReviewsResponse>(review, url);
     }
 
 }

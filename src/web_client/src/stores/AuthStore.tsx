@@ -2,13 +2,14 @@ import { action, observable } from "mobx";
 import RegistrationApi from "src/server-api/registration/RegistrationApi";
 import PersonsApi from "src/server-api/persons/PersonsApi";
 import UserLoginRequest from "src/server-api/registration/UserLoginRequest";
-import UserLoginResponse from "../server-api/registration/UserLoginResponse";
+import UserLoginResponse from "src/server-api/registration/UserLoginResponse";
+import Person from "src/server-api/persons/Person";
 
 export interface IUserData {
     phone: string;
     token: string | undefined;
     uid?: string;
-    data?: object;
+    data?: Person;
 }
 
 export class AuthStore {
@@ -89,9 +90,9 @@ export class AuthStore {
             if (this.user.uid) {
                 resultPromise = new Promise<IUserData>((resolve, reject) => {
                     PersonsApi.getPersonInfo(this.user.uid!)
-                        .then((data) => {
-                            console.log("Person", data);
-                            this.user.data = data;
+                        .then((result) => {
+                            console.log("Load Person", result);
+                            this.user.data = result.data;
                             resolve(this.user);
                         })
                         .catch((err) => {

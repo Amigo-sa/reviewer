@@ -5,5 +5,5 @@ export const REDIRECT_TO_LOGIN: string = "/";
 export const REDIRECT_TO_AFTER_LOGIN: string = "/add-survey";
 
 // TODO: use constant with {0}. Need to add substitute method to StringHelper
-export const personUrlById = (id: string) => "/personal/" + id;
+export const personUrlById = (id?: string) => `/personal/${id || ""}`;
 export const PERSON_URL: string = "/personal/{0}";
