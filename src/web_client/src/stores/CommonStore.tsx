@@ -1,4 +1,3 @@
-import { observable, action } from "mobx";
 import Specialization from "../server-api/specializations/Specialization";
 import SpecializationsApi from "../server-api/specializations/SpecializationsApi";
 import GetSpecializationsListResponse from "../server-api/specializations/GetSpecializationsListResponse";
@@ -12,36 +11,30 @@ import GetSkillsListResponse from "src/server-api/skills/GetSkillsListResponse";
 */
 
 export class CommonStore {
-    @observable
     public specializationList: Specialization[] = [];
-    @observable
     public softSkillList: Skill[] = [];
-    @observable
     public hardSkillList: Skill[] = [];
 
-    constructor() {
-        console.debug("Construct CommonStore");
-    }
-
-    @action
-    public loadData() {
+    public loadData(): Promise<any> {
         // Загрузка всех специализаций
-        SpecializationsApi.loadList()
-            .then(action((result: GetSpecializationsListResponse) => {
+        const loadSpecializations = SpecializationsApi.loadList()
+            .then((result: GetSpecializationsListResponse) => {
                 this.specializationList = result.list || [];
-            }));
+            });
 
         // Загрузка всех личностных характеристик
-        SkillsApi.loadSoftSkillsList()
-            .then(action((result: GetSkillsListResponse) => {
+        const loadSoftSkills = SkillsApi.loadSoftSkillsList()
+            .then((result: GetSkillsListResponse) => {
                 this.softSkillList = result.list || [];
-            }));
+            });
 
         // Загрузка всех профессиональных навыков
-        SkillsApi.loadHardSkillsList()
-            .then(action((result: GetSkillsListResponse) => {
+        const loadHardSkills = SkillsApi.loadHardSkillsList()
+            .then((result: GetSkillsListResponse) => {
                 this.hardSkillList = result.list || [];
-            }));
+            });
+
+        return Promise.all([loadSpecializations, loadSoftSkills, loadHardSkills]);
     }
 }
 

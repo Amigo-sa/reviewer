@@ -12,82 +12,103 @@ import AuthorizationUIHelper from "./AuthorizationUIHelper";
 import authStore from "./stores/AuthStore";
 import Grid from "@material-ui/core/Grid";
 import commonStore from "./stores/CommonStore";
-import CommonUIHelper from "./CommonUIHelper";
 import Reviews from "./pages/ReviewPage";
 import CreateReviewPage from "./pages/ReviewPage/CreateReviewPage";
+import { LinearProgress } from "@material-ui/core";
 
 const authUIHelper = new AuthorizationUIHelper(authStore);
-const commonUIHelper = new CommonUIHelper(commonStore);
 
-class App extends React.Component<any> {
+interface IState {
+    loaded: boolean;
+}
 
-    public componentWillMount() {
-        // TODO: а если это займет много времени, как пользователя будет оповещать об этом?
-        commonUIHelper.tryLoadData();
-        authUIHelper.tryAuthenticate();
+class App extends React.Component<any, IState> {
+
+    public state = {
+        loaded: false,
+    };
+
+    public componentDidMount() {
+
+        const loadCommonData = commonStore.loadData();
+        const makeAuthorization = authStore.authenticate("78005553535", "12345678");
+
+        Promise.all([loadCommonData, makeAuthorization]).then(() => {
+            this.setState({ loaded: true });
+        },
+            () => {
+                console.error("Inital loading error");
+            });
     }
 
     public render() {
-        return (
-            <div
-                style={{
-                    maxWidth: 1440,
-                    minHeight: "100%",
-                    margin: "0px auto",
-                }}
-            >
-                <Grid container>
-                    <Switch>
-                        <Route exact path="/" component={Main} />
-                        <Route path="/login" component={LoginPage} />
-                        {/* Change to private router */}
-                        <PrivateRoute
-                            exact
-                            path="/personal"
-                            component={PersonalPage}
-                            authHelper={authUIHelper}
-                        />
-                        {/* TODO необходимо переносить роуты внутрь управляющих страниц! */}
-                        <PrivateRoute
-                            exact
-                            path="/personal/:id/review"
-                            component={CreateReviewPage}
-                            authHelper={authUIHelper}
-                        />
-                        <PrivateRoute
-                            path="/personal/:id/review/:specid"
-                            component={CreateReviewPage}
-                            authHelper={authUIHelper}
-                        />
-                        <PrivateRoute
-                            path="/personal/:id"
-                            component={PersonalPage}
-                            authHelper={authUIHelper}
-                        />
-                        <PrivateRoute
-                            path="/reviews"
-                            component={Reviews}
-                            authHelper={authUIHelper}
-                        />
-                        <PrivateRoute
-                            path="/search-peoples"
-                            component={SearchPeoplePage}
-                            authHelper={authUIHelper}
-                        />
-                        <PrivateRoute
-                            path="/search-structures"
-                            component={SearchStructuresPage}
-                            authHelper={authUIHelper}
-                        />
-                        <PrivateRoute
-                            path="/add-survey"
-                            component={AddSurveyPage}
-                            authHelper={authUIHelper}
-                        />
-                    </Switch>
-                </Grid>
-            </div>
-        );
+        if (this.state.loaded) {
+            // If all initial data is loaded, then show application UI
+            return (
+                <div
+                    style={{
+                        maxWidth: 1440,
+                        minHeight: "100%",
+                        margin: "0px auto",
+                    }}
+                >
+                    <Grid container>
+                        <Switch>
+                            <Route exact path="/" component={Main} />
+                            <Route path="/login" component={LoginPage} />
+                            {/* Change to private router */}
+                            <PrivateRoute
+                                exact
+                                path="/personal"
+                                component={PersonalPage}
+                                authHelper={authUIHelper}
+                            />
+                            {/* TODO необходимо переносить роуты внутрь управляющих страниц! */}
+                            {/* TODO: why do we use review url for current user? */}
+                            <PrivateRoute
+                                exact
+                                path="/personal/:id/review"
+                                component={CreateReviewPage}
+                                authHelper={authUIHelper}
+                            />
+                            <PrivateRoute
+                                path="/personal/:id/review/:specid"
+                                component={CreateReviewPage}
+                                authHelper={authUIHelper}
+                            />
+                            <PrivateRoute
+                                path="/personal/:id"
+                                component={PersonalPage}
+                                authHelper={authUIHelper}
+                            />
+                            <PrivateRoute
+                                path="/reviews"
+                                component={Reviews}
+                                authHelper={authUIHelper}
+                            />
+                            <PrivateRoute
+                                path="/search-peoples"
+                                component={SearchPeoplePage}
+                                authHelper={authUIHelper}
+                            />
+                            <PrivateRoute
+                                path="/search-structures"
+                                component={SearchStructuresPage}
+                                authHelper={authUIHelper}
+                            />
+                            <PrivateRoute
+                                path="/add-survey"
+                                component={AddSurveyPage}
+                                authHelper={authUIHelper}
+                            />
+                        </Switch>
+                    </Grid>
+                </div>
+            );
+        } else {
+            // Initial data is not loaded yet, show progress info
+            return (<LinearProgress />);
+        }
     }
 }
 
