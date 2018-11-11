@@ -6,6 +6,7 @@ import UserLoginResponse from "../server-api/registration/UserLoginResponse";
 
 export interface IUserData {
     phone: string;
+    token: string | undefined;
     uid?: string;
     data?: object;
 }
@@ -16,6 +17,7 @@ export class AuthStore {
     @observable
     public user: IUserData = {
         phone: "",
+        token: undefined,
         uid: undefined,
         data: undefined,
     };
@@ -64,6 +66,7 @@ export class AuthStore {
     @action
     private setUser(responce: UserLoginResponse) {
         this.user.uid = responce.person_id;
+        this.user.token = responce.session_id;
         localStorage.setItem("User", JSON.stringify(this.user));
     }
 
