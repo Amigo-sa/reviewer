@@ -87,7 +87,12 @@ export default class ServerApiHelper {
 
         // create headers
         const headers = new Object();
-
+        if (isAuth) {
+            const user = JSON.parse(localStorage.getItem("User") || "");
+            if (user.token) {
+                headers["Authorization"] = "Barrier " + user.token;
+            }
+        }
         // create promise base on Axios http request
         const result = new Promise<Response>((resolve, reject) => {
             axios({

@@ -37,7 +37,7 @@ export default class PersonsApi {
 
     public static getPersonInfo(personId: string): Promise<GetPersonInfoResponse> {
         const url = SERVER_HOST + "/persons/" + personId;
-        return ServerApiHelper.makeGetRequest<GetPersonInfoResponse>(null, url);
+        return ServerApiHelper.makeGetRequest<GetPersonInfoResponse>(null, url, true);
     }
 
     public static getPersonSpecializations(personId: string): Promise<GetPersonsSpecializationsResponse> {
