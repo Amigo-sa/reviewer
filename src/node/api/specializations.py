@@ -14,7 +14,7 @@ bp = Blueprint('specializations', __name__)
 @required_auth("admin")
 def add_specializations():
     return add_resource(Specialization,
-                        ["type"],
+                        ["type", "display_text"],
                         optional_fields=["detail"])
 
 
@@ -29,7 +29,8 @@ def list_specializations():
     return list_resources(Specialization,
                           {"id": "_id",
                            "type": "type",
-                           "detail": "detail"})
+                           "detail": "detail",
+                           "display_text": "display_text"})
 
 
 @bp.route("/persons/<string:id>/specializations", methods=['POST'])
@@ -81,7 +82,8 @@ def get_person_specializations(id):
                      "department_name": department.name,
                      "level": round(p_spec.level,1) if p_spec.level else None,
                      "specialization_type": p_spec.specialization_id.type,
-                     "is_active": str(p_spec.is_active)
+                     "is_active": str(p_spec.is_active),
+                     "display_text": p_spec.specialization_id.display_text
                      }
                 if p_spec.specialization_id.detail: d.update({"specialization_detail": p_spec.specialization_id.detail})
                 if p_spec.details: d.update({"additional_details": p_spec.details})

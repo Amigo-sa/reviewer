@@ -197,7 +197,7 @@ def get_review_info(id):
     return jsonify(result), 200
 
 
-def get_subject_name(subj_cls, subj_id):
+def get_subject_display_text(subj_cls, subj_id):
     subject = subj_cls.objects.get({"_id": ObjectId(subj_id)})
     parent_fields = {"PersonSpecialization": "specialization_id",
                      "PersonSS": "ss_id",
@@ -205,10 +205,7 @@ def get_subject_name(subj_cls, subj_id):
     parent_id = getattr(subject, parent_fields[subj_cls.__name__])
     parent_cls = parent_id.__class__
     parent_obj = parent_cls.objects.get({"_id": ObjectId(parent_id.pk)})
-    if parent_cls == Specialization:
-        return parent_obj.type
-    else:
-        return parent_obj.name
+    return parent_obj.display_text
 
 
 def get_review_info_dict(review):
@@ -220,8 +217,7 @@ def get_review_info_dict(review):
                       "surname": reviewer.surname,
                       "middle_name": reviewer.middle_name},
          "subject": {"id": str(review.subject_id.pk),
-                     "name": get_subject_name(subj_cls, review.subject_id.pk),
-                     "display_text": "Здесь будет читабельное название объекта отзыва"},
+                     "display_text": get_subject_display_text(subj_cls, review.subject_id.pk)},
          "topic": review.topic,
          "value": round(review.value,1),
          "description": review.description,

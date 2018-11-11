@@ -826,18 +826,19 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "b5622f30-57a5-4da5-8bdc-e371c91c17e0",
-								"type": "text/javascript",
 								"exec": [
 									"pm.environment.set(\"phone_no\", \"79032233223\");",
-									"pm.environment.set(\"password\", \"SomeSecurePass\");"
-								]
+									"pm.environment.set(\"password\", \"SomeSecurePass\");",
+									"//pm.environment.set(\"phone_no\", \"78005553535\");",
+									"//pm.environment.set(\"password\", \"12345678\");"
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "45258049-9d66-4668-ac26-8f247e956c90",
-								"type": "text/javascript",
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
 									"tests[\"Contains an access_token\"] = jsonData.hasOwnProperty('session_id');",
@@ -845,7 +846,8 @@
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
 									"postman.setEnvironmentVariable(\"auth_token\", jsonData.session_id);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -4123,15 +4125,10 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/specializations",
-									"protocol": "http",
+									"raw": "{{server_url}}/specializations",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{server_url}}"
 									],
-									"port": "5000",
 									"path": [
 										"specializations"
 									]
@@ -4142,32 +4139,24 @@
 							"_postman_previewlanguage": "json",
 							"header": [
 								{
-									"key": "Content-Length",
-									"value": "487",
-									"name": "Content-Length",
-									"description": "The length of the response body in octets (8-bit bytes)"
-								},
-								{
 									"key": "Content-Type",
-									"value": "application/json",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
+									"value": "application/json"
 								},
 								{
-									"key": "Date",
-									"value": "Fri, 24 Aug 2018 18:05:24 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
+									"key": "Content-Length",
+									"value": "1034"
 								},
 								{
 									"key": "Server",
-									"value": "Werkzeug/0.14.1 Python/3.6.5",
-									"name": "Server",
-									"description": "A name for the server"
+									"value": "Werkzeug/0.14.1 Python/3.6.5"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 11 Nov 2018 07:18:51 GMT"
 								}
 							],
 							"cookie": [],
-							"body": "{\"list\":[{\"detail\":\"\\u0422\\u041e\\u042d\",\"id\":\"5b803b932131370554f2f2fe\",\"type\":\"Tutor\"},{\"detail\":\"\\u041c\\u0438\\u043a\\u0440\\u043e\\u043f\\u0440\\u043e\\u0441\\u0435\\u0441\\u0441\\u043e\\u0440\\u043d\\u044b\\u0435 \\u0441\\u0438\\u0441\\u0442\\u0435\\u043c\\u044b\",\"id\":\"5b803b932131370554f2f2ff\",\"type\":\"Tutor\"},{\"detail\":\"\\u041c\\u0435\\u0442\\u0440\\u043e\\u043b\\u043e\\u0433\\u0438\\u044f\",\"id\":\"5b803b932131370554f2f300\",\"type\":\"Lab assistant\"},{\"id\":\"5b803b932131370554f2f301\",\"type\":\"Student\"}],\"result\":0}\n"
+							"body": "{\n    \"list\": [\n        {\n            \"detail\": \"ТОЭ\",\n            \"display_text\": \"Преподаватель, ТОЭ\",\n            \"id\": \"5be7d62921313707f4d15522\",\n            \"type\": \"Tutor\"\n        },\n        {\n            \"detail\": \"Микропросессорные системы\",\n            \"display_text\": \"Преподаватель, Микропросессорные системы\",\n            \"id\": \"5be7d62921313707f4d15523\",\n            \"type\": \"Tutor\"\n        },\n        {\n            \"detail\": \"Метрология\",\n            \"display_text\": \"Лаборант, Метрология\",\n            \"id\": \"5be7d62921313707f4d15524\",\n            \"type\": \"Lab assistant\"\n        },\n        {\n            \"display_text\": \"Студент\",\n            \"id\": \"5be7d62921313707f4d15525\",\n            \"type\": \"Student\"\n        }\n    ],\n    \"result\": 0\n}"
 						}
 					]
 				},
@@ -4421,7 +4410,7 @@
 					},
 					"response": [
 						{
-							"name": "get_person_specializations_inactive_student",
+							"name": "get_person_specializations",
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
@@ -4430,18 +4419,13 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/persons/5b8295642131370144243ab9/specializations",
-									"protocol": "http",
+									"raw": "{{server_url}}/persons/{{person_id}}/specializations",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{server_url}}"
 									],
-									"port": "5000",
 									"path": [
 										"persons",
-										"5b8295642131370144243ab9",
+										"{{person_id}}",
 										"specializations"
 									]
 								}
@@ -4451,90 +4435,24 @@
 							"_postman_previewlanguage": "json",
 							"header": [
 								{
-									"key": "Content-Length",
-									"value": "245",
-									"name": "Content-Length",
-									"description": "The length of the response body in octets (8-bit bytes)"
-								},
-								{
 									"key": "Content-Type",
-									"value": "application/json",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
+									"value": "application/json"
 								},
 								{
-									"key": "Date",
-									"value": "Sun, 26 Aug 2018 12:24:21 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
+									"key": "Content-Length",
+									"value": "831"
 								},
 								{
 									"key": "Server",
-									"value": "Werkzeug/0.14.1 Python/3.6.5",
-									"name": "Server",
-									"description": "A name for the server"
-								}
-							],
-							"cookie": [],
-							"body": "{\"list\":[{\"additional_details\":{\"graduation\":\"\\u043e\\u043a\\u043e\\u043d\\u0447\\u0438\\u043b\"},\"department_id\":\"5b82943a21313712e8ee61af\",\"id\":\"5b82943b21313712e8ee61f6\",\"is_active\":\"False\",\"level\":null,\"specialization_type\":\"Student\"}],\"result\":0}\n"
-						},
-						{
-							"name": "get_person_specializations_tutor",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/persons/5b8295642131370144243ab9/specializations",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"persons",
-										"5b8295642131370144243ab9",
-										"specializations"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Length",
-									"value": "780",
-									"name": "Content-Length",
-									"description": "The length of the response body in octets (8-bit bytes)"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
+									"value": "Werkzeug/0.14.1 Python/3.6.5"
 								},
 								{
 									"key": "Date",
-									"value": "Sun, 26 Aug 2018 12:25:24 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Server",
-									"value": "Werkzeug/0.14.1 Python/3.6.5",
-									"name": "Server",
-									"description": "A name for the server"
+									"value": "Sun, 11 Nov 2018 07:20:24 GMT"
 								}
 							],
 							"cookie": [],
-							"body": "{\"list\":[{\"department_id\":\"5b82943a21313712e8ee61af\",\"id\":\"5b8297542131370144243abd\",\"is_active\":\"True\",\"level\":93.11,\"specialization_detail\":\"\\u041c\\u0438\\u043a\\u0440\\u043e\\u043a\\u043e\\u043d\\u0442\\u0440\\u043e\\u043b\\u043b\\u0435\\u0440\\u044b\",\"specialization_type\":\"Tutor\"},{\"department_id\":\"5b82943a21313712e8ee61af\",\"id\":\"5b82943b21313712e8ee61f1\",\"is_active\":\"True\",\"level\":70.0,\"specialization_detail\":\"\\u041c\\u0438\\u043a\\u0440\\u043e\\u043f\\u0440\\u043e\\u0441\\u0435\\u0441\\u0441\\u043e\\u0440\\u043d\\u044b\\u0435 \\u0441\\u0438\\u0441\\u0442\\u0435\\u043c\\u044b\",\"specialization_type\":\"Tutor\"},{\"department_id\":\"5b82943a21313712e8ee61af\",\"id\":\"5b82943b21313712e8ee61f3\",\"is_active\":\"True\",\"level\":45.0,\"specialization_detail\":\"\\u0422\\u041e\\u042d\",\"specialization_type\":\"Tutor\"}],\"result\":0}\n"
+							"body": "{\n    \"list\": [\n        {\n            \"additional_details\": {\n                \"graduation\": \"окончил\"\n            },\n            \"department_id\": \"5be7d62521313707f4d153a8\",\n            \"department_name\": \"Кафедра ИИТ\",\n            \"display_text\": \"Студент\",\n            \"id\": \"5be7d62921313707f4d15529\",\n            \"is_active\": \"False\",\n            \"level\": null,\n            \"specialization_type\": \"Student\"\n        },\n        {\n            \"department_id\": \"5be7d62521313707f4d153a8\",\n            \"department_name\": \"Кафедра ИИТ\",\n            \"display_text\": \"Лаборант, Метрология\",\n            \"id\": \"5be7d62921313707f4d1552a\",\n            \"is_active\": \"True\",\n            \"level\": null,\n            \"specialization_detail\": \"Метрология\",\n            \"specialization_type\": \"Lab assistant\"\n        }\n    ],\n    \"result\": 0\n}"
 						}
 					]
 				},
@@ -4809,8 +4727,8 @@
 							"script": {
 								"id": "dfb8bd2e-741f-4842-9f0d-a906da6d01d2",
 								"exec": [
-									"pm.environment.set(\"person_specialization_id\", \"5bd0bfe9213137109c90b6f0\");",
-									"pm.environment.set(\"value\",90.0);",
+									"pm.environment.set(\"person_specialization_id\", \"5be6d46021313716802608db\");",
+									"pm.environment.set(\"value\",5);",
 									"pm.environment.set(\"topic\", \"Тема отзыва\");",
 									"pm.environment.set(\"description\", \"Классный чел\");"
 								],
@@ -5512,13 +5430,13 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{server_url}}/reviews/5bcf5d322131370d244777a5",
+									"raw": "{{server_url}}/reviews/5be6f3b52131371ba46334b3",
 									"host": [
 										"{{server_url}}"
 									],
 									"path": [
 										"reviews",
-										"5bcf5d322131370d244777a5"
+										"5be6f3b52131371ba46334b3"
 									]
 								}
 							},
@@ -5532,7 +5450,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "488"
+									"value": "840"
 								},
 								{
 									"key": "Server",
@@ -5540,11 +5458,11 @@
 								},
 								{
 									"key": "Date",
-									"value": "Tue, 23 Oct 2018 18:01:32 GMT"
+									"value": "Sat, 10 Nov 2018 15:08:15 GMT"
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"data\": {\n        \"description\": \"Описание отзыва Дунаев на Employee Discipline пользователя Панкин\",\n        \"id\": \"5be5d2ae21313703f89b87ec\",\n        \"reviewer\": {\n            \"first_name\": \"Леонид\",\n            \"id\": \"5be5d2ac21313703f89b872e\",\n            \"middle_name\": \"Александрович\",\n            \"surname\": \"Дунаев\"\n        },\n        \"subject\": {\n            \"display_text\": \"Здесь будет читабельное название объекта отзыва\",\n            \"id\": \"5be5d2ad21313703f89b877f\",\n            \"name\": \"Employee Discipline\"\n        },\n        \"topic\": \"Тема отзыва\",\n        \"value\": 0.5460937021854129\n    },\n    \"result\": 0\n}"
+							"body": "{\n    \"data\": {\n        \"date\": \"2001-05-01\",\n        \"description\": \"Это просто чудо какое-то!\",\n        \"id\": \"5be6f3b52131371ba46334b3\",\n        \"reviewer\": {\n            \"first_name\": \"Леонид\",\n            \"id\": \"5be6f3b02131371ba4633309\",\n            \"middle_name\": \"Александрович\",\n            \"surname\": \"Дунаев\"\n        },\n        \"subject\": {\n            \"display_text\": \"Здесь будет читабельное название объекта отзыва\",\n            \"id\": \"5be6f3b52131371ba4633494\",\n            \"name\": \"Tutor\"\n        },\n        \"topic\": \"Тема\",\n        \"value\": 100\n    },\n    \"result\": 0\n}"
 						}
 					]
 				},
@@ -5625,7 +5543,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{server_url}}/reviews?reviewer_id=5be5d2ac21313703f89b872e&person_id=5be5d2ac21313703f89b8730&query_start=0&query_limit=10&type=specialization&type=soft_skill&type=hard_skill",
+									"raw": "{{server_url}}/reviews?reviewer_id=5be6f3b02131371ba4633309&person_id=5be6f3b02131371ba463330f&query_start=0&query_limit=10&type=specialization&type=soft_skill&type=hard_skill",
 									"host": [
 										"{{server_url}}"
 									],
@@ -5635,11 +5553,11 @@
 									"query": [
 										{
 											"key": "reviewer_id",
-											"value": "5be5d2ac21313703f89b872e"
+											"value": "5be6f3b02131371ba4633309"
 										},
 										{
 											"key": "person_id",
-											"value": "5be5d2ac21313703f89b8730"
+											"value": "5be6f3b02131371ba463330f"
 										},
 										{
 											"key": "query_start",
@@ -5674,7 +5592,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "3216"
+									"value": "2114"
 								},
 								{
 									"key": "Server",
@@ -5682,11 +5600,11 @@
 								},
 								{
 									"key": "Date",
-									"value": "Fri, 09 Nov 2018 18:44:48 GMT"
+									"value": "Sat, 10 Nov 2018 15:06:27 GMT"
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"length\": 3,\n    \"list\": [\n        {\n            \"description\": \"Описание дизлайка Дунаев на Постоянное саморазвитие пользователя Ерин\",\n            \"id\": \"5be5d2af21313703f89b8831\",\n            \"reviewer\": {\n                \"first_name\": \"Леонид\",\n                \"id\": \"5be5d2ac21313703f89b872e\",\n                \"middle_name\": \"Александрович\",\n                \"surname\": \"Дунаев\"\n            },\n            \"subject\": {\n                \"display_text\": \"Здесь будет читабельное название объекта отзыва\",\n                \"id\": \"5be5d2ad21313703f89b8774\",\n                \"name\": \"Постоянное саморазвитие\"\n            },\n            \"topic\": \"Тема отзыва\",\n            \"value\": 0\n        },\n        {\n            \"description\": \"Описание отзыва Дунаев на Cost Control пользователя Ерин\",\n            \"id\": \"5be5d2ae21313703f89b87ee\",\n            \"reviewer\": {\n                \"first_name\": \"Леонид\",\n                \"id\": \"5be5d2ac21313703f89b872e\",\n                \"middle_name\": \"Александрович\",\n                \"surname\": \"Дунаев\"\n            },\n            \"subject\": {\n                \"display_text\": \"Здесь будет читабельное название объекта отзыва\",\n                \"id\": \"5be5d2ad21313703f89b8763\",\n                \"name\": \"Cost Control\"\n            },\n            \"topic\": \"Тема отзыва\",\n            \"value\": 64.92087663441096\n        },\n        {\n            \"description\": \"Описание отзыва Дунаев на Traffic Management пользователя Ерин\",\n            \"id\": \"5be5d2ae21313703f89b87f2\",\n            \"reviewer\": {\n                \"first_name\": \"Леонид\",\n                \"id\": \"5be5d2ac21313703f89b872e\",\n                \"middle_name\": \"Александрович\",\n                \"surname\": \"Дунаев\"\n            },\n            \"subject\": {\n                \"display_text\": \"Здесь будет читабельное название объекта отзыва\",\n                \"id\": \"5be5d2ad21313703f89b8775\",\n                \"name\": \"Traffic Management\"\n            },\n            \"topic\": \"Тема отзыва\",\n            \"value\": 99.65197026353744\n        }\n    ],\n    \"result\": 0\n}"
+							"body": "{\n    \"length\": 2,\n    \"list\": [\n        {\n            \"date\": \"2001-05-01\",\n            \"description\": \"Это просто чудо какое-то!\",\n            \"id\": \"5be6f3b52131371ba46334b3\",\n            \"reviewer\": {\n                \"first_name\": \"Леонид\",\n                \"id\": \"5be6f3b02131371ba4633309\",\n                \"middle_name\": \"Александрович\",\n                \"surname\": \"Дунаев\"\n            },\n            \"subject\": {\n                \"display_text\": \"Здесь будет читабельное название объекта отзыва\",\n                \"id\": \"5be6f3b52131371ba4633494\",\n                \"name\": \"Tutor\"\n            },\n            \"topic\": \"Тема\",\n            \"value\": 100\n        },\n        {\n            \"date\": \"2000-05-01\",\n            \"description\": \"Описание дизлайка Дунаев на Постоянное саморазвитие пользователя Анисимов\",\n            \"id\": \"5be6f3b52131371ba463348a\",\n            \"reviewer\": {\n                \"first_name\": \"Леонид\",\n                \"id\": \"5be6f3b02131371ba4633309\",\n                \"middle_name\": \"Александрович\",\n                \"surname\": \"Дунаев\"\n            },\n            \"subject\": {\n                \"display_text\": \"Здесь будет читабельное название объекта отзыва\",\n                \"id\": \"5be6f3b22131371ba463339a\",\n                \"name\": \"Постоянное саморазвитие\"\n            },\n            \"topic\": \"Тема отзыва\",\n            \"value\": 0\n        }\n    ],\n    \"result\": 0\n}"
 						}
 					]
 				}
@@ -5797,6 +5715,7 @@
 							"script": {
 								"id": "a4761cbf-841a-4727-80c2-f7bd99733d56",
 								"exec": [
+									"pm.environment.set(\"specialization_id\", \"5be70a8321313717cca7b7a3\");",
 									"pm.environment.set(\"group_id\", \"5b7c5e9f2131371aa8e1c6a9\");",
 									"pm.environment.set(\"department_id\", \"5bbf8a202131371808dcad57\");",
 									"pm.environment.set(\"organization_id\", \"5b82943a21313712e8ee61ae\");"
@@ -5813,7 +5732,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{server_url}}/persons?surname=Шат&first_name=ле&middle_name=МИ&specialization=Student&group_id={{group_id}}&department_id={{department_id}}&organization_id={{organization_id}}&query_limit=10&query_start=0",
+							"raw": "{{server_url}}/persons?surname=Шат&first_name=ле&middle_name=МИ&specialization_id={{specialization_id}}&group_id={{group_id}}&department_id={{department_id}}&organization_id={{organization_id}}&query_limit=10&query_start=0",
 							"host": [
 								"{{server_url}}"
 							],
@@ -5834,8 +5753,8 @@
 									"value": "МИ"
 								},
 								{
-									"key": "specialization",
-									"value": "Student"
+									"key": "specialization_id",
+									"value": "{{specialization_id}}"
 								},
 								{
 									"key": "group_id",
@@ -5949,7 +5868,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"length\": 9,\n    \"list\": [\n        {\n            \"department\": \"Кафедра ИИТ\",\n            \"first_name\": \"Леонид\",\n            \"id\": \"5bcf73ab2131370ca06df9f0\",\n            \"middle_name\": \"Александрович\",\n            \"organization_name\": \"МЭИ\",\n            \"photo\": true,\n            \"specialization\": \"Student\",\n            \"surname\": \"Дунаев\"\n        },\n        {\n            \"department\": \"Кафедра ИИТ\",\n            \"first_name\": \"Кирилл\",\n            \"id\": \"5bcf73ab2131370ca06df9f1\",\n            \"middle_name\": \"Владимирович\",\n            \"organization_name\": \"МЭИ\",\n            \"photo\": false,\n            \"specialization\": \"Student\",\n            \"surname\": \"Ярин\"\n        }\n    ],\n    \"result\": 0\n}"
+							"body": "{\n    \"length\": 9,\n    \"list\": [\n        {\n            \"department\": \"Кафедра ИИТ\",\n            \"first_name\": \"Леонид\",\n            \"id\": \"5bcf73ab2131370ca06df9f0\",\n            \"middle_name\": \"Александрович\",\n            \"organization_name\": \"МЭИ\",\n            \"photo\": true,\n            \"specialization_display_text\": \"Студент\",\n            \"surname\": \"Дунаев\"\n        },\n        {\n            \"department\": \"Кафедра ИИТ\",\n            \"first_name\": \"Кирилл\",\n            \"id\": \"5bcf73ab2131370ca06df9f1\",\n            \"middle_name\": \"Владимирович\",\n            \"organization_name\": \"МЭИ\",\n            \"photo\": false,\n            \"specialization_display_text\": \"Студент\",\n            \"surname\": \"Ярин\"\n        }\n    ],\n    \"result\": 0\n}"
 						}
 					]
 				},
@@ -6905,6 +6824,61 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"list\": [\n        {\n            \"hs_id\": \"5bcf561b2131371b5018d2b3\",\n            \"id\": \"5bcf561b2131371b5018d334\",\n            \"level\": \"63.72164851321669\"\n        },\n        {\n            \"hs_id\": \"5bcf561b2131371b5018d2ac\",\n            \"id\": \"5bcf561b2131371b5018d341\",\n            \"level\": \"79.56469699405665\"\n        },\n        {\n            \"hs_id\": \"5bcf561b2131371b5018d2a7\",\n            \"id\": \"5bcf561b2131371b5018d343\",\n            \"level\": \"52.19057464642232\"\n        },\n        {\n            \"hs_id\": \"5bcf561b2131371b5018d29f\",\n            \"id\": \"5bcf561b2131371b5018d33b\",\n            \"level\": \"25.089805384624697\"\n        },\n        {\n            \"hs_id\": \"5bcf561b2131371b5018d28f\",\n            \"id\": \"5bcf561b2131371b5018d339\",\n            \"level\": \"86.31254367244793\"\n        },\n        {\n            \"hs_id\": \"5bcf561a2131371b5018d265\",\n            \"id\": \"5bcf561b2131371b5018d33f\",\n            \"level\": \"79.34602624739982\"\n        },\n        {\n            \"hs_id\": \"5bcf561a2131371b5018d1f9\",\n            \"id\": \"5bcf561b2131371b5018d33d\",\n            \"level\": \"12.048955582998444\"\n        },\n        {\n            \"hs_id\": \"5bcf561a2131371b5018d1cc\",\n            \"id\": \"5bcf561b2131371b5018d335\",\n            \"level\": \"66.75497207994424\"\n        },\n        {\n            \"hs_id\": \"5bcf561a2131371b5018d1c4\",\n            \"id\": \"5bcf561b2131371b5018d332\",\n            \"level\": \"76.24232200989233\"\n        },\n        {\n            \"hs_id\": \"5bcf561a2131371b5018d1bd\",\n            \"id\": \"5bcf561b2131371b5018d337\",\n            \"level\": \"25.039289624147415\"\n        }\n    ],\n    \"result\": 0\n}"
+						},
+						{
+							"name": "find_person_hard_skills",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{server_url}}/persons/hard_skills?person_id=5be6d45b2131371680260757",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"persons",
+										"hard_skills"
+									],
+									"query": [
+										{
+											"key": "person_id",
+											"value": "5be6d45b2131371680260757"
+										},
+										{
+											"key": "hs_id",
+											"value": "{{hs_id}}",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "842"
+								},
+								{
+									"key": "Server",
+									"value": "Werkzeug/0.14.1 Python/3.6.5"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 10 Nov 2018 13:35:08 GMT"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"list\": [\n        {\n            \"hs_id\": \"5be6d45b21313716802606d7\",\n            \"id\": \"5be6d45c213137168026078c\",\n            \"level\": 41.8\n        },\n        {\n            \"hs_id\": \"5be6d45b21313716802606d2\",\n            \"id\": \"5be6d45c2131371680260796\",\n            \"level\": 57.8\n        },\n        {\n            \"hs_id\": \"5be6d45b21313716802606b0\",\n            \"id\": \"5be6d45c213137168026078a\",\n            \"level\": 30.7\n        },\n        {\n            \"hs_id\": \"5be6d45b2131371680260657\",\n            \"id\": \"5be6d45c2131371680260790\",\n            \"level\": 87.9\n        },\n        {\n            \"hs_id\": \"5be6d45b2131371680260627\",\n            \"id\": \"5be6d45c213137168026079a\",\n            \"level\": 64.2\n        },\n        {\n            \"hs_id\": \"5be6d45b2131371680260610\",\n            \"id\": \"5be6d45c2131371680260794\",\n            \"level\": 75.1\n        },\n        {\n            \"hs_id\": \"5be6d45b213137168026060e\",\n            \"id\": \"5be6d45c213137168026079c\",\n            \"level\": 96.7\n        },\n        {\n            \"hs_id\": \"5be6d45b213137168026060a\",\n            \"id\": \"5be6d45c213137168026078e\",\n            \"level\": 26.1\n        },\n        {\n            \"hs_id\": \"5be6d45b21313716802605f8\",\n            \"id\": \"5be6d45c2131371680260792\",\n            \"level\": 57.2\n        },\n        {\n            \"hs_id\": \"5be6d45b21313716802605f6\",\n            \"id\": \"5be6d45c2131371680260798\",\n            \"level\": 37.5\n        }\n    ],\n    \"result\": 0\n}"
 						}
 					]
 				},
@@ -9158,7 +9132,7 @@
 	],
 	"variable": [
 		{
-			"id": "46d3d67a-1b41-4cae-9a79-dac4fec0767b",
+			"id": "8decd5ba-34c7-49d0-a0fd-09bd381595c0",
 			"key": "server_url",
 			"value": "https://127.0.0.1:5000",
 			"type": "string"

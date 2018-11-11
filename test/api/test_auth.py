@@ -278,7 +278,8 @@ class TestAuth(unittest.TestCase):
 
         self.spec_id = hm.post_item(self, self.api_URL + "/specializations",
                                     {"type": "Tutor",
-                                     "detail": "TOE"})
+                                     "detail": "TOE",
+                                     "display_text": "Преподаватель ТОЭ"})
         self.user_spec_id = hm.post_item(self, self.api_URL + "/persons/%s/specializations" % self.user_person_id,
                                          {"department_id": self.dep_id,
                                           "specialization_id": self.spec_id

@@ -202,6 +202,7 @@ class TestApi(unittest.TestCase):
         hard_skill = model.HardSkill()
         hard_skill.name = "hs_name"
         hard_skill.skill_type_id = skill_type.pk
+        hard_skill.display_text = "hs_display_text"
         hard_skill.save()
         return [str(hard_skill.pk), {
             "name" : "hs_name",
@@ -216,6 +217,7 @@ class TestApi(unittest.TestCase):
         soft_skill.name = "ss_name"
         soft_skill.skill_type_id = skill_type.pk
         soft_skill.weight = 1
+        soft_skill.display_text = "ss_display_text"
         soft_skill.save()
         return [str(soft_skill.pk), {
             "name": "ss_name",
@@ -277,7 +279,7 @@ class TestApi(unittest.TestCase):
         skill_type = model.SkillType()
         skill_type.name = "sample_skill_type"
         skill_type.save()
-        post_data = {"name": "some_name", "weight": 1}
+        post_data = {"name": "some_name", "weight": 1, "display_text": "some_display_text"}
         ss_id = self.post_item("/skill_types/%s/soft_skills" % skill_type.pk, post_data)
         soft_skill = model.SoftSkill(_id=ss_id)
         soft_skill.refresh_from_db()
@@ -290,7 +292,7 @@ class TestApi(unittest.TestCase):
         skill_type = model.SkillType()
         skill_type.name = "sample_skill_type"
         skill_type.save()
-        post_data = {"name": "some_name"}
+        post_data = {"name": "some_name", "display_text": "some_display_text"}
         hs_id = self.post_item("/skill_types/%s/hard_skills" % skill_type.pk, post_data)
         hard_skill = model.HardSkill(_id=hs_id)
         hard_skill.refresh_from_db()
@@ -523,14 +525,14 @@ class TestApi(unittest.TestCase):
     def test_post_specialization(self):
         # post without detail
         # struct = hm.prepare_org_structure()
-        spec_data = {"type": "Student"}
+        spec_data = {"type": "Student", "display_text": "Студент"}
         spec_id = self.post_item("/specializations", spec_data)
         spec = model.Specialization.objects.get({"_id": ObjectId(spec_id)})
         spec.refresh_from_db()
         self.assertEqual("Student", spec.type, "spec type must be saved")
         self.assertIsNone(spec.detail, "no detail must present")
         # post with detail
-        spec_data = {"type": "Tutor", "detail": "ТОЭ"}
+        spec_data = {"type": "Tutor", "detail": "ТОЭ", "display_text": "Преподаватель ТОЭ"}
         spec_id = self.post_item("/specializations", spec_data)
         spec = model.Specialization.objects.get({"_id": ObjectId(spec_id)})
         spec.refresh_from_db()
@@ -636,7 +638,8 @@ class TestApi(unittest.TestCase):
                        "specialization_type": struct["spec_1"]["type"],
                        "is_active": "True",
                        "specialization_detail": struct["spec_1"]["detail"],
-                       "additional_details": {"detail": "text"}},
+                       "additional_details": {"detail": "text"},
+                       "display_text": struct["spec_1"]["display_text"]},
                       person_1_spec_list,
                       "p_spec info must present")
         self.assertIn({"id": str(p_spec_2.pk),
@@ -645,6 +648,7 @@ class TestApi(unittest.TestCase):
                        "level": 40.0,
                        "specialization_type": struct["spec_2"]["type"],
                        "is_active": "False",
+                       "display_text": struct["spec_2"]["display_text"]
                        },
                       person_1_spec_list,
                       "p_spec info must present")
@@ -699,7 +703,7 @@ class TestApi(unittest.TestCase):
             ObjectId(struct["spec_1"]["id"]),
             50.0,
             {"detail": "text"},
-            True
+            True,
         )
         p_spec_1.save()
 
@@ -708,7 +712,7 @@ class TestApi(unittest.TestCase):
         p_1_ref_dict = struct["person_1"]
         p_1_ref_dict.pop("phone_no")
         p_1_ref_dict.pop("birth_date")
-        p_1_ref_dict.update({"specialization": struct["spec_1"]["type"]})
+        p_1_ref_dict.update({"specialization_display_text": struct["spec_1"]["display_text"]})
         p_1_ref_dict.update({"organization_name": struct["org_1"]["name"]})
         p_1_ref_dict.update({"department_name": struct["dep_1"]["name"]})
         p_1_ref_dict.update({"photo": False})
@@ -718,7 +722,7 @@ class TestApi(unittest.TestCase):
         p_2_ref_dict.pop("phone_no")
         p_2_ref_dict.pop("birth_date")
         # TODO внести единство в эти None и "None"
-        p_2_ref_dict.update({"specialization": None})
+        p_2_ref_dict.update({"specialization_display_text": None})
         p_2_ref_dict.update({"organization_name": "None"})
         p_2_ref_dict.update({"department_name": "None"})
         p_2_ref_dict.update({"photo": False})
@@ -853,7 +857,9 @@ class TestApi(unittest.TestCase):
         ss_id = self.prepare_ss()[0]
         spec_id = self.post_item("/specializations",
                                  {"type": "Tutor",
-                                  "detail": "TOE"})
+                                  "detail": "TOE",
+                                  "display_text": "Преподаватель ТОЭ"})
+
         p_spec_id = self.post_item("/persons/%s/specializations" % person_id,
                                    {"department_id": dep_id,
                                     "specialization_id": spec_id})
@@ -900,16 +906,15 @@ class TestApi(unittest.TestCase):
         subj_ids["PersonSS"] = p_ss_id
         subj_ids["PersonHS"] = p_hs_id
 
-        display_names = {"Specialization": "Tutor",
-                         "PersonHS": "hs_name",
-                         "PersonSS": "ss_name"}
+        display_text = {"Specialization": "Преподаватель ТОЭ",
+                         "PersonHS": "hs_display_text",
+                         "PersonSS": "ss_display_text"}
 
         for subj_type, review_data in rev_refs.items():
             review_data.update({
                 "subject": {
-                    "display_text": "Здесь будет читабельное название объекта отзыва",
-                    "id": subj_ids[subj_type],
-                    "name": display_names[subj_type]
+                    "display_text": display_text[subj_type],
+                    "id": subj_ids[subj_type]
                 },
                 "date": datetime.datetime.utcnow().date().isoformat()
             })
@@ -955,9 +960,8 @@ class TestApi(unittest.TestCase):
                                 "surname": reviewer2.surname
                             },
                             "subject": {
-                                "display_text": "Здесь будет читабельное название объекта отзыва",
-                                "id": p_spec_id,
-                                "name": "Tutor"
+                                "display_text": "Преподаватель ТОЭ",
+                                "id": p_spec_id
                             },
                             "date": datetime.datetime.utcnow().date().isoformat()
                             })
@@ -1111,7 +1115,8 @@ class TestApi(unittest.TestCase):
         d_id = self.prepare_department()["dep_id"]
         spec_id = self.post_item("/specializations",
                                  {"type": "Tutor",
-                                  "detail": "TOE"})
+                                  "detail": "TOE",
+                                  "display_text": "Преподаватель ТОЭ"})
         self.post_duplicate_item("/persons/%s/specializations" % p_id,
                                  "/persons/%s/specializations" % p_id,
                                  specialization_id=spec_id,
@@ -1144,7 +1149,8 @@ class TestApi(unittest.TestCase):
         print(person_id, org_id, dep_id, group_id, hs_id, ss_id)
         spec_id = self.post_item("/specializations",
                                  {"type": "Tutor",
-                                  "detail": "TOE"})
+                                  "detail": "TOE",
+                                  "display_text": "Преподаватель ТОЭ"})
         p_spec_id = self.post_item("/persons/%s/specializations" % person_id,
                                    {"department_id": dep_id,
                                     "specialization_id": spec_id})
@@ -1185,16 +1191,19 @@ class TestApi(unittest.TestCase):
                                {"person_id": p_id,
                                 "department_id": dep_id,
                                 "type": "Student",
-                                "description": "specialization_description"})
+                                "description": "specialization_description",
+                                "display_text": "specialization_display_text"})
         st_id = self.post_item("/skill_types",
                                {"name" : "skill_type_name"})
         hs_id = self.post_item("/skill_types/%s/hard_skills" % st_id,
                                {"name": "hard_skill_name",
-                                "skill_type_id" : st_id})
+                                "skill_type_id" : st_id,
+                                "display_text": "hard_skill_display_text"})
         ss_id = self.post_item("/skill_types/%s/soft_skills" % st_id,
                                {"name": "soft_skill_name",
                                 "skill_type_id": st_id,
-                                "weight": 1})
+                                "weight": 1,
+                                "display_text": "soft_skill_display_text"})
         post_routes = [
             "/organizations",
             "/organizations/%s/departments" % org_id,
@@ -1240,7 +1249,8 @@ class TestApi(unittest.TestCase):
         group_id = fac_ids["group_id"]
         spec_id = self.post_item("/specializations",
                                  {"type": "Tutor",
-                                  "detail": "TOE"})
+                                  "detail": "TOE",
+                                  "display_text": "Преподаватель ТОЭ"})
         p_spec_id = self.post_item("/persons/%s/specializations" % p_id,
                                    {"department_id": dep_id,
                                     "specialization_id": spec_id})

@@ -27,14 +27,15 @@ def delete_skill_type(id):
 def list_skill_types():
     return list_resources(SkillType,
                           {"id": "_id",
-                           "name": "name"})
+                           "name": "name",
+                           "display_text": "display_text"})
 
 
 @bp.route("/skill_types/<string:id>/soft_skills", methods = ['POST'])
 @required_auth("admin")
 def add_soft_skill(id):
     return add_resource(SoftSkill,
-                        ["name", "weight"],
+                        ["name", "weight", "display_text"],
                         SkillType,
                         id,
                         "skill_type_id")
@@ -52,14 +53,15 @@ def list_soft_skills():
                           {"id": "_id",
                            "name": "name",
                            "skill_type": "skill_type_id",
-                           "weight": "weight"})
+                           "weight": "weight",
+                           "display_text": "display_text"})
 
 
 @bp.route("/skill_types/<string:id>/hard_skills", methods = ['POST'])
 @required_auth("admin")
 def add_hard_skill(id):
     return add_resource(HardSkill,
-                        ["name"],
+                        ["name", "display_text"],
                         SkillType,
                         id,
                         "skill_type_id")
@@ -76,4 +78,5 @@ def list_hard_skills():
     return list_resources(HardSkill,
                           {"id": "_id",
                            "name": "name",
-                           "skill_type": "skill_type_id"})
+                           "skill_type": "skill_type_id",
+                           "display_text": "display_text"})

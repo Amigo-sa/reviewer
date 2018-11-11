@@ -170,7 +170,7 @@ def find_persons():
         lst = []
         for person in Person.objects.aggregate(*pipeline):
             if "person_specialization" in person and person["person_specialization"]:
-                specialization = person["specialization"][0]["type"]
+                specialization = person["specialization"][0]["display_text"]
                 dep_name = person["department"][0]["name"]
                 org_name = person["organization"][0]["name"]
             else:
@@ -181,7 +181,7 @@ def find_persons():
                         "first_name": person["first_name"],
                         "middle_name": person["middle_name"],
                         "surname": person["surname"],
-                        "specialization": specialization,
+                        "specialization_display_text": specialization,
                         "department_name": dep_name,
                         "organization_name": org_name,
                         "photo": "photo" in person})

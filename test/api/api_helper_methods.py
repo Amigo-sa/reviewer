@@ -74,9 +74,10 @@ def prepare_org_structure():
         date(1987, 7, 6),
         "78398889991")
     person_2.save()
-    spec_1 = model.Specialization("Tutor", "ТОЭ")
+    spec_1 = model.Specialization("Tutor", "ТОЭ", "Преподаватель ТОЭ")
     spec_1.save()
     spec_2 = model.Specialization("Student")
+    spec_2.display_text = "Студент"
     spec_2.save()
     group_role_1 = model.GroupRole("role_1")
     group_role_1.save()
@@ -124,11 +125,13 @@ def prepare_org_structure():
             "type": spec_1.type,
             "detail": spec_1.detail,
             "id": str(spec_1.pk),
+            "display_text": spec_1.display_text
         },
         "spec_2": {
             "type": spec_2.type,
             "detail": None,
             "id": str(spec_2.pk),
+            "display_text": spec_2.display_text
         },
         "group_1": {
             "name": group_1.name,
