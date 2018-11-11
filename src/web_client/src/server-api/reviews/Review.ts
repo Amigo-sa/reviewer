@@ -15,6 +15,12 @@ export interface ISubjectItem {
  * Review
  */
 export default class Review {
+
+    /**
+     * id отзыва
+     */
+    public id: string;
+
     /**
      * id пользователя который оставил отзыв
      */

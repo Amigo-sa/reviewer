@@ -56,6 +56,7 @@ export default class PersonalPageVM {
             this.isCurrentPerson = true;
         }
         this._personalInfoVM.loadPersonInfo(this._personId);
+        this._reviewsVM.loadReviews(this._personId);
     }
 
     // Private fields

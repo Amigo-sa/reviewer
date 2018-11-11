@@ -38,7 +38,7 @@ class Logo extends React.Component<IProps> {
         const { classes } = this.props;
         return (
             <Link to="/" className={classes.link} title={title}>
-                <img src="static/img/logo.png" alt="logo" className={classes.img} />
+                <img src="/static/img/logo.png" alt="logo" className={classes.img} />
                 <div className={classes.titleSection}>
                     <span className={classes.title}>Skill for life</span>
                     <span className={classes.subtitle}>reviewer</span>

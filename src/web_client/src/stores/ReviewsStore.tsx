@@ -44,10 +44,13 @@ export class ReviewsStore {
         });
     }
 
-    public getList(personId: string): Promise<FindReviewsViews | null> {
+    public getList(personId: string, limit?: number): Promise<FindReviewsViews | null> {
         const findRequest = new FindReviewRequest();
         // #TODO использовать для поиска либо только отзывов по специализациям или продумать
         findRequest.person_id = personId;
+        if (limit) {
+            findRequest.query_limit = limit;
+        }
         findRequest.type = "specialization";
         return ReviewsApi.findSpecializationReview(findRequest)
             .then((reviews) => {

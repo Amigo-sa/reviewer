@@ -91,7 +91,9 @@ class LeftMenu extends React.Component<IProps> {
                         Сообщения
                     </Button>
                     <Button className={this.props.classes.buttonLink}>
-                        Поиск
+                        <Link to={"/search-peoples"}>
+                            Поиск
+                        </Link>
                     </Button>
                     <Button className={this.props.classes.buttonLink}>
                         Рейтинг
