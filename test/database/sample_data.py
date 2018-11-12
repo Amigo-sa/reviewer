@@ -619,8 +619,26 @@ def fill_db():
         item.save()
     for key, item in test_results.items():
         item.save()
-    for key, item in p_spec_reviews.items():
-        item.save()
+
+    i = 0;
+    for s_key, s_item in person_specializations.items():
+        for p_key, p_item in persons.items():
+            if (s_item.person_id != p_item.pk):
+                # print(s_item.person_id.surname + p_item.surname)
+                i += 1
+                review = SpecializationReview()
+                review.reviewer_id = p_item.pk
+                review.subject_id = s_item.pk
+                review.value = random.randint(0,100)
+                review.topic = "Тема отзыва " + str(i)
+                review.description = "Отзыв %s на '%s' пользователя %s"%\
+                                     (p_item.surname,
+                                      s_item.specialization_id.display_text,
+                                      s_item.person_id.surname)
+                review.date = datetime.date(random.randint(1990,2018), random.randint(1,12), random.randint(1,28))
+                review.save()
+    # for key, item in p_spec_reviews.items():
+    #     item.save()
     for key, item in group_reviews.items():
         item.save()
     for key, item in role_in_group_reviews.items():
