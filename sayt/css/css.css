@@ -30,15 +30,15 @@ h4{
 	color: #000000;
 	margin-bottom: 22px;
 }*/
+h3{
+	margin-left: 3%;
+	font-size: 26px;
+	color: #008CDF;
+}
 h5{
 	line-height: 42px;
 	font-size: 24px;
 	color: #5A5A5A;
-}
-h3{
-	margin-left: 30px;
-	font-size: 26px;
-	color: #008CDF;
 }
 ul li{
 	list-style: none;
@@ -856,13 +856,26 @@ button::-moz-focus-inner {
 }
 
 /**/
+.wrapper{
+	width: 100%;
+	display: flex;
+	flex-flow: column;
+	margin: auto;
+	height: auto;
+	background-color: #ffffff;
+}
+}
 .return_page{
 	display: flex;
 	align-items: center;
 }
-
 .return_page img{
 	width: 20%;
+}
+.return_page{
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
 }
 .user{
 	line-height: 21px;
@@ -873,13 +886,14 @@ button::-moz-focus-inner {
 .sandwich{
 	display: flex;
 	flex-flow: column;
-	justify-content: center;
 	width: 15%;
 }
 .sandwich span{
-	width: 30%;
-	height: 10%;
-	margin: auto;
+	width: 40%;
+	padding: 4%;
+	margin-top: 8%;
+	margin-left: 20%;
+	cursor: pointer;
 	background-color: #E5E5E5;
 }
 .global_search{
@@ -949,4 +963,27 @@ button::-moz-focus-inner {
 }
 .details_organization{
 	flex: 1 0 auto;
+}
+.structure{
+line-height: 30px;
+font-size: 28px;
+color: #5A5A5A;
+}
+.structure li *{
+	margin-top: 1%;
+}
+.students{
+ margin-left: 3%;
+}
+.faculties{
+margin-left: 4%;
+}
+.departments{
+margin-left: 5%;
+}
+.group_number{
+margin-left: 6%;
+}
+.students_list{
+margin-left: 7%;
 }
