@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Grid } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import Profession from "./Profession";
 import { Link } from "react-router-dom";
 import { urlReviewNew } from "../../ReviewPage";
@@ -17,6 +17,7 @@ class ProfessionsRating extends React.Component<IProps> {
                 <Grid container item xs={12}
                     direction="row"
                     alignItems="baseline">
+                    <Typography variant="h5">Профессия</Typography>
                     {this.props.isCurrentPerson ? null :
                         <Link to={urlReviewNew(this.props.personId)}>Оставить отзыв</Link>}
                 </Grid>
