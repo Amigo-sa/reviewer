@@ -48,13 +48,19 @@ export default class PersonalPageVM {
     public loadPersonInfo(id: string | null): void {
         if (id) {
             this._personId = id;
-            this.isCurrentPerson = false;
         }
         else {
             // id is null, so we would like to show personal page for current user
             this._personId = authStore.user.uid!;
-            this.isCurrentPerson = true;
         }
+
+        // Determine if need to show info for current person
+        if (this._personId === authStore.user.uid!) {
+            this.isCurrentPerson = true;
+        } else {
+            this.isCurrentPerson = false;
+        }
+
         this._personalInfoVM.loadPersonInfo(this._personId);
         this._reviewsVM.loadReviews(this._personId);
     }
