@@ -86,10 +86,9 @@ class SearchResult extends React.Component<ISearchProps> {
                                     firstName={item.first_name}
                                     surname={item.surname}
                                     middleName={item.middle_name}
-                                    university={item.organization_name}
-                                    specialization=""
-                                    course={5}
-                                    rating={"9,5"}
+                                    organizationName={item.organization_name}
+                                    departamentName={item.department_name}
+                                    specialization={item.specialization_display_text}
                                 />
                             );
                         })

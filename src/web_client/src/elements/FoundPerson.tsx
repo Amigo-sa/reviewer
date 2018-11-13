@@ -1,7 +1,6 @@
 import * as React from "react";
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
-import classNames from "classnames";
 import { ButtonBase, Grid, Typography } from "@material-ui/core";
 import { personUrlById, DUMMY_AVATAR_URL } from "src/constants";
 import { Link } from "react-router-dom";
@@ -60,15 +59,14 @@ const styles = (theme: Theme) => createStyles({
 // - add user info to props
 // - add mode identificator: for show in rating list, for show as found person in search page
 interface IProps extends WithStyles<typeof styles> {
-    id?: string;
+    id: string;
     isPersonPhotoExist: boolean;
     firstName: string;
     surname: string;
     middleName?: string;
-    university: string;
-    specialization: string;
-    course: number;
-    rating: string;
+    organizationName?: string;
+    departamentName?: string;
+    specialization?: string;
 }
 
 class FoundPerson extends React.Component<IProps>{
@@ -79,10 +77,9 @@ class FoundPerson extends React.Component<IProps>{
             firstName,
             surname,
             middleName,
-            university,
+            organizationName,
             specialization,
-            course,
-            rating,
+            departamentName,
             classes,
         } = this.props;
 
@@ -92,8 +89,6 @@ class FoundPerson extends React.Component<IProps>{
             photoUrl = PersonsApi.personPhotoUrlById(id);
         }
 
-        // const courseClasses = classNames(classes.property, classes.course);
-        const ratingClasses = classNames(classes.property, classes.rating);
         const linkId = id || "";
         return (
             <Grid container item justify="center" className={classes.profile}>
@@ -114,17 +109,14 @@ class FoundPerson extends React.Component<IProps>{
                     </ul>
                     <div className={classes.rat}>
                         <Typography variant="caption">
-                            {university},{specialization}
+                            {organizationName}
                         </Typography>
                         <Typography variant="caption">
-                            {specialization},{course} курс
+                            {departamentName}
                         </Typography>
-                        {rating &&
-                            <div className={classes.rating}>
-                                <span className={classes.property}>Рейтинг: </span>
-                                <span className={ratingClasses}>{rating}</span>
-                            </div>
-                        }
+                        <Typography variant="caption">
+                            {specialization}
+                        </Typography>
                     </div>
                 </Link>
             </Grid>

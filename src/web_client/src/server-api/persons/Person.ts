@@ -12,4 +12,8 @@ export default class Person {
     // tslint:disable-next-line:variable-name
     public organization_name: string;
     public photo: boolean;
+    // tslint:disable-next-line:variable-name
+    public department_name?: string;
+    // tslint:disable-next-line:variable-name
+    public specialization_display_text?: string;
 }
