@@ -9,6 +9,8 @@ import HardSkill from "src/server-api/persons/HardSkill";
 import commonStore from "src/stores/CommonStore";
 import SoftSkill from "src/server-api/persons/SoftSkill";
 import { DUMMY_AVATAR_URL } from "src/constants";
+import FindPersonsRequest from "src/server-api/persons/FindPersonsRequest";
+import FindPersonsResponse from "src/server-api/persons/FindPersonsResponse";
 
 export default class PersonalInfoVM {
 
@@ -16,7 +18,6 @@ export default class PersonalInfoVM {
 
     public constructor() {
         this.status = "Сотрудник";
-        this.organizationName = "ИТМО";
 
         this.professionLists = [["менеджер", 8.5]];
 
@@ -126,7 +127,25 @@ export default class PersonalInfoVM {
 
         // Wait all parallel tasks
         Promise.all([loadPersonInfo, findHardSkills, findSoftSkills]).then(() => {
-            this._loaded = true;
+
+            // TODO: temp get needed info over searching functionality
+            const findPersonRequest = new FindPersonsRequest();
+            findPersonRequest.first_name = this._person.first_name;
+            findPersonRequest.middle_name = this._person.middle_name;
+            findPersonRequest.surname = this._person.surname;
+            PersonsApi.findPersons(findPersonRequest)
+                .then((result: FindPersonsResponse) => {
+                    this.organizationName = result.list![0].organization_name;
+                    this.status = result.list![0].specialization_display_text!;
+
+                    this._loaded = true;
+                })
+                .catch((err: any) => {
+                    console.log("Error Search", err);
+                    this._loaded = true;
+                });
+
+            // this._loaded = true;
         });
     }
 
