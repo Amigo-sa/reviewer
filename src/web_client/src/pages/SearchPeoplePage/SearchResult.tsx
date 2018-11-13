@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import {
     Grid,
@@ -83,11 +82,12 @@ class SearchResult extends React.Component<ISearchProps> {
                                 <FoundPerson
                                     key={item.id}
                                     id={item.id}
+                                    isPersonPhotoExist={item.photo}
                                     firstName={item.first_name}
                                     surname={item.surname}
                                     middleName={item.middle_name}
                                     university={item.organization_name}
-                                    specialization={item.specialization}
+                                    specialization=""
                                     course={5}
                                     rating={"9,5"}
                                 />

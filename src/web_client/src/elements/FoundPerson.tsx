@@ -3,7 +3,7 @@ import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import classNames from "classnames";
 import { ButtonBase, Grid, Typography } from "@material-ui/core";
-import { personUrlById } from "src/constants";
+import { personUrlById, DUMMY_AVATAR_URL } from "src/constants";
 import { Link } from "react-router-dom";
 import PersonsApi from "src/server-api/persons/PersonsApi";
 
@@ -61,6 +61,7 @@ const styles = (theme: Theme) => createStyles({
 // - add mode identificator: for show in rating list, for show as found person in search page
 interface IProps extends WithStyles<typeof styles> {
     id?: string;
+    isPersonPhotoExist: boolean;
     firstName: string;
     surname: string;
     middleName?: string;
@@ -84,6 +85,13 @@ class FoundPerson extends React.Component<IProps>{
             rating,
             classes,
         } = this.props;
+
+        // Determine url of person photo
+        let photoUrl: string = DUMMY_AVATAR_URL;
+        if (this.props.isPersonPhotoExist) {
+            photoUrl = PersonsApi.personPhotoUrlById(id);
+        }
+
         // const courseClasses = classNames(classes.property, classes.course);
         const ratingClasses = classNames(classes.property, classes.rating);
         const linkId = id || "";
@@ -91,7 +99,7 @@ class FoundPerson extends React.Component<IProps>{
             <Grid container item justify="center" className={classes.profile}>
                 <Link to={personUrlById(linkId)} className={classes.link}>
                     <ButtonBase className={classes.image}>
-                        <img src={PersonsApi.personPhotoUrlById(id)}
+                        <img src={photoUrl}
                             className={classes.img}
                             alt={this._firstInitial}
                             title={this._fio}

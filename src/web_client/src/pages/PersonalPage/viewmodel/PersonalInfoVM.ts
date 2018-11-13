@@ -8,6 +8,7 @@ import FindPersonHardSkillInfoResponse from "src/server-api/persons/FindPersonHa
 import HardSkill from "src/server-api/persons/HardSkill";
 import commonStore from "src/stores/CommonStore";
 import SoftSkill from "src/server-api/persons/SoftSkill";
+import { DUMMY_AVATAR_URL } from "src/constants";
 
 export default class PersonalInfoVM {
 
@@ -36,6 +37,9 @@ export default class PersonalInfoVM {
 
     @observable
     public personId: string;
+
+    @observable
+    public photoUrl: string;
 
     @observable
     public fullName: string;
@@ -135,6 +139,13 @@ export default class PersonalInfoVM {
         this.fullName = person.surname +
             " " + person.first_name +
             " " + person.middle_name;
+
+        // Update photo url
+        if (person.photo) {
+            this.photoUrl = PersonsApi.personPhotoUrlById(this.personId);
+        } else {
+            this.photoUrl = DUMMY_AVATAR_URL;
+        }
     }
 
     // Private constants

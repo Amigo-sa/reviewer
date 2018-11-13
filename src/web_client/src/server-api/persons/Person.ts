@@ -11,5 +11,5 @@ export default class Person {
     public phone_no?: string;
     // tslint:disable-next-line:variable-name
     public organization_name: string;
-    public specialization: string;
+    public photo: boolean;
 }

@@ -6,7 +6,6 @@ import PersonalNotes from "./PersonalNotes";
 import ProfessionsRating from "./ProfessionsRating";
 // import { urlReviewNew } from "../ReviewPage";
 // import { Link } from "react-router-dom";
-import PersonsApi from "src/server-api/persons/PersonsApi";
 import PersonalInfoVM from "src/pages/PersonalPage/viewmodel/PersonalInfoVM";
 import { observer } from "mobx-react";
 
@@ -27,7 +26,7 @@ class PersonalInfo extends React.Component<IProps> {
                 <Grid container item xs={12}>
                     <Grid item xs={3}>
                         <img
-                            src={PersonsApi.personPhotoUrlById(viewModel.personId)}
+                            src={viewModel.photoUrl}
                             alt=""
                             width="100%"
                             height="100%" />
