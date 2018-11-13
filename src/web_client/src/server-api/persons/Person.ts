@@ -16,4 +16,5 @@ export default class Person {
     public department_name?: string;
     // tslint:disable-next-line:variable-name
     public specialization_display_text?: string;
+    public notes?: string;
 }

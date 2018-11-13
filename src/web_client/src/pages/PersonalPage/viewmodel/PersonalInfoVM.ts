@@ -17,12 +17,7 @@ export default class PersonalInfoVM {
     // Constructor
 
     public constructor() {
-        this.status = "Сотрудник";
-
         this.professionLists = [["менеджер", 8.5]];
-
-        // tslint:disable-next-line:max-line-length
-        this.personalNotes = "Возможно размещение короткого пояснительного текста о себе с указанием личных достижений и значимых наград Характер: спокойный, усидчивый, умение ставить цели и достигать их";
     }
 
     // Public properties
@@ -164,6 +159,13 @@ export default class PersonalInfoVM {
             this.photoUrl = PersonsApi.personPhotoUrlById(this.personId);
         } else {
             this.photoUrl = DUMMY_AVATAR_URL;
+        }
+
+        // Update person notes
+        if (person.notes) {
+            this.personalNotes = person.notes;
+        } else {
+            this.personalNotes = "Пока ничего нет. Как отображать пустые заметки о себе?";
         }
     }
 
