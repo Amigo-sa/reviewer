@@ -9,6 +9,8 @@ import Person from "src/server-api/persons/Person";
 import { inject, observer } from "mobx-react";
 import { UsersStore } from "src/stores/UsersStore";
 import { AuthStore } from "src/stores/AuthStore";
+import { DUMMY_AVATAR_URL } from "src/constants";
+import PersonsApi from "src/server-api/persons/PersonsApi";
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -25,12 +27,16 @@ interface IProps extends WithStyles<typeof styles> {
     usersStore?: UsersStore;
 }
 
+interface IState {
+    user: Person | undefined;
+}
+
 @inject("authStore", "usersStore")
 @observer
-class LeftMenu extends React.Component<IProps> {
+class LeftMenu extends React.Component<IProps, IState> {
 
-    public state = {
-        user: null,
+    public state: IState = {
+        user: undefined,
     };
 
     get inject() {
@@ -50,6 +56,16 @@ class LeftMenu extends React.Component<IProps> {
     }
 
     public render() {
+
+        // TODO: extract determintion of person photo url to some helper class.
+        // Determine url of person photo
+        let photoUrl: string = DUMMY_AVATAR_URL;
+        if (this.state.user) {
+            if (this.state.user.photo) {
+                photoUrl = PersonsApi.personPhotoUrlById(this.state.user!.id);
+            }
+        }
+
         return (
             <Paper>
                 <Grid
@@ -61,7 +77,7 @@ class LeftMenu extends React.Component<IProps> {
                         }}>
                         <Avatar
                             alt="icon"
-                            src="/static/img/icon_min.png"
+                            src={photoUrl}
                             style={{
                                 width: 108,
                                 height: 108,
