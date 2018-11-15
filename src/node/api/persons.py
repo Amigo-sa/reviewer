@@ -196,7 +196,7 @@ def find_persons():
 
 
 @bp.route("/persons/<string:person_id>", methods = ['DELETE'])
-@required_auth("user")
+@required_auth("admin", "owner")
 def delete_person(person_id):
     return delete_resource(Person, person_id)
 
@@ -227,7 +227,7 @@ def get_person_info(person_id):
 
 
 @bp.route("/persons/<string:person_id>/photo", methods=['PUT'])
-@required_auth("user")
+@required_auth("admin", "owner")
 def post_person_photo(person_id):
     try:
         header = request.headers.get('Content-Type')
@@ -271,7 +271,7 @@ def get_person_photo(person_id):
 
 
 @bp.route("/persons/<string:person_id>/notes", methods=['PUT'])
-@required_auth("user")
+@required_auth("admin", "owner")
 def post_person_notes(person_id):
     try:
         req = request.get_json()

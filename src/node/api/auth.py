@@ -260,7 +260,7 @@ def check_phone_format(phone_no):
     return re.match(pattern, phone_no)
 
 
-def required_auth(required_permissions="admin"):
+def required_auth(*required_permissions):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -274,23 +274,30 @@ def required_auth(required_permissions="admin"):
                     auth_info = AuthInfo.objects.get({"session_id": auth_token})
                 except DoesNotExist:
                     return jsonify({"result": ERR.AUTH_NO_SESSION}), 200
-                if auth_info.permissions & 1 and required_permissions != "reviewer":
+                if not auth_info.is_approved:
+                    return jsonify({"result": ERR.AUTH}), 200
+                # требуются полномочия администратора
+                if "admin" in required_permissions and auth_info.permissions & 1:
                     return f(*args, **kwargs)
-                if required_permissions == "admin":
-                    return jsonify({"result": ERR.AUTH_NO_PERMISSIONS}), 200
-                if required_permissions == "user" and auth_info.person_id:
+                # требуются полномочия любого зарегистрированного пользователя
+                if "user" in required_permissions and auth_info.person_id:
+                    return f(*args, **kwargs)
+                # требуются полномочия владельца учетной записи
+                if "owner" in required_permissions and auth_info.person_id:
                     if "person_id" in kwargs:
                         person_id = kwargs["person_id"]
                     else:
                         person_id = request.get_json()["person_id"]
                     if person_id == str(auth_info.person_id.pk):
                         return f(*args, **kwargs)
-                if required_permissions == "group_member" and auth_info.person_id:
+                # требуются полномочия члена группы
+                if "group_member" in required_permissions and auth_info.person_id:
                     if Person.objects.raw({"_id": auth_info.person_id.pk}).count():
                         for group_member in GroupMember.objects.raw({"person_id": auth_info.person_id.pk}):
                             if str(group_member.pk) == kwargs["id"]:
                                 return f(*args, **kwargs)
-                if required_permissions == "reviewer" and auth_info.person_id:
+                # требуются полномочия владельца учетной записи при оставлении/удалении отзыва
+                if "reviewer" in required_permissions and auth_info.person_id:
                     if request.method == "POST":
                         kwargs["reviewer_id"] = str(auth_info.person_id.pk)
                         return f(*args, **kwargs)

@@ -64,7 +64,7 @@ def find_surveys():
 
 
 @bp.route("/surveys/<string:id>", methods = ['POST'])
-@required_auth("user")
+@required_auth("admin", "owner")
 def participate_survey(id):
     req = request.get_json()
     try:

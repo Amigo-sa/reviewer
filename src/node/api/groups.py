@@ -172,7 +172,7 @@ def delete_group_member(id):
 
 
 @bp.route("/group_members/<string:id>", methods=['GET'])
-@required_auth("group_member")
+@required_auth("admin", "group_member")
 def get_group_member_info(id):
     try:
         if GroupMember(_id=id) in GroupMember.objects.raw({"_id": ObjectId(id)}):
