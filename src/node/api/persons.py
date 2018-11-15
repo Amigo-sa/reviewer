@@ -202,8 +202,8 @@ def delete_person(person_id):
 
 
 @bp.route("/persons/<string:person_id>", methods=['GET'])
-#@required_auth("user")
-def get_person_info(person_id):
+@required_auth("admin", "owner", "user")
+def get_person_info(person_id, auth_info=None):
     try:
         person = Person.objects.get({"_id": ObjectId(person_id)})
         birth_date_str = person.birth_date.strftime("%Y-%m-%d") if person.birth_date else None
@@ -213,10 +213,13 @@ def get_person_info(person_id):
                 "middle_name": person.middle_name,
                 "surname": person.surname,
                 "birth_date": birth_date_str,
-                "phone_no": person.phone_no,
                 "rating": round(rating,1) if rating else None,
                 "photo": bool(person.photo),
                 "notes": person.notes}
+        if auth_info:
+            if (auth_info.person_id and str(auth_info.person_id.pk) == person_id) \
+                    or auth_info.permissions & 1:
+                data.update({"phone_no": person.phone_no})
         result = {"result": ERR.OK, "data": data}
 
     except DoesNotExist:

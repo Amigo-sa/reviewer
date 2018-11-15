@@ -12,6 +12,7 @@ from functools import wraps
 import re
 from node.thirdparty import smsc_api
 import os
+import inspect
 
 
 bp = Blueprint('routes_auth', __name__)
@@ -276,6 +277,8 @@ def required_auth(*required_permissions):
                     return jsonify({"result": ERR.AUTH_NO_SESSION}), 200
                 if not auth_info.is_approved:
                     return jsonify({"result": ERR.AUTH}), 200
+                if "auth_info" in inspect.getfullargspec(f).args:
+                    kwargs["auth_info"] = auth_info
                 # требуются полномочия администратора
                 if "admin" in required_permissions and auth_info.permissions & 1:
                     return f(*args, **kwargs)
