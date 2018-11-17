@@ -54,12 +54,13 @@ class Main extends React.Component<WithStyles<typeof styles>> {
                         </TextInfo>
                     </Grid>
                 </Grid>
+                {/*}
                 <Grid container>
                     <Grid item xs={12} className={classes.block2}>
                         <Grid className={classes.slide}>
                             <h4>Рейтинг участников</h4>
                         </Grid>
-                        {/*<Grid container justify="center" spacing={16}>
+                        {<Grid container justify="center" spacing={16}>
                             <FoundPerson
                                 img={"static/img/img-1.png"}
                                 fullname={"Петров Иван Алексеевич"}
@@ -88,9 +89,9 @@ class Main extends React.Component<WithStyles<typeof styles>> {
                                 course={5}
                                 rating={"8,5"}
                             />
-                        </Grid>*/}
+                        </Grid>
                     </Grid>
-                </Grid>
+                </Grid>*/}
                 <Footer />
             </>
         );

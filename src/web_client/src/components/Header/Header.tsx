@@ -6,7 +6,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 // import Typography from "@material-ui/core/Typography";
 import {
-    Badge,
+    // Badge,
     Menu,
     MenuItem,
 } from "@material-ui/core";
@@ -15,11 +15,11 @@ import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import MailIcon from "@material-ui/icons/Mail";
-import NotificationsIcon from "@material-ui/icons/Notifications";
+// import MailIcon from "@material-ui/icons/Mail";
+// import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Logo from "./elements/Logo";
-import HeaderMenu from "./elements/Menu";
+// import HeaderMenu from "./elements/Menu";
 import { observer, inject } from "mobx-react";
 import { AuthStore } from "../../stores/AuthStore";
 import { Button, Dialog } from "@material-ui/core";
@@ -101,6 +101,9 @@ const styles = (theme: Theme) => createStyles({
     },
 });
 
+// TODO: do we reaaly need use technic with inject?
+// Maybe have global obkect Application.getInstance?
+// get authorization info from it, and have view model relative to Header component?
 interface IAuthProps {
     authStore?: AuthStore;
 }
@@ -120,7 +123,7 @@ interface IState {
 @inject("authStore")
 @observer
 class Header extends React.Component<IProps, IState>{
-    public state = {
+    public state: IState = {
         anchorEl: null,
         mobileMoreAnchorEl: null,
         isLoginAnchorEl: false,
@@ -129,6 +132,8 @@ class Header extends React.Component<IProps, IState>{
     get injected() {
         return this.props as IAuthProps;
     }
+
+    // TODO: name conversion and location of methods
 
     private handleProfileMenuOpen = (event: any) => {
         this.setState({ anchorEl: event.currentTarget });
@@ -155,12 +160,13 @@ class Header extends React.Component<IProps, IState>{
         this.setState({ isLoginAnchorEl: false });
     }
 
+    // TODO: divide method on several privates.
     public render() {
-        const { anchorEl, mobileMoreAnchorEl, isLoginAnchorEl } = this.state;
+        const { anchorEl, /*mobileMoreAnchorEl,*/ isLoginAnchorEl } = this.state;
         const { classes, title } = this.props;
         const { authStore } = this.injected;
         const isMenuOpen = Boolean(anchorEl);
-        const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+        // const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
         const isLoginOpen = isLoginAnchorEl;
 
         // #TODO менюшка у пользователя
@@ -181,38 +187,38 @@ class Header extends React.Component<IProps, IState>{
         );
 
         // #TODO мобильная менюшка, как пример
-        const renderMobileMenu = (
-            <Menu
-                anchorEl={mobileMoreAnchorEl}
-                anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                transformOrigin={{ vertical: "top", horizontal: "right" }}
-                open={isMobileMenuOpen}
-                onClose={this.handleMobileMenuClose}
-            >
-                <MenuItem>
-                    <IconButton color="inherit">
-                        <Badge badgeContent={4} color="secondary">
-                            <MailIcon />
-                        </Badge>
-                    </IconButton>
-                    <p>Messages</p>
-                </MenuItem>
-                <MenuItem>
-                    <IconButton color="inherit">
-                        <Badge badgeContent={11} color="secondary">
-                            <NotificationsIcon />
-                        </Badge>
-                    </IconButton>
-                    <p>Notifications</p>
-                </MenuItem>
-                <MenuItem onClick={this.handleProfileMenuOpen}>
-                    <IconButton color="inherit">
-                        <AccountCircle />
-                    </IconButton>
-                    <p>Profile</p>
-                </MenuItem>
-            </Menu>
-        );
+        // const renderMobileMenu = (
+        //     <Menu
+        //         anchorEl={mobileMoreAnchorEl}
+        //         anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        //         transformOrigin={{ vertical: "top", horizontal: "right" }}
+        //         open={isMobileMenuOpen}
+        //         onClose={this.handleMobileMenuClose}
+        //     >
+        //         <MenuItem>
+        //             <IconButton color="inherit">
+        //                 <Badge badgeContent={4} color="secondary">
+        //                     <MailIcon />
+        //                 </Badge>
+        //             </IconButton>
+        //             <p>Messages</p>
+        //         </MenuItem>
+        //         <MenuItem>
+        //             <IconButton color="inherit">
+        //                 <Badge badgeContent={11} color="secondary">
+        //                     <NotificationsIcon />
+        //                 </Badge>
+        //             </IconButton>
+        //             <p>Notifications</p>
+        //         </MenuItem>
+        //         <MenuItem onClick={this.handleProfileMenuOpen}>
+        //             <IconButton color="inherit">
+        //                 <AccountCircle />
+        //             </IconButton>
+        //             <p>Profile</p>
+        //         </MenuItem>
+        //     </Menu>
+        // );
 
         return (
             <Grid
@@ -228,15 +234,18 @@ class Header extends React.Component<IProps, IState>{
                             {title}
                         </Typography>
                         */}
-                        <HeaderMenu />
-                        <div className={classes.search}>
-                            {/*<div className={classes.searchIcon}>
+                        {/* <HeaderMenu /> */}
+                        <Grid container
+                            direction="row"
+                            justify="flex-end">
+                            <div className={classes.search}>
+                                {/*<div className={classes.searchIcon}>
                                 <SearchIcon />
                             </div>*/}
-                            <Link to="/search-peoples">
-                                <IconButton><SearchIcon /></IconButton>
-                            </Link>
-                            {/*<Input
+                                <Link to="/search-peoples">
+                                    <IconButton><SearchIcon /></IconButton>
+                                </Link>
+                                {/*<Input
                                 placeholder="Search…"
                                 disableUnderline={true}
                                 classes={{
@@ -244,50 +253,50 @@ class Header extends React.Component<IProps, IState>{
                                     input: classes.inputInput,
                                 }}
                             />*/}
-                        </div>
-                        <div className={classes.grow} />
-                        {authStore && authStore.isAuth ?
-                            <>
-                                {/* Вывод для дестопа */}
-                                <div className={classes.sectionDesktop}>
-                                    <IconButton
-                                        aria-owns={isMenuOpen ? "material-appbar" : undefined}
-                                        aria-haspopup="true"
-                                        onClick={this.handleProfileMenuOpen}
-                                        color="inherit"
+                            </div>
+                            {authStore && authStore.isAuth ?
+                                <>
+                                    {/* Вывод для дестопа */}
+                                    <div className={classes.sectionDesktop}>
+                                        <IconButton
+                                            aria-owns={isMenuOpen ? "material-appbar" : undefined}
+                                            aria-haspopup="true"
+                                            onClick={this.handleProfileMenuOpen}
+                                            color="inherit"
+                                        >
+                                            <AccountCircle />
+                                        </IconButton>
+                                    </div>
+                                    {/* Вывод для мобильнх устройств */}
+                                    <div className={classes.sectionMobile}>
+                                        <IconButton
+                                            aria-haspopup="true"
+                                            onClick={this.handleMobileMenuOpen}
+                                            color="inherit"
+                                        >
+                                            <MoreIcon />
+                                        </IconButton>
+                                    </div>
+                                </>
+                                :
+                                <>
+                                    <Button onClick={this.handleLoginClickOpen}>Войти</Button>
+                                    <Dialog
+                                        open={isLoginOpen}
+                                        onClose={this.handleLoginClickClose}
+                                        aria-labelledby="form-dialog-title"
                                     >
-                                        <AccountCircle />
-                                    </IconButton>
-                                </div>
-                                {/* Вывод для мобильнх устройств */}
-                                <div className={classes.sectionMobile}>
-                                    <IconButton
-                                        aria-haspopup="true"
-                                        onClick={this.handleMobileMenuOpen}
-                                        color="inherit"
-                                    >
-                                        <MoreIcon />
-                                    </IconButton>
-                                </div>
-                            </>
-                            :
-                            <>
-                                <Button onClick={this.handleLoginClickOpen}>Войти</Button>
-                                <Dialog
-                                    open={isLoginOpen}
-                                    onClose={this.handleLoginClickClose}
-                                    aria-labelledby="form-dialog-title"
-                                >
-                                    <LoginDialog
-                                        handleClose={this.handleLoginClickClose}
-                                    />
-                                </Dialog>
-                            </>
-                        }
+                                        <LoginDialog
+                                            handleClose={this.handleLoginClickClose}
+                                        />
+                                    </Dialog>
+                                </>
+                            }
+                        </Grid>
                     </Toolbar>
                 </AppBar>
                 {renderMenu}
-                {renderMobileMenu}
+                {/* {renderMobileMenu} */}
             </Grid>
         );
     }
