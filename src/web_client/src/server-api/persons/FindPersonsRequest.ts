@@ -5,7 +5,8 @@ export default class FindPersonsRequest {
     public first_name?: string;
     // tslint:disable-next-line:variable-name
     public middle_name?: string;
-    public specialization?: string;
+    // tslint:disable-next-line:variable-name
+    public specialization_id?: string;
     // tslint:disable-next-line:variable-name
     public group_id?: string;
     // tslint:disable-next-line:variable-name

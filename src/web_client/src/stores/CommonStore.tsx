@@ -10,6 +10,7 @@ import GetSkillsListResponse from "src/server-api/skills/GetSkillsListResponse";
 ** It contans all common data from server
 */
 export class CommonStore {
+    // TODO: create business object relative specialization and make convertion from dto
     public specializationList: Specialization[] = [];
 
     /**

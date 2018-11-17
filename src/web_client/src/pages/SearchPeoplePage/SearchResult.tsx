@@ -2,9 +2,9 @@ import * as React from "react";
 import {
     Grid,
     Typography,
-    Select,
-    InputLabel,
-    MenuItem,
+    // Select,
+    // InputLabel,
+    // MenuItem,
     LinearProgress,
 } from "@material-ui/core";
 import FoundPerson from "../../elements/FoundPerson";
@@ -42,7 +42,7 @@ class SearchResult extends React.Component<ISearchProps> {
 
     public render() {
         // #TODO функция сортировки внутри SearchStore
-        const { classes, sort, handleSort, results, loading } = this.props;
+        const { classes, /*sort, handleSort, */results, loading } = this.props;
         console.log("Results ", results);
         return (
             <Grid container className={classes.block1}>
@@ -57,7 +57,7 @@ class SearchResult extends React.Component<ISearchProps> {
                             Найдено совпадений: {results.length}
                         </Typography>
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    {/* <Grid item xs={12} md={4}>
                         <InputLabel htmlFor="sort">Сортировать по</InputLabel>
                         <Select
                             value={sort || "rating"}
@@ -70,7 +70,7 @@ class SearchResult extends React.Component<ISearchProps> {
                             <MenuItem value="rating">Рейтингу</MenuItem>
                             <MenuItem value="faculty">Фактультету</MenuItem>
                         </Select>
-                    </Grid>
+                    </Grid> */}
                 </Grid>
                 <Grid container item alignItems="center" justify="space-between">
                     {loading &&

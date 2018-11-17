@@ -13,6 +13,7 @@ import {
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import FindPersonsRequest from "../../server-api/persons/FindPersonsRequest";
+import commonStore from "src/stores/CommonStore";
 
 /*
 ** Component SearchForm
@@ -37,7 +38,7 @@ interface IState {
     surname: string;
     firstName: string;
     middleName: string;
-    departmentId: string;
+    specializationId: string;
     organizationId: string;
 }
 
@@ -59,13 +60,13 @@ class SearchForm extends React.Component<ISearchFormProps, IState> {
         surname: "",
         firstName: "",
         middleName: "",
-        departmentId: "",
+        specializationId: SearchForm.SPECIALIZATION_NONE_VALUE,
         organizationId: "",
     };
 
     public render() {
         const { classes } = this.props;
-        const { surname, firstName, middleName, departmentId, organizationId } = this.state;
+        const { surname, firstName, middleName, specializationId, organizationId } = this.state;
         return (
             <Grid container className={classes.root}>
                 <Grid item xs={12}>
@@ -120,18 +121,24 @@ class SearchForm extends React.Component<ISearchFormProps, IState> {
                     <Grid item xs={12} md={3} lg={3}>
                         <FormControl>
                             <Select
-                                value={departmentId}
+                                autoWidth
+                                native={false}
+                                value={specializationId}
                                 onChange={(event: any) =>
-                                    this.setState({ departmentId: event.target.value })
+                                    this.setState({ specializationId: event.target.value })
                                 }
-                                inputProps={{
-                                    name: "category",
-                                    id: "category",
-                                }}
                             >
-                                <MenuItem value="">Категория</MenuItem>
-                                <MenuItem value="1">Категория 1</MenuItem>
-                                <MenuItem value="2">Категория 2</MenuItem>
+                                <MenuItem value={SearchForm.SPECIALIZATION_NONE_VALUE}>
+                                    <em>None</em>
+                                </MenuItem>
+                                {commonStore.specializationList.map((specialization) => {
+                                    return (
+                                        <MenuItem
+                                            key={specialization.id}
+                                            value={specialization.id}>
+                                            {specialization.display_text}
+                                        </MenuItem>);
+                                })}
                             </Select>
                         </FormControl>
                     </Grid>
@@ -147,6 +154,9 @@ class SearchForm extends React.Component<ISearchFormProps, IState> {
                             <TextField
                                 id="org"
                                 placeholder="Полное название организации"
+                                style={{
+                                    width: 230,
+                                }}
                                 value={organizationId}
                                 onChange={(event: any) =>
                                     this.setState({ organizationId: event.target.value })
@@ -172,8 +182,12 @@ class SearchForm extends React.Component<ISearchFormProps, IState> {
         );
     }
 
+    // Private constants
+
+    private static SPECIALIZATION_NONE_VALUE: string = "";
+
     private _handleSearchPeolple = () => {
-        const { surname, firstName, middleName, departmentId, organizationId } = this.state;
+        const { surname, firstName, middleName, specializationId, organizationId } = this.state;
         const request = new FindPersonsRequest();
         if (surname) {
             request.surname = surname;
@@ -184,8 +198,8 @@ class SearchForm extends React.Component<ISearchFormProps, IState> {
         if (middleName) {
             request.middle_name = middleName;
         }
-        if (departmentId) {
-            request.department_id = departmentId;
+        if (specializationId !== SearchForm.SPECIALIZATION_NONE_VALUE) {
+            request.specialization_id = specializationId;
         }
         if (organizationId) {
             request.organization_id = organizationId;
