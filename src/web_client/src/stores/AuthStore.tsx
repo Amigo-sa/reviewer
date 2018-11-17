@@ -23,6 +23,9 @@ export class AuthStore {
         data: undefined,
     };
 
+    @observable
+    public pending: boolean = false;
+
     constructor() {
         console.log("Construct AuthStore");
     }
@@ -38,6 +41,7 @@ export class AuthStore {
 
     @action
     public authenticate(phone: string, password: string) {
+        this.pending = true;
         return RegistrationApi.userLogin(new UserLoginRequest(phone, password))
             .then((responce: UserLoginResponse) => {
                 this.setUser(responce);
@@ -50,9 +54,11 @@ export class AuthStore {
             .then(action(() => {
                 this.setPhone(phone);
                 this.isAuth = true;
+                this.pending = false;
             }))
             .catch((err) => {
                 throw err;
+                this.pending = true;
             });
     }
 
@@ -61,6 +67,8 @@ export class AuthStore {
     }
 
     @action public logout() {
+        this.isAuth = false;
+        localStorage.removeItem("User");
         return Promise.resolve();
     }
 
@@ -73,9 +81,16 @@ export class AuthStore {
 
     @action
     public tryAuthenticate() {
+        this.pending = true;
         return this.getCurrentUser()
-            .then(action(() => { this.isAuth = true; }))
-            .catch((err: object) => { throw err; });
+            .then(action(() => {
+                this.isAuth = true;
+                this.pending = false;
+            }))
+            .catch((err: object) => {
+                this.isAuth = false;
+                this.pending = false;
+            });
     }
 
     private getCurrentUser(force?: boolean): Promise<IUserData> {
