@@ -11,10 +11,10 @@ import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import { inject, observer } from "mobx-react";
 
 import { IPersonShort } from "src/server-api/reviews/Review";
-import { ReviewSpecializationInfo, ReviewsStore } from "src/stores/ReviewsStore";
+import { ReviewSpecializationInfo, ReviewsStore } from "src/model/ReviewsStore";
 import { personUrlById } from "src/constants";
 import { Link } from "react-router-dom";
-import { AuthStore } from "src/stores/AuthStore";
+import { AuthStore } from "src/model/AuthStore";
 
 const styles = (theme: Theme) => createStyles({
     root: {

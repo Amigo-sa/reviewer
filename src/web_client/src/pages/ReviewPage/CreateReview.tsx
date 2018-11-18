@@ -18,9 +18,9 @@ import Person from "src/server-api/persons/Person";
 
 import { inject, observer } from "mobx-react";
 
-import { PersonsStore } from "src/stores/PersonsStore";
-import { SpecializationsStore } from "src/stores/SpecializationsStore";
-import { ReviewsStore } from "src/stores/ReviewsStore";
+import { PersonsStore } from "src/model/PersonsStore";
+import { SpecializationsStore } from "src/model/SpecializationsStore";
+import { ReviewsStore } from "src/model/ReviewsStore";
 
 import PersonSpecialization, { PersonSpecializationList } from "src/server-api/persons/PersonSpecialization";
 import { urlReviewList } from ".";

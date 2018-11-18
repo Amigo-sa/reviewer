@@ -7,7 +7,7 @@ import {
     // MenuItem,
     LinearProgress,
 } from "@material-ui/core";
-import FoundPerson from "../../elements/FoundPerson";
+import FoundPerson from "../../components/FoundPerson";
 
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";

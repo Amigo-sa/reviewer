@@ -1,12 +1,12 @@
 import { observable, action, computed } from "mobx";
 import Person from "src/server-api/persons/Person";
 import { PersonSpecializationList } from "src/server-api/persons/PersonSpecialization";
-import personsStore from "src/stores/PersonsStore";
+import personsStore from "src/model/PersonsStore";
 import PersonsApi from "src/server-api/persons/PersonsApi";
 import FindPersonSoftSkillInfoResponse from "src/server-api/persons/FindPersonSoftSkillInfoResponse";
 import FindPersonHardSkillInfoResponse from "src/server-api/persons/FindPersonHardSkillInfoResponse";
 import HardSkill from "src/server-api/persons/HardSkill";
-import commonStore from "src/stores/CommonStore";
+import commonStore from "src/model/CommonStore";
 import SoftSkill from "src/server-api/persons/SoftSkill";
 import { DUMMY_AVATAR_URL } from "src/constants";
 import FindPersonsRequest from "src/server-api/persons/FindPersonsRequest";

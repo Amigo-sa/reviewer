@@ -5,12 +5,12 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import registerServiceWorker from "./registerServiceWorker";
-import authStore from "./stores/AuthStore";
-import searchStore from "./stores/SearchStore";
-import commonStore from "./stores/CommonStore";
-import personsStore from "./stores/PersonsStore";
-import reviewsStore from "./stores/ReviewsStore";
-import specializationsStore from "./stores/SpecializationsStore";
+import authStore from "./model/AuthStore";
+import searchStore from "./model/SearchStore";
+import commonStore from "./model/CommonStore";
+import personsStore from "./model/PersonsStore";
+import reviewsStore from "./model/ReviewsStore";
+import specializationsStore from "./model/SpecializationsStore";
 
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import theme from "./Theme";

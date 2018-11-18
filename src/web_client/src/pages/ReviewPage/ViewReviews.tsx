@@ -10,14 +10,14 @@ import { withRouter, RouteComponentProps } from "react-router";
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import { inject, observer } from "mobx-react";
-import { ReviewsStore, ReviewSpecializationInfo, FindReviewsViews } from "src/stores/ReviewsStore";
+import { ReviewsStore, ReviewSpecializationInfo, FindReviewsViews } from "src/model/ReviewsStore";
 
 import Person from "src/server-api/persons/Person";
-import { AuthStore } from "src/stores/AuthStore";
+import { AuthStore } from "src/model/AuthStore";
 import { Link } from "react-router-dom";
 import { personUrlById } from "src/constants";
 import { IPersonShort } from "src/server-api/reviews/Review";
-import { PersonsStore } from "src/stores/PersonsStore";
+import { PersonsStore } from "src/model/PersonsStore";
 
 const styles = (theme: Theme) => createStyles({
     root: {

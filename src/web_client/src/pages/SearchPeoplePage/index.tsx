@@ -4,13 +4,13 @@ import Footer from "../../components/Footer";
 
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
-import { SearchStore } from "../../stores/SearchStore";
+import { SearchStore } from "../../model/SearchStore";
 
 import SearchResult from "./SearchResult";
 import { observer, inject } from "mobx-react";
 import SearchForm from "./SearchForm";
 import FindPersonsRequest from "../../server-api/persons/FindPersonsRequest";
-import { SpecializationsStore } from "src/stores/SpecializationsStore";
+import { SpecializationsStore } from "src/model/SpecializationsStore";
 
 interface ISearchPageProps extends WithStyles<typeof styles> {
     searchStore?: SearchStore;

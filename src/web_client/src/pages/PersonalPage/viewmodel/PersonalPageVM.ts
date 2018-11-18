@@ -1,5 +1,5 @@
 import PersonalInfoVM from "./PersonalInfoVM";
-import authStore from "src/stores/AuthStore"; // TODO: get auth store from constructor
+import authStore from "src/model/AuthStore"; // TODO: get auth store from constructor
 import { observable, computed, action } from "mobx";
 import { ReviewsVM } from "./ReviewsVM";
 

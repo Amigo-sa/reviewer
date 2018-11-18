@@ -13,7 +13,7 @@ import {
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import FindPersonsRequest from "../../server-api/persons/FindPersonsRequest";
-import commonStore from "src/stores/CommonStore";
+import commonStore from "src/model/CommonStore";
 
 /*
 ** Component SearchForm

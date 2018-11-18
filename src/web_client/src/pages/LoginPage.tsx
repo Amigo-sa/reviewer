@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Button } from "@material-ui/core";
 import { Dialog } from "@material-ui/core";
-import { AuthStore } from "../stores/AuthStore";
+import { AuthStore } from "../model/AuthStore";
 import { inject, observer } from "mobx-react";
 import { observable, action } from "mobx";
 import { Redirect } from "react-router-dom";

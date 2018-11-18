@@ -21,7 +21,7 @@ import MoreIcon from "@material-ui/icons/MoreVert";
 import Logo from "./elements/Logo";
 // import HeaderMenu from "./elements/Menu";
 import { observer, inject } from "mobx-react";
-import { AuthStore } from "../../stores/AuthStore";
+import { AuthStore } from "../../model/AuthStore";
 import { Button, Dialog } from "@material-ui/core";
 import LoginDialog from "src/components/LoginDialog";
 

@@ -7,8 +7,8 @@ import "typeface-roboto";
 import { Link } from "react-router-dom";
 import Person from "src/server-api/persons/Person";
 import { inject, observer } from "mobx-react";
-import { PersonsStore } from "src/stores/PersonsStore";
-import { AuthStore } from "src/stores/AuthStore";
+import { PersonsStore } from "src/model/PersonsStore";
+import { AuthStore } from "src/model/AuthStore";
 import { DUMMY_AVATAR_URL } from "src/constants";
 import PersonsApi from "src/server-api/persons/PersonsApi";
 

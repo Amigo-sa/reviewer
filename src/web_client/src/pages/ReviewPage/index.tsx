@@ -6,7 +6,7 @@ import { Switch, Route } from "react-router-dom";
 import ViewReviews from "./ViewReviews";
 import ViewReview from "./ViewReview";
 import { Grid } from "@material-ui/core";
-import LeftMenu from "src/elements/LeftMenu";
+import LeftMenu from "src/components/LeftMenu";
 
 class Reviews extends React.Component<any> {
     public render() {

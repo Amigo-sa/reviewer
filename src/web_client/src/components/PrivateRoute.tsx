@@ -3,7 +3,7 @@ import { Route, Redirect, RouteProps } from "react-router-dom";
 import { REDIRECT_TO_LOGIN } from "../constants";
 import { ScaleLoader } from "react-spinners";
 import { observer } from "mobx-react";
-import authStore from "src/stores/AuthStore";
+import authStore from "src/model/AuthStore";
 
 /**
  * PrivateRoute component.
