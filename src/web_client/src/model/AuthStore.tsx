@@ -4,7 +4,6 @@ import PersonsApi from "src/server-api/persons/PersonsApi";
 import UserLoginRequest from "src/server-api/registration/UserLoginRequest";
 import UserLoginResponse from "src/server-api/registration/UserLoginResponse";
 import Person from "src/server-api/persons/Person";
-import { AuthorizationInfo } from "src/components/PrivateRoute";
 
 // TODO: we really need only uid and token info
 export interface IUserData {
@@ -15,7 +14,8 @@ export interface IUserData {
 
 export class AuthStore {
 
-    public authInfo: AuthorizationInfo = new AuthorizationInfo();
+    @observable
+    public isAuth: boolean = false;
 
     @observable
     public user: IUserData = {
@@ -36,7 +36,7 @@ export class AuthStore {
                 });
             })
             .then(action(() => {
-                this.authInfo.isAuth = true;
+                this.isAuth = true;
             }))
             .catch((err) => {
                 throw err;
@@ -48,7 +48,7 @@ export class AuthStore {
     }
 
     @action public logout() {
-        this.authInfo.isAuth = false;
+        this.isAuth = false;
         localStorage.removeItem("User");
         return Promise.resolve();
     }
@@ -64,16 +64,16 @@ export class AuthStore {
     public tryAuthenticate() {
         return this.getCurrentUser()
             .then(action(() => {
-                this.authInfo.isAuth = true;
+                this.isAuth = true;
             }))
             .catch((err: object) => {
-                this.authInfo.isAuth = false;
+                this.isAuth = false;
             });
     }
 
     private getCurrentUser(force?: boolean): Promise<IUserData> {
         let resultPromise: Promise<IUserData>;
-        if (!force && this.user && this.authInfo.isAuth) {
+        if (!force && this.user && this.isAuth) {
             resultPromise = Promise.resolve(this.user);
         }
         else {

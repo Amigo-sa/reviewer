@@ -254,7 +254,7 @@ class Header extends React.Component<IProps, IState>{
                                 }}
                             />*/}
                             </div>
-                            {authStore && authStore.authInfo.isAuth ?
+                            {authStore && authStore.isAuth ?
                                 <>
                                     {/* Вывод для дестопа */}
                                     <div className={classes.sectionDesktop}>
