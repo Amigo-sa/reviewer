@@ -8,38 +8,36 @@ import SearchPeoplePage from "./pages/SearchPeoplePage";
 import SearchStructuresPage from "./pages/SearchStructuresPage";
 import PrivateRoute from "./components/PrivateRoute";
 import LoginPage from "./pages/LoginPage";
-import authStore from "./model/AuthStore";
 import Grid from "@material-ui/core/Grid";
-import commonStore from "./model/CommonStore";
 import Reviews from "./pages/ReviewPage";
 import CreateReviewPage from "./pages/ReviewPage/CreateReviewPage";
 import { LinearProgress } from "@material-ui/core";
+import application from "./Application";
+import AppVM, { IAppVMListener } from "./AppVM";
 
-interface IState {
-    loaded: boolean;
-}
+// TODO: we have to use VM + listener approach instead of mobx, because @observer
+// decarator blocks updating of routes
+class App extends React.Component implements IAppVMListener {
 
-class App extends React.Component<any, IState> {
+    constructor(props: any) {
+        super(props);
+        // attach to view model as listener
+        this._appVM.attachListener(this);
+    }
 
-    public state = {
-        loaded: false,
-    };
+    // Implements of IViewModelListener
+
+    public onUpdate(): void {
+        // redraw react component
+        this.forceUpdate();
+    }
 
     public componentDidMount() {
-
-        const loadCommonData = commonStore.loadData();
-        const tryAuthorizate = authStore.tryAuthenticate();
-
-        Promise.all([loadCommonData, tryAuthorizate]).then(() => {
-            this.setState({ loaded: true });
-        },
-            () => {
-                console.error("Inital loading error");
-            });
+        this._appVM.initilalLoad();
     }
 
     public render() {
-        if (this.state.loaded) {
+        if (this._appVM.loaded) {
             // If all initial data is loaded, then show application UI
             return (
                 <div
@@ -99,6 +97,8 @@ class App extends React.Component<any, IState> {
             return (<LinearProgress />);
         }
     }
+
+    private _appVM: AppVM = application.appVM;
 }
 
 export default App;
