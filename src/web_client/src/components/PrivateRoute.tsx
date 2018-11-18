@@ -3,19 +3,26 @@ import { Route, Redirect, RouteProps } from "react-router-dom";
 import { REDIRECT_TO_LOGIN } from "src/constants";
 import { ScaleLoader } from "react-spinners";
 import { observer } from "mobx-react";
-import authStore from "src/model/AuthStore";
+import { observable } from "mobx";
+
+export class AuthorizationInfo {
+    @observable
+    public isAuth: boolean = false;
+
+    @observable
+    public pending: boolean = false;
+}
+
+interface IProps extends RouteProps {
+    authInfo: AuthorizationInfo;
+}
 
 /**
  * PrivateRoute component.
  * Helps to work with private pages.
  */
 @observer
-export default class PrivateRoute extends React.Component<RouteProps> {
-
-    public componentDidMount() {
-        // try to authorization
-        authStore.tryAuthenticate();
-    }
+export default class PrivateRoute extends React.Component<IProps> {
 
     public render() {
         const routeProps = {
@@ -27,17 +34,17 @@ export default class PrivateRoute extends React.Component<RouteProps> {
             strict: this.props.strict,
         };
 
-        if (authStore.pending) {
+        if (this.props.authInfo.pending) {
             return (
                 <div className={"Centered"}>
                     <ScaleLoader
                         height={150}
                         color={"#123abc"}
-                        loading={authStore.pending}
+                        loading={this.props.authInfo.pending}
                     />
                 </div>
             );
-        } else if (!authStore.isAuth) {
+        } else if (!this.props.authInfo.isAuth) {
             // TODO: need to add info about from where we open Login page.
             // We need to redirect to this page after user makes logining success
             return <Redirect to={REDIRECT_TO_LOGIN} />;

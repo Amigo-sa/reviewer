@@ -4,6 +4,7 @@ import PersonsApi from "src/server-api/persons/PersonsApi";
 import UserLoginRequest from "src/server-api/registration/UserLoginRequest";
 import UserLoginResponse from "src/server-api/registration/UserLoginResponse";
 import Person from "src/server-api/persons/Person";
+import { AuthorizationInfo } from "src/components/PrivateRoute";
 
 // TODO: we really need only uid and token info
 export interface IUserData {
@@ -14,7 +15,8 @@ export interface IUserData {
 }
 
 export class AuthStore {
-    @observable public isAuth: boolean = false;
+
+    public authInfo: AuthorizationInfo = new AuthorizationInfo();
 
     @observable
     public user: IUserData = {
@@ -23,9 +25,6 @@ export class AuthStore {
         uid: undefined,
         data: undefined,
     };
-
-    @observable
-    public pending: boolean = false;
 
     constructor() {
         console.log("Construct AuthStore");
@@ -44,7 +43,7 @@ export class AuthStore {
 
     @action
     public authenticate(phone: string, password: string) {
-        this.pending = true;
+        this.authInfo.pending = true;
         return RegistrationApi.userLogin(new UserLoginRequest(phone, password))
             .then((responce: UserLoginResponse) => {
                 this.setUser(responce);
@@ -56,12 +55,12 @@ export class AuthStore {
             })
             .then(action(() => {
                 this.setPhone(phone);
-                this.isAuth = true;
-                this.pending = false;
+                this.authInfo.isAuth = true;
+                this.authInfo.pending = false;
             }))
             .catch((err) => {
                 throw err;
-                this.pending = true;
+                this.authInfo.pending = true;
             });
     }
 
@@ -70,7 +69,7 @@ export class AuthStore {
     }
 
     @action public logout() {
-        this.isAuth = false;
+        this.authInfo.isAuth = false;
         localStorage.removeItem("User");
         return Promise.resolve();
     }
@@ -84,21 +83,21 @@ export class AuthStore {
 
     @action
     public tryAuthenticate() {
-        this.pending = true;
+        this.authInfo.pending = true;
         return this.getCurrentUser()
             .then(action(() => {
-                this.isAuth = true;
-                this.pending = false;
+                this.authInfo.isAuth = true;
+                this.authInfo.pending = false;
             }))
             .catch((err: object) => {
-                this.isAuth = false;
-                this.pending = false;
+                this.authInfo.isAuth = false;
+                this.authInfo.pending = false;
             });
     }
 
     private getCurrentUser(force?: boolean): Promise<IUserData> {
         let resultPromise: Promise<IUserData>;
-        if (!force && this.user && this.isAuth) {
+        if (!force && this.user && this.authInfo.isAuth) {
             resultPromise = Promise.resolve(this.user);
         }
         else {

@@ -6,7 +6,7 @@ import Main from "./pages/MainPage/Main";
 import PersonalPage from "./pages/PersonalPage";
 import SearchPeoplePage from "./pages/SearchPeoplePage";
 import SearchStructuresPage from "./pages/SearchStructuresPage";
-import PrivateRoute from "./pages/components/PrivateRoute";
+import PrivateRoute from "./components/PrivateRoute";
 import LoginPage from "./pages/LoginPage";
 import authStore from "./model/AuthStore";
 import Grid from "@material-ui/core/Grid";
@@ -58,6 +58,7 @@ class App extends React.Component<any, IState> {
                                 exact
                                 path="/personal"
                                 component={PersonalPage}
+                                authInfo={authStore.authInfo}
                             />
                             {/* TODO необходимо переносить роуты внутрь управляющих страниц! */}
                             {/* TODO: why do we use review url for current person? */}
@@ -65,30 +66,37 @@ class App extends React.Component<any, IState> {
                                 exact
                                 path="/personal/:id/review"
                                 component={CreateReviewPage}
+                                authInfo={authStore.authInfo}
                             />
                             <PrivateRoute
                                 path="/personal/:id/review/:specid"
                                 component={CreateReviewPage}
+                                authInfo={authStore.authInfo}
                             />
                             <PrivateRoute
                                 path="/personal/:id"
                                 component={PersonalPage}
+                                authInfo={authStore.authInfo}
                             />
                             <PrivateRoute
                                 path="/reviews"
                                 component={Reviews}
+                                authInfo={authStore.authInfo}
                             />
                             <PrivateRoute
                                 path="/search-peoples"
                                 component={SearchPeoplePage}
+                                authInfo={authStore.authInfo}
                             />
                             <PrivateRoute
                                 path="/search-structures"
                                 component={SearchStructuresPage}
+                                authInfo={authStore.authInfo}
                             />
                             <PrivateRoute
                                 path="/add-survey"
                                 component={AddSurveyPage}
+                                authInfo={authStore.authInfo}
                             />
                         </Switch>
                     </Grid>
