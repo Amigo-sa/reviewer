@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Route, Redirect, RouteProps } from "react-router-dom";
-import { REDIRECT_TO_LOGIN } from "../constants";
+import { REDIRECT_TO_LOGIN } from "src/constants";
 import { ScaleLoader } from "react-spinners";
 import { observer } from "mobx-react";
 import authStore from "src/model/AuthStore";

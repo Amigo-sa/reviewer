@@ -6,7 +6,7 @@ import Main from "./pages/MainPage/Main";
 import PersonalPage from "./pages/PersonalPage";
 import SearchPeoplePage from "./pages/SearchPeoplePage";
 import SearchStructuresPage from "./pages/SearchStructuresPage";
-import PrivateRoute from "./components/PrivateRoute";
+import PrivateRoute from "./pages/components/PrivateRoute";
 import LoginPage from "./pages/LoginPage";
 import authStore from "./model/AuthStore";
 import Grid from "@material-ui/core/Grid";

@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Grid } from "@material-ui/core";
-import LeftMenu from "src/components/LeftMenu";
-import Footer from "src/components/Footer";
-import Header from "src/components/Header";
+import LeftMenu from "src/pages/components/LeftMenu";
+import Footer from "src/pages/components/Footer";
+import Header from "src/pages/components/Header";
 
 import CreateReview from "./CreateReview";
 

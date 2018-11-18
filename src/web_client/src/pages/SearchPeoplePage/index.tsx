@@ -1,6 +1,6 @@
 import * as React from "react";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
+import Header from "src/pages/components/Header";
+import Footer from "src/pages/components/Footer";
 
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";

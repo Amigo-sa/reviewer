@@ -10,7 +10,7 @@ import {
 } from "@material-ui/core";
 import { computed } from "mobx";
 import { observer, inject } from "mobx-react";
-import { AuthStore } from "../../model/AuthStore";
+import { AuthStore } from "src/model/AuthStore";
 
 // #TODO перейти на другую схему, лишнее убрать
 interface IAuthProps {

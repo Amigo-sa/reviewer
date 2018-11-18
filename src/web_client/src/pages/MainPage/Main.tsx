@@ -1,7 +1,7 @@
 import * as React from "react";
 import Grid from "@material-ui/core/Grid";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
+import Header from "src/pages/components/Header";
+import Footer from "src/pages/components/Footer";
 import TextInfo from "./TextInfo";
 // import FoundPerson from "../../elements/FoundPerson";
 
