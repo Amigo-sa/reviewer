@@ -21,6 +21,7 @@ interface IState {
 @inject("authStore")
 @observer
 class LoginPage extends React.Component<IAuthProps, IState> {
+    // TODO: remove hardcode really data
     @observable
     public user: object = {
         login: "78005553535",

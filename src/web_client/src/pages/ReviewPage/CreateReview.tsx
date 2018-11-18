@@ -18,7 +18,7 @@ import Person from "src/server-api/persons/Person";
 
 import { inject, observer } from "mobx-react";
 
-import { UsersStore } from "src/stores/UsersStore";
+import { PersonsStore } from "src/stores/PersonsStore";
 import { SpecializationsStore } from "src/stores/SpecializationsStore";
 import { ReviewsStore } from "src/stores/ReviewsStore";
 
@@ -43,7 +43,7 @@ interface IDetailParams {
 }
 
 interface IReviewPageProps extends WithStyles<typeof styles> {
-    usersStore?: UsersStore;
+    personsStore?: PersonsStore;
     specializationsStore?: SpecializationsStore;
     reviewsStore?: ReviewsStore;
 }
@@ -63,7 +63,7 @@ interface IState {
 }
 
 // TODO: add state interface
-@inject("usersStore", "specializationsStore", "reviewsStore")
+@inject("personsStore", "specializationsStore", "reviewsStore")
 @observer
 class CreateReview extends React.Component<IReviewPageProps & RouteComponentProps<IDetailParams>, IState> {
 
@@ -203,14 +203,14 @@ class CreateReview extends React.Component<IReviewPageProps & RouteComponentProp
 
     // Получение информации о пользователе по ID
     private _loadPerson(id: string): void {
-        const { usersStore, specializationsStore } = this.injected;
+        const { personsStore, specializationsStore } = this.injected;
         let { specializationId } = this.state;
 
         // загрузка пользователя на которого оставляют отзыв
-        if (usersStore) {
-            usersStore.get(id)
-                .then((user) => {
-                    this.setState({ person: user, loading: false });
+        if (personsStore) {
+            personsStore.get(id)
+                .then((person) => {
+                    this.setState({ person, loading: false });
                 })
                 .catch(() => this.setState({ loading: false, loadingError: "Не загружен пользователь" }));
         }

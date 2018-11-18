@@ -9,9 +9,9 @@ export class SpecializationsStore {
 
     @action
     public get(id: string, force = false): Promise<PersonSpecializationList | undefined> {
-        const user = this._peak(id);
-        if (user && !force) {
-            return Promise.resolve(user);
+        const specialization = this._peak(id);
+        if (specialization && !force) {
+            return Promise.resolve(specialization);
         }
         return PersonsApi.getPersonSpecializations(id)
             .then((response: GetPersonsSpecializationsResponse) => {
@@ -26,9 +26,9 @@ export class SpecializationsStore {
     }
 
     private _peak(id: string): PersonSpecializationList | undefined {
-        const user = this.specializations[id];
-        if (user) {
-            return user;
+        const specialization = this.specializations[id];
+        if (specialization) {
+            return specialization;
         }
         return undefined;
     }

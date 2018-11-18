@@ -3,19 +3,19 @@ import PersonsApi from "src/server-api/persons/PersonsApi";
 import Person from "src/server-api/persons/Person";
 import GetPersonInfoResponse from "src/server-api/persons/GetPersonInfoResponse";
 
-export class UsersStore {
+export class PersonsStore {
     @observable
-    public users: { [key: string]: Person } = {};
+    public persons: { [key: string]: Person } = {};
 
     public get(id: string, force = false): Promise<Person | undefined> {
-        const user = this._peak(id);
-        if (user && !force) {
-            return Promise.resolve(user);
+        const person = this._peak(id);
+        if (person && !force) {
+            return Promise.resolve(person);
         }
         return PersonsApi.getPersonInfo(id)
             .then(action((response: GetPersonInfoResponse) => {
                 if (response.result === 0 && response.data) {
-                    this.users[id] = response.data;
+                    this.persons[id] = response.data;
                     return response.data;
                 }
                 return undefined;
@@ -23,14 +23,14 @@ export class UsersStore {
     }
 
     private _peak(id: string): Person | undefined {
-        const user = this.users[id];
-        if (user) {
-            return user;
+        const person = this.persons[id];
+        if (person) {
+            return person;
         }
         return undefined;
     }
 
 }
 
-const usersStore = new UsersStore();
-export default usersStore;
+const personsStore = new PersonsStore();
+export default personsStore;

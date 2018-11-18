@@ -1,7 +1,7 @@
 import { observable, action, computed } from "mobx";
 import Person from "src/server-api/persons/Person";
 import { PersonSpecializationList } from "src/server-api/persons/PersonSpecialization";
-import usersStore from "src/stores/UsersStore";
+import personsStore from "src/stores/PersonsStore";
 import PersonsApi from "src/server-api/persons/PersonsApi";
 import FindPersonSoftSkillInfoResponse from "src/server-api/persons/FindPersonSoftSkillInfoResponse";
 import FindPersonHardSkillInfoResponse from "src/server-api/persons/FindPersonHardSkillInfoResponse";
@@ -97,7 +97,7 @@ export default class PersonalInfoVM {
         });
 
         // Load personal info
-        const loadPersonInfo = usersStore.get(id).then((result: Person) => {
+        const loadPersonInfo = personsStore.get(id).then((result: Person) => {
             this._updatePerson(result);
         });
 

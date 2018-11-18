@@ -60,7 +60,7 @@ class App extends React.Component<any, IState> {
                                 component={PersonalPage}
                             />
                             {/* TODO необходимо переносить роуты внутрь управляющих страниц! */}
-                            {/* TODO: why do we use review url for current user? */}
+                            {/* TODO: why do we use review url for current person? */}
                             <PrivateRoute
                                 exact
                                 path="/personal/:id/review"

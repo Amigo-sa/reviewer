@@ -7,7 +7,7 @@ import "typeface-roboto";
 import { Link } from "react-router-dom";
 import Person from "src/server-api/persons/Person";
 import { inject, observer } from "mobx-react";
-import { UsersStore } from "src/stores/UsersStore";
+import { PersonsStore } from "src/stores/PersonsStore";
 import { AuthStore } from "src/stores/AuthStore";
 import { DUMMY_AVATAR_URL } from "src/constants";
 import PersonsApi from "src/server-api/persons/PersonsApi";
@@ -24,19 +24,19 @@ const styles = (theme: Theme) =>
 
 interface IProps extends WithStyles<typeof styles> {
     authStore?: AuthStore;
-    usersStore?: UsersStore;
+    personsStore?: PersonsStore;
 }
 
 interface IState {
-    user: Person | undefined;
+    person: Person | undefined;
 }
 
-@inject("authStore", "usersStore")
+@inject("authStore", "personsStore")
 @observer
 class LeftMenu extends React.Component<IProps, IState> {
 
     public state: IState = {
-        user: undefined,
+        person: undefined,
     };
 
     get inject() {
@@ -46,12 +46,12 @@ class LeftMenu extends React.Component<IProps, IState> {
     public componentDidMount() {
         const {
             authStore,
-            usersStore,
+            personsStore,
         } = this.inject;
 
-        if (authStore && authStore.user.uid && usersStore) {
-            usersStore.get(authStore.user.uid)
-                .then((user) => this.setState({ user }));
+        if (authStore && authStore.user.uid && personsStore) {
+            personsStore.get(authStore.user.uid)
+                .then((person: Person) => this.setState({ person }));
         }
     }
 
@@ -60,9 +60,9 @@ class LeftMenu extends React.Component<IProps, IState> {
         // TODO: extract determintion of person photo url to some helper class.
         // Determine url of person photo
         let photoUrl: string = DUMMY_AVATAR_URL;
-        if (this.state.user) {
-            if (this.state.user.photo) {
-                photoUrl = PersonsApi.personPhotoUrlById(this.state.user!.id);
+        if (this.state.person) {
+            if (this.state.person.photo) {
+                photoUrl = PersonsApi.personPhotoUrlById(this.state.person!.id);
             }
         }
 
@@ -137,9 +137,9 @@ class LeftMenu extends React.Component<IProps, IState> {
     }
 
     public _renderFio() {
-        const { user } = this.state;
-        if (user) {
-            const uInfo = user as Person;
+        const { person } = this.state;
+        if (person) {
+            const uInfo = person as Person;
             return uInfo.surname + " " + uInfo.first_name + " " + uInfo.middle_name;
         }
         return;

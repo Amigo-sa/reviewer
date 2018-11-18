@@ -8,7 +8,7 @@ import registerServiceWorker from "./registerServiceWorker";
 import authStore from "./stores/AuthStore";
 import searchStore from "./stores/SearchStore";
 import commonStore from "./stores/CommonStore";
-import usersStore from "./stores/UsersStore";
+import personsStore from "./stores/PersonsStore";
 import reviewsStore from "./stores/ReviewsStore";
 import specializationsStore from "./stores/SpecializationsStore";
 
@@ -20,7 +20,7 @@ const stores = {
     authStore,
     searchStore,
     commonStore,
-    usersStore,
+    personsStore,
     reviewsStore,
     specializationsStore,
 };

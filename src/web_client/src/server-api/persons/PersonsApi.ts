@@ -1,6 +1,3 @@
-// import ServerApiHelper from "../ServerApiHelper";
-// import { SERVER_HOST } from "src/constants";
-// import UserProfileResponce from "./UserProfileResponce";
 import Person from "src/server-api/persons/Person";
 import AddPersonResponse from "./AddPersonResponse";
 import ServerApiHelper from "../ServerApiHelper";

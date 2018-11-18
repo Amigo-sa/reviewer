@@ -17,7 +17,7 @@ import { AuthStore } from "src/stores/AuthStore";
 import { Link } from "react-router-dom";
 import { personUrlById } from "src/constants";
 import { IPersonShort } from "src/server-api/reviews/Review";
-import { UsersStore } from "src/stores/UsersStore";
+import { PersonsStore } from "src/stores/PersonsStore";
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -52,7 +52,7 @@ interface IDetailParams {
 interface IReviewsPageProps extends WithStyles<typeof styles> {
     reviewsStore?: ReviewsStore;
     authStore?: AuthStore;
-    usersStore?: UsersStore;
+    personsStore?: PersonsStore;
 }
 
 interface IState {
@@ -64,7 +64,7 @@ interface IState {
     loadingError: string;
 }
 
-@inject("authStore", "reviewsStore", "usersStore")
+@inject("authStore", "reviewsStore", "personsStore")
 @observer
 class ViewReviews extends React.Component<IReviewsPageProps & RouteComponentProps<IDetailParams>, any> {
 
@@ -164,11 +164,11 @@ class ViewReviews extends React.Component<IReviewsPageProps & RouteComponentProp
 
     // #TODO Получение информации о пользователе оставившем отзыв по ID
     private _loadPerson(id: string): Promise<void> {
-        const { usersStore } = this.injected;
-        if (usersStore) {
-            return usersStore.get(id)
-                .then((user) => {
-                    this.setState({ person: user });
+        const { personsStore } = this.injected;
+        if (personsStore) {
+            return personsStore.get(id)
+                .then((person: Person) => {
+                    this.setState({ person });
                 })
                 .catch(() => {
                     this.setState({ loadingError: "Не загружен пользователь" });

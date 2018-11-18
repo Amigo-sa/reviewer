@@ -56,7 +56,7 @@ const styles = (theme: Theme) => createStyles({
 
 // TODO:
 // props:
-// - add user info to props
+// - add person info to props
 // - add mode identificator: for show in rating list, for show as found person in search page
 interface IProps extends WithStyles<typeof styles> {
     id: string;

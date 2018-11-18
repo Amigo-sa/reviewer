@@ -64,7 +64,7 @@ class PersonalInfo extends React.Component<IProps> {
         );
     }
 
-    // private _renderReviewLink(isCurrentUser: boolean) {
+    // private _renderReviewLink(isCurrentPerson: boolean) {
     //     const specializations = this.props.viewModel.specializationList;
 
     //     if (specializations.list && specializations.list.length > 1) {
@@ -72,7 +72,7 @@ class PersonalInfo extends React.Component<IProps> {
     //         return specializations.list.map((specialization) => (
     //             <Grid item>
     //                 <b>{specialization.specialization_type}({specialization.department_name})</b>
-    //                 {!isCurrentUser &&
+    //                 {!isCurrentPerson &&
     //                     <Link to={urlReviewNew(this.props.viewModel.personId,
     // specialization.id)}>Оставить отзыв</Link>}
     //             </Grid>

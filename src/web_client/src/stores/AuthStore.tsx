@@ -5,6 +5,7 @@ import UserLoginRequest from "src/server-api/registration/UserLoginRequest";
 import UserLoginResponse from "src/server-api/registration/UserLoginResponse";
 import Person from "src/server-api/persons/Person";
 
+// TODO: we really need only uid and token info
 export interface IUserData {
     phone: string;
     token: string | undefined;
@@ -30,11 +31,13 @@ export class AuthStore {
         console.log("Construct AuthStore");
     }
 
+    // TODO: do we need have it here?
     @action
     public setPhone(phone: string) {
         this.user.phone = phone;
     }
 
+    // TODO: do we need have it here?
     @action public reset() {
         // this.user = null;
     }
