@@ -12,7 +12,11 @@ export default class AppVM {
 
     // Public properties
 
-    public loaded: boolean;
+    public loaded: boolean = false;
+
+    public isErrorShown: boolean = false;
+
+    public errorMessage?: string;
 
     // Public methods
 
@@ -45,6 +49,18 @@ export default class AppVM {
             () => {
                 console.error("Inital loading error");
             });
+    }
+
+    public showError(errorMessage: string): void {
+        this.isErrorShown = true;
+        this.errorMessage = errorMessage;
+        this._notifyListener();
+    }
+
+    public hideError(): void {
+        this.isErrorShown = false;
+        this.errorMessage = undefined;
+        this._notifyListener();
     }
 
     // Private methods

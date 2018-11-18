@@ -11,7 +11,7 @@ import LoginPage from "./pages/LoginPage";
 import Grid from "@material-ui/core/Grid";
 import Reviews from "./pages/ReviewPage";
 import CreateReviewPage from "./pages/ReviewPage/CreateReviewPage";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress, Dialog } from "@material-ui/core";
 import application from "./Application";
 import AppVM, { IAppVMListener } from "./AppVM";
 
@@ -90,11 +90,32 @@ class App extends React.Component implements IAppVMListener {
                             />
                         </Switch>
                     </Grid>
+                    {this._showError()}
                 </div>
             );
         } else {
             // Initial data is not loaded yet, show progress info
             return (<LinearProgress />);
+        }
+    }
+
+    // Private methods
+
+    /**
+     * Shows error.
+     */
+    private _showError() {
+        if (this._appVM.isErrorShown) {
+            return (
+                <Dialog
+                    open
+                    onClose={() => this._appVM.hideError()}
+                    aria-labelledby="form-dialog-title">
+                    {this._appVM.errorMessage}
+                </Dialog>
+            );
+        } else {
+            return null;
         }
     }
 
