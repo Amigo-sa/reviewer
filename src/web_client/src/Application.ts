@@ -14,6 +14,10 @@ class Application {
         this._appVM.showError(errorMessage);
     }
 
+    public showLoginDialog(): void {
+        this._appVM.showLoginDialog();
+    }
+
     // Private fields
 
     private _appVM: AppVM = new AppVM();

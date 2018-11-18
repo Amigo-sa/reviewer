@@ -63,6 +63,18 @@ export default class AppVM {
         this._notifyListener();
     }
 
+    public isLoginDialogShown: boolean = false;
+
+    public showLoginDialog(): void {
+        this.isLoginDialogShown = true;
+        this._notifyListener();
+    }
+
+    public hideLoginDialog(): void {
+        this.isLoginDialogShown = false;
+        this._notifyListener();
+    }
+
     // Private methods
 
     /**

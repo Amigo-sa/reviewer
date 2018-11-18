@@ -14,6 +14,7 @@ import CreateReviewPage from "./pages/ReviewPage/CreateReviewPage";
 import { LinearProgress, Dialog } from "@material-ui/core";
 import application from "./Application";
 import AppVM, { IAppVMListener } from "./AppVM";
+import LoginDialog from "./pages/components/LoginDialog";
 
 // TODO: we have to use VM + listener approach instead of mobx, because @observer
 // decarator blocks updating of routes
@@ -90,6 +91,7 @@ class App extends React.Component implements IAppVMListener {
                             />
                         </Switch>
                     </Grid>
+                    {this._showLoginDialog()}
                     {this._showError()}
                 </div>
             );
@@ -117,6 +119,25 @@ class App extends React.Component implements IAppVMListener {
         } else {
             return null;
         }
+    }
+
+    private _showLoginDialog() {
+        if (this._appVM.isLoginDialogShown) {
+            return (
+                <Dialog
+                    open
+                    onClose={() => this._appVM.hideLoginDialog()}
+                    aria-labelledby="form-dialog-title"
+                >
+                    <LoginDialog
+                        handleClose={() => this._appVM.hideLoginDialog()}
+                    />
+                </Dialog>
+            );
+        } else {
+            return null;
+        }
+
     }
 
     private _appVM: AppVM = application.appVM;

@@ -22,8 +22,8 @@ import Logo from "./elements/Logo";
 // import HeaderMenu from "./elements/Menu";
 import { observer, inject } from "mobx-react";
 import { AuthStore } from "src/model/AuthStore";
-import { Button, Dialog } from "@material-ui/core";
-import LoginDialog from "src/pages/components/LoginDialog";
+import { Button } from "@material-ui/core";
+import application from "src/Application";
 
 // #TODO определиться как лучше писать стили так или в css
 // такая струкутура позволяет обновлять тему
@@ -117,7 +117,6 @@ interface IProps extends WithStyles<typeof styles>, IAuthProps {
 interface IState {
     anchorEl: any;
     mobileMoreAnchorEl: any;
-    isLoginAnchorEl: boolean;
 }
 
 @inject("authStore")
@@ -126,7 +125,6 @@ class Header extends React.Component<IProps, IState>{
     public state: IState = {
         anchorEl: null,
         mobileMoreAnchorEl: null,
-        isLoginAnchorEl: false,
     };
 
     get injected() {
@@ -153,21 +151,16 @@ class Header extends React.Component<IProps, IState>{
     }
 
     private handleLoginClickOpen = (event: any) => {
-        this.setState({ isLoginAnchorEl: true });
-    }
-
-    private handleLoginClickClose = () => {
-        this.setState({ isLoginAnchorEl: false });
+        application.showLoginDialog();
     }
 
     // TODO: divide method on several privates.
     public render() {
-        const { anchorEl, /*mobileMoreAnchorEl,*/ isLoginAnchorEl } = this.state;
+        const { anchorEl /*mobileMoreAnchorEl,*/ } = this.state;
         const { classes, title } = this.props;
         const { authStore } = this.injected;
         const isMenuOpen = Boolean(anchorEl);
         // const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-        const isLoginOpen = isLoginAnchorEl;
 
         // #TODO менюшка у пользователя
         const renderMenu = (
@@ -281,15 +274,6 @@ class Header extends React.Component<IProps, IState>{
                                 :
                                 <>
                                     <Button onClick={this.handleLoginClickOpen}>Войти</Button>
-                                    <Dialog
-                                        open={isLoginOpen}
-                                        onClose={this.handleLoginClickClose}
-                                        aria-labelledby="form-dialog-title"
-                                    >
-                                        <LoginDialog
-                                            handleClose={this.handleLoginClickClose}
-                                        />
-                                    </Dialog>
                                 </>
                             }
                         </Grid>
