@@ -8,7 +8,6 @@ import { AuthorizationInfo } from "src/components/PrivateRoute";
 
 // TODO: we really need only uid and token info
 export interface IUserData {
-    phone: string;
     token: string | undefined;
     uid?: string;
     data?: Person;
@@ -20,26 +19,10 @@ export class AuthStore {
 
     @observable
     public user: IUserData = {
-        phone: "",
         token: undefined,
         uid: undefined,
         data: undefined,
     };
-
-    constructor() {
-        console.log("Construct AuthStore");
-    }
-
-    // TODO: do we need have it here?
-    @action
-    public setPhone(phone: string) {
-        this.user.phone = phone;
-    }
-
-    // TODO: do we need have it here?
-    @action public reset() {
-        // this.user = null;
-    }
 
     @action
     public authenticate(phone: string, password: string) {
@@ -54,7 +37,6 @@ export class AuthStore {
                 });
             })
             .then(action(() => {
-                this.setPhone(phone);
                 this.authInfo.isAuth = true;
                 this.authInfo.pending = false;
             }))
