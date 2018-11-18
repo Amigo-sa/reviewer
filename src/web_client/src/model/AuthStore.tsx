@@ -26,7 +26,6 @@ export class AuthStore {
 
     @action
     public authenticate(phone: string, password: string) {
-        this.authInfo.pending = true;
         return RegistrationApi.userLogin(new UserLoginRequest(phone, password))
             .then((responce: UserLoginResponse) => {
                 this.setUser(responce);
@@ -38,11 +37,9 @@ export class AuthStore {
             })
             .then(action(() => {
                 this.authInfo.isAuth = true;
-                this.authInfo.pending = false;
             }))
             .catch((err) => {
                 throw err;
-                this.authInfo.pending = true;
             });
     }
 
@@ -65,15 +62,12 @@ export class AuthStore {
 
     @action
     public tryAuthenticate() {
-        this.authInfo.pending = true;
         return this.getCurrentUser()
             .then(action(() => {
                 this.authInfo.isAuth = true;
-                this.authInfo.pending = false;
             }))
             .catch((err: object) => {
                 this.authInfo.isAuth = false;
-                this.authInfo.pending = false;
             });
     }
 
