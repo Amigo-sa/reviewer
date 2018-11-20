@@ -15,6 +15,7 @@ import { ReviewSpecializationInfo, ReviewsStore } from "src/model/ReviewsStore";
 import { personUrlById } from "src/constants";
 import { Link } from "react-router-dom";
 import { AuthStore } from "src/model/AuthStore";
+import FullReviewCard from "./components/FullReviewCard";
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -98,41 +99,16 @@ class ViewReview extends React.Component<IReviewPageProps & RouteComponentProps<
     }
 
     private _renderReview() {
-        const { classes } = this.props;
+        const { authStore } = this.injected;
         const { review } = this.state;
         if (!review.isLoaded) {
             return;
         }
         return (
-            <Grid item className={classes.row} xs={12}>
-                <Paper>
-                    <Typography className={classes.dateLabel}>
-                        {review.reviewDate.toLocaleDateString()}
-                    </Typography>
-                    <Typography variant="h5" component="h3">
-                        {review.reviewTopic}
-                    </Typography>
-                    <Typography className={classes.specializationLabel}>
-                        Специализация: {review.specializationDetail}
-                    </Typography>
-                    <Typography component="p">
-                        {review.reviewDescription}
-                    </Typography>
-                    <Typography component="h6" color="textPrimary" align="right" variant="h6" gutterBottom>
-                        {this._fio(review.reviewerName)}
-                    </Typography>
-                </Paper>
-            </Grid>
-        );
-    }
-
-    private _fio(reviewer: IPersonShort, full?: boolean) {
-        const { authStore } = this.injected;
-        const link = authStore && authStore.user.uid === reviewer.id ? personUrlById() : personUrlById(reviewer.id);
-        return (
-            <Link to={link} >
-                {reviewer.surname} {reviewer.first_name} {full && reviewer.middle_name}
-            </Link>
+            <FullReviewCard
+                review={review}
+                currentUserId={authStore!.user.uid}
+            />
         );
     }
 

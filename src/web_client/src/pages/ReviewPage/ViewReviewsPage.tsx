@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import { personUrlById } from "src/constants";
 import { IPersonShort } from "src/server-api/reviews/Review";
 import { PersonsStore } from "src/model/PersonsStore";
+import ReviewCard from "./components/ReviewCard";
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -126,25 +127,10 @@ class ViewReviews extends React.Component<IReviewsPageProps & RouteComponentProp
                 {length ?
                     reviews.map((review, index) => {
                         return (
-                            <Grid key={index} item className={classes.row} xs={12}>
-                                <Paper>
-                                    <Typography className={classes.dateLabel}>
-                                        {review.reviewDate.toLocaleDateString()}
-                                    </Typography>
-                                    <Typography variant="h5" component="h3">
-                                        {review.reviewTopic}
-                                    </Typography>
-                                    <Typography className={classes.specializationLabel}>
-                                        Специализация: {review.specializationDetail}
-                                    </Typography>
-                                    <Typography component="p">
-                                        {review.reviewDescription}
-                                    </Typography>
-                                    <Typography component="h6" align="right" variant="h6" gutterBottom>
-                                        {this._fio(review.reviewerName)}
-                                    </Typography>
-                                </Paper>
-                            </Grid>
+                            <ReviewCard
+                                key={index}
+                                review={review}
+                            />
                         );
                     })
                     :

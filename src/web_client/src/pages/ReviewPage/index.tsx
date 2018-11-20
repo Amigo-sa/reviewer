@@ -3,7 +3,7 @@ import Header from "src/pages/components/Header";
 import Footer from "src/pages/components/Footer";
 
 import { Switch, Route } from "react-router-dom";
-import ViewReviews from "./ViewReviews";
+import ViewReviews from "./ViewReviewsPage";
 import ViewReview from "./ViewReview";
 import { Grid } from "@material-ui/core";
 import LeftMenu from "src/pages/components/LeftMenu";
