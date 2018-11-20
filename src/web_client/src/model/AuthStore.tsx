@@ -4,6 +4,7 @@ import PersonsApi from "src/server-api/persons/PersonsApi";
 import UserLoginRequest from "src/server-api/registration/UserLoginRequest";
 import UserLoginResponse from "src/server-api/registration/UserLoginResponse";
 import Person from "src/server-api/persons/Person";
+import application from "src/Application";
 
 // TODO: we really need only uid and token info
 export interface IUserData {
@@ -48,7 +49,9 @@ export class AuthStore {
     }
 
     @action public logout() {
+        // TODO fix one place of auth info constraint
         this.isAuth = false;
+        application.appVM.isAuth = false;
         localStorage.removeItem("User");
         return Promise.resolve();
     }
