@@ -1,19 +1,15 @@
 import * as React from "react";
 import {
     Grid,
-    Typography,
     LinearProgress,
-    Paper,
 } from "@material-ui/core";
+
 import { withRouter, RouteComponentProps } from "react-router";
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import { inject, observer } from "mobx-react";
 
-import { IPersonShort } from "src/server-api/reviews/Review";
 import { ReviewSpecializationInfo, ReviewsStore } from "src/model/ReviewsStore";
-import { personUrlById } from "src/constants";
-import { Link } from "react-router-dom";
 import { AuthStore } from "src/model/AuthStore";
 import FullReviewCard from "./components/FullReviewCard";
 

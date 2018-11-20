@@ -3,7 +3,6 @@ import {
     Grid,
     Typography,
     LinearProgress,
-    Paper,
 } from "@material-ui/core";
 
 import { withRouter, RouteComponentProps } from "react-router";
