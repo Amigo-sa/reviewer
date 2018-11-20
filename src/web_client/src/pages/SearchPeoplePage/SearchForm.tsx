@@ -8,6 +8,7 @@ import {
     MenuItem,
     Button,
     TextField,
+    InputLabel,
 } from "@material-ui/core";
 
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
@@ -51,6 +52,9 @@ const styles = (theme: Theme) => createStyles({
     },
     row: {
         marginBottom: 35,
+    },
+    MinSelectWidth: {
+        minWidth: 250,
     },
 });
 
@@ -120,16 +124,20 @@ class SearchForm extends React.Component<ISearchFormProps, IState> {
                     </Grid>
                     <Grid item xs={12} md={3} lg={3}>
                         <FormControl>
+                            <InputLabel htmlFor="specialization">Специализация</InputLabel>
                             <Select
-                                autoWidth
-                                native={false}
+                                className={classes.MinSelectWidth}
                                 value={specializationId}
+                                inputProps={{
+                                    name: "specialization",
+                                    id: "specialization",
+                                }}
                                 onChange={(event: any) =>
                                     this.setState({ specializationId: event.target.value })
                                 }
                             >
                                 <MenuItem value={SearchForm.SPECIALIZATION_NONE_VALUE}>
-                                    <em>None</em>
+                                    <em>Не выбрано</em>
                                 </MenuItem>
                                 {commonStore.specializationList.map((specialization) => {
                                     return (
@@ -149,7 +157,7 @@ class SearchForm extends React.Component<ISearchFormProps, IState> {
                     className={classes.row}
                     xs={12} md={12} lg={12}
                 >
-                    <Grid item xs={12} md={12} lg={6}>
+                    <Grid item xs={12} md={6} lg={6}>
                         <FormControl>
                             <TextField
                                 id="org"
