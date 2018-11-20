@@ -18,6 +18,10 @@ class Application {
         this._appVM.showLoginDialog();
     }
 
+    public setPrevLocation(location: string): void {
+        this._appVM.setPrevLocation(location);
+    }
+
     public hideLoginDialog(): void {
         this._appVM.hideLoginDialog();
     }

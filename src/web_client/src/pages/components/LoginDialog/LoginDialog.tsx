@@ -11,12 +11,11 @@ import {
 import { computed } from "mobx";
 import { observer, inject } from "mobx-react";
 import { AuthStore } from "src/model/AuthStore";
-import application from "src/Application";
 
 // #TODO перейти на другую схему, лишнее убрать
 interface IAuthProps {
     authStore?: AuthStore;
-    handleClose: (event: any) => void;
+    handleAuthClose: () => void;
 }
 
 /* TODO временно упростим логику
@@ -102,7 +101,7 @@ class LoginDialog extends React.Component<IAuthProps, IState>{
             authStore.authenticate(login.trim(), password.trim())
                 .then(() => {
                     this.setState({ isAuth: true });
-                    application.hideLoginDialog();
+                    this.props.handleAuthClose();
                 })
                 .catch((err: any) => {
                     console.log("Error", err);

@@ -13,6 +13,7 @@ export default class AppVM {
     // Public properties
 
     public loaded: boolean = false;
+    public isAuth: boolean = false;
 
     public isErrorShown: boolean = false;
 
@@ -75,6 +76,19 @@ export default class AppVM {
         this._notifyListener();
     }
 
+    public prevLocation: string | null = null;
+
+    public setPrevLocation(location: string): void {
+        this.prevLocation = location;
+        this._notifyListener();
+
+    }
+
+    public removePrevLocation(): void {
+        this.prevLocation = null;
+        this._notifyListener();
+
+    }
     // Private methods
 
     /**

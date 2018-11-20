@@ -103,7 +103,7 @@ class LoginPage extends React.Component<IAuthProps, IState> {
                     aria-labelledby="form-dialog-title"
                 >
                     <LoginDialog
-                        handleClose={this.handleClose}
+                        handleAuthClose={this.handleClose}
                     />
                 </Dialog>
             </>

@@ -173,7 +173,7 @@ class Header extends React.Component<IProps, IState>{
             >
                 <Link to={"/personal"}><MenuItem >Профиль</MenuItem></Link>
                 <MenuItem
-                    onClick={(event: any) => authStore!.logout()}>
+                    onClick={(event: any) => { authStore!.logout(); this.handleMenuClose(); }}>
                     Выход
                 </MenuItem>
             </Menu>

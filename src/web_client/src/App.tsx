@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Route, Switch } from "react-router";
+import { Route, Switch, withRouter, RouteComponentProps, Redirect } from "react-router";
 import "./App.css";
 import AddSurveyPage from "./pages/AddSurveyPage";
 import Main from "./pages/MainPage/Main";
@@ -18,7 +18,7 @@ import LoginDialog from "./pages/components/LoginDialog";
 
 // TODO: we have to use VM + listener approach instead of mobx, because @observer
 // decarator blocks updating of routes
-class App extends React.Component implements IAppVMListener {
+class App extends React.Component<RouteComponentProps<{ history: History }>> implements IAppVMListener {
 
     constructor(props: any) {
         super(props);
@@ -92,6 +92,7 @@ class App extends React.Component implements IAppVMListener {
                         </Switch>
                     </Grid>
                     {this._showLoginDialog()}
+                    {this._goPrevLocationOnAuth()}
                     {this._showError()}
                 </div>
             );
@@ -131,9 +132,13 @@ class App extends React.Component implements IAppVMListener {
                 <Dialog
                     open
                     aria-labelledby="form-dialog-title"
+                    onClose={() => this._appVM.hideLoginDialog()}
                 >
                     <LoginDialog
-                        handleClose={() => this._appVM.hideLoginDialog()}
+                        handleAuthClose={() => {
+                            this._appVM.isAuth = true;
+                            this._appVM.hideLoginDialog();
+                        }}
                     />
                 </Dialog>
             );
@@ -143,7 +148,18 @@ class App extends React.Component implements IAppVMListener {
 
     }
 
+    private _goPrevLocationOnAuth() {
+        if (this._appVM.prevLocation && this._appVM.isAuth) {
+            const prevLocation = this._appVM.prevLocation;
+            console.log("Go to", prevLocation);
+            this._appVM.removePrevLocation();
+            return <Redirect to={prevLocation} />;
+        } else {
+            return null;
+        }
+    }
+
     private _appVM: AppVM = application.appVM;
 }
 
-export default App;
+export default withRouter(App);
