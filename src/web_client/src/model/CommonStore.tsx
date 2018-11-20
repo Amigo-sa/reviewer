@@ -49,7 +49,7 @@ export class CommonStore {
         });
         // TODO: add assertion
         if (skill) {
-            return skill.name;
+            return skill.display_text;
         }
         else {
             return "";
@@ -67,7 +67,7 @@ export class CommonStore {
         });
         // TODO: add assertion
         if (skill) {
-            return skill.name;
+            return skill.display_text;
         }
         else {
             return "";
