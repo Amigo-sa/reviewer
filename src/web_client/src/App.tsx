@@ -11,7 +11,7 @@ import LoginPage from "./pages/LoginPage";
 import Grid from "@material-ui/core/Grid";
 import Reviews from "./pages/ReviewPage";
 import CreateReviewPage from "./pages/ReviewPage/CreateReviewPage";
-import { LinearProgress, Dialog } from "@material-ui/core";
+import { LinearProgress, Dialog, Snackbar } from "@material-ui/core";
 import application from "./Application";
 import AppVM, { IAppVMListener } from "./AppVM";
 import LoginDialog from "./pages/components/LoginDialog";
@@ -109,12 +109,16 @@ class App extends React.Component implements IAppVMListener {
     private _showError() {
         if (this._appVM.isErrorShown) {
             return (
-                <Dialog
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "left",
+                    }}
                     open
                     onClose={() => this._appVM.hideError()}
-                    aria-labelledby="form-dialog-title">
-                    {this._appVM.errorMessage}
-                </Dialog>
+                    autoHideDuration={5000}
+                    message={this._appVM.errorMessage}
+                />
             );
         } else {
             return null;
@@ -126,7 +130,6 @@ class App extends React.Component implements IAppVMListener {
             return (
                 <Dialog
                     open
-                    onClose={() => this._appVM.hideLoginDialog()}
                     aria-labelledby="form-dialog-title"
                 >
                     <LoginDialog

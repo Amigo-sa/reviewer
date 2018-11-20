@@ -11,6 +11,7 @@ import {
 import { computed } from "mobx";
 import { observer, inject } from "mobx-react";
 import { AuthStore } from "src/model/AuthStore";
+import application from "src/Application";
 
 // #TODO перейти на другую схему, лишнее убрать
 interface IAuthProps {
@@ -99,7 +100,10 @@ class LoginDialog extends React.Component<IAuthProps, IState>{
 
         if (authStore) {
             authStore.authenticate(login.trim(), password.trim())
-                .then(() => { this.setState({ isAuth: true }); })
+                .then(() => {
+                    this.setState({ isAuth: true });
+                    application.hideLoginDialog();
+                })
                 .catch((err: any) => {
                     console.log("Error", err);
                     this.setState({ error: "Неверный вход, попробуйте еще раз" });

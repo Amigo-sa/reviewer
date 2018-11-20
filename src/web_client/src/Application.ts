@@ -18,6 +18,10 @@ class Application {
         this._appVM.showLoginDialog();
     }
 
+    public hideLoginDialog(): void {
+        this._appVM.hideLoginDialog();
+    }
+
     // Private fields
 
     private _appVM: AppVM = new AppVM();
