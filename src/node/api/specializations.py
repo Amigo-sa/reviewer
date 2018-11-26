@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from bson import ObjectId
+from pymongo.errors import DuplicateKeyError
+
 import node.settings.errors as ERR
 import node.settings.constants as constants
 from flask import Blueprint, request, jsonify
@@ -58,6 +60,8 @@ def add_person_specialization(id):
                       "id": str(person_spec.pk)}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
+    except DuplicateKeyError:
+        return jsonify({"result": ERR.DB_DUPLICATE}), 200
     except:
         result = {"result":ERR.DB}
 

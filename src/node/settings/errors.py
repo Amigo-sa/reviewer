@@ -9,3 +9,4 @@ AUTH_SMS_TIMEOUT = 7# таймаут при отправке СМС
 AUTH_CODE_INCORRECT = 8 # некорректный код авторизации
 AUTH_SESSION_EXPIRED = 9# время жизни сессии истекло
 AUTH_NO_PERMISSIONS = 10 #не достаточный уровень разрешений
+DB_DUPLICATE = 11  # Запись уже существует в базе данных

@@ -5,6 +5,7 @@ import node.settings.constants as constants
 from flask import Blueprint, request, jsonify
 from data.reviewer_model import *
 from pymodm.errors import DoesNotExist
+from pymongo.errors import DuplicateKeyError
 from node.api.auth import required_auth
 from node.api.base_functions import delete_resource, list_resources
 from datetime import datetime
@@ -60,6 +61,8 @@ def post_review(review_type, subject_id, reviewer_id):
                 result = {"result": ERR.NO_DATA}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
+    except DuplicateKeyError:
+        return jsonify({"result": ERR.DB_DUPLICATE}), 200
     except Exception as e:
         result = {"result": ERR.DB,
                   "error_message": str(e)}
@@ -119,6 +122,8 @@ def post_person_skill_review(skill_review_cls, p_id, s_id, reviewer_id):
                         "error_message": str(e)})
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
+    except DuplicateKeyError:
+        return jsonify({"result": ERR.DB_DUPLICATE}), 200
     except Exception as e:
         print(e)
         result = {"result": ERR.DB,

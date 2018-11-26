@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from bson import ObjectId
+from pymongo.errors import DuplicateKeyError
+
 import node.settings.errors as ERR
 import node.settings.constants as constants
 from flask import Blueprint, request, jsonify
@@ -158,6 +160,8 @@ def add_group_member(id):
             result = {"result": ERR.NO_DATA}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
+    except DuplicateKeyError:
+        return jsonify({"result": ERR.DB_DUPLICATE}), 200
     except Exception as e:
         result = {"result":ERR.DB,
                   "error_message": str(e)}

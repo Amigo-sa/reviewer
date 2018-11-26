@@ -1182,7 +1182,7 @@ class TestApi(unittest.TestCase):
                                  headers=self.reviewer_header)
             self.assertEqual(200, resp.status_code, "post response status code must be 200")
             resp_json = resp.json()
-            self.assertEqual(ERR.DB, resp_json["result"], "duplicate post result must be ERR.OK")
+            self.assertEqual(ERR.DB_DUPLICATE, resp_json["result"], "duplicate post result must be ERR.DB_DUPLICATE")
 
     def test_invalid_post(self):
         self.setup_reviewer()
@@ -1661,7 +1661,7 @@ class TestApi(unittest.TestCase):
         resp = requests.post(url=self.api_URL + url_post, json=data, headers=self.admin_header)
         self.assertEqual(200, resp.status_code, "post response status code must be 200")
         resp_json = resp.json()
-        self.assertEqual(ERR.DB, resp_json["result"], "duplicate post result must be ERR.DB")
+        self.assertEqual(ERR.DB_DUPLICATE, resp_json["result"], "duplicate post result must be ERR.DB_DUPLICATE")
         self.assertNotIn("id", resp_json, "returned id must be None")
         item_list = self.get_item_list(url_get_list)
         self.assertEqual(1, len(item_list))

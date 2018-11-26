@@ -7,6 +7,7 @@ from data.reviewer_model import *
 from node.api.auth import required_auth
 from node.api.base_functions import delete_resource, list_resources, add_resource
 import random, string
+from pymongo.errors import DuplicateKeyError
 
 bp = Blueprint('persons', __name__)
 
@@ -33,6 +34,8 @@ def add_person():
                   "auth_key": auth_key}
     except KeyError:
         return jsonify({"result": ERR.INPUT}), 200
+    except DuplicateKeyError:
+        return jsonify({"result": ERR.DB_DUPLICATE}), 200
     except Exception as e:
         result = {"result": ERR.DB,
                   "error_message": str(e)}
