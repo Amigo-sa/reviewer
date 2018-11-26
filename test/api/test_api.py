@@ -940,7 +940,15 @@ class TestApi(unittest.TestCase):
         # get review info
         for subj_type, rev_data in rev_refs.items():
             review_data = self.get_item_data("/reviews/" + rev_data["id"])
+            person = model.Person.objects.get({"_id": ObjectId(person_id)})
+            rev_data["subject"].update({"person":{
+                                    "id": person_id,
+                                    "first_name": person.first_name,
+                                    "middle_name": person.middle_name,
+                                    "surname": person.surname
+                                }})
             self.assertDictEqual(rev_data, review_data)
+            rev_data["subject"].pop("person")
         # verify with review from person2
         review_data = {
             "reviewer_id": self.reviewer_id2,
