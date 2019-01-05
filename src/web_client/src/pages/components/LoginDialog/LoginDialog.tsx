@@ -11,6 +11,7 @@ import {
 import { computed } from "mobx";
 import { observer, inject } from "mobx-react";
 import { AuthStore } from "src/model/AuthStore";
+import MaskedInput from "react-text-mask";
 
 // #TODO перейти на другую схему, лишнее убрать
 interface IAuthProps {
@@ -140,6 +141,9 @@ class LoginDialog extends React.Component<IAuthProps, IState>{
                                     value={this.state.login}
                                     fullWidth
                                     onChange={this.changeStepLoginField}
+                                    InputProps={{
+                                        inputComponent: TextMaskCustom,
+                                    }}
                                 />
                             }
                             {step === 1 &&
@@ -178,5 +182,17 @@ class LoginDialog extends React.Component<IAuthProps, IState>{
             </>
         );
     }
+}
+function TextMaskCustom(props: any) {
+    const { inputRef, ...other } = props;
+    return (
+        <MaskedInput
+            {...other}
+            ref={inputRef}
+            mask={["(", /[1-9]/, /\d/, /\d/, ")", " ", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/]}
+            placeholderChar={"\u2000"}
+            showMask
+        />
+    );
 }
 export default LoginDialog;

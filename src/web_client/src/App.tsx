@@ -18,7 +18,7 @@ import LoginDialog from "./pages/components/LoginDialog";
 
 // TODO: we have to use VM + listener approach instead of mobx, because @observer
 // decarator blocks updating of routes
-class App extends React.Component<RouteComponentProps<{ history: History }>> implements IAppVMListener {
+class App extends React.Component<RouteComponentProps<{}>> implements IAppVMListener {
 
     constructor(props: any) {
         super(props);
