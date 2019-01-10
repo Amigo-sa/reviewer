@@ -96,8 +96,8 @@ class LoginDialog extends React.Component<IAuthProps, IState>{
 
     public handleAuth = () => {
         const { authStore } = this.injected;
-        const { login, password } = this.state;
-
+        const { password } = this.state;
+        const login = clearLogin(this.state.login);
         if (authStore) {
             authStore.authenticate(login.trim(), password.trim())
                 .then(() => {
@@ -183,16 +183,22 @@ class LoginDialog extends React.Component<IAuthProps, IState>{
         );
     }
 }
+
 function TextMaskCustom(props: any) {
     const { inputRef, ...other } = props;
     return (
         <MaskedInput
             {...other}
             ref={inputRef}
-            mask={["(", /[1-9]/, /\d/, /\d/, ")", " ", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/]}
+            mask={["7", "(", /[1-9]/, /\d/, /\d/, ")", " ", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/]}
             placeholderChar={"\u2000"}
             showMask
         />
     );
 }
+
+function clearLogin(login: any) {
+    return login.replace(/[()-\s+]/g, "");
+}
+
 export default LoginDialog;
