@@ -98,32 +98,32 @@ def fill_db():
                 "Богословских",
                 datetime.date(1986, 4, 9),
                 "79055533342"),
-        "Shatokhin":
+        "Shatokhina":
             Person(
-                "Александр",
-                "Алексеевич",
-                "Шатохин",
-                datetime.date(1900, 3, 4),
+                "Александрa",
+                "Алексеевна",
+                "Шатохина",
+                datetime.date(1946, 3, 4),
                 "79052231123"),
         "Anisimov":
             Person(
                 "Анатолий",
                 "Степанович",
                 "Анисимов",
-                datetime.date(1812, 6, 24),
+                datetime.date(1946, 6, 24),
                 "79050100001"),
         "Ivanov":
             Person(
                 "Полуэкт",
                 "Степанович",
                 "Иванов",
-                datetime.date(1812, 6, 24)),
-        "Petrov":
+                datetime.date(1986, 6, 24)),
+        "Sidorova":
             Person(
-                "Иван",
-                "Васильевич",
-                "Петров",
-                datetime.date(1812, 6, 24))
+                "Ирина",
+                "Константиновна",
+                "Сидорова",
+                datetime.date(1986, 6, 24))
     }
 
     organizations = {
@@ -168,7 +168,7 @@ def fill_db():
     person_specializations = {
         "Shatokhin_MCU":
             PersonSpecialization(
-                persons["Shatokhin"],
+                persons["Shatokhina"],
                 departments["IIT"],
                 specializations["MCU_Tutor"],
                 70.0
@@ -182,7 +182,7 @@ def fill_db():
             ),
         "Shatokhin_TOE":
             PersonSpecialization(
-                persons["Shatokhin"],
+                persons["Shatokhina"],
                 departments["IIT"],
                 specializations["TOE_Tutor"],
                 45.0
@@ -275,7 +275,7 @@ def fill_db():
 
     roles_in_groups = {
         "Shatokhin_admin_arduino":
-            GroupMember(persons["Shatokhin"],
+            GroupMember(persons["Shatokhina"],
                         groups["Arduino"],
                         group_roles["admin"],
                         [group_permissions["read_info"],
@@ -365,7 +365,7 @@ def fill_db():
     p_spec_reviews = {
         "Shatokhin_Pashka_sr":
             SpecializationReview(
-                persons["Shatokhin"],
+                persons["Shatokhina"],
                 person_specializations["Pashka"],
                 50.0,
                 "Тема",
@@ -411,10 +411,10 @@ def fill_db():
             ),
         "Shatokhin_arduino":
             GroupReview(
-                persons["Shatokhin"],
+                persons["Shatokhina"],
                 groups["Arduino"],
                 10.0,
-                "Лучше бы я вёл историю"
+                "Лучше бы я вела историю"
             )
     }
 
@@ -487,7 +487,7 @@ def fill_db():
         "Shatokhin_food":
             SurveyResponse(
                 surveys["A403_foodcourt"],
-                persons["Shatokhin"],
+                persons["Shatokhina"],
                 "2"
             ),
         "Bogi_food":
