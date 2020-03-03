@@ -5,8 +5,8 @@ import datetime
 import random
 from pymodm.connection import connect, _get_db
 from node.settings import constants
-
-fill_script_version = "0.3"
+from node.api.auth import hash_password, gen_session_id
+from bson.binary import Binary, BINARY_SUBTYPE
 
 from data.reviewer_model import (Department,
                                  Group,
@@ -23,20 +23,23 @@ from data.reviewer_model import (Department,
                                  PersonSS,
                                  GroupMember,
                                  GroupMemberReview,
-                                 SRReview,
+                                 Specialization,
                                  SSReview,
                                  Service,
+                                 SkillType,
                                  SoftSkill,
-                                 StudentRole,
+                                 PersonSpecialization,
                                  Survey,
-                                 TRReview,
+                                 SpecializationReview,
                                  TestResult,
-                                 TutorRole,
                                  AuthInfo,
+                                 SurveyResponse,
                                  get_dependent_list,
                                  init_model)
 
+from data.initial_data import fill_initial_data
 
+"""
 def clear_db():
     print("clearing db...")
     revDb = _get_db("reviewer")
@@ -46,7 +49,19 @@ def clear_db():
         print("dropped collection " + col)
     print("done")
 
+def wipe_db(db_name):
+    try:
+        revDb = _get_db(db_name)
+        colList = revDb.list_collection_names()
+        for col in colList:
+            revDb[col].delete_many({})
+    except Exception as e:
+        print("Failed to wipe DB")
+        print(str(e))
+"""
+
 def fill_db():
+
     persons = {
         "Leni4":
             Person(
@@ -54,7 +69,7 @@ def fill_db():
                 "Александрович",
                 "Дунаев",
                 datetime.date(1986, 5, 1),
-                "88005553535"),
+                "78005553535"),
         "Maniac":
             Person(
                 "Кирилл",
@@ -83,20 +98,32 @@ def fill_db():
                 "Богословских",
                 datetime.date(1986, 4, 9),
                 "79055533342"),
-        "Shatokhin":
+        "Shatokhina":
             Person(
-                "Александр",
-                "Алексеевич",
-                "Шатохин",
-                datetime.date(1900, 3, 4),
+                "Александрa",
+                "Алексеевна",
+                "Шатохина",
+                datetime.date(1946, 3, 4),
                 "79052231123"),
         "Anisimov":
             Person(
                 "Анатолий",
                 "Степанович",
                 "Анисимов",
-                datetime.date(1812, 6, 24),
-                "79050100001")
+                datetime.date(1946, 6, 24),
+                "79050100001"),
+        "Ivanov":
+            Person(
+                "Полуэкт",
+                "Степанович",
+                "Иванов",
+                datetime.date(1986, 6, 24)),
+        "Sidorova":
+            Person(
+                "Ирина",
+                "Константиновна",
+                "Сидорова",
+                datetime.date(1986, 6, 24))
     }
 
     organizations = {
@@ -116,148 +143,94 @@ def fill_db():
                 organizations["MPEI"])
     }
 
-    hard_skills = {
-        "VFP":
-            HardSkill(
-                "Visual Fox Pro"),
-        "uC":
-            HardSkill(
-                "C для микроконтроллеров"),
-        "digSch":
-            HardSkill(
-                "Цифровая схемотехника"),
-        "litrbol":
-            HardSkill(
-                "Литрбол"),
-        "phoneRepair":
-            HardSkill(
-                "Ремонт телефонов"),
-        "psySupp":
-            HardSkill(
-                "Психологическое подавление")
-    }
-
-    person_hs = {
-        "Leni4_VFP":
-            PersonHS(
-                persons["Leni4"],
-                hard_skills["VFP"],
-                15.0),
-        "Leni4_uC":
-            PersonHS(
-                persons["Leni4"],
-                hard_skills["uC"],
-                60.0),
-        "Maniac_phoneRepair":
-            PersonHS(
-                persons["Maniac"],
-                hard_skills["phoneRepair"],
-                99.0),
-        "Shatokhin_uC":
-            PersonHS(
-                persons["Shatokhin"],
-                hard_skills["uC"],
-                90.0),
-        "Pashka_litrbol":
-            PersonHS(
-                persons["Pashka"],
-                hard_skills["litrbol"],
-                100.0),
-        "Anisimov_psySupp":
-            PersonHS(
-                persons["Anisimov"],
-                hard_skills["psySupp"],
-                95.0),
-    }
-
-    soft_skills = {
-        "Communication":
-            SoftSkill(
-                "Communication"),
-        "Courtesy":
-            SoftSkill(
-                "Courtesy"),
-        "Flexibility":
-            SoftSkill(
-                "Flexibility"),
-        "Integrity":
-            SoftSkill(
-                "Integrity"),
-        "Interpersonal skills":
-            SoftSkill(
-                "Interpersonal skills"),
-        "Positive attitude":
-            SoftSkill(
-                "Positive attitude")
-    }
-
-    person_ss = {}
-    for pers_key, person in persons.items():
-        for ss_key, soft_skill in soft_skills.items():
-            ss = PersonSS(
-                person,
-                soft_skill,
-                random.random() * 100.0
-            )
-            person_ss.update({person.surname + "_" + soft_skill.name: ss})
-
-    tutor_roles = {
-        "Shatokhin_MCU":
-            TutorRole(
-                persons["Shatokhin"],
-                departments["IIT"],
-                "Отжигание на микроконтроллерах семейства 8051"
-            ),
-        "Anisimov_TOE":
-            TutorRole(
-                persons["Anisimov"],
-                departments["EFIS"],
+    specializations = {
+        "TOE_Tutor":
+            Specialization(
+                "Tutor",
                 "ТОЭ"
             ),
-        "Anisimov_rel":
-            TutorRole(
-                persons["Anisimov"],
-                departments["EFIS"],
-                "Религиоведенье"
+        "MCU_Tutor":
+            Specialization(
+                "Tutor",
+                "Микропросессорные системы"
             ),
-        "Shatokhin_debug":
-            TutorRole(
-                persons["Shatokhin"],
-                departments["IIT"],
-                "Отладка кода, написанного за 20 лет до вашего рождения"
+        "Metr_Assistant":
+            Specialization(
+                "Lab assistant",
+                "Метрология"
+            ),
+        "Student":
+            Specialization(
+                "Student",
             ),
     }
 
-    student_roles = {
+    person_specializations = {
+        "Shatokhin_MCU":
+            PersonSpecialization(
+                persons["Shatokhina"],
+                departments["IIT"],
+                specializations["MCU_Tutor"],
+                70.0
+            ),
+        "Anisimov_TOE":
+            PersonSpecialization(
+                persons["Anisimov"],
+                departments["EFIS"],
+                specializations["TOE_Tutor"],
+                90.0
+            ),
+        "Shatokhin_TOE":
+            PersonSpecialization(
+                persons["Shatokhina"],
+                departments["IIT"],
+                specializations["TOE_Tutor"],
+                45.0
+            ),
         "Leni4":
-            StudentRole(
+            PersonSpecialization(
                 persons["Leni4"],
                 departments["IIT"],
-                "Студент очной формы обучения"
+                specializations["Student"],
+                None,
+                {"graduation": "окончил"},
+                False
+            ),
+        "Leni4_lab":
+            PersonSpecialization(
+                persons["Leni4"],
+                departments["IIT"],
+                specializations["Metr_Assistant"],
             ),
         "Pashka":
-            StudentRole(
+            PersonSpecialization(
                 persons["Pashka"],
                 departments["IIT"],
-                "Студент очной формы обучения"
+                specializations["Student"],
+                None,
+                {"graduation": "окончил"},
+                False
             ),
         "Vovka":
-            StudentRole(
+            PersonSpecialization(
                 persons["Vovka"],
                 departments["IIT"],
-                "Студент очной формы обучения"
+                specializations["Student"]
             ),
         "Bogi":
-            StudentRole(
+            PersonSpecialization(
                 persons["Bogi"],
                 departments["IIT"],
-                "Студент очной формы обучения"
+                specializations["Student"]
             ),
         "Maniac":
-            StudentRole(
+            PersonSpecialization(
                 persons["Maniac"],
                 departments["IIT"],
-                "Отчислен"
+                specializations["Student"],
+                20.0,
+                {"graduation": "отчислен"},
+                False
             ),
     }
 
@@ -284,36 +257,6 @@ def fill_db():
             )
     }
 
-    group_permissions = {
-        "read_info":
-            GroupPermission(
-                "read_info"
-            ),
-        "modify_info":
-            GroupPermission(
-                "modify_info"
-            ),
-        "create_test":
-            GroupPermission(
-                "create_test"
-            ),
-        "participate_test":
-            GroupPermission(
-                "participate_test"
-            ),
-        "schedule_event":
-            GroupPermission(
-                "schedule_event"
-            ),
-        "create_survey":
-            GroupPermission(
-                "create_survey"),
-        "participate_survey":
-            GroupPermission(
-                "participate_survey"
-            )
-    }
-
     groups = {
         "Arduino":
             Group(departments["IIT"],
@@ -327,15 +270,17 @@ def fill_db():
                   )
     }
 
+    from data.initial_data import group_permission_dict as group_permissions
+    from data.initial_data import hard_skill_list, soft_skill_list
+
     roles_in_groups = {
         "Shatokhin_admin_arduino":
-            GroupMember(persons["Shatokhin"],
+            GroupMember(persons["Shatokhina"],
                         groups["Arduino"],
                         group_roles["admin"],
                         [group_permissions["read_info"],
                          group_permissions["modify_info"],
-                         group_permissions["create_test"],
-                         group_permissions["schedule_event"]]),
+                         group_permissions["create_survey"]]),
         "Leni4_member_arduino":
             GroupMember(persons["Leni4"],
                         groups["Arduino"],
@@ -417,78 +362,42 @@ def fill_db():
                        )
     }
 
-    ss_reviews = {
-        "bogi_anisimov_posAtt":
-            SSReview(
-                persons["Bogi"],
-                person_ss["Анисимов_Positive attitude"],
-                1.0,
-                "Очень негативный человек!!!1"
-            ),
-        "Leni4_Maniac_posAtt":
-            SSReview(
-                persons["Leni4"],
-                person_ss["Ярин_Communication"],
-                40.0,
-                "Картавит"
-            )
-    }
-
-    hs_reviews = {
-        "Shatokhin_Leni4_uC":
-            HSReview(
-                persons["Shatokhin"],
-                person_hs["Leni4_uC"],
-                90.0,
-                "Способен запрограммировать даже советский утюг"
-            ),
-        "Pashka_Maniac_phone":
-            HSReview(
-                persons["Pashka"],
-                person_hs["Maniac_phoneRepair"],
-                0.0,
-                "Ушатал мне мобилу"
-            ),
-        "Bogi_Anisimov_psy":
-            HSReview(
-                persons["Bogi"],
-                person_hs["Anisimov_psySupp"],
-                100.0,
-                "Подавил так подавил"
-            )
-    }
-
-    sr_reviews = {
+    p_spec_reviews = {
         "Shatokhin_Pashka_sr":
-            SRReview(
-                persons["Shatokhin"],
-                student_roles["Pashka"],
+            SpecializationReview(
+                persons["Shatokhina"],
+                person_specializations["Pashka"],
                 50.0,
-                "Часто появляется с перегаром"
+                "Тема",
+                "Часто появляется с перегаром",
+                datetime.date(2001, 5, 1)
             ),
         "Anisimov_Bogi_sr":
-            SRReview(
+            SpecializationReview(
                 persons["Anisimov"],
-                student_roles["Bogi"],
-                0.0,
-                "Сам ты негативный, засранец!"
-            )
-    }
-
-    tr_reviews = {
+                person_specializations["Bogi"],
+                20.0,
+                "Тема",
+                "Боится ТОЭ",
+                datetime.date(2001, 5, 1)
+            ),
         "Pashka_Shatokhin_MCU":
-            TRReview(
+            SpecializationReview(
                 persons["Pashka"],
-                tutor_roles["Shatokhin_MCU"],
+                person_specializations["Shatokhin_MCU"],
                 50.0,
-                "Не знает современную элементную базу"
+                "Тема",
+                "Не знает современную элементную базу",
+                datetime.date(2001, 5, 1)
             ),
         "Leni4_Anisimov_rel":
-            TRReview(
+            SpecializationReview(
                 persons["Leni4"],
-                tutor_roles["Anisimov_rel"],
+                person_specializations["Anisimov_TOE"],
                 100.0,
-                "Это просто чудо какое-то!"
+                "Тема",
+                "Это просто чудо какое-то!",
+                datetime.date(2001, 5, 1)
             )
     }
 
@@ -502,10 +411,10 @@ def fill_db():
             ),
         "Shatokhin_arduino":
             GroupReview(
-                persons["Shatokhin"],
+                persons["Shatokhina"],
                 groups["Arduino"],
                 10.0,
-                "Лучше бы я вёл историю"
+                "Лучше бы я вела историю"
             )
     }
 
@@ -548,55 +457,159 @@ def fill_db():
             Survey(
                 groups["A403"],
                 "Опрос про любимую столовую",
-                {"в корпусе В": 55.0,
-                 "в корпусе М": 40.0,
-                 "в корпусе К": 5.0, }
+                {"1": "в корпусе В",
+                 "2": "в корпусе М",
+                 "3": "в корпусе К"}
             ),
         "A403_timetable":
             Survey(
                 groups["A403"],
                 "Опрос по смещению расписания занятий",
-                {"начинать в 8:40": 35.0,
-                 "начинать в 9:00": 40.0,
-                 "начинать в 9:20": 25.0, }
+                {"1": "начинать в 8:40",
+                 "2": "начинать в 9:00",
+                 "3": "начинать в 9:20"}
             )
     }
 
-    auth_users = {
-        "admin":
-            AuthInfo(
-                phone_no = "88001112233",
-                last_send_time = datetime.datetime.now(datetime.timezone.utc),
-                is_approved = True,
-                password = "0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c",
-                session_id = "12345"
-            )
+    survey_responses = {
+        "Leni4_food":
+            SurveyResponse(
+                surveys["A403_foodcourt"],
+                persons["Leni4"],
+                "2"
+            ),
+        "Pashka_food":
+            SurveyResponse(
+                surveys["A403_foodcourt"],
+                persons["Pashka"],
+                "2"
+            ),
+        "Shatokhin_food":
+            SurveyResponse(
+                surveys["A403_foodcourt"],
+                persons["Shatokhina"],
+                "2"
+            ),
+        "Bogi_food":
+            SurveyResponse(
+                surveys["A403_foodcourt"],
+                persons["Bogi"],
+                "1"
+            ),
+        "Vovka_food":
+            SurveyResponse(
+                surveys["A403_foodcourt"],
+                persons["Vovka"],
+                "3"
+            ),
+        "Anisimov_food":
+            SurveyResponse(
+                surveys["A403_foodcourt"],
+                persons["Anisimov"],
+                "3"
+            ),
     }
+
+    auth_users = {
+        "generic_user":
+            AuthInfo(
+                phone_no=persons["Leni4"].phone_no,
+                last_send_time=datetime.datetime.now(datetime.timezone.utc),
+                is_approved=True,
+                password=hash_password("12345678"),
+                session_id=None,
+                permissions=0,
+                person_id=persons["Leni4"]
+            ),
+    }
+
     print("Filling db...")
-    print("Fill script version is " + fill_script_version)
-    service = Service(fill_script_version)
-    service.save()
+
     for key, item in persons.items():
+        try:
+            with open(r"./img/" + key + r".jpg", mode='rb') as file:
+                fileContent = file.read()
+            item.photo = Binary(fileContent)
+        except FileNotFoundError:
+            pass
         item.save()
     for key, item in organizations.items():
         item.save()
     for key, item in departments.items():
         item.save()
-    for key, item in hard_skills.items():
+    # add skills
+    for key,item in persons.items():
+        for i in range(10):
+            p_ss = PersonSS()
+            p_ss.person_id = item.pk
+            p_ss.level = random.random() * 10
+            p_ss.ss_id = random.choice(random.choice(soft_skill_list))
+            try:
+                p_ss.save()
+                #print("%s получил софт скилл %s -> %s"%(item.surname, p_ss.ss_id.skill_type_id.name, p_ss.ss_id.name))
+            except:
+                #print("Не повезло: %s пропустил софт скилл"%item.surname)
+                pass
+            p_hs = PersonHS()
+            p_hs.person_id = item.pk
+            p_hs.level = random.random() * 10
+            p_hs.hs_id = random.choice(random.choice(hard_skill_list))
+            try:
+                p_hs.save()
+                #print("%s получил хард скилл %s -> %s"%(item.surname, p_hs.hs_id.skill_type_id.name, p_hs.hs_id.name))
+            except:
+                #print("Не повезло: %s пропустил хард скилл"%item.surname)
+                pass
+
+    for i in range(100):
+        reviewer = random.choice(list(persons.values()))
+        reviewed = random.choice(list(PersonHS.objects.all()))
+        hs_review = HSReview()
+        hs_review.reviewer_id = reviewer.pk
+        hs_review.subject_id = reviewed.pk
+        hs_review.value = random.random() * 10
+        hs_review.topic = "Тема отзыва"
+        hs_review.description = "Описание отзыва %s на %s пользователя %s"%(reviewer.surname, reviewed.hs_id.name,
+                                    reviewed.person_id.surname)
+        hs_review.date = datetime.date(2000, 5, 1)
+        try:
+            hs_review.save()
+        except:
+            pass
+        reviewer = random.choice(list(persons.values()))
+        reviewed = random.choice(list(PersonSS.objects.all()))
+        ss_review = SSReview()
+        ss_review.reviewer_id = reviewer.pk
+        ss_review.subject_id = reviewed.pk
+        ss_review.value = random.choice([0,10])
+        ss_review.topic = "Тема отзыва"
+        ss_review.description = "Описание %s %s на %s пользователя %s" % (
+                                ("лайка" if ss_review.value == 10 else "дизлайка"),
+                                reviewer.surname, reviewed.ss_id.name,
+                                reviewed.person_id.surname)
+        ss_review.date = datetime.date(2000, 5, 1)
+        try:
+            ss_review.save()
+        except:
+            pass
+
+    for key, item in specializations.items():
+        if item.type == "Student":
+            item_type = "Студент"
+        elif item.type == "Tutor":
+            item_type = "Преподаватель"
+        elif item.type == "Lab assistant":
+            item_type = "Лаборант"
+        else:
+            item_type = item.type
+        display_text = item_type
+        if (item.detail):
+            display_text += ", " + item.detail
+        item.display_text = display_text
         item.save()
-    for key, item in person_hs.items():
-        item.save()
-    for key, item in soft_skills.items():
-        item.save()
-    for key, item in person_ss.items():
-        item.save()
-    for key, item in tutor_roles.items():
-        item.save()
-    for key, item in student_roles.items():
+    for key, item in person_specializations.items():
         item.save()
     for key, item in group_roles.items():
-        item.save()
-    for key, item in group_permissions.items():
         item.save()
     for key, item in groups.items():
         item.save()
@@ -606,14 +619,26 @@ def fill_db():
         item.save()
     for key, item in test_results.items():
         item.save()
-    for key, item in ss_reviews.items():
-        item.save()
-    for key, item in hs_reviews.items():
-        item.save()
-    for key, item in sr_reviews.items():
-        item.save()
-    for key, item in tr_reviews.items():
-        item.save()
+
+    i = 0;
+    for s_key, s_item in person_specializations.items():
+        for p_key, p_item in persons.items():
+            if (s_item.person_id != p_item.pk):
+                # print(s_item.person_id.surname + p_item.surname)
+                i += 1
+                review = SpecializationReview()
+                review.reviewer_id = p_item.pk
+                review.subject_id = s_item.pk
+                review.value = random.randint(0,100)
+                review.topic = "Тема отзыва " + str(i)
+                review.description = "Отзыв %s на '%s' пользователя %s"%\
+                                     (p_item.surname,
+                                      s_item.specialization_id.display_text,
+                                      s_item.person_id.surname)
+                review.date = datetime.date(random.randint(1990,2018), random.randint(1,12), random.randint(1,28))
+                review.save()
+    # for key, item in p_spec_reviews.items():
+    #     item.save()
     for key, item in group_reviews.items():
         item.save()
     for key, item in role_in_group_reviews.items():
@@ -622,6 +647,22 @@ def fill_db():
         item.save()
     for key, item in surveys.items():
         item.save()
+    for key, item in survey_responses.items():
+        item.save()
+    # обработка опросов
+    for item in Survey.objects.all():
+        response_list = list(SurveyResponse.objects.raw({"survey_id": item.pk}))
+        survey_dict = {}
+        for response in response_list:
+            option = response.chosen_option
+            if option not in survey_dict:
+                survey_dict.update({option: 1})
+            else:
+                survey_dict.update({option: survey_dict[option] + 1})
+        if survey_dict:
+            item.survey_result = survey_dict
+            item.save()
+
     for key, item in auth_users.items():
         item.save()
     print("done")
@@ -647,35 +688,39 @@ def display_data():
 
     print("----Person Hard Skills:")
     for item in PersonHS.objects.all():
-        print(item.person_id.surname +
-              ", " +
-              item.hs_id.name +
-              ", lvl: " +
-              str(item.level))
+        print("%s %s -> %s: %3.1f" %
+              (item.person_id.surname,
+               item.hs_id.skill_type_id.name,
+               item.hs_id.name,
+               item.level))
 
     print("----Soft Skills:")
     for item in SoftSkill.objects.all():
         print(item.name + " _id:" + str(item.pk))
 
     print("----Person Soft Skills:")
-    for ss in PersonSS.objects.all():
-        print(ss.person_id.surname +
-              " " +
-              ss.ss_id.name +
-              ": " +
-              str(ss.level))
+    for item in PersonSS.objects.all():
+        print("%s %s -> %s: %3.1f" %
+              (item.person_id.surname,
+               item.ss_id.skill_type_id.name,
+               item.ss_id.name,
+               item.level))
 
-    print("----Tutor Roles:")
-    for item in TutorRole.objects.all():
-        print("{0} из {2} ведет {1}".format(item.person_id.surname,
-                                            item.discipline,
-                                            item.department_id.name))
+    print("----Specializations")
+    for item in Specialization.objects.all():
+        print("{0} {1}".format(item.type,
+                               item.detail))
 
-    print("----Student Roles:")
-    for item in StudentRole.objects.all():
-        print("{0} - {1}, {2}".format(item.person_id.surname,
-                                      item.description,
-                                      item.department_id.name))
+    print("----Person Specializations:")
+    for item in PersonSpecialization.objects.all():
+        print("{0} - {1} {2}, {3}, рейтинг - {4}".format(item.person_id.surname,
+                                                         item.specialization_id.type,
+                                                         item.specialization_id.detail,
+                                                         item.department_id.name,
+                                                         item.level))
+        if not item.is_active:
+            print("Неактивен")
+        print(item.details)
 
     print("----Roles for Groups:")
     for item in GroupRole.objects.all():
@@ -715,7 +760,7 @@ def display_data():
 
     print("----Soft Skill Reviews:")
     for item in SSReview.objects.all():
-        print("{0} оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
+        print("{0} оставил отзыв с оценкой {1:3.1f} на {2} пользователя {3} с комментарием: {4}".format(
             item.reviewer_id.surname,
             item.value,
             item.subject_id.ss_id.name,
@@ -724,32 +769,24 @@ def display_data():
 
     print("----Hard Skill Reviews:")
     for item in HSReview.objects.all():
-        print("{0} оставил отзыв с оценкой {1} на {2} пользователя {3} с комментарием: {4}".format(
+        print("{0} оставил отзыв с оценкой {1:3.1f} на {2} пользователя {3} с комментарием: {4}".format(
             item.reviewer_id.surname,
             item.value,
             item.subject_id.hs_id.name,
             item.subject_id.person_id.surname,
             item.description))
 
-    print("----Student Role Reviews:")
-    for item in SRReview.objects.all():
+    print("----Person Specialization Reviews:")
+    for item in SpecializationReview.objects.all():
         print(
-            "{0} оставил отзыв с оценкой {1} на пользователя {2} в качестве {3} подразделения {4} с комментарием: {5}".format(
+            "{0} оставил отзыв с оценкой {1} на пользователя {2} в качестве {3} {4} "
+            "подразделения {5} с комментарием: {6}".format(
                 item.reviewer_id.surname,
                 item.value,
                 item.subject_id.person_id.surname,
-                item.subject_id.description,
+                item.subject_id.specialization_id.type,
+                item.subject_id.specialization_id.detail,
                 item.subject_id.department_id.name,
-                item.description))
-
-    print("----Tutor Role Reviews:")
-    for item in TRReview.objects.all():
-        print(
-            "{0} оставил отзыв с оценкой {1} на пользователя {2} в качестве преподавателя {3} с комментарием: {4}".format(
-                item.reviewer_id.surname,
-                item.value,
-                item.subject_id.person_id.surname,
-                item.subject_id.discipline,
                 item.description))
 
     print("----Group Reviews:")
@@ -780,12 +817,36 @@ def display_data():
 
     print("----Surveys:")
     for item in Survey.objects.all():
-        print("В группе {0} Проведен {1} с результатами: {2}".format(
+        print("В группе {0} Проведен {1} ".format(
             item.group_id.name,
-            item.description,
-            item.survey_data))
+            item.description))
+        print("Варианты ответов:")
+        for key, value in item.survey_options.items():
+            print("%s: %s" % (key, value))
+
+    print("----Survey Responses:")
+    for item in SurveyResponse.objects.all():
+        print("{0} выбрал вариант '{1}' в опросе {2}".format(
+            item.person_id.surname,
+            item.survey_id.survey_options[item.chosen_option],
+            item.survey_id.description
+        ))
+
+    print("----Survey Results:")
+    for item in Survey.objects.all():
+        print("Результаты опроса " + item.description)
+        if item.survey_result:
+            for key, value in item.survey_result.items():
+                print("{0}: {1} ответов".format(
+                    item.survey_options[key],
+                    value
+                ))
+        else:
+            print("Опрос не завершён")
+
 
 if __name__ == "__main__":
+    """
     db_name = constants.db_name
     if len(sys.argv) > 1:
         if '--help' in str(sys.argv):
@@ -793,7 +854,15 @@ if __name__ == "__main__":
             exit()
         if '--test' in str(sys.argv):
             db_name = constants.db_name_test
-    connect(constants.mongo_db + "/" + db_name, alias="reviewer")
-    clear_db()
+        if '--load_test' in str(sys.argv):
+            db_name = constants.db_name_load_test
+        if '--develop' in str(sys.argv):
+            db_name = constants.db_name_develop
+    print("Filling DB '%s' \n" % db_name)
+    """
+    #connect(constants.mongo_db + "/" + db_name, alias="reviewer")
+    #wipe_db("reviewer")
+    fill_initial_data("..//..//src//data//hard_skills",
+                      "..//..//src//data//soft_skills")
     fill_db()
-    display_data()
+    #display_data()

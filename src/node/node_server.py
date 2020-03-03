@@ -6,17 +6,46 @@ from threading import Thread
 from node.settings import constants
 import pymongo
 from flask import Flask
-from node.api.routes import bp
+from node.api.versioning import register_api_default, register_api_v1, register_api_v2
+from node.api.logging import bp as bp_logging
+from node.api.logging import configure_logger
 from pymodm.connection import connect
+import logging
+import os
+
 
 app = Flask(__name__)
-app.register_blueprint(bp)
-	
-def start_server(port):
-    app.run(port=port)
+register_api_default(app)
+register_api_v1(app)
+register_api_v2(app)
+
+try:
+    app_mode = os.environ["REVIEWER_APP_MODE"]
+except Exception as e:
+    logging.error("Environment variable REVIEWER_APP_MODE must be defined !")
+    raise
+
+if app_mode == "production" or app_mode == "development" or app_mode == "load":
+    configure_logger(app)
+
+app.register_blueprint(bp_logging)
+
+
+def start_server(port, protocol="http", log=True):
+    if not log:
+        for handler in logging.getLogger().handlers:
+            logging.getLogger().removeHandler(handler)
+        for handler in app.logger.handlers:
+            app.logger.removeHandler(handler)
+    if protocol == "http":
+        app.run(port=port)
+    elif protocol == "https":
+        app.run(port=port, ssl_context=('cert.pem', 'key.pem'))
+
 
 if __name__ == "__main__":
-    start_server(constants.node_server_port)
+    start_server(constants.node_server_port, protocol="https")
+
 
 def is_db_exists():
     rev_client = pymongo.MongoClient(constants.mongo_db)
@@ -30,28 +59,6 @@ def is_db_exists():
     except Exception as ex:
         print(ex)
         return False
-
-
-if __debug__:
-    def print_something_from_db():
-
-        rev_client = pymongo.MongoClient(constants.mongo_db)
-        rev_db = rev_client[constants.db_name_test]
-        col_person = rev_db["Person"]
-        cursor = col_person.find({})
-
-        try:
-            for person in cursor:
-                print(person["Name"])
-        except Exception as ex:
-            print(ex)
-
-        return
-
-
-    if (is_db_exists()):
-        print_something_from_db()
-
 
 
 class UpdateNetwork(Thread):
@@ -80,4 +87,5 @@ class UpdateNetwork(Thread):
 
 update_network_thread = UpdateNetwork()
 #update_network_thread.start()
+
 
