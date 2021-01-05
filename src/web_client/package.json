@@ -7,7 +7,7 @@
         "@material-ui/core": "^3.2.2",
         "@material-ui/icons": "^3.0.1",
         "@types/react-text-mask": "^5.4.3",
-        "axios": "^0.18.0",
+        "axios": "^0.21.1",
         "classnames": "^2.2.6",
         "mobx": "^5.1.0",
         "mobx-react": "^5.2.8",
